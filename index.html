@@ -270,6 +270,11 @@
   .an-pfr{cursor:pointer}
   .an-pfr.sel{box-shadow:0 0 0 2px #c3c8d4}
   .an-pfr .an-cps{margin-top:8px}
+  .an-vis{margin-top:10px;display:grid;gap:5px}
+  .an-vr{display:flex;gap:8px;align-items:baseline;font-size:12.5px;font-weight:700;color:#2a2f3c;min-width:0}
+  .an-vt{font-variant-numeric:tabular-nums;white-space:nowrap}
+  .an-vr b{color:#0a9a54;white-space:nowrap}
+  .an-vr small{color:#8a90a0;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
   .an-pfr.unset b{color:#9aa3b5}
   .rt-sum>div{flex:1;background:var(--card);border-radius:16px;padding:10px 14px;box-shadow:0 4px 14px rgba(30,40,70,.06)}
   .rt-sum small{display:block;font-size:11.5px;font-weight:800;color:#8a90a0}
@@ -3119,7 +3124,7 @@ function openSyncSheet(){
     row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして、いつものURLから開くと繋がる')+
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c1.7）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c1.8）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -5643,7 +5648,7 @@ function anaCount0(r,days,N,limit,nowIdx){
       if(en.e){b=off+hmMin(en.e)+(Number(en.ed)||0)*1440;if(b<=a)b+=1440;}
       else if(en.k==='sleep'&&d>=addDays(todayStr(),-1))b=P+nowIdx;else continue;   /* 終了時刻の無い記録は数えない（寝ている途中だけ今まで） */
       const mv=!!en.mv,kk=mv?'move':(ANA_REC[en.k]?en.k:'stay'),tr=mv?TRS.findIndex(t=>t[0]===en.tr):-1;
-      items.push({a,b,c:IX[kk],acts:Array.isArray(en.acts)?en.acts:[],off,mv,tv:mv?(tr>=0?tr+1:ANA_NOTR):0,v2:mv&&Number(en.ts)>=MV_V2_TS,pf:prefOf(en.pf)?Number(en.pf):0,pf0:(mv&&prefOf(en.pf0))?Number(en.pf0):0,et:(mv||en.k==='sleep')?0:((typeof en.d==='string'&&en.d)?tIx(en.d):(en.dx?tIx('_other'):0))});}}
+      items.push({a,b,c:IX[kk],acts:Array.isArray(en.acts)?en.acts:[],off,mv,tv:mv?(tr>=0?tr+1:ANA_NOTR):0,v2:mv&&Number(en.ts)>=MV_V2_TS,pf:prefOf(en.pf)?Number(en.pf):0,pf0:(mv&&prefOf(en.pf0))?Number(en.pf0):0,lb:mv?String(en.rt||'移動'):String(en.p||((kindOf(en.k||'stay')||{}).lb)||''),et:(mv||en.k==='sleep')?0:((typeof en.d==='string'&&en.d)?tIx(en.d):(en.dx?tIx('_other'):0))});}}
   for(const x of rlogList()){if(!x.s||!x.e||x.d<dayList[0]||x.d>dayList[dayList.length-1])continue;const off=P+Math.round((parseD(x.d)-parseD(r.s))/86400000)*1440;
     let a=off+hmMin(x.s),b=off+hmMin(x.e);if(b<=a)b+=1440;items.push({a,b,c:IX.rtn,acts:[],off,rtn:1,mv:false,tv:0,v2:false,pf:0});}
   items.sort((p,q)=>p.a-q.a||q.b-p.b);
@@ -5689,6 +5694,9 @@ function anaCount0(r,days,N,limit,nowIdx){
     if(p)pfS[p]++;else if(c!==IXR)pfS[0]++;
     if(md){mdTot++;pfM[p]++;}
     pfK[p*256+c]++;}
+  const vis={};{let cp=0,st=-1,lbs=[];const flush=e=>{if(cp&&st>=0)(vis[cp]=vis[cp]||[]).push({s:st-P,e:e-P,lb:lbs.join('・')});cp=0;st=-1;lbs=[];};
+    for(let m=P;m<P+limit;m++){const o=own[m],p=o>=0?pfL[m]:0;if(p!==cp){flush(m);if(p){cp=p;st=m;}}if(p){const l=items[o]&&items[o].lb;if(l&&lbs.indexOf(l)<0&&lbs.length<3)lbs.push(l);}}
+    flush(P+limit);}   /* 県ごとの「何時何分〜何時何分」（s,e は期間の頭からの分） */
   const kid=i=>i===255?'_untyped':(K[i-1]?K[i-1].id:'?'),obj=(arr,f,from)=>{const o={};for(let i=(from==null?1:from);i<arr.length;i++)if(arr[i])o[f(i)]=arr[i];return o;};
   const sumO={_none:sum[0]};for(let i=1;i<=K.length;i++)if(sum[i])sumO[K[i-1].id]=sum[i];
   const means={};let mt=0,mu=0,mb=0,mo=0,mm=0;
@@ -5697,7 +5705,7 @@ function anaCount0(r,days,N,limit,nowIdx){
   const prefKind={};for(let p=0;p<48;p++){if(!pfS[p])continue;const o={};for(let c=1;c<=K.length;c++){const v=pfK[p*256+c];if(v)o[K[c-1].id]=v;}prefKind[p]=o;}
   return {total:limit,rec,K,sum:sumO,tool:obj(toolS,i=>TL[i-1]),pref:obj(pfS,i=>i,0),prefMuda:obj(pfM,i=>i,0),prefBlank:obj(pfB,i=>i,0),prefKind,
     mv:{means,acts:obj(mvA,kid),tools:obj(mvD,i=>TL[i-1]),tot:mt,used:mu,blank:mb,old:mo,mudaAct:mm},
-    muda:{blank:mdBlank,kinds:obj(mdK,kid),total:mdTot},unknown:sum[IX['?']]||0};
+    muda:{blank:mdBlank,kinds:obj(mdK,kid),total:mdTot},unknown:sum[IX['?']]||0,visits:vis};
 }
 function anaTr(k){if(k==='_none')return ['❔','乗り物なし'];const t=TRS.find(x=>x[0]===k);if(!t)return ['❔',String(k)];
   const i=t[1].indexOf(' ');return [TRICON[k]||t[1].slice(0,i),t[1].slice(i+1)];}
@@ -5767,14 +5775,19 @@ function renderAnaPage(keep){
   const pl=Object.keys(cur.pref).filter(c=>+c).map(c=>({c:+c,p:prefOf(c),m:cur.pref[c]})).sort((a,b)=>b.m-a.m);
   const named=pl.length;if(cur.pref[0])pl.push({c:0,p:{short:'未設定',co:'#c3c8d4'},m:cur.pref[0]});
   const pmx=Math.max(1,...pl.filter(x=>x.c||!named).map(x=>x.m));
+  const vt=x=>pad(Math.floor((x%1440)/60))+':'+pad(x%60),vd=x=>{const D=parseD(addDays(r.s,Math.floor(x/1440)));return (D.getMonth()+1)+'/'+D.getDate()+'('+YOBI[D.getDay()]+')';};
+  const anaVisHtml=c=>{const vs=((cur.visits||{})[c]||[]).slice().reverse();if(!vs.length)return '';const all=!!anaMore['pv'+c],sh=all?vs:vs.slice(0,10);
+    return '<div class="an-vis"><div class="an-sub">いた時間（'+vs.length+'回）</div>'+sh.map(v=>{const d0=vd(v.s),d1=vd(v.e-1);
+      return '<div class="an-vr"><span class="an-vt">'+(anaUnit==='day'?'':esc(d0)+' ')+vt(v.s)+' – '+(d1!==d0?esc(d1)+' ':'')+vt(v.e)+'</span><b>'+hh(v.e-v.s)+'</b>'+(v.lb?'<small>'+esc(v.lb)+'</small>':'')+'</div>';}).join('')+
+      (vs.length>10?'<button class="an-more" data-pvm="'+c+'">'+(all?'▲ たたむ':'▼ もっと見る（あと'+(vs.length-10)+'）')+'</button>':'')+'</div>';};
   const pRow=x=>{const sel=anaPfSel===x.c,mdm=cur.prefMuda[x.c]||0,bl=cur.prefBlank[x.c]||0,pk=cur.prefKind[x.c]||{};
     return '<div class="an-pfr'+(sel?' sel':'')+(x.c?'':' unset')+'" data-pf="'+x.c+'"><div class="an-pf1"><i class="an-dot" style="background:'+x.p.co+'"></i><b>'+esc(x.p.short)+'</b><span class="an-h">'+hh(x.m)+'<small>'+Math.round(x.m/rec*100)+'%</small></span></div>'+
       '<div class="an-pf2"><span class="an-mb"><i style="width:'+Math.min(100,Math.max(2,Math.round(x.m/pmx*100)))+'%;background:'+x.p.co+'"></i></span>'+(mdm?'<span class="an-pm">ムダ '+hs(mdm)+'</span>':'')+'</div>'+
-      (sel?'<div class="an-cps">'+chips(pk,id=>{const k=kOf(id);return {ic:k.ic,lb:k.lb,md:isMd(id)};})+(bl?'<span class="an-cp md">🕳️ 空白の移動 <b>'+hs(bl)+'</b></span>':'')+'</div>':'')+'</div>';};
+      (sel?'<div class="an-cps">'+chips(pk,id=>{const k=kOf(id);return {ic:k.ic,lb:k.lb,md:isMd(id)};})+(bl?'<span class="an-cp md">🕳️ 空白の移動 <b>'+hs(bl)+'</b></span>':'')+'</div>'+anaVisHtml(x.c):'')+'</div>';};
   const shown=pl.filter((x,i)=>anaMore.pf||!x.c||i<5);
   const pfBody=(named?'':'<div class="an-empty">都道府県の記録なし（記録の 🗾 を押すと出る）</div>')+
     (pl.length?'<div class="an-list">'+shown.map(pRow).join('')+moreBtn('pf',5,named)+'</div>':'')+
-    '<div class="an-empty">移動は前半を出発、後半を到着の県に数える。％＝記録のある時間に対して。タップで内訳</div>';
+    '<div class="an-empty">移動は前半を出発、後半を到着の県に数える。％＝記録のある時間に対して。県を押すと、何をしていたかと、いた時間（何時何分〜何時何分）が出る</div>';
   p.innerHTML='<div class="page-head"><button class="bk" id="pgBk">‹ 戻る</button><span class="tt">📊 分析</span><span style="width:36px"></span></div>'+
     '<div class="page-body">'+
     '<div class="an-tabs">'+[['day','日'],['week','週'],['month','月'],['year','年']].map(u=>'<button data-au="'+u[0]+'"'+(anaUnit===u[0]?' class="on"':'')+'>'+u[1]+'</button>').join('')+'</div>'+
@@ -5794,6 +5807,7 @@ function renderAnaPage(keep){
   p.querySelectorAll('[data-as]').forEach(b=>b.onclick=()=>{const o=Object.assign({},anaOpenGet()),s=b.dataset.as;o[s]=isOpen(s)?0:1;anaOpenSet(o);renderAnaPage(true);});
   p.querySelectorAll('[data-am]').forEach(b=>b.onclick=()=>{anaMore[b.dataset.am]=!anaMore[b.dataset.am];renderAnaPage(true);});
   p.querySelectorAll('[data-pf]').forEach(b=>b.onclick=()=>{const c=+b.dataset.pf;anaPfSel=anaPfSel===c?-1:c;renderAnaPage(true);});
+  p.querySelectorAll('[data-pvm]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();const k='pv'+b.dataset.pvm;anaMore[k]=!anaMore[k];renderAnaPage(true);});
 }
 function openRtnPage(){closeSheet();
   if(!state.rtn&&RTN_SEED.n){mutate(()=>{state.rtn={};state.rtn[RTN_SEED.id]={n:RTN_SEED.n,o:1,ts:Date.now()};});}
@@ -6740,7 +6754,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c1.7";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c1.8";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 function openLoginSheet(opt){
   opt=opt||{};
