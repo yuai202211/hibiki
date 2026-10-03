@@ -425,6 +425,8 @@
   .actrow .ac-dw{grid-column:1 / -1;display:flex;gap:5px;align-items:center;margin-top:5px;min-width:0}
   .actrow .ac-dv{flex:1 1 auto;min-width:0;display:flex;gap:5px;align-items:center;flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;overscroll-behavior-x:contain}
   .actrow .ac-dv::-webkit-scrollbar{display:none}
+  .actrow .ac-dx{grid-column:1 / -1;margin-top:6px}
+  .act .a-dv .a-dx{font-style:normal;font-size:11px;font-weight:800;color:#6a7080;background:#f1f3f8;border-radius:6px;padding:1px 6px;margin:0 6px 0 3px;vertical-align:1px}
   .actrow .ac-dv button[data-ad] em{font-style:normal;font-size:11px;font-weight:800;margin-left:3px;vertical-align:2px}
   .actrow .ac-dv button[data-ad].sel em{display:none}
   .actrow .ac-dv button[data-ad]{flex:0 0 auto;height:30px;min-width:36px;padding:0 7px;border-radius:10px;background:#fff;border:1px solid var(--line);font-size:16px;line-height:1;filter:grayscale(.6);opacity:.75}
@@ -2651,7 +2653,7 @@ function actsHtml(en){
     /* 知らない種類・道具は ❓＋id の先頭4文字（捨てない） */
     const kk=x.k?(kindOf(x.k)||{ic:'❓',lb:String(x.k).slice(0,4),co:'#9aa3b5'}):null,dv=x.d?(toolOf(x.d)||{ic:'❓',lb:String(x.d).slice(0,4)}):null;
     const kst=(kk&&x.k!=='ai'&&x.k!=='work')?' style="background:'+esc(kk.co)+';color:#fff"':'';   /* AI・仕事は既存の色（CSS） */
-    return '<span class="act'+(m?' tm':'')+((x.k&&/^[a-z0-9_]+$/i.test(x.k))?' k-'+x.k:'')+'">'+(kk?'<i class="a-k">'+esc(kk.ic)+'</i>':'<i class="a-d"></i>')+'<span class="a-t">'+(kk?'<em class="a-kl"'+kst+'>'+esc(kk.lb)+'</em>':'')+(dv?'<i class="a-dv" title="'+esc(dv.lb)+'">'+esc(dv.ic)+'</i>':'')+((kk&&String(x.t).trim()===kk.lb)?'':esc(x.t))+((x.s&&x.e)?'<span class="a-r">'+esc(x.s)+' – '+esc(x.e)+'</span>':'')+'</span>'+
+    return '<span class="act'+(m?' tm':'')+((x.k&&/^[a-z0-9_]+$/i.test(x.k))?' k-'+x.k:'')+'">'+(kk?'<i class="a-k">'+esc(kk.ic)+'</i>':'<i class="a-d"></i>')+'<span class="a-t">'+(kk?'<em class="a-kl"'+kst+'>'+esc(kk.lb)+'</em>':'')+(dv?'<i class="a-dv" title="'+esc(x.dx||dv.lb)+'">'+esc(dv.ic)+(x.d==='_other'&&x.dx&&String(x.t).trim()!==x.dx?'<b class="a-dx">'+esc(x.dx)+'</b>':'')+'</i>':'')+((kk&&String(x.t).trim()===kk.lb)?'':esc(x.t))+((x.s&&x.e)?'<span class="a-r">'+esc(x.s)+' – '+esc(x.e)+'</span>':'')+'</span>'+
       (m?'<span class="a-m">'+esc(durText(m))+'</span>':'')+(x.c?'<span class="a-c">'+txtHtml(x.c)+'</span>':'')+((Array.isArray(x.ph)&&x.ph.length)?'<span class="a-ph">'+x.ph.slice(0,4).map(id=>'<img src="'+esc(phUrl(id))+'" alt="" onerror="this.style.visibility=\'hidden\'">').join('')+'</span>':'')+'</span>';}).join('');
   /* 「そのほか」は、全部の行に時間がある時だけ（時間の無い行があると、残りの時間が正しく出せないため） */
   if(stay&&sum&&stay>sum&&a.every(x=>Number(x.m)))h+='<span class="act rest"><i class="a-d"></i><span class="a-t">そのほか</span><span class="a-m">'+esc(durText(stay-sum))+'</span></span>';
@@ -3116,7 +3118,7 @@ function openSyncSheet(){
     row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして、いつものURLから開くと繋がる')+
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c1.5）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c1.6）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -3392,13 +3394,13 @@ function openEntrySheet(date,ref){
   /* ここでやったこと（何を・どれくらい）。acts＝[{t:何を,m:分}]。時間は選んだ時だけ入る（0＝未選択） */
   const okT=v=>/^\d{2}:\d{2}$/.test(String(v||''));
   let acts=(ex&&Array.isArray(ex.acts))?ex.acts.filter(a=>a&&a.t).map(a=>({t:String(a.t),m:Number(a.m)||0,s:okT(a.s)?a.s:'',e:okT(a.e)?a.e:'',c:String(a.c||'')})):[];
-  if(ex&&Array.isArray(ex.acts)){const src=ex.acts.filter(a=>a&&a.t);acts.forEach((a,i)=>{const o=src[i];if(!o)return;if(o.k&&typeof o.k==='string')a.k=o.k;if(o.d&&typeof o.d==='string')a.d=o.d;if(Array.isArray(o.ph)&&o.ph.length)a.ph=o.ph.filter(x=>typeof x==='string'&&x);});}   /* k（種類）／d（道具）は文字列ならそのまま（知らない id も捨てない） */
+  if(ex&&Array.isArray(ex.acts)){const src=ex.acts.filter(a=>a&&a.t);acts.forEach((a,i)=>{const o=src[i];if(!o)return;if(o.k&&typeof o.k==='string')a.k=o.k;if(o.d&&typeof o.d==='string')a.d=o.d;if(o.dx&&typeof o.dx==='string')a.dx=o.dx;if(Array.isArray(o.ph)&&o.ph.length)a.ph=o.ph.filter(x=>typeof x==='string'&&x);});}   /* k（種類）／d（道具）は文字列ならそのまま（知らない id も捨てない） */
   if(!acts.length)acts=[{t:'',m:0,s:'',e:''}];   /* いつも1行は空で出しておく＝押さずにすぐ書ける（空の行は保存されない） */
   /* 各行＝何を(t)・何時から(s)・何時まで(e)。かかった時間(m・分)は s と e から出す（終わりが始まりより前なら翌日扱い）。
      時刻を入れていない行は時間なし。前の版で「30分」などと選んであった行は、時刻を入れるまでその時間(m0)を保つ */
   const acRead=()=>{acts=[...$('acRows').querySelectorAll('.actrow')].map(r=>{
     const s=r.querySelector('.ac-s').value||'',e=r.querySelector('.ac-e').value||'';
-    const o={t:r.querySelector('.ac-t').value,s,e,m:(s&&e)?durMin(s,e,0):(Number(r.dataset.m0)||0),c:(r.querySelector('.ac-c')||{}).value||''};if(r.dataset.k)o.k=r.dataset.k;if(r.dataset.d)o.d=r.dataset.d;if(r.dataset.ph)o.ph=r.dataset.ph.split(',').filter(Boolean);return o;});};
+    const o={t:r.querySelector('.ac-t').value,s,e,m:(s&&e)?durMin(s,e,0):(Number(r.dataset.m0)||0),c:(r.querySelector('.ac-c')||{}).value||''};if(r.dataset.k)o.k=r.dataset.k;if(r.dataset.d)o.d=r.dataset.d;if(r.dataset.d==='_other'){const x=r.querySelector('.ac-dx');if(x&&x.value.trim())o.dx=x.value.trim();}if(r.dataset.ph)o.ph=r.dataset.ph.split(',').filter(Boolean);return o;});};
   const acSum=()=>{const el=$('acSum');if(!el)return;
     const sum=acts.reduce((s,a)=>s+(Number(a.m)||0),0);
     if(!sum){el.style.display='none';return;}
@@ -3409,9 +3411,10 @@ function openEntrySheet(date,ref){
   const acKBtns=k=>{const ls=kindList();if(k&&!ls.some(x=>x.id===k))ls.unshift(kindOf(k)||{id:k,ic:'❓',lb:String(k).slice(0,4),co:'#9aa3b5'});
     return ls.map(x=>'<button data-ak="'+esc(x.id)+'" style="--kc:'+esc(x.co)+'"'+(k===x.id?' class="sel"':'')+'>'+esc(x.ic)+'<span>'+esc(x.lb)+'</span></button>').join('');};
   /* 道具の帯＝絵だけの小さいチップ（選ぶと名前が出る） */
-  const acDBtns=d=>{const ls=toolList();if(d&&!ls.some(x=>x.id===d))ls.unshift(toolOf(d)||{id:d,ic:'❓',lb:String(d).slice(0,4)});
+  const acDBtns=d=>{const ls=toolList();if(d&&d!=='_other'&&!ls.some(x=>x.id===d))ls.unshift(toolOf(d)||{id:d,ic:'❓',lb:String(d).slice(0,4)});
     return ls.map(x=>{const ab=(x.own&&x.ic==='📌')?'<em>'+esc(Array.from(x.lb).slice(0,2).join(''))+'</em>':'';   /* 絵が既定の📌の物は頭2文字で見分ける */
-      return '<button data-ad="'+esc(x.id)+'" title="'+esc(x.lb)+'"'+(d===x.id?' class="sel"':'')+'>'+esc(x.ic)+ab+'<span>'+esc(x.lb)+'</span></button>';}).join('');};
+      return '<button data-ad="'+esc(x.id)+'" title="'+esc(x.lb)+'"'+(d===x.id?' class="sel"':'')+'>'+esc(x.ic)+ab+'<span>'+esc(x.lb)+'</span></button>';}).join('')+
+      '<button data-ad="_other" title="その他（その場で書く）"'+(d==='_other'?' class="sel"':'')+'>✍️<em>他</em><span>その他</span></button>';};   /* その他＝その行だけの手書き。一覧には足さない */
   /* 帯の右端の薄い影（続きがある印）と、選んだチップが帯の外にはみ出している時だけ scrollLeft を直接動かす */
   const acKEnd=st=>st.classList.toggle('end',st.scrollLeft+st.clientWidth>=st.scrollWidth-2);
   const acKVis=r=>{const st=r.querySelector('.ac-k');if(!st||!st.clientWidth)return;const b=st.querySelector('.sel');
@@ -3429,6 +3432,7 @@ function openEntrySheet(date,ref){
           '<span class="ac-d">'+(a.m?('⏱ '+esc(durText(a.m))):'')+'</span></div>'+
         '<div class="ac-kw"><div class="ac-k">'+acKBtns(a.k)+'</div><button class="ac-add" data-ak-add="1" aria-label="種類を足す・直す">＋</button></div>'+
         '<div class="ac-dw"><div class="ac-dv">'+acDBtns(a.d)+'</div><button class="ac-add" data-ad-add="1" aria-label="道具を足す・直す">＋</button></div>'+
+        '<input type="text" class="ac-dx" maxlength="20" placeholder="使った物を書く（この行だけ）" value="'+esc(a.dx||'')+'"'+(a.d==='_other'?'':' style="display:none"')+'>'+
         '<textarea class="ac-c" rows="2" maxlength="1000" placeholder="詳細（自由に書く）"'+(a.c?'':' style="display:none"')+'>'+esc(a.c||'')+'</textarea>'+((a.ph&&a.ph.length)?'<div class="ac-ph">'+a.ph.map(id=>'<img class="phth" data-v="'+esc(id)+'" src="'+esc(phUrl(id))+'" alt="" onerror="this.style.visibility=\'hidden\'">').join('')+'</div>':'')+'</div>';}).join('');
     [...$('acRows').querySelectorAll('.actrow')].forEach((r,i)=>{
       r.querySelector('.ac-x').onclick=()=>{acRead();acts.splice(i,1);acPaint();};
@@ -3442,7 +3446,8 @@ function openEntrySheet(date,ref){
         r.querySelectorAll('[data-ak]').forEach(x=>x.classList.toggle('sel',x.dataset.ak===r.dataset.k));});
       /* 道具：押すと付く、もう一度で外れる（1つだけ） */
       r.querySelectorAll('[data-ad]').forEach(b=>b.onclick=()=>{const d=b.dataset.ad;r.dataset.d=(r.dataset.d===d)?'':d;
-        r.querySelectorAll('[data-ad]').forEach(x=>x.classList.toggle('sel',x.dataset.ad===r.dataset.d));});
+        r.querySelectorAll('[data-ad]').forEach(x=>x.classList.toggle('sel',x.dataset.ad===r.dataset.d));
+        const dx=r.querySelector('.ac-dx');if(dx){const on=r.dataset.d==='_other';dx.style.display=on?'':'none';if(on){try{dx.focus();}catch(e){}}else dx.value='';}});
       /* ＋：種類・道具を足す／直すシート（#ovl2）。閉じたら描き直す。足した物は、この行が空なら付ける */
       r.querySelector('[data-ak-add]').onclick=()=>{acRead();openKindSheet('kind',nid=>{if(!sheetSt)return;if(nid&&acts[i]&&!acts[i].k)acts[i].k=nid;acPaint();});};
       r.querySelector('[data-ad-add]').onclick=()=>{acRead();openKindSheet('tool',nid=>{if(!sheetSt)return;if(nid&&acts[i]&&!acts[i].d)acts[i].d=nid;acPaint();});};
@@ -3459,7 +3464,7 @@ function openEntrySheet(date,ref){
     acCh();
     acSum();
     requestAnimationFrame(()=>{[...$('acRows').querySelectorAll('.actrow')].forEach((r,i)=>{if(!r.isConnected)return;const st=r.querySelector('.ac-k');if(kSl[i])st.scrollLeft=kSl[i];acKVis(r);
-      const dv=r.querySelector('.ac-dv'),sb=dv&&dv.querySelector('.sel');if(dSl[i])dv.scrollLeft=dSl[i];else if(sb){const sl=sb.getBoundingClientRect().left-dv.getBoundingClientRect().left+dv.scrollLeft;if(sl+sb.offsetWidth>dv.clientWidth)dv.scrollLeft=sl-8;}});});   /* 道具の帯も位置を保つ・選んだ物を見せる */
+      const dv=r.querySelector('.ac-dv'),sb=dv&&dv.querySelector('.sel');if(dSl[i])dv.scrollLeft=dSl[i];if(sb){const sl=sb.getBoundingClientRect().left-dv.getBoundingClientRect().left+dv.scrollLeft;if(sl<dv.scrollLeft||sl+sb.offsetWidth>dv.scrollLeft+dv.clientWidth)dv.scrollLeft=Math.max(0,sl-8);}});});   /* 道具の帯も位置を保つ・選んだ物を見せる */
     if(focusLast===true||typeof focusLast==='number'){const ins=$('acRows').querySelectorAll('.ac-t');
       const tg=(typeof focusLast==='number')?ins[focusLast]:ins[ins.length-1];if(tg){try{tg.focus();}catch(e){}}}
   };
@@ -3494,7 +3499,7 @@ function openEntrySheet(date,ref){
   /* 書きかけの退避（読み直し・電池切れ）でも、やったことが消えないように、文字にして渡す */
   sheetSt.actsText=()=>{acRead();return acts.filter(a=>a.t.trim()).map(a=>a.t.trim()+(a.m?' '+durText(a.m):'')+(a.c&&a.c.trim()?'（'+a.c.trim()+'）':'')).join('／');};
   /* 開いた時の中身を控える（外を押した時に、書きかけがあるかを比べる）。チップで入れた場所・行の種類・写真も拾う */
-  {const snapE=()=>{acRead();return JSON.stringify([$('shTa').value.trim(),$('shPlace').value.trim(),$('mvRt').value.trim(),acts.filter(a=>a.t.trim()||a.s||a.e||a.c||a.k||a.d).map(a=>[a.t.trim(),a.s,a.e,a.k||'',a.d||'',(a.c||'').trim()]),sheetSt.ph.length,eType,sheetSt.pf||0,sheetSt.pf0||0,acts.reduce((s,a)=>s+((a.ph||[]).length),0),tdSel,(($('tdX')||{}).value||'').trim()]);};
+  {const snapE=()=>{acRead();return JSON.stringify([$('shTa').value.trim(),$('shPlace').value.trim(),$('mvRt').value.trim(),acts.filter(a=>a.t.trim()||a.s||a.e||a.c||a.k||a.d).map(a=>[a.t.trim(),a.s,a.e,a.k||'',a.d||'',(a.c||'').trim(),a.dx||'']),sheetSt.ph.length,eType,sheetSt.pf||0,sheetSt.pf0||0,acts.reduce((s,a)=>s+((a.ph||[]).length),0),tdSel,(($('tdX')||{}).value||'').trim()]);};
     let d0='';try{d0=snapE();}catch(e){}
     sheetSt.isDirty=()=>{try{return snapE()!==d0;}catch(e){return false;}};}
   /* 場所チップは入力欄に入れるだけ（自由に書き換えOK） */
@@ -3535,13 +3540,13 @@ function openEntrySheet(date,ref){
     const isMv=eType==='move';
     /* やったこと：名前のある行だけ残す。時間だけ選んで名前が空の行は、消さずに知らせる */
     acRead();
-    acts.forEach(a=>{if(!a.t.trim()&&(a.k||a.d)){const z=kindOf(a.k)||toolOf(a.d);if(z)a.t=z.lb;}if(!a.t.trim()&&a.ph&&a.ph.length)a.t='写真';});   /* 題名が空で種類・道具だけ選んだ行は、その名前を題名に（1タップの行と同じ） */
+    acts.forEach(a=>{if(!a.t.trim()&&(a.k||a.d)){const z=kindOf(a.k)||toolOf(a.d);if(z)a.t=(!a.k&&a.d==='_other'&&a.dx)?a.dx:z.lb;}if(!a.t.trim()&&a.ph&&a.ph.length)a.t='写真';});   /* 題名が空で種類・道具だけ選んだ行は、その名前を題名に（1タップの行と同じ） */
     {const bad=acts.findIndex(a=>!a.t.trim()&&(a.m||a.s||a.e||a.k||a.d||(a.c&&a.c.trim())));
       if(bad>=0){cMode='list';cPaint();   /* 「自由に書く」側を見ていると、その行が隠れていて直せない→1行ずつの欄へ戻して、その行に合わせる */
         try{$('acRows').querySelectorAll('.ac-t')[bad].focus();}catch(e){}
         toast('時間だけ選んで、文字が空の行がある。書くか ✕ で消してくれ');return;}}
     /* 種類を「移動」に変えても、書いてあった行は捨てない（隠れているだけ。2026-10-03レビュー指摘）。並べ替えは、時刻が決まった後（下）でやる */
-    const actsS=acts.map(a=>{const o={t:a.t.trim(),m:Number(a.m)||0};if(a.s)o.s=a.s;if(a.e)o.e=a.e;if(a.k)o.k=a.k;if(a.d)o.d=a.d;if(a.c&&a.c.trim())o.c=a.c.trim();if(a.ph&&a.ph.length)o.ph=a.ph.slice();return o;}).filter(a=>a.t);
+    const actsS=acts.map(a=>{const o={t:a.t.trim(),m:Number(a.m)||0};if(a.s)o.s=a.s;if(a.e)o.e=a.e;if(a.k)o.k=a.k;if(a.d)o.d=a.d;if(a.d==='_other'&&a.dx)o.dx=String(a.dx).slice(0,20);if(a.c&&a.c.trim())o.c=a.c.trim();if(a.ph&&a.ph.length)o.ph=a.ph.slice();return o;}).filter(a=>a.t);
     if(isMv){if(!rt&&!t&&!sheetSt.ph.length){toast('どこから→どこまでを入れてくれ');return;}}
     else if(eType==='stay'){if(!t&&!p&&!sheetSt.ph.length&&!actsS.length){toast('場所・内容・写真、どれかは入れてくれ');return;}}
     /* 休憩・睡眠は時間だけで1件成立（何も書かなくてOK） */
@@ -6733,7 +6738,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c1.5";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c1.6";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 function openLoginSheet(opt){
   opt=opt||{};
