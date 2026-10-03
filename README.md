@@ -5,16 +5,26 @@
 - アプリ：https://yuai202211.github.io/hibiki/ （PWA。スマホは「ホーム画面に追加」）
 - 単一の HTML（`index.html`）＋ Service Worker（`sw.js`）＋ `manifest.webmanifest`
 - データとログイン：Supabase（Auth・Postgres・Storage）。アプリに入っているのは公開前提のキーだけ
+- 版：**c1.1**（`sw.js` の `VER` と画面の診断ラベルに出る）
+
+## できること
+
+- 下のボタン：トップ（日記）／支払い／メモ／ルーティン／**📊分析**／🎯一手
+- 日記は「1行ずつ書く」がメイン。各行に時刻（任意）・📝詳細・**種類**（仕事・AI・読書など20種。＋で自分で足す・隠す・🕳️ムダ印）・**道具**（💻PC 📱スマホ など。＋で足せる）
+- **移動**の記録でも1行ずつ書ける。乗り物に合わせた1タップ（車＝🔊音声で学ぶ・📞電話・🧠考え事、電車など＝🤖AI・💼仕事・📖読書…）。押すだけで移動中ずっと、時間を入れるとその分だけ
+- **都道府県**：🗾 を押す → 日本のかたちのエリアを1回押す → その地方の県をくるくる回して選ぶ。新しい記録は直前の記録の県が入る（点線＝自動）
+- **📊分析**：日・週・月・年で、何をした・🕳️ムダ（ムダ印の種類＋移動中に何もしなかった時間。徒歩は除く）・🚗移動の中身・🛠何を使って・🗾どこで
 
 ## 構成
 
 | ファイル | 役割 |
 |---|---|
-| `index.html` | アプリ本体（生成物。直接編集しない） |
+| `index.html` | アプリ本体（生成物。直接編集しない。生成の道具は非公開リポジトリ `hibiki-ai-context/tools/build.js` にある） |
 | `sw.js` | オフライン起動用。更新したら `VER` を上げる |
 | `manifest.webmanifest`, `icon-*.png`, `apple-touch-icon.png` | PWA の名前とアイコン |
 | `dev/cloud-layer.js` | クラウド同期（ログイン・1項目1行の送受信・写真・引っ越し） |
-| `dev/setup.sql` / `dev/setup-test.sql` / `dev/SETUP.md` | Supabase の表・関数・権限・写真置き場 |
+| `dev/setup.sql` / `dev/setup-test.sql` / `dev/SETUP.md` | Supabase の表・関数・権限・写真置き場（`SETUP.md`＝作る手順） |
+| `dev/PLAN.md` | クラウド化の計画書 |
 | `dev/mock-supabase.js` / `dev/mock-test.js` | 手元テスト用の擬似サーバー（`node dev/mock-supabase.js`） |
 | `dev/scan-public.js` | 公開前の検査（個人情報・鍵・埋め込みデータが無いこと） |
 

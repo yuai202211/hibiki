@@ -424,6 +424,78 @@ async function main() {
   r = await rawRequest('POST', '/rest/v1/rpc/integrity', { Origin: 'http://localhost:8931', apikey: M.ANON_KEY, 'content-type': 'application/json' });
   ok(r.headers['access-control-allow-origin'] === 'http://localhost:8931', '通常の応答（エラー時も）に Allow-Origin が付く', r.status + ' ' + r.headers['access-control-allow-origin']);
 
+  section('12b. アプリ本体の往復（kinds／tools／acts[].d／pf が 送信→受信→合流 で欠けないか）');
+  {
+    /* index.html から本物の clItems／clRowsToState／mergeStates を取り出して使う（写しではなく現物） */
+    const src = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+    const grab = (re) => { const m = src.match(re); if (!m) throw new Error('index.html に見つからない: ' + re); return m[0]; };
+    const m0 = src.indexOf('function mergeStates('), m1 = src.indexOf('\n}\n', m0) + 3;
+    const c0 = src.indexOf('function clItems('), c1 = src.indexOf('const clKey=');
+    const code = 'const DEF_DREAM={name:"",due:"",ts:0};\n' + grab(/^const emptyState=.*$/m) + '\n'
+      + ['CL_ID', 'CL_DAY', 'CL_DAY2', 'CL_SKIP'].map((n) => grab(new RegExp('^const ' + n + '=.*$', 'm'))).join('\n') + '\n'
+      + src.slice(c0, c1) + src.slice(m0, m1) + '\n({clItems,clRowsToState,mergeStates,emptyState,CL_ID})';
+    const C = require('vm').runInNewContext(code, {});
+    const canon = (v) => JSON.stringify(v, (k, x) => (x && typeof x === 'object' && !Array.isArray(x)) ? Object.keys(x).sort().reduce((o, kk) => (o[kk] = x[kk], o), {}) : x);
+    const NOWB = Date.now() - 60 * 1000;
+    ok(C.CL_ID.indexOf('kinds') >= 0 && C.CL_ID.indexOf('tools') >= 0, 'CL_ID に kinds／tools が入っている', C.CL_ID);
+
+    const S1 = {
+      updatedAt: NOWB + 50,
+      entries: { '2026-10-03': {
+        eA: { p: '渋谷', t: '作業', ph: [], s: '09:00', e: '10:30', ts: NOWB + 10, pf: 13,
+          acts: [{ t: '読書', m: 30, k: 'rt12b-own', d: 'rt12b-tool' }, { t: 'AI', m: 20, s: '09:30', e: '09:50', k: 'ai', d: 'pc', c: 'メモ' }] },
+        eB: { p: '', t: '移動', ph: [], s: '11:00', e: '11:40', ts: NOWB + 11, mv: 1, rt: '渋谷→新宿', tr: 'train', acts: [{ t: '音声', m: 10, d: 'phone' }] },
+      } },
+      kinds: { 'rt12b-own': { lb: '読書', ic: '📚', ts: NOWB + 20 }, work: { muda: 1, ts: NOWB + 21 }, rest: { off: 1, ts: NOWB + 22 } },
+      tools: { 'rt12b-tool': { lb: 'iPad', ic: '📱', ts: NOWB + 30 }, pc: { off: 1, ts: NOWB + 31 } },
+    };
+    const items = C.clItems(S1);
+    ok(items.filter((x) => x.coll === 'kinds').length === 3 && items.filter((x) => x.coll === 'tools').length === 2, 'clItems が kinds 3行・tools 2行を専用の coll で出す（_top に落ちない）', items.map((x) => x.coll + '/' + x.k));
+    ok(!items.some((x) => x.coll === '_top' && (x.k === 'kinds' || x.k === 'tools')), 'kinds／tools が _top に混ざらない');
+    r = await rpc('put_items', { rows: items }, T);
+    ok(r.status === 200 && r.json === items.length, 'put_items で全行が入る（' + items.length + '行）', brief(r));
+    const keySet = new Set(items.map((x) => x.coll + '\u0000' + x.k));
+    const back = (await pullAll(T)).filter((x) => keySet.has(x.coll + '\u0000' + x.k));
+    ok(back.length === items.length, 'pull_items で同じ行数が戻る', back.length);
+    // 受信側は端末が空（新しい端末）として合流
+    const part = C.clRowsToState(back);
+    const got = C.mergeStates(C.emptyState(), part);
+    ok(canon(got.kinds) === canon(S1.kinds), 'kinds が欠けず・値も同じで戻る', canon(got.kinds));
+    ok(canon(got.tools) === canon(S1.tools), 'tools が欠けず・値も同じで戻る', canon(got.tools));
+    ok(canon(got.entries) === canon(S1.entries), '記録の新項目（acts[].k／acts[].d／pf／mv）が欠けず戻る', canon(got.entries));
+    ok(got.entries['2026-10-03'].eA.acts[0].d === 'rt12b-tool' && got.entries['2026-10-03'].eA.pf === 13, 'acts[0].d と pf を個別に確認');
+
+    // ページ分け（cloudPull の while ループ＝1行ずつ受け取って合流を繰り返しても同じ結果）
+    let inc = C.emptyState();
+    for (const row of back) inc = C.mergeStates(inc, C.clRowsToState([row]));
+    ok(canon(inc.kinds) === canon(S1.kinds) && canon(inc.tools) === canon(S1.tools) && canon(inc.entries) === canon(S1.entries), '1行ずつ合流を繰り返しても同じ（ページ分けで欠けない）');
+
+    // すでに別の kinds／tools を持つ端末へ合流：1件ずつ ts の新しい方が勝ち・和集合（取り込みで消えない）
+    const LOCAL = C.emptyState();
+    LOCAL.updatedAt = NOWB + 999;   // 端末の方が updatedAt が新しい（known に無いと、ここで端末側が丸ごと勝って受信分が消える）
+    LOCAL.kinds = { 'rt12b-own': { lb: '本', ic: '📖', ts: NOWB + 5 }, 'rt12b-local': { lb: 'ここだけ', ic: '🏠', ts: NOWB + 6 } };
+    LOCAL.tools = { 'rt12b-tool': { lb: 'iPad mini', ic: '📱', ts: NOWB + 40 }, 'rt12b-ltool': { lb: 'ここだけ', ic: '🏠', ts: NOWB + 41 } };
+    const mg = C.mergeStates(LOCAL, part);
+    ok(mg.kinds['rt12b-own'].lb === '読書' && mg.kinds['rt12b-local'] && mg.kinds.work && mg.kinds.rest, 'kinds：新しい受信が勝ち・端末だけの行も・受信だけの行も残る', canon(mg.kinds));
+    ok(mg.tools['rt12b-tool'].lb === 'iPad mini' && mg.tools['rt12b-ltool'] && mg.tools.pc, 'tools：端末の方が新しい行が勝ち・両方の和集合', canon(mg.tools));
+    const mg2 = C.mergeStates(LOCAL, { entries: S1.entries });   // 受信に kinds が無くても端末の kinds を消さない
+    ok(canon(mg2.kinds) === canon(LOCAL.kinds) && canon(mg2.tools) === canon(LOCAL.tools), '受信に kinds／tools が無い時、端末の kinds／tools は消えない');
+    const mg3 = C.mergeStates(C.emptyState(), { ...part, 未来の項目: { x: 1 } });
+    ok(mg3['未来の項目'] && mg3['未来の項目'].x === 1, '知らないトップレベル項目は捨てない（新旧混在）');
+
+    // 旧版(c1.0)の端末が同じ記録を編集した時：記録は ts 丸ごと勝ち。c1.0 は pf／acts[].d を知らないので、編集で落ちる（仕様の確認）
+    const c10Edit = { p: '渋谷', t: '作業（直した）', ph: [], s: '09:00', e: '10:30', ts: NOWB + 100, acts: [{ t: '読書', m: 30 }, { t: 'AI', m: 20, s: '09:30', e: '09:50', k: 'ai', c: 'メモ' }] };
+    const mg4 = C.mergeStates(C.mergeStates(C.emptyState(), part), { entries: { '2026-10-03': { eA: c10Edit } } });
+    const eA = mg4.entries['2026-10-03'].eA;
+    ok(eA.t === '作業（直した）' && eA.pf === undefined && eA.acts[0].d === undefined && eA.acts[0].k === undefined,
+      '（仕様）c1.0 端末の編集の方が新しいと、記録は丸ごとそちらが勝つ＝pf・acts[].d・知らない k は落ちる', canon(eA));
+    ok(mg4.kinds['rt12b-own'] && mg4.tools['rt12b-tool'], '（仕様）その編集でも kinds／tools の行そのものは残る');
+    // 逆（c1.1 の方が新しい）なら全部残る
+    const c11Edit = Object.assign({}, S1.entries['2026-10-03'].eA, { ts: NOWB + 200, t: '作業（c1.1で直した）' });
+    const mg5 = C.mergeStates(C.mergeStates(C.emptyState(), { entries: { '2026-10-03': { eA: c10Edit } } }), { entries: { '2026-10-03': { eA: c11Edit } } });
+    ok(mg5.entries['2026-10-03'].eA.pf === 13 && mg5.entries['2026-10-03'].eA.acts[0].d === 'rt12b-tool', 'c1.1 の編集の方が新しければ pf・acts[].d は残る');
+  }
+
   section('13. ログアウト');
   r = await login();
   const L3 = r.json;
