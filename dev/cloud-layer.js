@@ -285,6 +285,7 @@ function openLoginSheet(opt){
     catch(e){const m=$('clMsg');m.style.display='';m.textContent='ログインできない：'+String((e&&e.message)||e).slice(0,80);inB.disabled=false;inB.textContent='ログイン';}
   };
   const lt=$('clLater');if(lt)lt.onclick=()=>{closeSheet();toast('あとで。次に開いた時にまた聞く');};
+  {const _cs=closeSheet;if(!window.__clCsWrapped){window.__clCsWrapped=1;closeSheet=function(){try{$('ovl').classList.remove('cl-first');}catch(e){}return _cs.apply(this,arguments);};}}
   if($('clRem'))$('clRem').onchange=()=>{if(!$('clRem').checked)clSet(CL_EMAIL,null);};
   if($('clAuto'))$('clAuto').onchange=()=>{clSet(CL_AUTO,$('clAuto').checked?'1':'0');};
   const eye=$('clEye');if(eye)eye.onclick=()=>{const p=$('clPass');p.type=(p.type==='password')?'text':'password';eye.textContent=(p.type==='password')?'表示':'隠す';};
@@ -384,12 +385,8 @@ async function cloudBoot(){
   if(!cloudConfigured())return;
   /* 起動した最初の画面：未ログインならログイン画面、ログイン済みでも今日まだならパスワード確認（自動ログインなら出さない）。
      起動フラッシュ（毎日のルールの画面）が出ている間は、閉じられてから出す */
-  if(!cloudLoggedIn()||clDailyDue()){
-    const show=()=>{try{if(!$('ovl').classList.contains('open'))openLoginSheet();}catch(e){}};
-    const fl=$('flash');
-    if(fl&&fl.classList.contains('open')){const iv=setInterval(()=>{if(!fl.classList.contains('open')){clearInterval(iv);setTimeout(show,300);}},400);}
-    else setTimeout(show,400);
-  }
+  /* 本人の決め事（2026-10-03）：ログインは「毎日のルールの画面より前の、本当の最初」。起動フラッシュの上に重ねて出す */
+  if(!cloudLoggedIn()||clDailyDue()){try{$('ovl').classList.add('cl-first');openLoginSheet();}catch(e){}}
   if(!cloudLoggedIn()){return;}
   await cloudSync();
 }
