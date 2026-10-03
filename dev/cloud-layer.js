@@ -256,7 +256,7 @@ function openLoginSheet(opt){
       '<label style="display:flex;align-items:center;gap:8px;margin:8px 2px 0;font-size:12.5px;font-weight:700;color:#6a7080"><input type="checkbox" id="clAuto" '+(clGet(CL_AUTO,'0')==='1'?'checked':'')+' style="width:18px;height:18px">自動ログイン（1日1回のパスワード入力も省く）</label>'+
       '<div class="sh-note" id="clMsg" style="color:#e0405a;display:none"></div>'+
       '<div class="sh-btns"><button class="savebtn" id="clIn">'+title+'</button></div>';
-  $('sheet').innerHTML='<div class="grab"></div><div class="sh-time"><span>☁️ HIBIKI クラウド</span></div>'+
+  $('sheet').innerHTML='<div class="grab"></div><div class="sh-time" style="justify-content:center"><span><span class="hb-logo"><b>HIBIKI</b><i>日々記</i></span></span></div>'+
     (!cloudConfigured()?'<div class="sh-note">このアプリはまだクラウドの設定が入っていない（配信前の状態）。記録は端末に保存されている</div>':
     (daily?(loginForm('ログイン','🔑 <b>今日のパスワード確認</b>（忘れないように1日1回）。記録はこのまま続けられる')+
             '<div class="sh-note"><button class="chip" id="clLater" style="background:#f1f3f8;color:#8a90a0">あとで</button></div>'):

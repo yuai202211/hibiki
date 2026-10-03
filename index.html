@@ -1,6 +1,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<title>HIBIKI ヒビキ（日々記）</title>
+<title>HIBIKI 日々記</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#0bc167">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -197,6 +197,10 @@
   .hour.wr .bed.warn{background:#fff3c9;color:#a8790a}
   .hour.wr .bed.hot,.hour.wr .bed.over{background:#ffe9ec;color:#e0405a}
   .sgoal{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:6px 0 8px}
+  /* HIBIKI 日々記 のロゴの組み方（本人選択 B・2026-10-03）：1行・同じ下線（ベースライン）。段差を作らない */
+  .hb-logo{display:inline-flex;align-items:baseline;gap:.42em;line-height:1;white-space:nowrap}
+  .hb-logo b{font-weight:800;letter-spacing:.06em;font-size:1em}
+  .hb-logo i{font-style:normal;font-weight:800;font-size:.78em;letter-spacing:.08em;opacity:.92}
   /* 📚 ルーティン */
   .rt-sum{display:flex;gap:8px;margin:4px 0 6px}
   .rt-sum>div{flex:1;background:var(--card);border-radius:16px;padding:10px 14px;box-shadow:0 4px 14px rgba(30,40,70,.06)}
@@ -1079,9 +1083,9 @@
   .ovl.open~.toast{bottom:auto;top:calc(48px + env(safe-area-inset-top,0px))}   /* シートを開いている間は上に出す＝書きかけの文字を隠さない */
 </style>
 
-<div id="bootmsg" style="position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:24px;background:#faf9f5;color:#6a7080;font:800 15px -apple-system,BlinkMacSystemFont,sans-serif;text-align:center"><div style="font-size:34px">📔</div><div id="bootmsgT">読み込み中…</div><div id="bootmsgS" style="font-size:12px;color:#9aa3b5;font-weight:700"></div></div>
+<div id="bootmsg" style="position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:24px;background:#faf9f5;color:#6a7080;font:800 15px -apple-system,BlinkMacSystemFont,sans-serif;text-align:center"><div style="font-size:34px">📔</div><div class="hb-logo" style="font-size:24px;color:#0a9a54"><b>HIBIKI</b><i>日々記</i></div><div id="bootmsgT">読み込み中…</div><div id="bootmsgS" style="font-size:12px;color:#9aa3b5;font-weight:700"></div></div>
 <div class="app" id="app">
-<a href="https://yuai202211.github.io/hibiki/" target="_blank" rel="noopener" id="movedBar" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:10px 12px;background:linear-gradient(135deg,#0bc167,#12a6a0);color:#fff;font-weight:800;font-size:13.5px;text-decoration:none;letter-spacing:.02em">📔 新しい場所 <b>HIBIKI（日々記）</b> はこちら →<span style="font-weight:700;opacity:.9;font-size:11.5px">（今日からはそちらで記録）</span></a>
+
 
   <div class="top">
     <div class="datebar">
@@ -2893,7 +2897,7 @@ function openSyncSheet(){
     row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして、いつものURLから開くと繋がる')+
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c0.4）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c0.5）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -6155,7 +6159,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c0.4";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c0.5";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 function openLoginSheet(opt){
   opt=opt||{};
@@ -6170,7 +6174,7 @@ function openLoginSheet(opt){
       '<label style="display:flex;align-items:center;gap:8px;margin:8px 2px 0;font-size:12.5px;font-weight:700;color:#6a7080"><input type="checkbox" id="clAuto" '+(clGet(CL_AUTO,'0')==='1'?'checked':'')+' style="width:18px;height:18px">自動ログイン（1日1回のパスワード入力も省く）</label>'+
       '<div class="sh-note" id="clMsg" style="color:#e0405a;display:none"></div>'+
       '<div class="sh-btns"><button class="savebtn" id="clIn">'+title+'</button></div>';
-  $('sheet').innerHTML='<div class="grab"></div><div class="sh-time"><span>☁️ HIBIKI クラウド</span></div>'+
+  $('sheet').innerHTML='<div class="grab"></div><div class="sh-time" style="justify-content:center"><span><span class="hb-logo"><b>HIBIKI</b><i>日々記</i></span></span></div>'+
     (!cloudConfigured()?'<div class="sh-note">このアプリはまだクラウドの設定が入っていない（配信前の状態）。記録は端末に保存されている</div>':
     (daily?(loginForm('ログイン','🔑 <b>今日のパスワード確認</b>（忘れないように1日1回）。記録はこのまま続けられる')+
             '<div class="sh-note"><button class="chip" id="clLater" style="background:#f1f3f8;color:#8a90a0">あとで</button></div>'):
