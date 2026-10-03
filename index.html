@@ -311,7 +311,14 @@
   .actrow .ac-ar{color:#8a90a0;font-weight:800;flex-shrink:0}
   .actrow .ac-d{margin-left:auto;font-size:12px;font-weight:800;color:#0a9a54;white-space:nowrap}
   .act .a-c{grid-column:2 / -1;display:block;margin-top:3px;padding:5px 9px;border-radius:10px;background:#f4f6fa;color:#5b6170;font-size:12.5px;font-weight:600;line-height:1.5;word-break:break-word}
-  .actrow .ac-cb{flex:0 0 auto;padding:5px 9px;border-radius:10px;background:#fff;border:1px solid var(--line);font-size:13px}
+  /* 1行の右に縦並び：上 ✕、下 📝詳細 */
+  .actrow{display:grid!important;grid-template-columns:minmax(0,1fr) auto;column-gap:6px}
+  .actrow .ac-l1{grid-column:1;grid-row:1}
+  .actrow .ac-l2{grid-column:1;grid-row:2}
+  .actrow .ac-side{grid-column:2;grid-row:1 / span 2;display:flex;flex-direction:column;align-items:center;gap:6px}
+  .actrow .ac-k,.actrow .ac-c{grid-column:1 / -1}
+  .actrow .ac-cb{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;width:44px;padding:5px 0;border-radius:12px;background:#fff;border:1px solid var(--line);font-size:15px;line-height:1}
+  .actrow .ac-cb span{font-size:10px;font-weight:800;color:#6a7080}
   .actrow .ac-cb.on{background:#eef3ff;border-color:#c9d6ff}
   .actrow .ac-c{width:100%;margin-top:6px;border:1px solid var(--line);border-radius:12px;padding:8px 11px;font:inherit;font-size:16px;resize:vertical;background:#fff;outline:none}
   .act .a-r{display:block;font-size:11px;font-weight:700;color:#9aa3b5;font-variant-numeric:tabular-nums;margin-top:1px}
@@ -2904,7 +2911,7 @@ function openSyncSheet(){
     row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして、いつものURLから開くと繋がる')+
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c0.7）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c0.8）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -3171,13 +3178,14 @@ function openEntrySheet(date,ref){
     $('acRows').innerHTML=acts.map(a=>{
       return '<div class="actrow" data-m0="'+((a.s&&a.e)?0:(Number(a.m)||0))+'" data-k="'+esc(a.k||'')+'">'+
         '<div class="ac-l1"><input type="text" class="ac-t" maxlength="40" placeholder="1行ずつ書く" enterkeyhint="next" value="'+esc(a.t)+'">'+
-          '<button class="ac-x" aria-label="この行を消す">✕</button></div>'+
+          '</div>'+
+        '<div class="ac-side"><button class="ac-x" aria-label="この行を消す">✕</button><button class="ac-cb'+(a.c?' on':'')+'" aria-label="詳細を書く">📝<span>詳細</span></button></div>'+
         '<div class="ac-l2"><input type="time" class="ac-s" step="300" lang="ja-JP" aria-label="何時から" value="'+esc(a.s||'')+'"><span class="ac-ar">→</span>'+
           '<input type="time" class="ac-e" step="300" lang="ja-JP" aria-label="何時まで" value="'+esc(a.e||'')+'">'+
           '<span class="ac-d">'+(a.m?('⏱ '+esc(durText(a.m))):'')+'</span></div>'+
         '<div class="ac-k">'+Object.keys(ACT_K).map(k=>'<button data-ak="'+k+'"'+(a.k===k?' class="sel"':'')+'>'+ACT_K[k][0]+'<span>'+ACT_K[k][1]+'</span></button>').join('')+
-          '<button class="ac-cb'+(a.c?' on':'')+'" aria-label="コメント">💬</button></div>'+
-        '<textarea class="ac-c" rows="2" maxlength="1000" placeholder="この行へのコメント（自由に）"'+(a.c?'':' style="display:none"')+'>'+esc(a.c||'')+'</textarea></div>';}).join('');
+          '</div>'+
+        '<textarea class="ac-c" rows="2" maxlength="1000" placeholder="詳細（自由に書く）"'+(a.c?'':' style="display:none"')+'>'+esc(a.c||'')+'</textarea></div>';}).join('');
     [...$('acRows').querySelectorAll('.actrow')].forEach((r,i)=>{
       r.querySelector('.ac-x').onclick=()=>{acRead();acts.splice(i,1);acPaint();};
       /* 💬：押すとコメント欄を開く（中身がある時は閉じない＝書いた物を隠さない） */
@@ -6170,7 +6178,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c0.7";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c0.8";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 function openLoginSheet(opt){
   opt=opt||{};
