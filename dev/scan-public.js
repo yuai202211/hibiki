@@ -169,12 +169,17 @@ function scanFile(file, opts, dict) {
     asg.lastIndex = 0;
     let m;
     while ((m = asg.exec(L))) {
-      const start = m.index + m[0].length;
-      const isJson = L[start] === "{" || L[start] === "[" || L.startsWith("JSON.parse(", start);
+      let src = L, start = m.index + m[0].length;
+      if (!L.slice(start).trim()) {   // 「let CSTATE=」で行が終わり、右辺が次の（空でない）行から始まる書き方も見る
+        let j = i + 1;
+        while (j < lines.length && !lines[j].trim()) j++;
+        if (j < lines.length) { src = lines[j]; start = src.length - src.replace(/^\s+/, "").length; }
+      }
+      const isJson = src[start] === "{" || src[start] === "[" || src.startsWith("JSON.parse(", start);
       if (!isJson) continue;
-      let end = L.indexOf(";/*CSTATE-END*/", start);
-      if (end < 0) end = L.length;
-      const body = L.slice(start, end).replace(/[\s;]+$/g, "").trim();
+      let end = src.indexOf(";/*CSTATE-END*/", start);
+      if (end < 0) end = src.length;
+      const body = src.slice(start, end).replace(/[\s;]+$/g, "").trim();
       if (/^(\{\s*\}|\[\s*\])$/.test(body) || body === "") continue;      // 空は許す
       F.a.push({ line: i + 1, msg: "CSTATE にデータが入っている（" + fmtN(body.length) + " 文字・内容は表示しない）" });
     }

@@ -139,6 +139,27 @@ begin
       abs(v_ts - (now_ms + 3600000)) < 60000 and (v_data->>'ts')::bigint = v_ts,
       'ts-(now+1h)=' || (v_ts - (now_ms + 3600000)) || 'ms');
 
+    -- 8b. 小数の ts は切り捨て・負の ts は 0 に丸めて受け付ける（拒否しない）／5001 行は 54000 で全体拒否
+    n_w := public.put_items(jsonb_build_array(
+      jsonb_build_object('coll','_top','k','dectest','ts',base + 0.9,'data',jsonb_build_object('a',1)),
+      jsonb_build_object('coll','_top','k','negtest','ts',-5,        'data',jsonb_build_object('a',1))
+    ));
+    select d.ts into v_seq1 from public.pull_items(0, 100) d where d.coll = '_top' and d.k = 'dectest';
+    select d.ts into v_seq2 from public.pull_items(0, 100) d where d.coll = '_top' and d.k = 'negtest';
+    res := pg_temp.hb_add(res, '小数の ts は切り捨て、負の ts は 0 に丸めて受け付ける',
+      n_w = 2 and v_seq1 = base and v_seq2 = 0,
+      '戻り値=' || n_w || ' dec.ts=' || coalesce(v_seq1::text, 'null') || ' neg.ts=' || coalesce(v_seq2::text, 'null'));
+
+    raised := false;
+    begin
+      perform public.put_items(
+        (select jsonb_agg(jsonb_build_object('coll','big','k','k' || g,'ts',base,'data',jsonb_build_object('i',g)))
+           from generate_series(1, 5001) as g));
+    exception when sqlstate '54000' then raised := true; end;
+    select count(*) into v_cnt from public.pull_items(0, 100) d where d.coll = 'big';
+    res := pg_temp.hb_add(res, '5001 行は拒否される（1回の上限は 5000 行・1行も書かれない）', raised and v_cnt = 0,
+      '拒否=' || raised || ' 書かれた件数=' || v_cnt);
+
     -- 9. 同じバッチに同じキーが2件あっても落ちず、ts の新しい方が残る
     n_w := public.put_items(jsonb_build_array(
       jsonb_build_object('coll','memos','k','m1','ts',base+10,'data',jsonb_build_object('t','newer','ts',base+10)),
