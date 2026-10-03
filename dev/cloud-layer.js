@@ -235,30 +235,58 @@ phUrl=function(id){
   return CL_BLANK;
 };
 
-/* ---------- ログイン画面 ---------- */
-function openLoginSheet(){
+/* ---------- ログイン画面 ----------
+   本人の決め事（2026-10-03）：①未ログインなら起動した最初の画面がログイン ②メールアドレスは「覚える」で常に表示
+   ③パスワードは忘れないように1日1回は入力する（その日の最初の起動で聞く）④「自動ログイン」にチェックした時だけ③も省く */
+const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
+const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
+const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
+const CL_APPVER='__APPVER__';   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
+function openLoginSheet(opt){
+  opt=opt||{};
   const u=cloudLoggedIn()?CL.sess.user:null;
+  const daily=!!(u&&(opt.daily||clDailyDue()));   /* ログイン済みだが「今日のパスワード確認」がまだ */
+  const remEmail=clGet(CL_EMAIL,'')||(u&&u.email)||'';
+  const loginForm=(title,note)=>
+      '<div class="sh-note" style="text-align:left;margin-bottom:6px">'+note+'</div>'+
+      '<div><div class="sh-label">メールアドレス</div><input type="email" id="clEmail" autocomplete="username" inputmode="email" placeholder="登録したメールアドレス" value="'+esc(remEmail)+'" style="width:100%;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 13px;outline:none'+(daily?';background:#f1f3f8;color:#6a7080'+'" readonly':'"')+'></div>'+
+      '<label style="display:flex;align-items:center;gap:8px;margin:6px 2px 0;font-size:12.5px;font-weight:700;color:#6a7080"><input type="checkbox" id="clRem" '+(clGet(CL_EMAIL,'')||!u?'checked':'')+' style="width:18px;height:18px">メールアドレスを覚える（次から表示したまま）</label>'+
+      '<div style="margin-top:10px"><div class="sh-label">パスワード</div><div style="display:flex;gap:6px"><input type="password" id="clPass" autocomplete="current-password" style="flex:1;min-width:0" autofocus><button class="chip" id="clEye" style="flex-shrink:0">表示</button></div></div>'+
+      '<label style="display:flex;align-items:center;gap:8px;margin:8px 2px 0;font-size:12.5px;font-weight:700;color:#6a7080"><input type="checkbox" id="clAuto" '+(clGet(CL_AUTO,'0')==='1'?'checked':'')+' style="width:18px;height:18px">自動ログイン（1日1回のパスワード入力も省く）</label>'+
+      '<div class="sh-note" id="clMsg" style="color:#e0405a;display:none"></div>'+
+      '<div class="sh-btns"><button class="savebtn" id="clIn">'+title+'</button></div>';
   $('sheet').innerHTML='<div class="grab"></div><div class="sh-time"><span>☁️ HIBIKI クラウド</span></div>'+
     (!cloudConfigured()?'<div class="sh-note">このアプリはまだクラウドの設定が入っていない（配信前の状態）。記録は端末に保存されている</div>':
+    (daily?(loginForm('ログイン','🔑 <b>今日のパスワード確認</b>（忘れないように1日1回）。記録はこのまま続けられる')+
+            '<div class="sh-note"><button class="chip" id="clLater" style="background:#f1f3f8;color:#8a90a0">あとで</button></div>'):
     (u?('<div class="sh-note" style="text-align:left">ログイン中：<b>'+esc(u.email||'')+'</b><br>クラウド '+esc(cloudStatusText())+'</div>'+
         '<div class="sh-btns"><button class="delbtn" id="clOut">ログアウト</button><button class="savebtn" id="clSyncNow">今すぐ同期</button></div>'+
         '<div class="sh-label" style="margin-top:14px">引っ越し（旧アプリから）</div>'+
         '<button class="bkbtn" id="clImpJsonBtn">📥 バックアップ JSON を取り込む（消さずに合流）</button>'+
         '<button class="bkbtn" id="clImpPhBtn" style="margin-top:6px">📦 写真をクラウドへ（ファイルを選ぶ）</button>'+
         '<div class="sh-note" id="clImpMsg" style="text-align:left"></div>'):
-      ('<div><div class="sh-label">メールアドレス</div><input type="email" id="clEmail" autocomplete="username" inputmode="email" placeholder="登録したメールアドレス"></div>'+
-       '<div><div class="sh-label">パスワード</div><div style="display:flex;gap:6px"><input type="password" id="clPass" autocomplete="current-password" style="flex:1;min-width:0"><button class="chip" id="clEye" style="flex-shrink:0">表示</button></div></div>'+
-       '<div class="sh-note" id="clMsg" style="color:#e0405a;display:none"></div>'+
-       '<div class="sh-btns"><button class="savebtn" id="clIn">ログイン</button></div>'+
-       '<div class="sh-note">ログインしなくても記録はできる（この端末に保存）。ログインすると、どの端末でも同じ記録が出る</div>')));
+      (loginForm('ログイン','ログインすると、どの端末でも同じ記録が出る。しなくても記録はできる（この端末に保存）')))));
   const inB=$('clIn');
   if(inB)inB.onclick=async()=>{
     const em=$('clEmail').value.trim(),pw=$('clPass').value;
     if(!em||!pw){toast('メールとパスワードを入れてくれ');return;}
     inB.disabled=true;inB.textContent='ログイン中…';
-    try{await clLogin(em,pw);closeSheet();toast('✓ ログインした。同期を始める');CL.firstPull=false;CL.seq=0;clSaveSync();cloudSync();}
+    try{
+      const wasIn=cloudLoggedIn();
+      await clLogin(em,pw);
+      clSet(CL_EMAIL,($('clRem')&&$('clRem').checked)?em:null);
+      clSet(CL_AUTO,($('clAuto')&&$('clAuto').checked)?'1':'0');
+      clSet(CL_PWDAY,todayStr());
+      closeSheet();
+      if(wasIn){toast('✓ 今日のパスワード確認 OK');renderSync();}
+      else{toast('✓ ログインした。同期を始める');CL.firstPull=false;CL.seq=0;clSaveSync();cloudSync();}
+    }
     catch(e){const m=$('clMsg');m.style.display='';m.textContent='ログインできない：'+String((e&&e.message)||e).slice(0,80);inB.disabled=false;inB.textContent='ログイン';}
   };
+  const lt=$('clLater');if(lt)lt.onclick=()=>{closeSheet();toast('あとで。次に開いた時にまた聞く');};
+  if($('clRem'))$('clRem').onchange=()=>{if(!$('clRem').checked)clSet(CL_EMAIL,null);};
+  if($('clAuto'))$('clAuto').onchange=()=>{clSet(CL_AUTO,$('clAuto').checked?'1':'0');};
   const eye=$('clEye');if(eye)eye.onclick=()=>{const p=$('clPass');p.type=(p.type==='password')?'text':'password';eye.textContent=(p.type==='password')?'表示':'隠す';};
   const out=$('clOut');if(out)out.onclick=async()=>{if(clDirtyCount()){toast('まだ送っていない記録がある（'+clDirtyCount()+'件）。先に同期してくれ');return;}await clLogout();closeSheet();toast('ログアウトした');};
   const sn=$('clSyncNow');if(sn)sn.onclick=async()=>{sn.disabled=true;await cloudSync(true);sn.disabled=false;openLoginSheet();};
@@ -350,9 +378,18 @@ let afterCloudReady=function(){};
 async function cloudBoot(){
   CL.ready=true;
   clShadowFromState();
+  if(clGet('hibiki-ver','')!==CL_APPVER){clSet('hibiki-ver',CL_APPVER);clSet(CL_PWDAY,null);}   /* 版が上がった＝今日のパスワード確認をやり直す */
   /* 前回までの未送信（dirty）はそのまま。影は今の state を基準にする */
   unsynced=clDirtyCount()>0;renderSync();
   if(!cloudConfigured())return;
+  /* 起動した最初の画面：未ログインならログイン画面、ログイン済みでも今日まだならパスワード確認（自動ログインなら出さない）。
+     起動フラッシュ（毎日のルールの画面）が出ている間は、閉じられてから出す */
+  if(!cloudLoggedIn()||clDailyDue()){
+    const show=()=>{try{if(!$('ovl').classList.contains('open'))openLoginSheet();}catch(e){}};
+    const fl=$('flash');
+    if(fl&&fl.classList.contains('open')){const iv=setInterval(()=>{if(!fl.classList.contains('open')){clearInterval(iv);setTimeout(show,300);}},400);}
+    else setTimeout(show,400);
+  }
   if(!cloudLoggedIn()){return;}
   await cloudSync();
 }
