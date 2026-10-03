@@ -3116,7 +3116,7 @@ function openSyncSheet(){
     row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして、いつものURLから開くと繋がる')+
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c1.4）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c1.5）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -3342,7 +3342,7 @@ function openEntrySheet(date,ref){
     $('eType').querySelectorAll('button').forEach(b=>b.classList.toggle('sel',b.dataset.ty===eType));
     $('secStay').style.display=(eType==='move')?'none':'';
     $('secMove').style.display=(eType==='move')?'':'none';
-    {const st=$('secTool');if(st)st.style.display=(eType==='move'||eType==='sleep')?'none':'';}   /* 移動は移動手段、睡眠は無し */
+    {const st=$('secTool');if(st)st.style.display='none';}   /* 記録の「使う物」は出さない（本人指示 2026-10-04：道具は内容の行だけ）。前に付けた値は消さずに残す */
     cPaint();acCh();pfPaint();   /* 移動でも1行ずつ書ける（c1.1：移動中にしたこと） */
     {const an=$('acNote');if(an)an.textContent=(eType==='move')?'Enterで次の行。時間の無い行は移動中ずっとに数える（時間を入れるとその分だけ）':'Enterで次の行。時間は入れても入れなくてもいい（入れると、かかった時間が出る）';}
     const tl=$('tLab');if(tl)tl.textContent=(eType==='sleep')?'🌙 就寝 → ☀ 起床（タップして選ぶ）':'🕐 時間（タップして選ぶ）';
@@ -6733,7 +6733,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c1.4";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c1.5";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 function openLoginSheet(opt){
   opt=opt||{};
