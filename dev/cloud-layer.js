@@ -241,7 +241,11 @@ function openLoginSheet(){
   $('sheet').innerHTML='<div class="grab"></div><div class="sh-time"><span>☁️ HIBIKI クラウド</span></div>'+
     (!cloudConfigured()?'<div class="sh-note">このアプリはまだクラウドの設定が入っていない（配信前の状態）。記録は端末に保存されている</div>':
     (u?('<div class="sh-note" style="text-align:left">ログイン中：<b>'+esc(u.email||'')+'</b><br>クラウド '+esc(cloudStatusText())+'</div>'+
-        '<div class="sh-btns"><button class="delbtn" id="clOut">ログアウト</button><button class="savebtn" id="clSyncNow">今すぐ同期</button></div>'):
+        '<div class="sh-btns"><button class="delbtn" id="clOut">ログアウト</button><button class="savebtn" id="clSyncNow">今すぐ同期</button></div>'+
+        '<div class="sh-label" style="margin-top:14px">引っ越し（旧アプリから）</div>'+
+        '<button class="bkbtn" id="clImpJsonBtn">📥 バックアップ JSON を取り込む（消さずに合流）</button>'+
+        '<button class="bkbtn" id="clImpPhBtn" style="margin-top:6px">📦 写真をクラウドへ（ファイルを選ぶ）</button>'+
+        '<div class="sh-note" id="clImpMsg" style="text-align:left"></div>'):
       ('<div><div class="sh-label">メールアドレス</div><input type="email" id="clEmail" autocomplete="username" inputmode="email" placeholder="登録したメールアドレス"></div>'+
        '<div><div class="sh-label">パスワード</div><div style="display:flex;gap:6px"><input type="password" id="clPass" autocomplete="current-password" style="flex:1;min-width:0"><button class="chip" id="clEye" style="flex-shrink:0">表示</button></div></div>'+
        '<div class="sh-note" id="clMsg" style="color:#e0405a;display:none"></div>'+
@@ -258,7 +262,59 @@ function openLoginSheet(){
   const eye=$('clEye');if(eye)eye.onclick=()=>{const p=$('clPass');p.type=(p.type==='password')?'text':'password';eye.textContent=(p.type==='password')?'表示':'隠す';};
   const out=$('clOut');if(out)out.onclick=async()=>{if(clDirtyCount()){toast('まだ送っていない記録がある（'+clDirtyCount()+'件）。先に同期してくれ');return;}await clLogout();closeSheet();toast('ログアウトした');};
   const sn=$('clSyncNow');if(sn)sn.onclick=async()=>{sn.disabled=true;await cloudSync(true);sn.disabled=false;openLoginSheet();};
+  const ij=$('clImpJsonBtn');if(ij)ij.onclick=()=>clImpInput('json').click();
+  const ip=$('clImpPhBtn');if(ip)ip.onclick=()=>clImpInput('ph').click();
   openOvl();
+}
+/* 引っ越し用のファイル入力（画面には出さない。1回作って使い回す） */
+function clImpInput(kind){
+  const id=kind==='json'?'clImpJson':'clImpPh';
+  let inp=document.getElementById(id);
+  if(!inp){inp=document.createElement('input');inp.type='file';inp.id=id;inp.style.display='none';
+    if(kind==='json'){inp.accept='.json,application/json';}else{inp.accept='image/*';inp.multiple=true;}
+    document.body.appendChild(inp);
+    inp.addEventListener('change',()=>{if(kind==='json')clImportJson(inp.files&&inp.files[0]);else clImportPhotos(inp.files);inp.value='';});}
+  return inp;
+}
+const clImpSay=t=>{const m=$('clImpMsg');if(m)m.textContent=t;toast(t);};
+/* 旧アプリのバックアップ JSON（または埋め込みデータから作った JSON）を、消さずに合流する。何度やっても同じ結果 */
+async function clImportJson(f){
+  if(!f)return;
+  try{
+    const data=JSON.parse(await f.text());
+    const st=(data&&data.entries)?data:((data&&data.state&&data.state.entries)?data.state:null);
+    if(!st){clImpSay('このファイルは日記のバックアップじゃない');return;}
+    const cnt=s=>{let n=0;for(const d in (s.entries||{}))for(const k in s.entries[d])n++;return n;};
+    const before=cnt(state);
+    state=mergeStates(state,st);
+    if(st._cfg&&(!state._cfg||(Number(st._cfg.ts)||0)>=(Number(state._cfg.ts)||0)))state._cfg=st._cfg;
+    try{cfgApply();}catch(e){}
+    state.updatedAt=Math.max(state.updatedAt||0,Date.now());
+    saveLocal(false);render();
+    clImpSay('📥 取り込んだ：記録 '+before+'→'+cnt(state)+'件・支払い '+Object.keys(state.pays||{}).length+'・写真番号 '+Object.keys(state.pha||{}).length+'。クラウドへ送っている…');
+    scheduleSync(300);
+  }catch(e){clImpSay('取り込みに失敗：'+String((e&&e.message)||e).slice(0,60));}
+}
+/* 写真ファイル（名前＝保管番号）をクラウドの写真置き場へ。pha に無い番号は飛ばす。同じ物が既にあれば成功扱い */
+async function clImportPhotos(files){
+  if(!files||!files.length)return;
+  if(!cloudLoggedIn()){clImpSay('先にログインしてくれ');return;}
+  const want={};for(const id in (state.pha||{}))want[state.pha[id]]=1;
+  const list=[...files].map(f=>({f,aid:String(f.name||'').replace(/\.[^.]+$/,'').toLowerCase()})).filter(x=>/^[0-9a-f]{32}$/.test(x.aid));
+  const todo=list.filter(x=>want[x.aid]),skip=list.length-todo.length;
+  let ok=0,dup=0,ng=0,i=0;
+  const uid=CL.sess.user.id;
+  const one=async(x)=>{
+    try{await clEnsureFresh();
+      const r=await fetch(CLOUD.url+'/storage/v1/object/'+CLOUD.bucket+'/'+uid+'/'+x.aid,{method:'POST',headers:{'apikey':CLOUD.key,'Authorization':'Bearer '+CL.sess.access_token,'Content-Type':x.f.type||'image/jpeg','x-upsert':'false'},body:x.f});
+      if(r.ok)ok++;else{const j=await clJson(r);if(r.status===400&&j&&/exists/i.test(String(j.message||j.error||'')))dup++;else ng++;}
+    }catch(e){ng++;}
+    i++;if(i%10===0||i===todo.length)clImpSay('📦 写真 '+i+'/'+todo.length+'（新規 '+ok+'・既にあった '+dup+'・失敗 '+ng+'）');
+  };
+  /* 4枚ずつ並行 */
+  for(let p=0;p<todo.length;p+=4)await Promise.all(todo.slice(p,p+4).map(one));
+  clImpSay('📦 写真の引っ越し：新規 '+ok+'・既にあった '+dup+'・失敗 '+ng+(skip?'・番号が合わず飛ばした '+skip:'')+'（全 '+todo.length+'）');
+  PH.mem={};render();
 }
 function cloudStatusText(){
   const n=clDirtyCount();
