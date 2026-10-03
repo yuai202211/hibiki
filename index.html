@@ -206,6 +206,27 @@
   .hb-logo i{font-style:normal;font-weight:800;font-size:.78em;letter-spacing:.08em;opacity:.92}
   /* 📚 ルーティン */
   .rt-sum{display:flex;gap:8px;margin:4px 0 6px}
+  /* 📊 分析 */
+  .an-tabs{display:flex;gap:4px;background:#eef0f5;border-radius:14px;padding:4px;margin:2px 0 10px}
+  .an-tabs button{flex:1;padding:8px 0;border-radius:10px;font-weight:800;color:#6a7080;background:transparent}
+  .an-tabs button.on{background:#fff;color:var(--ink);box-shadow:0 2px 6px rgba(30,40,70,.1)}
+  .an-nav{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:10px}
+  .an-nav b{font-size:17px;font-weight:800;min-width:150px;text-align:center}
+  .an-nav button{font-size:22px;color:#8a90a0;padding:0 10px}
+  .an-nav button:disabled{opacity:.25}
+  .an-bar{display:flex;height:18px;border-radius:999px;overflow:hidden;margin-bottom:12px}
+  .an-bar i{display:block;height:100%}
+  .an-list{display:grid;gap:8px}
+  .an-row{display:grid;grid-template-columns:26px 74px minmax(0,1fr) auto 52px;align-items:center;gap:6px;background:var(--card);border-radius:14px;padding:9px 10px}
+  .an-ic{font-size:17px;text-align:center}
+  .an-nm{font-weight:800;font-size:13.5px}
+  .an-mb{height:8px;border-radius:999px;background:#eef0f5;overflow:hidden}
+  .an-mb i{display:block;height:100%;border-radius:999px}
+  .an-h{font-weight:800;font-size:14px;font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+  .an-h small{display:block;font-size:10.5px;color:#9aa3b5;font-weight:700}
+  .an-d{font-size:11px;font-weight:800;text-align:right;color:#9aa3b5;white-space:nowrap}
+  .an-d.up{color:#0a9a54}.an-d.dn{color:#e0405a}
+  .an-row.none{background:transparent;border:1px dashed #dfe3ea}
   .rt-sum>div{flex:1;background:var(--card);border-radius:16px;padding:10px 14px;box-shadow:0 4px 14px rgba(30,40,70,.06)}
   .rt-sum small{display:block;font-size:11.5px;font-weight:800;color:#8a90a0}
   .rt-sum b{font-size:22px;font-weight:800;color:#4d7dff;font-variant-numeric:tabular-nums}
@@ -487,7 +508,7 @@
   }
   .nav .nb{
     flex:1;display:flex;flex-direction:column;align-items:center;gap:1px;padding:4px 0 2px;
-    border-radius:14px;position:relative;color:#b8bdca;font-size:10px;font-weight:800;line-height:1.3;
+    border-radius:14px;position:relative;color:#b8bdca;font-size:9.5px;font-weight:800;line-height:1.3;white-space:nowrap;min-width:0;
   }
   .nav .nb:active{background:#f1f3f8}
   .nav .nb.on{color:var(--green)}
@@ -1152,6 +1173,7 @@
     <button class="nb" id="navPay"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8.5 7.5l3.5 5 3.5-5M12 12.5V17M9 13h6M9 15.5h6"/></svg><span>支払い</span><i class="nbdg" id="navPayB" style="display:none"></i></button>
     <button class="nb" id="navMemo"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6zM14 3v5h5M9 12h7M9 16h7"/></svg><span>メモ</span></button>
     <button class="nb" id="navRtn"><svg viewBox="0 0 24 24"><path d="M4 5.5C4 4.7 4.7 4 5.5 4H11v16H5.5c-.8 0-1.5-.7-1.5-1.5zM20 5.5c0-.8-.7-1.5-1.5-1.5H13v16h5.5c.8 0 1.5-.7 1.5-1.5zM7 8h2M15 8h2M7 11h2M15 11h2"/></svg><span>ルーティン</span><i class="nbdg z" id="navRtnB" style="display:none"></i></button>
+    <button class="nb" id="navAna"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>分析</span></button>
     <button class="nb" id="navAim"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2"/></svg><span>一手</span><i class="nbdg z" id="navAimB" style="display:none"></i></button>
   </div>
 
@@ -2911,7 +2933,7 @@ function openSyncSheet(){
     row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして、いつものURLから開くと繋がる')+
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c0.8）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c0.9）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -5234,6 +5256,85 @@ function rtnRowHtml(d){
     '<span class="loc" style="color:'+(done===rs.length?'var(--green)':'#4d7dff')+'">ルーティン '+done+'/'+rs.length+(tot?'　⏱ '+esc(durText(tot)):'')+'</span>'+
     '<div class="txt">'+rs.map(r=>(rtnDone(r.id,d,logs)?'✅ ':'・ ')+esc(r.n)).join('<br>')+'</div></div></button>';
 }
+/* 📊 時間の分析。数え方（本人決定 ①A）：記録の時間は記録の種類で数え、1行ずつの行に種類と時間があれば、その分を行の種類へ振り分ける。
+   重なった記録は、後から始まった記録（＝中の細かい記録）が勝つ。1分ずつ塗り分けるので、合計が24時間を超えない。記録の無い時間は「記録なし」 */
+const ANA_K=[['sleep','🌙','睡眠','#475569'],['work','💼','仕事','#1e3a8a'],['ai','🤖','AI','#7a6ef3'],['stay','📍','滞在','#0bc167'],['move','🚗','移動','#12a6a0'],
+  ['meal','🍚','食事','#f08a24'],['rest','☕','休憩','#c98a2f'],['rtn','📚','ルーティン','#e0559b']];
+const ANA_IX={};ANA_K.forEach((k,i)=>{ANA_IX[k[0]]=i+1;});
+let anaUnit='week',anaBase=null;
+const hmMin=s=>{const a=String(s||'').split(':').map(Number);return (a[0]||0)*60+(a[1]||0);};
+function anaRange(unit,base){
+  const d=parseD(base);let s,e;
+  if(unit==='day'){s=base;e=addDays(base,1);}
+  else if(unit==='week'){const w=(d.getDay()+6)%7;s=addDays(base,-w);e=addDays(s,7);}
+  else if(unit==='month'){s=fmt(new Date(d.getFullYear(),d.getMonth(),1));e=fmt(new Date(d.getFullYear(),d.getMonth()+1,1));}
+  else{s=fmt(new Date(d.getFullYear(),0,1));e=fmt(new Date(d.getFullYear()+1,0,1));}
+  return {s,e};
+}
+function anaLabel(unit,r){const a=parseD(r.s),b=parseD(addDays(r.e,-1));
+  if(unit==='day')return (a.getMonth()+1)+'月'+a.getDate()+'日（'+YOBI[a.getDay()]+'）';
+  if(unit==='week')return (a.getMonth()+1)+'/'+a.getDate()+' – '+(b.getMonth()+1)+'/'+b.getDate();
+  if(unit==='month')return a.getFullYear()+'年'+(a.getMonth()+1)+'月';
+  return a.getFullYear()+'年';}
+/* 期間 [s,e) を1分ずつ塗る。今より先は数えない */
+function anaCount(r,maxMin){
+  const days=Math.round((parseD(r.e)-parseD(r.s))/86400000),N=days*1440;
+  const own=new Int32Array(N).fill(-1),cat=new Uint8Array(N);
+  const t0=parseD(r.s).getTime();
+  const now=new Date(),nowIdx=Math.floor((now.getTime()-t0)/60000);
+  const limit=Math.max(0,Math.min(N,nowIdx,maxMin==null?N:maxMin));   /* maxMin＝前の期間を、今の期間と同じ長さで比べる時の上限 */
+  const items=[];
+  const dayList=[];for(let i=-2;i<days;i++)dayList.push(addDays(r.s,i));
+  for(const d of dayList){const eo=(state.entries||{})[d]||{};const off=Math.round((parseD(d)-parseD(r.s))/86400000)*1440;
+    for(const k in eo){const en=eo[k];if(!en||en.del||en.noT||!en.s)continue;
+      let a=off+hmMin(en.s),b;
+      if(en.e){b=off+hmMin(en.e)+(Number(en.ed)||0)*1440;if(b<=a)b+=1440;}
+      else if(en.k==='sleep'&&d>=addDays(todayStr(),-1))b=nowIdx;else continue;
+      const kk=en.mv?'move':(ANA_IX[en.k]?en.k:'stay');
+      items.push({a,b,c:ANA_IX[kk],acts:en.mv?[]:(Array.isArray(en.acts)?en.acts:[]),off});}}
+  for(const x of rlogList()){if(!x.s||!x.e||x.d<dayList[0]||x.d>=r.e)continue;const off=Math.round((parseD(x.d)-parseD(r.s))/86400000)*1440;
+    let a=off+hmMin(x.s),b=off+hmMin(x.e);if(b<=a)b+=1440;items.push({a,b,c:ANA_IX.rtn,acts:[],off});}
+  items.sort((p,q)=>p.a-q.a||q.b-p.b);
+  items.forEach((it,ix)=>{const a=Math.max(0,it.a),b=Math.min(limit,it.b);for(let m=a;m<b;m++){own[m]=ix;cat[m]=it.c;}});
+  /* 1行ずつの行の振り分け：時刻があればその時間、無ければ分数だけ、その記録が持っている分から振り替える */
+  items.forEach((it,ix)=>{for(const ac of it.acts){if(!ac||!ANA_IX[ac.k]||!(Number(ac.m)>0))continue;const c=ANA_IX[ac.k];
+    if(ac.s&&ac.e){let a=it.off+hmMin(ac.s),b=it.off+hmMin(ac.e);if(a<it.a)a+=1440;if(b<=a)b+=1440;a=Math.max(a,0);b=Math.min(b,limit);
+      for(let m=a;m<b;m++)if(own[m]===ix)cat[m]=c;}
+    else{let left=Number(ac.m);const a=Math.max(0,it.a),b=Math.min(limit,it.b);
+      for(let m=a;m<b&&left>0;m++)if(own[m]===ix&&cat[m]===it.c){cat[m]=c;left--;}}}});
+  const sum=new Array(ANA_K.length+1).fill(0);for(let m=0;m<limit;m++)sum[cat[m]]++;
+  return {sum,total:limit};
+}
+function openAnaPage(){closeSheet();if(!anaBase)anaBase=todayStr();renderAnaPage();}
+function renderAnaPage(){
+  pageMode='ana';const p=$('page');
+  const r=anaRange(anaUnit,anaBase),cur=anaCount(r);
+  const pb=anaRange(anaUnit,addDays(r.s,-1)),prev=anaCount(pb,cur.total);   /* 途中の期間は、前の期間も同じ経過分だけで比べる */
+  const hh=m=>{if(!m)return '0分';const x=Math.round(m/6)/10;return m<60?(m+'分'):(x+'時間');};
+  const rows=ANA_K.map((k,i)=>({k,m:cur.sum[i+1],pm:prev.sum[i+1]})).filter(x=>x.m||x.pm).sort((a,b)=>b.m-a.m);
+  const none=cur.sum[0],tot=cur.total||1,mx=Math.max(1,...rows.map(x=>x.m));
+  const bar='<div class="an-bar">'+rows.filter(x=>x.m).map(x=>'<i style="flex:'+x.m+';background:'+x.k[3]+'"></i>').join('')+(none?'<i style="flex:'+none+';background:#e3e6ee"></i>':'')+'</div>';
+  const dif=x=>{const d=x.m-x.pm;if(!x.pm&&!x.m)return '';const s=Math.round(Math.abs(d)/6)/10;return '<span class="an-d '+(d>0?'up':d<0?'dn':'')+'">'+(d===0?'±0':(d>0?'＋':'－')+(Math.abs(d)<60?Math.abs(d)+'分':s+'h'))+'</span>';};
+  const isCur=r.s<=todayStr()&&todayStr()<r.e;
+  p.innerHTML='<div class="page-head"><button class="bk" id="pgBk">‹ 戻る</button><span class="tt">📊 分析</span><span style="width:36px"></span></div>'+
+    '<div class="page-body">'+
+    '<div class="an-tabs">'+[['day','日'],['week','週'],['month','月'],['year','年']].map(u=>'<button data-au="'+u[0]+'"'+(anaUnit===u[0]?' class="on"':'')+'>'+u[1]+'</button>').join('')+'</div>'+
+    '<div class="an-nav"><button id="anPrev">‹</button><b>'+esc(anaLabel(anaUnit,r))+'</b><button id="anNext"'+(isCur?' disabled':'')+'>›</button></div>'+
+    (cur.total?(bar+
+      '<div class="an-list">'+rows.map(x=>'<div class="an-row"><span class="an-ic">'+x.k[1]+'</span><span class="an-nm">'+x.k[2]+'</span>'+
+        '<span class="an-mb"><i style="width:'+Math.max(2,Math.round(x.m/mx*100))+'%;background:'+x.k[3]+'"></i></span>'+
+        '<span class="an-h">'+hh(x.m)+'<small>'+Math.round(x.m/tot*100)+'%</small></span>'+dif(x)+'</div>').join('')+
+        '<div class="an-row none"><span class="an-ic">⬜</span><span class="an-nm">記録なし</span><span class="an-mb"></span><span class="an-h">'+hh(none)+'<small>'+Math.round(none/tot*100)+'%</small></span><span class="an-d"></span></div>'+
+      '</div>'+
+      '<div class="sh-note">右の数字＝前の'+({day:'日',week:'週',month:'月',year:'年'})[anaUnit]+'との差。'+(isCur?'（今の'+({day:'日',week:'週',month:'月',year:'年'})[anaUnit]+'は今の時刻まで。前の'+({day:'日',week:'週',month:'月',year:'年'})[anaUnit]+'も同じ長さで比べている）':'')+'</div>')
+    :'<div class="empty-hint">この期間はまだ来ていない</div>')+
+    '</div>';
+  p.classList.add('open');payReopenMark();
+  $('pgBk').onclick=closePage;
+  p.querySelectorAll('[data-au]').forEach(b=>b.onclick=()=>{anaUnit=b.dataset.au;renderAnaPage();});
+  $('anPrev').onclick=()=>{anaBase=addDays(r.s,-1);renderAnaPage();};
+  $('anNext').onclick=()=>{if(isCur)return;anaBase=r.e;renderAnaPage();};
+}
 function openRtnPage(){closeSheet();
   if(!state.rtn&&RTN_SEED.n){mutate(()=>{state.rtn={};state.rtn[RTN_SEED.id]={n:RTN_SEED.n,o:1,ts:Date.now()};});}
   renderRtnPage();}
@@ -5818,7 +5919,8 @@ const navGo=fn=>{if($('page').classList.contains('open'))closePage();fn();};
 $('navHome').onclick=()=>{closePage();ui.date=todayStr();ui.tab='di';render();scrollToNow();};
 $('navPay').onclick=()=>navGo(openPayPage);
 $('navMemo').onclick=()=>navGo(openMemoPage);
-$('navRtn').onclick=()=>navGo(openRtnPage);   /* 📚ルーティン */
+$('navRtn').onclick=()=>navGo(openRtnPage);
+$('navAna').onclick=()=>navGo(openAnaPage);   /* 📊分析 */   /* 📚ルーティン */
 $('navAim').onclick=()=>navGo(openAimPage);   /* 🎯一手（毎日のルールはこのページの下から開ける） */
 /* 下の4つの見た目：どれを開いているか（緑）／支払いの数（赤＝未払いの件数）／今日のルール達成（n/6）。
    支払いの赤い数字は、💴支払いを開いた時に出る「未払い N件」と必ず同じ数（今月が期日の未払い＋前の月までの払い残し）。
@@ -5828,9 +5930,9 @@ function navPaint(){
   try{
     const pg=$('page'),open=pg.classList.contains('open');
     /* ルールのページは🎯一手から開くので、開いている間は🎯を緑にする */
-    const tab=!open?'home':pageMode==='pay'?'pay':pageMode==='memo'?'memo':pageMode==='rtn'?'rtn':(pageMode==='aim'||pageMode==='rules')?'aim':'';
-    pg.classList.toggle('withnav',open&&(pageMode==='pay'||pageMode==='memo'||pageMode==='rules'||pageMode==='aim'||pageMode==='rtn'));
-    [['navHome','home'],['navPay','pay'],['navMemo','memo'],['navRtn','rtn'],['navAim','aim']].forEach(x=>{const b=$(x[0]);if(b)b.classList.toggle('on',tab===x[1]);});
+    const tab=!open?'home':pageMode==='pay'?'pay':pageMode==='memo'?'memo':pageMode==='rtn'?'rtn':pageMode==='ana'?'ana':(pageMode==='aim'||pageMode==='rules')?'aim':'';
+    pg.classList.toggle('withnav',open&&(pageMode==='pay'||pageMode==='memo'||pageMode==='rules'||pageMode==='aim'||pageMode==='rtn'||pageMode==='ana'));
+    [['navHome','home'],['navPay','pay'],['navMemo','memo'],['navRtn','rtn'],['navAna','ana'],['navAim','aim']].forEach(x=>{const b=$(x[0]);if(b)b.classList.toggle('on',tab===x[1]);});
     const nv=$('nav');if(nv&&nv.offsetHeight)document.documentElement.style.setProperty('--navh',nv.offsetHeight+'px');
     sleepBarTick();
   }catch(e){}
@@ -6178,7 +6280,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c0.8";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c0.9";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 function openLoginSheet(opt){
   opt=opt||{};
