@@ -2612,14 +2612,15 @@ function areaOf(id){const a=AREAS.find(x=>x[0]===id);return a?{id:a[0],name:a[1]
 function prefOf(code){const c=Number(code),p=(c>=1&&c<=47)?PREFS[c-1]:null;if(!p||p[0]!==c)return null;const a=areaOf(p[2]);
   return {code:c,name:p[1],area:p[2],short:p[3],co:a?a.co:'#9aa3b5'};}
 function pfTag(en){const p=en&&prefOf(en.pf),p0=en&&en.mv?prefOf(en.pf0):null;
-  if(p0&&(!p||p0.code!==p.code))return '<span class="pftag" style="background:linear-gradient(90deg,'+p0.co+','+(p?p.co:p0.co)+')" title="'+esc(p0.name+' → '+(p?p.name:'？'))+'">'+esc(p0.short)+'→'+esc(p?p.short:'？')+'</span>';   /* 移動：出発→到着 */
+  if(p0&&p&&p0.code!==p.code)return '<span class="pftag" style="background:linear-gradient(90deg,'+p0.co+','+(p?p.co:p0.co)+')" title="'+esc(p0.name+' → '+(p?p.name:'？'))+'">'+esc(p0.short)+'→'+esc(p?p.short:'？')+'</span>';   /* 移動：出発→到着 */
+  if(!p&&p0)return '<span class="pftag" style="background:'+p0.co+'" title="'+esc(p0.name)+'">'+esc(p0.short)+'</span>';   /* 到着を選んでいない＝出発と同じ県 */
   return p?'<span class="pftag" style="background:'+p.co+'" title="'+esc(p.name)+'">'+esc(p.short)+'</span>':'';}
 /* 新規の記録の初期値＝時系列で直前の記録の pf（同じ日の開始が sm 以前で一番遅い物→無ければ前の日へ最大30日）。lastPref は持たない */
 function pfAuto(date,sm){
   const pick=(d,lim)=>{const eo=state.entries[d]||{};let bm='',bv=0;
-    for(const k in eo){const en=eo[k];if(!en||en.del||!prefOf(en.pf))continue;
+    for(const k in eo){const en=eo[k];if(!en||en.del)continue;const pv=prefOf(en.pf)?Number(en.pf):((en.mv&&prefOf(en.pf0))?Number(en.pf0):0);if(!pv)continue;   /* 到着が無い移動は出発の県 */
       const s=en.s||((/^[0-9]+$/.test(k)?pad(Number(k)):'12')+':00');
-      if(lim&&s>lim)continue;if(s>=bm){bm=s;bv=Number(en.pf);}}
+      if(lim&&s>lim)continue;if(s>=bm){bm=s;bv=pv;}}
     return bv;};
   let v=pick(date,sm);if(v)return v;
   for(let i=1;i<=30;i++){v=pick(addDays(date,-i),'');if(v)return v;}
@@ -2906,7 +2907,7 @@ function renderPlans(pane,d){
   html+='<div class="glab blue">☑ 予定（やること）</div>';
   html+='<div class="planwrap">'+
     '<div class="prow" style="margin-bottom:2px"><input type="text" id="pTodo" maxlength="200" placeholder="やることを書く（Enterで追加）"><button class="addbtn" id="planAdd" style="background:#4d7dff;flex-shrink:0">＋</button></div>'+
-    '<div class="prow" style="align-items:center;flex-wrap:wrap;gap:4px"><input type="time" id="pTime" step="600" lang="ja-JP" style="flex-shrink:0">'+
+    '<div class="prow" style="align-items:center;flex-wrap:wrap;gap:4px"><input type="time" id="pTime" step="600" lang="ja-JP" style="flex-shrink:0"><span style="color:#8a90a0;font-weight:800">→</span><input type="time" id="pEnd" step="600" lang="ja-JP" style="flex-shrink:0" aria-label="何時まで"><span id="pDurT" style="font-size:12px;font-weight:800;color:#0a9a54;white-space:nowrap"></span>'+
     [15,30,60,120].map(m=>'<button class="gchip" data-dur="'+m+'">'+durLabel(m)+'</button>').join('')+
     '<input type="text" id="pPlace" maxlength="120" placeholder="場所（任意）" style="flex:1;min-width:90px"></div>'+
     (gReady?'<div style="margin:2px 0 4px"><button class="gchip'+(g2c?' on':'')+'" id="pG2c">📅 Googleカレンダーにも入れる</button></div>':'')+
@@ -2916,10 +2917,14 @@ function renderPlans(pane,d){
     '</div>';
   pane.innerHTML=html;
   let pDur=null;
+  /* 何時から→何時まで を入れたら所要時間を自動で出す。長さのボタンは終わりの時刻を入れる */
+  const pSync=()=>{const s=$('pTime').value,e=$('pEnd').value;if(s&&e){pDur=durMin(s,e,0)||null;}
+    $('pDurT').textContent=pDur?('⏱ '+durText(pDur)):'';pane.querySelectorAll('[data-dur]').forEach(x=>x.classList.toggle('on',Number(x.dataset.dur)===pDur));};
+  $('pTime').onchange=()=>{const s=$('pTime').value;if(s&&pDur)$('pEnd').value=hmAdd(s,pDur);pSync();};$('pEnd').onchange=pSync;
   pane.querySelectorAll('[data-dur]').forEach(b=>b.onclick=()=>{
     const m=Number(b.dataset.dur);
     pDur=(pDur===m)?null:m;
-    pane.querySelectorAll('[data-dur]').forEach(x=>x.classList.toggle('on',Number(x.dataset.dur)===pDur));
+    {const s=$('pTime').value;$('pEnd').value=(s&&pDur)?hmAdd(s,pDur):'';}pSync();
   });
   const add=async()=>{
     const v=$('pTodo').value.trim();
@@ -3111,7 +3116,7 @@ function openSyncSheet(){
     row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして、いつものURLから開くと繋がる')+
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c1.3）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c1.4）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -3357,7 +3362,8 @@ function openEntrySheet(date,ref){
     if(!mvT&&!sheetSt.pf&&sheetSt.pf0Auto){sheetSt.pf=sheetSt.pf0;sheetSt.pfAuto=true;sheetSt.pf0=0;sheetSt.pf0Auto=false;}   /* 移動をやめたら戻す */
     const one=(b,code,auto,lab)=>{if(!b)return;const p=prefOf(code);b.textContent='🗾 '+lab+(p?p.short:(lab?'未選択':'都道府県'));b.style.background=p?p.co:'';b.classList.toggle('on',!!p);b.classList.toggle('auto',!!(p&&auto));};
     const b0=$('pf0Chip');if(b0)b0.style.display=mvT?'':'none';if(mvT)one(b0,sheetSt.pf0,sheetSt.pf0Auto,'出発：');
-    one($('pfChip'),sheetSt.pf,sheetSt.pfAuto,mvT?'到着：':'');}
+    one($('pfChip'),sheetSt.pf,sheetSt.pfAuto,mvT?'到着：':'');
+    if(mvT&&!prefOf(sheetSt.pf)&&prefOf(sheetSt.pf0))$('pfChip').textContent='🗾 到着：出発と同じ';}   /* 同じ県なら選ばなくていい */
   $('pfChip').onclick=()=>{if(!sheetSt)return;openPrefPicker(sheetSt.pf,c=>{sheetSt.pf=c;sheetSt.pfAuto=false;pfPaint();});};
   $('pf0Chip').onclick=()=>{if(!sheetSt)return;openPrefPicker(sheetSt.pf0,c=>{sheetSt.pf0=c;sheetSt.pf0Auto=false;pfPaint();});};
   $('eType').querySelectorAll('button').forEach(b=>b.onclick=()=>{eType=b.dataset.ty;mty();});
@@ -3590,6 +3596,7 @@ function openPlanSheet(d,id){
     '<input type="text" id="plTx" maxlength="200" placeholder="やること">'+
     '<div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:6px">'+
     '<input type="time" id="plHh" step="600" lang="ja-JP" style="width:104px;flex-shrink:0;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:9px 6px;font-size:16px;font-weight:700;text-align:center;outline:none">'+
+    '<span style="color:#8a90a0;font-weight:800">→</span><input type="time" id="plEnd" step="600" lang="ja-JP" aria-label="何時まで" style="width:104px;flex-shrink:0;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:9px 6px;font-size:16px;font-weight:700;text-align:center;outline:none"><span id="plDurT" style="font-size:12px;font-weight:800;color:#0a9a54;white-space:nowrap"></span>'+
     [15,30,60,120].map(m=>'<button class="gchip" data-pdur="'+m+'">'+dl(m)+'</button>').join('')+'</div>'+
     '<input type="text" id="plPl" maxlength="120" placeholder="場所（任意）" style="margin-top:6px">'+
     '<div class="sh-btns"><button class="delbtn" id="plDel">削除</button><button class="savebtn" id="plSave" style="background:#4d7dff;box-shadow:0 6px 16px rgba(77,125,255,.3)">保存して閉じる</button></div>';
@@ -3597,9 +3604,12 @@ function openPlanSheet(d,id){
   $('plPl').value=p.pl||'';
   $('plTx').value=p.t;
   let plMm=p.mm||null;
-  const paint=()=>$('sheet').querySelectorAll('[data-pdur]').forEach(x=>x.classList.toggle('on',Number(x.dataset.pdur)===plMm));
+  const paint=()=>{$('sheet').querySelectorAll('[data-pdur]').forEach(x=>x.classList.toggle('on',Number(x.dataset.pdur)===plMm));$('plDurT').textContent=plMm?('⏱ '+durText(plMm)):'';};
+  $('plEnd').value=(p.hh&&p.mm)?hmAdd(p.hh,p.mm):'';
+  const plSync=()=>{const s=$('plHh').value,e=$('plEnd').value;if(s&&e)plMm=durMin(s,e,0)||null;paint();};   /* 何時から→何時まで で所要時間 */
+  $('plHh').onchange=()=>{const s=$('plHh').value;if(s&&plMm)$('plEnd').value=hmAdd(s,plMm);paint();};$('plEnd').onchange=plSync;
   $('sheet').querySelectorAll('[data-pdur]').forEach(b=>b.onclick=()=>{
-    const m=Number(b.dataset.pdur);plMm=(plMm===m)?null:m;paint();
+    const m=Number(b.dataset.pdur);plMm=(plMm===m)?null:m;{const s=$('plHh').value;$('plEnd').value=(s&&plMm)?hmAdd(s,plMm):'';}paint();
   });
   paint();
   /* 閉じる＝保存（保存ボタンを押し忘れても消えない） */
@@ -5304,6 +5314,7 @@ function renderMemoEditor(id){
    朝は「☀ 起きた」：寝てる最中の記録に起床時刻を入れて確定。日またぎは自動で翌日扱い。
    「📍前回の場所」：その場所が入った状態で記録シートを開く（何をしたかだけ書けばいい） */
 function durMin(s,e,ed){if(!s||!e)return 0;const a=s.split(':').map(Number),b=e.split(':').map(Number);let m=(b[0]*60+b[1])-(a[0]*60+a[1])+(ed||0)*1440;if(m<0)m+=1440;return m;}
+function hmAdd(s,m){const a=String(s||'').split(':').map(Number),t=((a[0]||0)*60+(a[1]||0)+Number(m||0))%1440;return pad(Math.floor(t/60))+':'+pad(t%60);}   /* 'HH:MM'＋分 */
 function durText(m){if(!m)return '';const h=Math.floor(m/60),mm=m%60;return (h?h+'時間':'')+(mm?mm+'分':'');}
 function nowHM(){const d=new Date();return pad(d.getHours())+':'+pad(Math.floor(d.getMinutes()/10)*10);}
 function openSleep(){
@@ -5651,8 +5662,8 @@ function anaCount0(r,days,N,limit,nowIdx){
   /* 第3パス：乗り物（勝った分だけ）／都道府県は別の層（pf の無い内側の記録は外側の pf に透ける） */
   items.forEach((it,ix)=>{const a=Math.max(0,it.a),b=Math.min(NT,it.b);
     if(it.mv)for(let m=a;m<b;m++)if(own[m]===ix)mvm[m]=it.tv;
-    if(it.pf0&&it.pf0!==it.pf){const mid=it.a+Math.floor((it.b-it.a)/2);for(let m=a;m<b;m++){if(m<mid)pfL[m]=it.pf0;else if(it.pf)pfL[m]=it.pf;}}   /* 移動：前半＝出発、後半＝到着の県 */
-    else if(it.pf)for(let m=a;m<b;m++)pfL[m]=it.pf;
+    if(it.pf0&&it.pf&&it.pf0!==it.pf){const mid=it.a+Math.floor((it.b-it.a)/2);for(let m=a;m<b;m++){if(m<mid)pfL[m]=it.pf0;else if(it.pf)pfL[m]=it.pf;}}   /* 移動：前半＝出発、後半＝到着の県 */
+    else if(it.pf||it.pf0){const v=it.pf||it.pf0;for(let m=a;m<b;m++)pfL[m]=v;}   /* 同じ県・到着なし＝全部その県 */
     if(it.et)for(let m=a;m<b;m++)if(own[m]===ix&&!tool[m])tool[m]=it.et;});   /* 記録の「使う物」：行で道具を選んでいない分に付ける */
   /* 集計は1回のループ */
   const IXM=IX.move,IXR=IX.rtn,NK=K.length+1;
@@ -6722,7 +6733,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c1.3";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c1.4";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 function openLoginSheet(opt){
   opt=opt||{};
