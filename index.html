@@ -217,7 +217,7 @@
   .an-bar{display:flex;height:18px;border-radius:999px;overflow:hidden;margin-bottom:12px}
   .an-bar i{display:block;height:100%}
   .an-list{display:grid;gap:8px}
-  .an-row{display:grid;grid-template-columns:26px 74px minmax(0,1fr) auto 52px;align-items:center;gap:6px;background:var(--card);border-radius:14px;padding:9px 10px}
+  .an-row{display:grid;grid-template-columns:24px minmax(0,1fr) minmax(32px,.8fr) auto 44px;align-items:center;gap:6px;background:var(--card);border-radius:14px;padding:9px 10px}
   .an-ic{font-size:17px;text-align:center}
   .an-nm{font-weight:800;font-size:13.5px}
   .an-mb{height:8px;border-radius:999px;background:#eef0f5;overflow:hidden}
@@ -227,6 +227,49 @@
   .an-d{font-size:11px;font-weight:800;text-align:right;color:#9aa3b5;white-space:nowrap}
   .an-d.up{color:#0a9a54}.an-d.dn{color:#e0405a}
   .an-row.none{background:transparent;border:1px dashed #dfe3ea}
+  /* c1.1 分析：ムダのカード・畳める見出し・移動の中身（4色バー）・どこで */
+  .an-row.md{box-shadow:inset 3px 0 0 #e0405a}
+  .an-nm{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .an-nm small{display:block;font-size:10.5px;color:#12a6a0;font-weight:700;overflow:hidden;text-overflow:ellipsis}
+  .an-muda{background:#fdecef;border:1px solid #f6c3cc;border-radius:16px;padding:10px 12px;margin-bottom:12px}
+  .an-muda.zero{background:#e7f8ef;border-color:#bfe9d2}
+  .an-m1{display:flex;align-items:center;gap:8px}
+  .an-mi{font-size:26px;line-height:1}
+  .an-mt{flex:1;min-width:0;font-weight:800;font-size:14px;color:#b4233d}
+  .an-mt b{font-size:22px;margin:0 3px;font-variant-numeric:tabular-nums}
+  .an-mt small{font-size:11px;color:#c0566a;white-space:nowrap}
+  .an-muda.zero .an-mt{color:#0a9a54}
+  .an-m2,.an-m3{font-size:12px;font-weight:700;color:#8a3a4a;margin-top:4px;overflow-wrap:anywhere}
+  .an-md{font-size:12.5px;font-weight:800;white-space:nowrap;color:#9aa3b5}
+  .an-md.up{color:#e0405a}.an-md.dn{color:#0a9a54}
+  .an-sec{margin-top:12px}
+  .an-sh{display:flex;align-items:center;gap:6px;width:100%;font-weight:800;font-size:15px;color:var(--ink);padding:4px 0 8px;text-align:left}
+  .an-ar{display:inline-block;color:#9aa3b5;transition:transform .15s}
+  .an-sec.open .an-ar{transform:rotate(90deg)}
+  .an-more{display:block;width:100%;padding:8px 0;font-size:12.5px;font-weight:800;color:#6a7080;border:1px dashed #dfe3ea;border-radius:12px}
+  .an-mvr,.an-pfr{background:var(--card);border-radius:14px;padding:8px 10px;min-width:0}
+  .an-mv1,.an-pf1{display:flex;align-items:center;gap:6px}
+  .an-mv1 b,.an-pf1 b{flex:1;min-width:0;font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .an-mv2,.an-pf2{display:flex;align-items:center;gap:8px;margin-top:6px}
+  .an-mvb{flex:1;min-width:0;display:flex;height:10px;border-radius:999px;overflow:hidden;background:#eef0f5}
+  .an-mvb i{display:block;height:100%}
+  .an-mvt{font-size:11px;font-weight:800;color:#8a90a0;white-space:nowrap}
+  .an-mvt em{font-style:normal}.an-mvt em.g{color:#0a9a54}.an-mvt em.r{color:#e0405a}
+  .an-lg{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:11px;font-weight:700;color:#6a7080;margin:8px 2px 0}
+  .an-lg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:3px;vertical-align:-1px}
+  .an-sub{font-size:12px;font-weight:800;color:#6a7080;margin:12px 2px 6px}
+  .an-cps{display:flex;flex-wrap:wrap;gap:6px}
+  .an-cp{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px 10px;font-size:12px;font-weight:700;max-width:100%;overflow-wrap:anywhere}
+  .an-cp b{font-variant-numeric:tabular-nums}
+  .an-cp.md{border-color:#e0405a;color:#b4233d}
+  .an-empty{font-size:12px;color:#9aa3b5;font-weight:700;padding:6px 2px}
+  .an-dot{display:inline-block;width:10px;height:10px;border-radius:50%;flex:0 0 auto}
+  .an-pf2 .an-mb{flex:1;min-width:0}
+  .an-pm{font-size:11.5px;font-weight:800;color:#e0405a;white-space:nowrap}
+  .an-pfr{cursor:pointer}
+  .an-pfr.sel{box-shadow:0 0 0 2px #c3c8d4}
+  .an-pfr .an-cps{margin-top:8px}
+  .an-pfr.unset b{color:#9aa3b5}
   .rt-sum>div{flex:1;background:var(--card);border-radius:16px;padding:10px 14px;box-shadow:0 4px 14px rgba(30,40,70,.06)}
   .rt-sum small{display:block;font-size:11.5px;font-weight:800;color:#8a90a0}
   .rt-sum b{font-size:22px;font-weight:800;color:#4d7dff;font-variant-numeric:tabular-nums}
@@ -360,6 +403,24 @@
   /* 書く画面：時刻が空の欄は薄く（書かなくてもいい、が見て分かる） */
   .actrow .ac-s.emp,.actrow .ac-e.emp{opacity:.45}
   .actrow .ac-x{flex-shrink:0;width:34px;height:34px;border-radius:50%;background:#f1f3f8;color:#8a90a0;font-weight:800}
+  /* c1.1 種類の帯（横スクロール・＋は帯の外の右端に固定・右端の薄い影＝続きがある印） */
+  .actrow .ac-kw{grid-column:1 / -1;display:flex;gap:5px;align-items:center;margin-top:6px;min-width:0}
+  .actrow .ac-kw .ac-k{flex:1 1 auto;min-width:0;margin-top:0;flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none;overscroll-behavior-x:contain;padding-bottom:1px;-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent)}
+  .actrow .ac-kw .ac-k.end{-webkit-mask-image:none;mask-image:none}
+  .actrow .ac-k::-webkit-scrollbar{display:none}
+  .actrow .ac-k button{flex:0 0 auto;min-width:0;padding:6px 8px 7px;box-shadow:inset 0 -3px 0 var(--kc,#c3c8d4)}
+  .actrow .ac-k button.sel{background:var(--kc,var(--ink));border-color:var(--kc,var(--ink));color:#fff;box-shadow:none}
+  .actrow .ac-add{flex:0 0 auto;width:32px;height:30px;border-radius:10px;background:#eefaf3;color:#0a9a54;font-weight:900;font-size:16px;line-height:1;border:1px dashed #9fdcbc}
+  /* 道具の帯（絵だけ・選ぶと名前が出る） */
+  .actrow .ac-dv{grid-column:1 / -1;display:flex;gap:5px;align-items:center;flex-wrap:wrap;margin-top:5px}
+  .actrow .ac-dv button[data-ad]{flex:0 0 auto;height:30px;min-width:36px;padding:0 7px;border-radius:10px;background:#fff;border:1px solid var(--line);font-size:16px;line-height:1;filter:grayscale(.6);opacity:.75}
+  .actrow .ac-dv button[data-ad] span{display:none;font-size:11px;font-weight:800;margin-left:4px;vertical-align:2px}
+  .actrow .ac-dv button[data-ad].sel{filter:none;opacity:1;background:var(--ink);color:#fff;border-color:var(--ink)}
+  .actrow .ac-dv button[data-ad].sel span{display:inline}
+  /* 移動の1タップチップ（左の色＝種類の色） */
+  #acChips .chip.ac-q{background:#fff;border:1px solid var(--line);box-shadow:inset 4px 0 0 var(--kc,#c3c8d4);font-weight:800}
+  /* 日記の行：道具は種類ラベルの右に絵だけ */
+  .act .a-dv{font-style:normal;font-size:12.5px;margin-right:5px;vertical-align:0}
 
   /* 予定（青系ToDo・日報と別世界） */
   .planwrap{
@@ -572,6 +633,43 @@
     display:flex;flex-direction:column;gap:11px;max-height:86%;overflow-y:auto;
   }
   @media (min-width:500px){.sheet{border-radius:24px 24px 32px 32px}}
+  /* 第2のシート（記録シートの上に重ねる・c1.1） */
+  .ovl.ovl2{z-index:25}
+  .ks-new{display:flex;gap:6px;align-items:center}
+  .sheet .ks-new input.ks-ic{flex:0 0 54px;width:54px;text-align:center;font-size:20px;padding:6px 2px}
+  .sheet .ks-new input#ksLb{flex:1 1 auto;width:auto;min-width:0}
+  .ks-go{flex:0 0 auto;padding:10px 14px;border-radius:14px;background:var(--green);color:#fff;font-weight:800;font-size:14px}
+  .ks-list{display:flex;flex-direction:column;gap:5px}
+  .ks-row{display:flex;align-items:center;gap:6px;padding:6px 8px;border-radius:12px;background:#fff;border:1px solid var(--line);border-left:5px solid var(--kc,#c3c8d4)}
+  .ks-row b{flex:0 0 26px;font-size:18px;text-align:center;font-weight:400}
+  .ks-row span{flex:1 1 auto;min-width:0;font-size:13px;font-weight:800;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .ks-row button{flex:0 0 auto;padding:6px 9px;border-radius:10px;font-size:11.5px;font-weight:800;background:#f1f3f8;color:#6a7080;white-space:nowrap}
+  .ks-row button.md.on{background:#e0405a;color:#fff}
+  .ks-row.off{opacity:.45;border-left-style:dashed}
+  .ks-none{font-size:12px;color:#9aa3b5;font-weight:700;padding:4px 2px}
+  /* 都道府県（c1.1）：記録シートのチップ・エリアのタイル・ドラム・日記の札 */
+  .pfrow{display:flex;min-width:0}
+  .pfchip{display:inline-block;max-width:100%;padding:7px 14px;border-radius:999px;background:#eceef3;color:#8a90a0;font-weight:800;font-size:13.5px;border:2px solid transparent;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .pfchip.on{color:#fff;text-shadow:0 1px 1px rgba(0,0,0,.18)}
+  .pfchip.auto{border-style:dashed;border-color:rgba(26,28,34,.4)}
+  .pf-rc{display:flex;gap:6px;align-items:center;flex-wrap:wrap;flex-shrink:0}
+  .pf-rc span{font-size:15px}
+  .pf-rc button{padding:7px 13px;border-radius:999px;background:var(--ac);color:#fff;font-weight:800;font-size:13px}
+  .pf-rc button.cur,.pf-map button.cur{box-shadow:0 0 0 3px #fff,0 0 0 5px var(--ac)}
+  .pf-map{position:relative;height:220px;flex-shrink:0}
+  .pf-map button{position:absolute;border-radius:12px;background:var(--ac);color:#fff;font-weight:800;font-size:13px;line-height:1.2;padding:2px;display:flex;align-items:center;justify-content:center;text-align:center;text-shadow:0 1px 1px rgba(0,0,0,.18)}
+  .pf-map button:active{filter:brightness(.92)}
+  .pf-dw{position:relative;height:220px;flex-shrink:0;border-radius:16px;background:#f4f5f9;overflow:hidden}
+  .pf-band{position:absolute;left:8px;right:8px;top:88px;height:44px;border-radius:12px;background:var(--ac);pointer-events:none}
+  .pf-drum{position:relative;height:100%;overflow-y:auto;scroll-snap-type:y mandatory;overscroll-behavior:contain;padding-block:88px;box-sizing:border-box;scrollbar-width:none}
+  .pf-drum::-webkit-scrollbar{display:none}
+  .pf-drum button{display:block;width:100%;height:44px;scroll-snap-align:center;font-size:18px;font-weight:800;color:var(--ink);background:none;transition:color .12s}
+  .pf-drum button.on{color:#fff}
+  .pf-btns{display:flex;gap:6px;flex-shrink:0}
+  .pf-btns button{flex:1 1 0;min-width:0;padding:12px 6px;border-radius:14px;background:#f1f3f8;color:#5b6170;font-weight:800;font-size:14px;white-space:nowrap}
+  .pf-btns button.pf-ok{flex:1.6 1 0;color:#fff}
+  .hour .pftag{float:right;margin:2px 0 2px 6px;padding:1px 8px;border-radius:999px;color:#fff;font-size:11px;font-weight:800;line-height:1.5;white-space:nowrap}
+  .ks-close{width:100%;padding:12px;border-radius:14px;background:#f1f3f8;color:#5b6170;font-weight:800;font-size:14px;flex-shrink:0}
   .grab{width:38px;height:4px;border-radius:99px;background:#d5d9e3;margin:0 auto;flex-shrink:0}
   .sh-time{
     display:flex;align-items:center;justify-content:center;gap:12px;
@@ -1180,6 +1278,7 @@
   <div class="page" id="page"></div>
   <div class="flash" id="flash"></div>
   <div class="ovl" id="ovl"><div class="sheet" id="sheet"></div></div>
+  <div class="ovl ovl2" id="ovl2"><div class="sheet" id="sheet2"></div></div>
   <div class="viewer" id="viewer"></div>
   <div class="toast" id="toast"></div>
   <input type="file" id="phInput" accept="image/*" multiple style="display:none">
@@ -1483,7 +1582,7 @@ function mergeStates(a,b){
       out.payrep=out.payrep||{};const cur=out.payrep[k];
       if(!cur||((nu.ts||0)>(cur.ts||0)))out.payrep[k]=nu;}
     /* 📚 ルーティン（rtn）とその記録（rlog）。1件ずつ新しい方が勝つ。使うまで項目を作らない */
-    for(const k of ['rtn','rlog','payppl'])for(const id in (src[k]||{})){const nu=src[k][id];if(!nu)continue;
+    for(const k of ['rtn','rlog','payppl','kinds','tools'])for(const id in (src[k]||{})){   /* kinds／tools＝行の種類・道具（c1.1） */const nu=src[k][id];if(!nu)continue;
       out[k]=out[k]||{};const cur=out[k][id];if(!cur||((nu.ts||0)>(cur.ts||0)))out[k][id]=nu;}
     for(const id in (src.pins||{})){const nu=src.pins[id];if(!nu)continue;
       out.pins=out.pins||{};const cur=out.pins[id];
@@ -1503,7 +1602,7 @@ function mergeStates(a,b){
   /* 知らないトップレベル項目も捨てない（新旧バージョン混在でもデータを失わない） */
   /* payrep も必ずここに入れる。入れ忘れると、下の「知らない項目」の写しが、1件ずつ合わせた結果を丸ごと上書きする
      ＝別の端末で止めた・再開した印が消える（2026-09-30レビュー指摘） */
-  const known={updatedAt:1,dream:1,entries:1,plans:1,ai:1,dreams:1,memos:1,life:1,photos:1,pha:1,pays:1,rules:1,aims:1,moves:1,pins:1,steps:1,payrep:1,rtn:1,rlog:1,payppl:1};
+  const known={updatedAt:1,dream:1,entries:1,plans:1,ai:1,dreams:1,memos:1,life:1,photos:1,pha:1,pays:1,rules:1,aims:1,moves:1,pins:1,steps:1,payrep:1,rtn:1,rlog:1,payppl:1,kinds:1,tools:1};
   const newer=((b.updatedAt||0)>=(a.updatedAt||0))?b:a;
   const older=(newer===b)?a:b;
   for(const k in older)if(!known[k]&&older[k]!==undefined)out[k]=older[k];
@@ -2453,10 +2552,63 @@ function txtHtml(t){
 /* 並べ替えの基準：日をまたぐ記録（翌日以降に終わる・終了が開始以前・寝ている最中の睡眠）だけ、開始より前の時刻を「翌日の分」として後ろへ回す。
    それ以外は、単純に時刻の早い順（15時に書き始めた記録に朝9時の行を足しても、9時が先に来る・2026-10-03レビュー指摘） */
 function actsBase(en){return (en&&en.s&&(Number(en.ed)>0||(en.e?en.e<=en.s:en.k==='sleep')))?en.s:'';}
-function actsLine(x,sep){if(x&&x.mv)return '';const a=actsSort(Array.isArray(x&&x.acts)?x.acts.filter(y=>y&&y.t):[],actsBase(x));if(!a.length)return '';
+function actsLine(x,sep){const a=actsSort(Array.isArray(x&&x.acts)?x.acts.filter(y=>y&&y.t):[],actsBase(x));if(!a.length)return '';
   return sep+a.map(y=>'・'+y.t+(Number(y.m)?' '+durText(Number(y.m)):'')).join(sep);}
 /* 1行ずつ書いた行の種類（任意）。🤖AIは一番目・紫で目立たせる */
 const ACT_K={ai:['🤖','AI'],work:['💼','仕事'],stay:['📍','滞在'],move:['🚗','移動'],meal:['🍚','食事'],rest:['☕','休憩']};
+/* c1.1 行の種類（何をした）。[id,絵,名前,色,群(w仕事 l学び g生活 p私 x場所),ムダ印の初期値]。ACT_K は他所の参照用に残す */
+const KIND_BASE=[['work','💼','仕事','#1e3a8a','w'],['ai','🤖','AI','#7a6ef3','w'],['doc','📄','資料確認','#5b7fa6','w'],['call','📞','電話・連絡','#2f8fcf','w'],['meet','🤝','商談・人と会う','#d9633b','w'],['think','🧠','考え事','#6b7280','w'],
+ ['read','📖','読書','#8b5e3c','l'],['study','🎓','勉強','#c2410c','l'],['audio','🔊','音声で学ぶ','#9333ea','l'],
+ ['meal','🍚','食事','#f08a24','g'],['rest','☕','休憩','#c98a2f','g'],['exer','🏃','運動','#16a34a','g'],['bath','🛁','風呂・身支度','#06b6d4','g'],['house','🧹','家事','#a3a3a3','g'],
+ ['family','👦','家族','#f472b6','p'],['play','🎮','遊び','#fbbf24','p'],['video','📺','動画・SNS','#d946ef','p',1],
+ ['sleep','🌙','睡眠','#475569','g'],['stay','📍','滞在','#0bc167','x'],['move','🚗','移動','#12a6a0','x']];
+/* 道具（何を使って）。行に1つだけ付く（d） */
+const TOOL_BASE=[['pc','💻','PC'],['phone','📱','スマホ'],['tab','📟','タブレット'],['paper','📕','紙・本'],['ear','🎧','イヤホン']];
+const KIND_NOMUDA={move:1,stay:1,sleep:1};   /* ムダ印を出さない種類 */
+const KIND_MAX=30,TOOL_MAX=20;   /* 自分で足せる数 */
+const KIND_OWNCO=['#0f766e','#b45309','#4338ca','#be123c','#15803d','#7c3aed','#0369a1','#a16207'];   /* 自分で足した種類の色（id から決める） */
+/* 本人が足した物・基本の上書き（muda／off）は state.kinds[id]／state.tools[id] に1行ずつ。使うまで項目を作らない */
+function kindOf(id){if(!id||typeof id!=='string')return null;const o=(state.kinds||{})[id]||null,b=KIND_BASE.find(x=>x[0]===id);
+  if(b)return {id,ic:(o&&o.ic)||b[1],lb:(o&&o.lb)||b[2],co:b[3],g:b[4],muda:(o&&o.muda!=null)?!!o.muda:!!b[5],off:!!(o&&o.off),own:false};
+  if(!o||!o.lb)return null;let hs=0;for(const ch of id)hs=(hs*31+ch.charCodeAt(0))%997;
+  return {id,ic:o.ic||'📌',lb:String(o.lb),co:KIND_OWNCO[hs%KIND_OWNCO.length],g:'c',muda:!!o.muda,off:!!o.off,own:true};}
+function kindOwnIds(){const ks=state.kinds||{};return Object.keys(ks).filter(id=>!KIND_BASE.some(b=>b[0]===id)&&ks[id]&&ks[id].lb).sort();}
+function kindList(){return KIND_BASE.map(b=>kindOf(b[0])).concat(kindOwnIds().map(kindOf)).filter(k=>k&&!k.off);}
+function kindMuda(id){const k=kindOf(id);return !!(k&&!KIND_NOMUDA[id]&&k.muda);}
+function toolOf(id){if(!id||typeof id!=='string')return null;const o=(state.tools||{})[id]||null,b=TOOL_BASE.find(x=>x[0]===id);
+  if(b)return {id,ic:(o&&o.ic)||b[1],lb:(o&&o.lb)||b[2],off:!!(o&&o.off),own:false};
+  if(!o||!o.lb)return null;return {id,ic:o.ic||'📌',lb:String(o.lb),off:!!o.off,own:true};}
+function toolOwnIds(){const ts=state.tools||{};return Object.keys(ts).filter(id=>!TOOL_BASE.some(b=>b[0]===id)&&ts[id]&&ts[id].lb).sort();}
+function toolList(){return TOOL_BASE.map(b=>toolOf(b[0])).concat(toolOwnIds().map(toolOf)).filter(t=>t&&!t.off);}
+function kindSet(id,patch){mutate(()=>{state.kinds=state.kinds||{};state.kinds[id]=Object.assign({},state.kinds[id]||{},patch,{ts:Date.now()});});}
+/* c1.1 都道府県（🗾）。記録の pf＝JIS コード 1〜47（移動＝行き先、それ以外＝居る県）。エリア色は種類と被らない色 */
+const AREAS=[['hok','北海道','#3b82f6'],['toh','東北','#0ea5e9'],['kan','関東','#a855f7'],['chu','中部','#f59e0b'],['kin','近畿','#ec4899'],['chg','中国','#84cc16'],['shi','四国','#14b8a6'],['kyu','九州・沖縄','#fb7185']];
+const PREFS=[[1,'北海道','hok','北海道'],[2,'青森県','toh','青森'],[3,'岩手県','toh','岩手'],[4,'宮城県','toh','宮城'],[5,'秋田県','toh','秋田'],[6,'山形県','toh','山形'],[7,'福島県','toh','福島'],[8,'茨城県','kan','茨城'],[9,'栃木県','kan','栃木'],[10,'群馬県','kan','群馬'],[11,'埼玉県','kan','埼玉'],[12,'千葉県','kan','千葉'],[13,'東京都','kan','東京'],[14,'神奈川県','kan','神奈川'],[15,'新潟県','chu','新潟'],[16,'富山県','chu','富山'],[17,'石川県','chu','石川'],[18,'福井県','chu','福井'],[19,'山梨県','chu','山梨'],[20,'長野県','chu','長野'],[21,'岐阜県','chu','岐阜'],[22,'静岡県','chu','静岡'],[23,'愛知県','chu','愛知'],[24,'三重県','kin','三重'],[25,'滋賀県','kin','滋賀'],[26,'京都府','kin','京都'],[27,'大阪府','kin','大阪'],[28,'兵庫県','kin','兵庫'],[29,'奈良県','kin','奈良'],[30,'和歌山県','kin','和歌山'],[31,'鳥取県','chg','鳥取'],[32,'島根県','chg','島根'],[33,'岡山県','chg','岡山'],[34,'広島県','chg','広島'],[35,'山口県','chg','山口'],[36,'徳島県','shi','徳島'],[37,'香川県','shi','香川'],[38,'愛媛県','shi','愛媛'],[39,'高知県','shi','高知'],[40,'福岡県','kyu','福岡'],[41,'佐賀県','kyu','佐賀'],[42,'長崎県','kyu','長崎'],[43,'熊本県','kyu','熊本'],[44,'大分県','kyu','大分'],[45,'宮崎県','kyu','宮崎'],[46,'鹿児島県','kyu','鹿児島'],[47,'沖縄県','kyu','沖縄']];
+/* 日本のかたちに並べたエリアタイルの位置（%） */
+const AREA_MAP={hok:'left:71%;top:0;width:28%;height:22%',toh:'left:71%;top:25%;width:28%;height:22%',kan:'left:71%;top:50%;width:28%;height:22%',chu:'left:45%;top:36%;width:24%;height:26%',kin:'left:26%;top:50%;width:17%;height:24%',chg:'left:2%;top:40%;width:22%;height:20%',shi:'left:6%;top:64%;width:18%;height:16%',kyu:'left:0;top:83%;width:24%;height:17%'};
+function areaOf(id){const a=AREAS.find(x=>x[0]===id);return a?{id:a[0],name:a[1],co:a[2]}:null;}
+function prefOf(code){const c=Number(code),p=(c>=1&&c<=47)?PREFS[c-1]:null;if(!p||p[0]!==c)return null;const a=areaOf(p[2]);
+  return {code:c,name:p[1],area:p[2],short:p[3],co:a?a.co:'#9aa3b5'};}
+function pfTag(en){const p=en&&prefOf(en.pf);return p?'<span class="pftag" style="background:'+p.co+'" title="'+esc(p.name)+'">'+esc(p.short)+'</span>':'';}
+/* 新規の記録の初期値＝時系列で直前の記録の pf（同じ日の開始が sm 以前で一番遅い物→無ければ前の日へ最大30日）。lastPref は持たない */
+function pfAuto(date,sm){
+  const pick=(d,lim)=>{const eo=state.entries[d]||{};let bm='',bv=0;
+    for(const k in eo){const en=eo[k];if(!en||en.del||!prefOf(en.pf))continue;
+      const s=en.s||((/^[0-9]+$/.test(k)?pad(Number(k)):'12')+':00');
+      if(lim&&s>lim)continue;if(s>=bm){bm=s;bv=Number(en.pf);}}
+    return bv;};
+  let v=pick(date,sm);if(v)return v;
+  for(let i=1;i<=30;i++){v=pick(addDays(date,-i),'');if(v)return v;}
+  return 0;}
+/* 「最近」＝直近60日の記録の pf を新しい順に重複なしで n 個 */
+function pfRecent(n){const out=[],td=todayStr(),lo=addDays(td,-60);
+  const ds=Object.keys(state.entries||{}).filter(d=>d>=lo&&d<=td).sort().reverse();
+  for(const d of ds){const eo=state.entries[d]||{},a=[];
+    for(const k in eo){const en=eo[k];if(en&&!en.del&&prefOf(en.pf))a.push([en.s||'',Number(en.pf)]);}
+    a.sort((x,y)=>x[0]<y[0]?1:x[0]>y[0]?-1:0);
+    for(const x of a){if(out.indexOf(x[1])<0){out.push(x[1]);if(out.length>=n)return out;}}}
+  return out;}
+function toolSet(id,patch){mutate(()=>{state.tools=state.tools||{};state.tools[id]=Object.assign({},state.tools[id]||{},patch,{ts:Date.now()});});}
 /* 1行ずつ書いた行を、時刻の早い順に並べる。時刻の無い行は、すぐ上の時刻のある行にくっついたまま動く（書いた順の流れを崩さない）。
    記録の開始より前の時刻（23時に始めた記録の0:30など）は、日をまたいだ分として後ろに回す */
 function actsSort(a,base){
@@ -2465,14 +2617,16 @@ function actsSort(a,base){
     .sort((p,q)=>p.key<q.key?-1:p.key>q.key?1:p.i-q.i).map(o=>o.x);
 }
 function actsHtml(en){
-  if(en&&en.mv)return '';   /* 移動の記録では出さない（行は隠れているだけ。種類を戻せば出る） */
+  /* 移動の記録でも出す（c1.1：移動中にしたこと） */
   const a=actsSort(Array.isArray(en&&en.acts)?en.acts.filter(x=>x&&x.t):[],actsBase(en));
   if(!a.length)return '';
   const stay=(en.e&&!en.noT)?durMin(en.s,en.e,en.ed):0;
   const sum=a.reduce((s,x)=>s+(Number(x.m)||0),0);
   let h='<span class="acts">'+a.map(x=>{const m=Number(x.m)||0;
-    const kk=ACT_K[x.k];
-    return '<span class="act'+(m?' tm':'')+(x.k?' k-'+x.k:'')+'">'+(kk?'<i class="a-k">'+kk[0]+'</i>':'<i class="a-d"></i>')+'<span class="a-t">'+(kk?'<em class="a-kl">'+kk[1]+'</em>':'')+esc(x.t)+((x.s&&x.e)?'<span class="a-r">'+esc(x.s)+' – '+esc(x.e)+'</span>':'')+'</span>'+
+    /* 知らない種類・道具は ❓＋id の先頭4文字（捨てない） */
+    const kk=x.k?(kindOf(x.k)||{ic:'❓',lb:String(x.k).slice(0,4),co:'#9aa3b5'}):null,dv=x.d?(toolOf(x.d)||{ic:'❓',lb:String(x.d).slice(0,4)}):null;
+    const kst=(kk&&x.k!=='ai'&&x.k!=='work')?' style="background:'+esc(kk.co)+';color:#fff"':'';   /* AI・仕事は既存の色（CSS） */
+    return '<span class="act'+(m?' tm':'')+((x.k&&/^[a-z0-9_]+$/i.test(x.k))?' k-'+x.k:'')+'">'+(kk?'<i class="a-k">'+esc(kk.ic)+'</i>':'<i class="a-d"></i>')+'<span class="a-t">'+(kk?'<em class="a-kl"'+kst+'>'+esc(kk.lb)+'</em>':'')+(dv?'<i class="a-dv" title="'+esc(dv.lb)+'">'+esc(dv.ic)+'</i>':'')+((kk&&String(x.t).trim()===kk.lb)?'':esc(x.t))+((x.s&&x.e)?'<span class="a-r">'+esc(x.s)+' – '+esc(x.e)+'</span>':'')+'</span>'+
       (m?'<span class="a-m">'+esc(durText(m))+'</span>':'')+(x.c?'<span class="a-c">'+txtHtml(x.c)+'</span>':'')+'</span>';}).join('');
   /* 「そのほか」は、全部の行に時間がある時だけ（時間の無い行があると、残りの時間が正しく出せないため） */
   if(stay&&sum&&stay>sum&&a.every(x=>Number(x.m)))h+='<span class="act rest"><i class="a-d"></i><span class="a-t">そのほか</span><span class="a-m">'+esc(durText(stay-sum))+'</span></span>';
@@ -2555,7 +2709,7 @@ function renderTimeline(pane){
         const dm=(en.e&&!en.noT)?durMin(en.s,en.e,en.ed):0;
         const pill=dm?'<span class="dpill">⏱ '+esc(durText(dm))+'</span>':'';
         html+='<button class="hour filled" data-k="'+esc(it.k)+'"><span class="hh">'+(en.noT?'<b style="color:#c3c8d4">—</b>':('<b>'+esc(en.s||(pad(h)+':00'))+'</b>'+(en.e?'<small>'+(en.ed?(en.ed===1?'翌':'+'+en.ed+'日'):'')+esc(en.e)+'</small>':'')))+'</span><div class="body">'+
-          (en.mv?'<span class="loc big" style="color:#4d7dff">'+(TRICON[en.tr]||'🚗')+' '+esc(en.rt||'移動')+'</span>'
+          pfTag(en)+(en.mv?'<span class="loc big" style="color:#4d7dff">'+(TRICON[en.tr]||'🚗')+' '+esc(en.rt||'移動')+'</span>'
                 :en.k==='rest'?'<span class="loc big" style="color:#c98a2f">☕ 休憩'+(en.p?'　📍'+esc(en.p):'')+'</span>'
                 :en.k==='work'?'<span class="loc big" style="color:#1e3a8a">💼 仕事'+(en.p?'　📍'+esc(en.p):'')+'</span>'
                 :en.k==='ai'?'<span class="loc big" style="color:#7a6ef3">🤖 AI'+(en.p?'　📍'+esc(en.p):'')+'</span>'
@@ -2933,7 +3087,7 @@ function openSyncSheet(){
     row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして、いつものURLから開くと繋がる')+
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c0.9）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c1.1）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -3071,7 +3225,7 @@ function openEntrySheet(date,ref){
   const ex=(e0&&!e0.del)?e0:null;
   const hour=ex?(ex.s?Number(ex.s.slice(0,2)):(/^\d+$/.test(key)?Number(key):12))
               :((ref&&ref.hour!=null)?ref.hour:new Date().getHours());
-  sheetSt={kind:'entry',date,key,hour,existing:!!ex,ph:(ex&&ex.ph?ex.ph.slice():[])};
+  sheetSt={kind:'entry',date,key,hour,existing:!!ex,ph:(ex&&ex.ph?ex.ph.slice():[]),pf:(ex&&ex.pf)||0,pfAuto:false};
   /* 開始・終了（10分きざみ）。いまの時間帯を新規で開いたら現在時刻に丸める */
   const nowD=new Date();
   let defS=pad(hour)+':00';
@@ -3108,12 +3262,13 @@ function openEntrySheet(date,ref){
       '<button class="chip" id="mvArrow" style="flex-shrink:0;font-weight:800;font-size:15px">→</button></div>'+
       '<div class="sh-label" style="margin-top:8px">移動手段（1タップ）</div><div class="sh-chips" id="trChips">'+
       TRS.map(x=>'<button class="chip" data-tr="'+x[0]+'">'+x[1]+'</button>').join('')+'</div></div>'+
+    '<div class="pfrow" id="secPf"><button class="pfchip" id="pfChip">🗾 都道府県</button></div>'+   /* 都道府県（c1.1・記録の種類に関係なく1か所） */
     /* ここでやったこと：その場所で「何を・どれくらいの時間」やったかを、1行ずつ足せる（本人指示 2026-10-01）。
        使わなければ何も増えない（ボタン1個だけ）。時間は選んだ時だけ入る */
     /* 内容の書き方を切り替える：✎自由に書く（今までの欄）／☰1行ずつ書く（ToDoリストのように）。出すのは片方だけ。
        隠れている側に書いた物も消さずに保存する（中身がある側には緑の点を出す） */
     '<div id="secMode"><div class="sh-label">✎ 内容</div><div class="cmode" id="cMode"><button data-cm="list">☰ 1行ずつ書く<i></i></button><button data-cm="free">✎ 自由に書く<i></i></button></div></div>'+
-    '<div id="secActs"><div class="sh-note" style="text-align:left;margin:0 0 2px">Enterで次の行。時間は入れても入れなくてもいい（入れると、かかった時間が出る）</div>'+
+    '<div id="secActs"><div class="sh-note" id="acNote" style="text-align:left;margin:0 0 2px">Enterで次の行。時間は入れても入れなくてもいい（入れると、かかった時間が出る）</div>'+
       '<div id="acRows"></div><div class="sh-chips" id="acChips" style="margin-top:6px"></div>'+
       '<div id="acSum" style="font-size:11.5px;color:#8a90a0;font-weight:700;margin-top:5px;display:none"></div></div>'+
     '<div id="secFree"><div class="sh-ta-wrap"><textarea id="shTa" placeholder="'+(SR?'話すか、書く':'ここに書く（キーボードのマイクで音声入力もできる）')+'"></textarea>'+
@@ -3127,6 +3282,7 @@ function openEntrySheet(date,ref){
   /* 滞在／移動／休憩／睡眠の切り替え */
   let eType=(ex&&ex.mv)?'move':(ex&&ex.k==='work')?'work':((ex&&ex.k==='rest')?'rest':((ex&&ex.k==='sleep')?'sleep':((ex&&ex.k==='meal')?'meal':((ex&&ex.k==='ai')?'ai':'stay'))));
   let trSel=(ex&&ex.tr)||null;
+  if(!ex){sheetSt.pf=pfAuto(date,tS);sheetSt.pfAuto=!!sheetSt.pf;}   /* 新規の都道府県＝直前の記録から（自動＝点線） */
   $('mvRt').value=(ex&&(ex.rt||''))||'';
   if(!ex){
     /* 新規なら「どこから→」を直前の記録の場所から先回りで入れておく */
@@ -3148,15 +3304,22 @@ function openEntrySheet(date,ref){
     try{i.setSelectionRange(i.value.length,i.value.length);}catch(e){}
   };
   let cPaint=()=>{};   /* 内容の書き方の切り替え（下で中身を入れる） */
+  let acCh=()=>{};   /* 「＋ 行を足す」と移動の1タップチップ（下で中身を入れる） */
   const mty=()=>{
     $('eType').querySelectorAll('button').forEach(b=>b.classList.toggle('sel',b.dataset.ty===eType));
     $('secStay').style.display=(eType==='move')?'none':'';
     $('secMove').style.display=(eType==='move')?'':'none';
-    cPaint();   /* 移動の記録では、1行ずつの欄と切り替えを出さない */
+    cPaint();acCh();pfPaint();   /* 移動でも1行ずつ書ける（c1.1：移動中にしたこと） */
+    {const an=$('acNote');if(an)an.textContent=(eType==='move')?'移動中にしたこと（1行ずつ）。押すだけで移動中ずっとに数える。時間を入れるとその分だけになる':'Enterで次の行。時間は入れても入れなくてもいい（入れると、かかった時間が出る）';}
     const tl=$('tLab');if(tl)tl.textContent=(eType==='sleep')?'🌙 就寝 → ☀ 起床（タップして選ぶ）':'🕐 時間（タップして選ぶ）';
   };
-  const mtr=()=>{$('trChips').querySelectorAll('button').forEach(b=>b.classList.toggle('sel',b.dataset.tr===trSel));};
+  const mtr=()=>{$('trChips').querySelectorAll('button').forEach(b=>b.classList.toggle('sel',b.dataset.tr===trSel));acCh();};
   mty();mtr();
+  /* 都道府県のチップ（記録の種類に関係なく1か所）。自動で入った値は点線、選び直すと実線 */
+  function pfPaint(){const b=$('pfChip');if(!b||!sheetSt)return;const p=prefOf(sheetSt.pf);
+    b.textContent='🗾 '+(eType==='move'?'行き先：':'')+(p?p.short:'都道府県');
+    b.style.background=p?p.co:'';b.classList.toggle('on',!!p);b.classList.toggle('auto',!!(p&&sheetSt.pfAuto));}
+  $('pfChip').onclick=()=>{if(!sheetSt)return;openPrefPicker(sheetSt.pf,c=>{sheetSt.pf=c;sheetSt.pfAuto=false;pfPaint();});};
   $('eType').querySelectorAll('button').forEach(b=>b.onclick=()=>{eType=b.dataset.ty;mty();});
   $('trChips').querySelectorAll('button').forEach(b=>b.onclick=()=>{trSel=(trSel===b.dataset.tr)?null:b.dataset.tr;mtr();});
   /* 時刻：ネイティブの時刻ピッカー（コンパクト・端末純正のUI）＋日またぎ */
@@ -3183,30 +3346,42 @@ function openEntrySheet(date,ref){
   /* ここでやったこと（何を・どれくらい）。acts＝[{t:何を,m:分}]。時間は選んだ時だけ入る（0＝未選択） */
   const okT=v=>/^\d{2}:\d{2}$/.test(String(v||''));
   let acts=(ex&&Array.isArray(ex.acts))?ex.acts.filter(a=>a&&a.t).map(a=>({t:String(a.t),m:Number(a.m)||0,s:okT(a.s)?a.s:'',e:okT(a.e)?a.e:'',c:String(a.c||'')})):[];
-  if(ex&&Array.isArray(ex.acts)){const src=ex.acts.filter(a=>a&&a.t);acts.forEach((a,i)=>{if(src[i]&&ACT_K[src[i].k])a.k=src[i].k;});}
+  if(ex&&Array.isArray(ex.acts)){const src=ex.acts.filter(a=>a&&a.t);acts.forEach((a,i)=>{const o=src[i];if(!o)return;if(o.k&&typeof o.k==='string')a.k=o.k;if(o.d&&typeof o.d==='string')a.d=o.d;});}   /* k（種類）／d（道具）は文字列ならそのまま（知らない id も捨てない） */
   if(!acts.length)acts=[{t:'',m:0,s:'',e:''}];   /* いつも1行は空で出しておく＝押さずにすぐ書ける（空の行は保存されない） */
   /* 各行＝何を(t)・何時から(s)・何時まで(e)。かかった時間(m・分)は s と e から出す（終わりが始まりより前なら翌日扱い）。
      時刻を入れていない行は時間なし。前の版で「30分」などと選んであった行は、時刻を入れるまでその時間(m0)を保つ */
   const acRead=()=>{acts=[...$('acRows').querySelectorAll('.actrow')].map(r=>{
     const s=r.querySelector('.ac-s').value||'',e=r.querySelector('.ac-e').value||'';
-    const o={t:r.querySelector('.ac-t').value,s,e,m:(s&&e)?durMin(s,e,0):(Number(r.dataset.m0)||0),c:(r.querySelector('.ac-c')||{}).value||''};if(ACT_K[r.dataset.k])o.k=r.dataset.k;return o;});};
+    const o={t:r.querySelector('.ac-t').value,s,e,m:(s&&e)?durMin(s,e,0):(Number(r.dataset.m0)||0),c:(r.querySelector('.ac-c')||{}).value||''};if(r.dataset.k)o.k=r.dataset.k;if(r.dataset.d)o.d=r.dataset.d;return o;});};
   const acSum=()=>{const el=$('acSum');if(!el)return;
     const sum=acts.reduce((s,a)=>s+(Number(a.m)||0),0);
     if(!sum){el.style.display='none';return;}
     const wrap=(tE<=tS&&tEd===0),stay=(ex&&ex.noT&&!timeTouched&&eType!=='sleep')?0:durMin(tS,tE,wrap?1:tEd);   /* 時刻なしの旧日記は、触るまで居た時間を出さない */
     el.style.display='';el.style.color=(stay&&sum>stay)?'#e0405a':'#8a90a0';
     el.textContent='やったことの合計 '+durText(sum)+(stay?('　／　ここに居た '+durText(stay)+(sum>stay?'（合計の方が長い）':(stay>sum?'（残り '+durText(stay-sum)+'）':''))):'');};
+  /* 種類の帯＝kindList 全部。隠した・知らない種類が付いた行は、その1個を先頭に出して選んだ印を見せる */
+  const acKBtns=k=>{const ls=kindList();if(k&&!ls.some(x=>x.id===k))ls.unshift(kindOf(k)||{id:k,ic:'❓',lb:String(k).slice(0,4),co:'#9aa3b5'});
+    return ls.map(x=>'<button data-ak="'+esc(x.id)+'" style="--kc:'+esc(x.co)+'"'+(k===x.id?' class="sel"':'')+'>'+esc(x.ic)+'<span>'+esc(x.lb)+'</span></button>').join('');};
+  /* 道具の帯＝絵だけの小さいチップ（選ぶと名前が出る） */
+  const acDBtns=d=>{const ls=toolList();if(d&&!ls.some(x=>x.id===d))ls.unshift(toolOf(d)||{id:d,ic:'❓',lb:String(d).slice(0,4)});
+    return ls.map(x=>'<button data-ad="'+esc(x.id)+'" title="'+esc(x.lb)+'"'+(d===x.id?' class="sel"':'')+'>'+esc(x.ic)+'<span>'+esc(x.lb)+'</span></button>').join('');};
+  /* 帯の右端の薄い影（続きがある印）と、選んだチップが帯の外にはみ出している時だけ scrollLeft を直接動かす */
+  const acKEnd=st=>st.classList.toggle('end',st.scrollLeft+st.clientWidth>=st.scrollWidth-2);
+  const acKVis=r=>{const st=r.querySelector('.ac-k');if(!st||!st.clientWidth)return;const b=st.querySelector('.sel');
+    if(b){const br=b.getBoundingClientRect(),sr=st.getBoundingClientRect();if(br.left<sr.left)st.scrollLeft+=br.left-sr.left-8;else if(br.right>sr.right-24)st.scrollLeft+=br.right-sr.right+32;}
+    acKEnd(st);};
   const acPaint=focusLast=>{
+    const kSl=[...$('acRows').querySelectorAll('.ac-k')].map(x=>x.scrollLeft);   /* 描き直しで帯が先頭に戻らないように控える */
     $('acRows').innerHTML=acts.map(a=>{
-      return '<div class="actrow" data-m0="'+((a.s&&a.e)?0:(Number(a.m)||0))+'" data-k="'+esc(a.k||'')+'">'+
+      return '<div class="actrow" data-m0="'+((a.s&&a.e)?0:(Number(a.m)||0))+'" data-k="'+esc(a.k||'')+'" data-d="'+esc(a.d||'')+'">'+
         '<div class="ac-l1"><input type="text" class="ac-t" maxlength="40" placeholder="1行ずつ書く" enterkeyhint="next" value="'+esc(a.t)+'">'+
           '</div>'+
         '<div class="ac-side"><button class="ac-x" aria-label="この行を消す">✕</button><button class="ac-cb'+(a.c?' on':'')+'" aria-label="詳細を書く">📝<span>詳細</span></button></div>'+
         '<div class="ac-l2"><input type="time" class="ac-s" step="300" lang="ja-JP" aria-label="何時から" value="'+esc(a.s||'')+'"><span class="ac-ar">→</span>'+
           '<input type="time" class="ac-e" step="300" lang="ja-JP" aria-label="何時まで" value="'+esc(a.e||'')+'">'+
           '<span class="ac-d">'+(a.m?('⏱ '+esc(durText(a.m))):'')+'</span></div>'+
-        '<div class="ac-k">'+Object.keys(ACT_K).map(k=>'<button data-ak="'+k+'"'+(a.k===k?' class="sel"':'')+'>'+ACT_K[k][0]+'<span>'+ACT_K[k][1]+'</span></button>').join('')+
-          '</div>'+
+        '<div class="ac-kw"><div class="ac-k">'+acKBtns(a.k)+'</div><button class="ac-add" data-ak-add="1" aria-label="種類を足す・直す">＋</button></div>'+
+        '<div class="ac-dv">'+acDBtns(a.d)+'<button class="ac-add" data-ad-add="1" aria-label="道具を足す・直す">＋</button></div>'+
         '<textarea class="ac-c" rows="2" maxlength="1000" placeholder="詳細（自由に書く）"'+(a.c?'':' style="display:none"')+'>'+esc(a.c||'')+'</textarea></div>';}).join('');
     [...$('acRows').querySelectorAll('.actrow')].forEach((r,i)=>{
       r.querySelector('.ac-x').onclick=()=>{acRead();acts.splice(i,1);acPaint();};
@@ -3215,6 +3390,13 @@ function openEntrySheet(date,ref){
       /* 種類：押すと付く、もう一度押すと外れる（付けなくてもいい） */
       r.querySelectorAll('[data-ak]').forEach(b=>b.onclick=()=>{const k=b.dataset.ak;r.dataset.k=(r.dataset.k===k)?'':k;
         r.querySelectorAll('[data-ak]').forEach(x=>x.classList.toggle('sel',x.dataset.ak===r.dataset.k));});
+      /* 道具：押すと付く、もう一度で外れる（1つだけ） */
+      r.querySelectorAll('[data-ad]').forEach(b=>b.onclick=()=>{const d=b.dataset.ad;r.dataset.d=(r.dataset.d===d)?'':d;
+        r.querySelectorAll('[data-ad]').forEach(x=>x.classList.toggle('sel',x.dataset.ad===r.dataset.d));});
+      /* ＋：種類・道具を足す／直すシート（#ovl2）。閉じたら描き直す。足した物は、この行が空なら付ける */
+      r.querySelector('[data-ak-add]').onclick=()=>{acRead();openKindSheet('kind',nid=>{if(!sheetSt)return;if(nid&&acts[i]&&!acts[i].k)acts[i].k=nid;acPaint();});};
+      r.querySelector('[data-ad-add]').onclick=()=>{acRead();openKindSheet('tool',nid=>{if(!sheetSt)return;if(nid&&acts[i]&&!acts[i].d)acts[i].d=nid;acPaint();});};
+      {const st=r.querySelector('.ac-k');st.onscroll=()=>acKEnd(st);}
       /* 時刻を選んだら、その行のかかった時間と合計だけ書き直す（行を作り直さない＝入力中の文字や選択が消えない） */
       const emp=()=>{['.ac-s','.ac-e'].forEach(q=>{const el=r.querySelector(q);el.classList.toggle('emp',!el.value);});};emp();
       const upd=()=>{acRead();const a=acts[i];r.querySelector('.ac-d').textContent=(a&&a.m)?('⏱ '+durText(a.m)):'';emp();acSum();};
@@ -3223,20 +3405,30 @@ function openEntrySheet(date,ref){
       r.querySelector('.ac-t').onkeydown=ev=>{if(ev.key!=='Enter'||ev.isComposing||ev.keyCode===229)return;
         ev.preventDefault();acRead();if(!acts[i]||!acts[i].t.trim())return;acts.splice(i+1,0,{t:'',m:0,s:'',e:''});acPaint(i+1);};
     });
-    /* 入力した内容をタグボタンにして並べるのは、やめた（本人指示 2026-10-02）。出すのは「＋ 行を足す」だけ */
-    $('acChips').innerHTML='<button class="chip" id="acAdd" style="background:#eefaf3;color:#0a9a54">＋ 行を足す</button>';
-    $('acAdd').onclick=()=>{acRead();acts.push({t:'',m:0,s:'',e:''});acPaint(true);};
+    /* 入力した内容をタグボタンにして並べるのは、やめた（本人指示 2026-10-02）。出すのは「＋ 行を足す」（移動の時は1タップチップも） */
+    acCh();
     acSum();
+    requestAnimationFrame(()=>{[...$('acRows').querySelectorAll('.actrow')].forEach((r,i)=>{if(!r.isConnected)return;const st=r.querySelector('.ac-k');if(kSl[i])st.scrollLeft=kSl[i];acKVis(r);});});
     if(focusLast===true||typeof focusLast==='number'){const ins=$('acRows').querySelectorAll('.ac-t');
       const tg=(typeof focusLast==='number')?ins[focusLast]:ins[ins.length-1];if(tg){try{tg.focus();}catch(e){}}}
   };
+  /* 移動の時だけ、1タップで行を足すチップ（運転・徒歩・未選択＝耳と口でできる事／乗客＝手も使える事）。押すだけで「移動中ずっと」に数える */
+  acCh=()=>{const el=$('acChips');if(!el)return;
+    const q=(eType!=='move')?[]:((!trSel||trSel==='car'||trSel==='carrier'||trSel==='walk')?['audio','call','think']:['ai','work','read','doc','audio']);
+    el.innerHTML=q.map(id=>{const k=kindOf(id);return (k&&!k.off)?'<button class="chip ac-q" data-aq="'+id+'" style="--kc:'+k.co+'">'+esc(k.ic)+' '+esc(k.lb)+'</button>':'';}).join('')+
+      '<button class="chip" id="acAdd" style="background:#eefaf3;color:#0a9a54">＋ 行を足す</button>';
+    el.querySelectorAll('[data-aq]').forEach(b=>b.onclick=()=>{acRead();const k=kindOf(b.dataset.aq);if(!k)return;
+      const row={t:k.lb,k:k.id,m:0,s:'',e:''},last=acts[acts.length-1];
+      if(last&&!last.t.trim()&&!last.s&&!last.e&&!last.k&&!last.d&&!(last.c&&last.c.trim()))acts[acts.length-1]=row;else acts.push(row);   /* 空の行があればそこに入れる */
+      acPaint();});
+    $('acAdd').onclick=()=>{acRead();acts.push({t:'',m:0,s:'',e:''});acPaint(true);};};
   acPaint();
   /* 最初に出す側：中身がある方。両方ある・両方無い時は、前に使っていた方（端末に覚える） */
   let cMode=(()=>{const hasT=!!(ex&&ex.t),hasA=!!(ex&&Array.isArray(ex.acts)&&ex.acts.some(a=>a&&a.t));
     /* メインは「1行ずつ書く」。自由に書いた本文だけがある記録を開いた時だけ「自由に書く」で開く */
     if(hasT&&!hasA)return 'free';return 'list';})();
-  cPaint=()=>{const mv=(eType==='move'),m=mv?'free':cMode;
-    $('secMode').style.display=mv?'none':'';
+  cPaint=()=>{const m=cMode;   /* 移動でも切り替えと1行ずつを出す（c1.1） */
+    $('secMode').style.display='';
     $('secActs').style.display=(m==='list')?'':'none';$('secFree').style.display=(m==='free')?'':'none';
     $('cMode').querySelectorAll('button').forEach(b=>{const me=b.dataset.cm;b.classList.toggle('sel',me===m);
       const has=(me==='free')?!!$('shTa').value.trim():[...$('acRows').querySelectorAll('.ac-t')].some(i=>i.value.trim());
@@ -3248,7 +3440,7 @@ function openEntrySheet(date,ref){
   /* 書きかけの退避（読み直し・電池切れ）でも、やったことが消えないように、文字にして渡す */
   sheetSt.actsText=()=>{acRead();return acts.filter(a=>a.t.trim()).map(a=>a.t.trim()+(a.m?' '+durText(a.m):'')+(a.c&&a.c.trim()?'（'+a.c.trim()+'）':'')).join('／');};
   /* 開いた時の中身を控える（外を押した時に、書きかけがあるかを比べる）。チップで入れた場所・行の種類・写真も拾う */
-  {const snapE=()=>{acRead();return JSON.stringify([$('shTa').value.trim(),$('shPlace').value.trim(),$('mvRt').value.trim(),acts.filter(a=>a.t.trim()||a.s||a.e||a.c).map(a=>[a.t.trim(),a.s,a.e,a.k||'',(a.c||'').trim()]),sheetSt.ph.length,eType]);};
+  {const snapE=()=>{acRead();return JSON.stringify([$('shTa').value.trim(),$('shPlace').value.trim(),$('mvRt').value.trim(),acts.filter(a=>a.t.trim()||a.s||a.e||a.c||a.k||a.d).map(a=>[a.t.trim(),a.s,a.e,a.k||'',a.d||'',(a.c||'').trim()]),sheetSt.ph.length,eType,sheetSt.pf||0]);};
     let d0='';try{d0=snapE();}catch(e){}
     sheetSt.isDirty=()=>{try{return snapE()!==d0;}catch(e){return false;}};}
   /* 場所チップは入力欄に入れるだけ（自由に書き換えOK） */
@@ -3289,12 +3481,13 @@ function openEntrySheet(date,ref){
     const isMv=eType==='move';
     /* やったこと：名前のある行だけ残す。時間だけ選んで名前が空の行は、消さずに知らせる */
     acRead();
-    {const bad=isMv?-1:acts.findIndex(a=>!a.t.trim()&&(a.m||a.s||a.e||(a.c&&a.c.trim())));
+    acts.forEach(a=>{if(!a.t.trim()&&(a.k||a.d)){const z=kindOf(a.k)||toolOf(a.d);if(z)a.t=z.lb;}});   /* 題名が空で種類・道具だけ選んだ行は、その名前を題名に（1タップの行と同じ） */
+    {const bad=acts.findIndex(a=>!a.t.trim()&&(a.m||a.s||a.e||a.k||a.d||(a.c&&a.c.trim())));
       if(bad>=0){cMode='list';cPaint();   /* 「自由に書く」側を見ていると、その行が隠れていて直せない→1行ずつの欄へ戻して、その行に合わせる */
         try{$('acRows').querySelectorAll('.ac-t')[bad].focus();}catch(e){}
         toast('時間だけ選んで、文字が空の行がある。書くか ✕ で消してくれ');return;}}
     /* 種類を「移動」に変えても、書いてあった行は捨てない（隠れているだけ。2026-10-03レビュー指摘）。並べ替えは、時刻が決まった後（下）でやる */
-    const actsS=acts.map(a=>{const o={t:a.t.trim(),m:Number(a.m)||0};if(a.s)o.s=a.s;if(a.e)o.e=a.e;if(a.k)o.k=a.k;if(a.c&&a.c.trim())o.c=a.c.trim();return o;}).filter(a=>a.t);
+    const actsS=acts.map(a=>{const o={t:a.t.trim(),m:Number(a.m)||0};if(a.s)o.s=a.s;if(a.e)o.e=a.e;if(a.k)o.k=a.k;if(a.d)o.d=a.d;if(a.c&&a.c.trim())o.c=a.c.trim();return o;}).filter(a=>a.t);
     if(isMv){if(!rt&&!t&&!sheetSt.ph.length){toast('どこから→どこまでを入れてくれ');return;}}
     else if(eType==='stay'){if(!t&&!p&&!sheetSt.ph.length&&!actsS.length){toast('場所・内容・写真、どれかは入れてくれ');return;}}
     /* 休憩・睡眠は時間だけで1件成立（何も書かなくてOK） */
@@ -3305,7 +3498,7 @@ function openEntrySheet(date,ref){
     const saveKey=(sheetSt.key!=null)?sheetSt.key:('e'+Date.now()+Math.floor(Math.random()*1e4));
     const prev=(state.entries[d0]||{})[saveKey];
     const prevPh=(prev&&!prev.del&&prev.ph)?prev.ph:[];
-    const phList=sheetSt.ph.slice();
+    const phList=sheetSt.ph.slice(),pfS=sheetSt.pf||0;
     mutate(()=>{
       phList.forEach(phKeep);
       state.entries[d0]=state.entries[d0]||{};
@@ -3321,6 +3514,7 @@ function openEntrySheet(date,ref){
       if(eType==='meal')ne.k='meal';
       if(eType==='ai')ne.k='ai';
       if(eType==='work')ne.k='work';
+      if(pfS)ne.pf=pfS;   /* 都道府県（［なし］にした時は付けない） */
       if(actsS.length)ne.acts=actsSort(actsS,actsBase(ne));   /* 時刻の早い順に並べて保存 */
       state.entries[d0][saveKey]=ne;
     });
@@ -3491,7 +3685,76 @@ function openSettings(){
 let sheetDirty=false,ovlArm=0;   /* sheetDirty＝開いているシートで本人が何か入力した／ovlArm＝外を1回押した時刻 */
 function openOvl(){$('ovl').classList.add('open');sheetDirty=false;ovlArm=0;try{sleepBarTick();}catch(e){}}
 let planAutoSave=null;
+/* ===== 第2のシート（#ovl2）：記録シートの上に重ねる。閉じても記録シートは残る（c1.1） ===== */
+let subOnClose=null;
+function openSub(html,onClose){$('sheet2').innerHTML='<div class="grab"></div>'+html;if(onClose!==undefined)subOnClose=onClose;$('ovl2').classList.add('open');}
+function closeSub(){const o=$('ovl2');if(!o||!o.classList.contains('open'))return;o.classList.remove('open');$('sheet2').innerHTML='';
+  const f=subOnClose;subOnClose=null;if(f){try{f();}catch(e){}}}
+/* 「＋」シート：種類（which='kind'）／道具（'tool'）を足す・ムダ印・隠す。押した時にその場で保存（1 id＝1行）。消さずに隠すだけ */
+function openKindSheet(which,onDone){
+  const isK=which!=='tool',BASE=isK?KIND_BASE:TOOL_BASE,of=isK?kindOf:toolOf,set=isK?kindSet:toolSet,own=isK?kindOwnIds:toolOwnIds,MAX=isK?KIND_MAX:TOOL_MAX;
+  let added='';
+  const row=x=>'<div class="ks-row'+(x.off?' off':'')+'" style="--kc:'+esc(x.co||'#c3c8d4')+'"><b>'+esc(x.ic)+'</b><span>'+esc(x.lb)+'</span>'+
+    ((isK&&!KIND_NOMUDA[x.id]&&!x.off)?'<button class="md'+(x.muda?' on':'')+'" data-km="'+esc(x.id)+'">🕳️ ムダ</button>':'')+
+    '<button data-kh="'+esc(x.id)+'">'+(x.off?'↩ 戻す':'🙈 隠す')+'</button></div>';
+  const paint=()=>{
+    const mine=own().map(of).filter(Boolean),base=BASE.map(b=>of(b[0]));
+    openSub('<div class="sh-label">'+(isK?'➕ 種類を足す（何をした）':'➕ 道具を足す（何を使って）')+'</div>'+
+      '<div class="ks-new"><input type="text" id="ksIc" class="ks-ic" maxlength="4" value="📌" aria-label="絵"><input type="text" id="ksLb" maxlength="12" placeholder="'+(isK?'名前（例：散歩）':'名前（例：ノート）')+'"><button class="ks-go" id="ksGo">足す</button></div>'+
+      (isK?'<div class="sh-note" style="text-align:left;margin:0">🕳️ ムダ印＝分析で「ムダ」に合計する種類（例：動画・SNS）。移動中に何もしていない時間もムダに数える</div>':'')+
+      '<div class="sh-label">✋ 自分で足した物</div><div class="ks-list">'+(mine.length?mine.map(row).join(''):'<div class="ks-none">まだ無い</div>')+'</div>'+
+      '<div class="sh-label">📦 最初からある物</div><div class="ks-list">'+base.map(row).join('')+'</div>'+
+      '<button class="ks-close" id="ksClose">閉じる</button>');
+    $('ksGo').onclick=()=>{if(!sheetSt)return;const lb=$('ksLb').value.trim(),ic=$('ksIc').value.trim()||'📌';
+      if(!lb){toast('名前を書いてくれ');try{$('ksLb').focus();}catch(e){}return;}
+      const same=base.concat(mine).find(x=>x&&x.lb===lb);
+      if(same){if(same.off){set(same.id,{off:0});added=same.id;toast('隠していた「'+lb+'」を戻した');}else toast('「'+lb+'」はもうある');paint();return;}
+      if(mine.length>=MAX){toast('自分で足せるのは'+MAX+'個まで（使わない物は 🙈 隠す）');return;}
+      const id='c'+Date.now().toString(36);set(id,{ic,lb});added=id;toast('✓ 「'+lb+'」を足した');paint();};
+    $('ksLb').onkeydown=ev=>{if(ev.key!=='Enter'||ev.isComposing||ev.keyCode===229)return;ev.preventDefault();$('ksGo').click();};
+    $('sheet2').querySelectorAll('[data-km]').forEach(b=>b.onclick=()=>{if(!sheetSt)return;const id=b.dataset.km;set(id,{muda:kindMuda(id)?0:1});paint();});
+    $('sheet2').querySelectorAll('[data-kh]').forEach(b=>b.onclick=()=>{if(!sheetSt)return;const x=of(b.dataset.kh);if(!x)return;set(x.id,{off:x.off?0:1});paint();});
+    $('ksClose').onclick=closeSub;
+  };
+  paint();subOnClose=()=>{if(onDone)onDone(added);};
+}
+/* 都道府県ピッカー（#ovl2）：段1＝最近＋日本のかたちのエリアタイル（1タップ）／段2＝選んだエリアだけのドラム（くるくる）。北海道は押した時点で確定 */
+function openPrefPicker(cur,onPick){
+  const DH=44,pc=prefOf(cur);
+  const done=c=>{subOnClose=null;closeSub();if(sheetSt&&onPick)onPick(c);};
+  const step1=()=>{
+    const rc=pfRecent(4).map(prefOf).filter(Boolean);
+    openSub('<div class="sh-label">🗾 都道府県（エリアを1回押す）</div>'+
+      (rc.length?'<div class="pf-rc"><span>🕘</span>'+rc.map(p=>'<button data-pc="'+p.code+'" style="--ac:'+p.co+'"'+(pc&&pc.code===p.code?' class="cur"':'')+'>'+esc(p.short)+'</button>').join('')+'</div>':'')+
+      '<div class="pf-map">'+AREAS.map(a=>'<button data-pa="'+a[0]+'" style="'+AREA_MAP[a[0]]+';--ac:'+a[2]+'"'+(pc&&pc.area===a[0]?' class="cur"':'')+'>'+esc(a[1])+'</button>').join('')+'</div>'+
+      '<div class="pf-btns"><button id="pfNone">なし</button><button id="pfClose">閉じる</button></div>',null);
+    $('sheet2').querySelectorAll('[data-pc]').forEach(b=>b.onclick=()=>done(Number(b.dataset.pc)));
+    $('sheet2').querySelectorAll('[data-pa]').forEach(b=>b.onclick=()=>{if(!sheetSt)return;if(b.dataset.pa==='hok')done(1);else step2(b.dataset.pa);});
+    $('pfNone').onclick=()=>done(0);$('pfClose').onclick=closeSub;
+  };
+  const step2=aid=>{
+    const a=areaOf(aid),ps=PREFS.filter(p=>p[2]===aid);if(!a||!ps.length)return;
+    const i0=Math.max(0,ps.findIndex(p=>pc&&p[0]===pc.code));
+    openSub('<div class="sh-label">🗾 '+esc(a.name)+'（くるくる回して選ぶ）</div>'+
+      '<div class="pf-dw" style="--ac:'+a.co+'"><i class="pf-band"></i><div class="pf-drum" id="pfDrum">'+ps.map((p,i)=>'<button data-di="'+i+'">'+esc(p[3])+'</button>').join('')+'</div></div>'+
+      '<div class="pf-btns"><button id="pfBack">← エリア</button><button id="pfNone">なし</button><button class="pf-ok" id="pfOk" style="background:'+a.co+'">これにする</button></div>',null);
+    const dr=$('pfDrum'),its=Array.from(dr.children);let raf=0;
+    /* 中央からの距離で 小さく・薄く・中央へ寄せる＝回る円筒に見せる */
+    const upd=()=>{raf=0;const c=dr.scrollTop/DH,ci=Math.round(c);
+      its.forEach((b,i)=>{const d=i-c,ad=Math.min(Math.abs(d),2.5);
+        b.style.transform='translateY('+(-Math.sign(d)*ad*ad*3).toFixed(1)+'px) scale('+(1-ad*0.14).toFixed(3)+')';
+        b.style.opacity=(1-ad*0.32).toFixed(2);b.classList.toggle('on',i===ci);});};
+    dr.addEventListener('scroll',()=>{if(!raf)raf=requestAnimationFrame(upd);},{passive:true});
+    dr.scrollTop=i0*DH;upd();
+    its.forEach((b,i)=>b.onclick=()=>dr.scrollTo({top:i*DH,behavior:'smooth'}));
+    $('pfBack').onclick=()=>{if(sheetSt)step1();};
+    $('pfNone').onclick=()=>done(0);
+    $('pfOk').onclick=()=>{const i=Math.min(ps.length-1,Math.max(0,Math.round(dr.scrollTop/DH)));done(ps[i][0]);};
+  };
+  step1();
+}
 function closeSheet(){
+  try{subOnClose=null;closeSub();}catch(e){}   /* 重ねたシート（#ovl2）も閉じる。記録シートへの描き直しはしない */
   if(planAutoSave){try{planAutoSave();}catch(e){}planAutoSave=null;}  /* 予定シートは閉じる＝保存 */
   $('ovl').classList.remove('open');
   try{sleepBarTick();}catch(e){}
@@ -3513,6 +3776,7 @@ $('ovl').addEventListener('click',ev=>{
   closeSheet();
 });
 ['input','change'].forEach(t=>$('sheet').addEventListener(t,()=>{sheetDirty=true;}));
+$('ovl2').addEventListener('click',ev=>{if(ev.target===$('ovl2'))closeSub();});   /* 重ねたシートは外を押すと閉じる（下の記録シートは残る） */
 /* 支払いシートは、チップやボタン（方法・区分・毎月・何月分など）だけで中身が入る＝ボタンを押した時も書きかけとして扱う */
 $('sheet').addEventListener('click',ev=>{try{if($('pyC')&&ev.target&&ev.target.closest&&ev.target.closest('button'))sheetDirty=true;}catch(e){}});
 
@@ -5207,7 +5471,7 @@ function rulesDay(d,by){
   let aiHit=false,restN=r.rest||0,outT=r.out||null,firstMv=null;
   const ai=(state.ai||{})[d];if(ai&&!ai.del&&(ai.touched||ai.made))aiHit=true;
   for(const k in eo){const en=eo[k];if(!en||en.del)continue;if(en.k==='ai')aiHit=true;if(en.k==='rest')restN++;
-    if(Array.isArray(en.acts)&&!en.mv)for(const a of en.acts){if(!a||!a.t)continue;if(a.k==='ai')aiHit=true;if(a.k==='rest'&&en.k!=='rest')restN++;}
+    if(Array.isArray(en.acts))for(const a of en.acts){if(!a||!a.t)continue;if(a.k==='ai')aiHit=true;if(a.k==='rest'&&en.k!=='rest')restN++;}
     if(en.mv&&en.s&&wake&&en.s>=wake&&(!firstMv||en.s<firstMv))firstMv=en.s;}
   if(!outT&&firstMv)outT=firstMv;
   /* 押した記録が1つも無い過去日は「未採点」にする（機能が無かった日を✗にしない） */
@@ -5258,10 +5522,14 @@ function rtnRowHtml(d){
 }
 /* 📊 時間の分析。数え方（本人決定 ①A）：記録の時間は記録の種類で数え、1行ずつの行に種類と時間があれば、その分を行の種類へ振り分ける。
    重なった記録は、後から始まった記録（＝中の細かい記録）が勝つ。1分ずつ塗り分けるので、合計が24時間を超えない。記録の無い時間は「記録なし」 */
-const ANA_K=[['sleep','🌙','睡眠','#475569'],['work','💼','仕事','#1e3a8a'],['ai','🤖','AI','#7a6ef3'],['stay','📍','滞在','#0bc167'],['move','🚗','移動','#12a6a0'],
-  ['meal','🍚','食事','#f08a24'],['rest','☕','休憩','#c98a2f'],['rtn','📚','ルーティン','#e0559b']];
-const ANA_IX={};ANA_K.forEach((k,i)=>{ANA_IX[k[0]]=i+1;});
-let anaUnit='week',anaBase=null;
+/* 種類の idx 表は毎回作る（基本＋自分で足した物（隠した物も）＋ルーティン＋不明）。idx は 1 から */
+const ANA_RTN={id:'rtn',ic:'📚',lb:'ルーティン',co:'#e0559b',muda:false},ANA_UNK={id:'?',ic:'❓',lb:'不明',co:'#9aa3b5',muda:false};
+const ANA_REC={sleep:1,work:1,ai:1,stay:1,meal:1,rest:1};   /* 記録の種類（ボタン）。それ以外は滞在 */
+function anaKinds(){const a=KIND_BASE.map(b=>kindOf(b[0])).concat(kindOwnIds().map(kindOf)).filter(Boolean).slice(0,250);a.push(ANA_RTN,ANA_UNK);return a;}
+const MV_V2_TS=1791039600000;   /* c1.1（2026-10-04）以降に保存した移動だけ、空白をムダに数える */
+const ANA_NOTR=10,ANA_WALK=9;   /* mvm：TRS の順で 1..9（徒歩＝9）、乗り物なし＝10 */
+let anaUnit='week',anaBase=null,anaMore={},anaPfSel=-1,anaOpen=null;
+const anaCache=[];
 const hmMin=s=>{const a=String(s||'').split(':').map(Number);return (a[0]||0)*60+(a[1]||0);};
 function anaRange(unit,base){
   const d=parseD(base);let s,e;
@@ -5276,64 +5544,181 @@ function anaLabel(unit,r){const a=parseD(r.s),b=parseD(addDays(r.e,-1));
   if(unit==='week')return (a.getMonth()+1)+'/'+a.getDate()+' – '+(b.getMonth()+1)+'/'+b.getDate();
   if(unit==='month')return a.getFullYear()+'年'+(a.getMonth()+1)+'月';
   return a.getFullYear()+'年';}
-/* 期間 [s,e) を1分ずつ塗る。今より先は数えない */
+/* 期間 [s,e) を1分ずつ塗る。今より先は数えない（数え方は設計 5.6）。同じ条件ならキャッシュを返す */
 function anaCount(r,maxMin){
   const days=Math.round((parseD(r.e)-parseD(r.s))/86400000),N=days*1440;
-  const own=new Int32Array(N).fill(-1),cat=new Uint8Array(N);
-  const t0=parseD(r.s).getTime();
-  const now=new Date(),nowIdx=Math.floor((now.getTime()-t0)/60000);
+  const nowIdx=Math.floor((Date.now()-parseD(r.s).getTime())/60000);
   const limit=Math.max(0,Math.min(N,nowIdx,maxMin==null?N:maxMin));   /* maxMin＝前の期間を、今の期間と同じ長さで比べる時の上限 */
-  const items=[];
-  const dayList=[];for(let i=-2;i<days;i++)dayList.push(addDays(r.s,i));
-  for(const d of dayList){const eo=(state.entries||{})[d]||{};const off=Math.round((parseD(d)-parseD(r.s))/86400000)*1440;
+  let kts=0;for(const o of [state.kinds||{},state.tools||{}])for(const id in o)kts+=Number(o[id]&&o[id].ts)||0;
+  const key=r.s+'|'+r.e+'|'+limit+'|'+(state.updatedAt||0)+'|'+kts+'|'+(nowIdx<N+1440*2?nowIdx:'');
+  const hit=anaCache.find(c=>c.key===key);if(hit)return hit.res;
+  const res=anaCount0(r,days,N,limit,nowIdx);
+  anaCache.unshift({key,res});if(anaCache.length>4)anaCache.length=4;
+  return res;}
+function anaCount0(r,days,N,limit,nowIdx){
+  const K=anaKinds(),IX={},kMu=new Uint8Array(256);
+  K.forEach((k,i)=>{IX[k.id]=i+1;if(k.muda&&!KIND_NOMUDA[k.id])kMu[i+1]=1;});
+  const TL=TOOL_BASE.map(b=>b[0]).concat(toolOwnIds()).slice(0,200),TX={};TL.forEach((id,i)=>{TX[id]=i+1;});
+  const tIx=d=>{if(!d||typeof d!=='string')return 0;if(TX[d])return TX[d];if(TL.length>=254)return 0;TL.push(d);return TX[d]=TL.length;};   /* 知らない道具も1行で出す */
+  const kIx=k=>(!k||typeof k!=='string')?0:(IX[k]||IX['?']);
+  const P=2880,NT=P+N+2880;   /* 期間の前後2日も塗る（境界をまたぐ記録の行を、どの期間で数えても同じにする）。数えるのは P..P+limit だけ */
+  const own=new Int32Array(NT).fill(-1),cat=new Uint8Array(NT),claimed=new Uint8Array(NT),tool=new Uint8Array(NT),pfL=new Uint8Array(NT),mvm=new Uint8Array(NT),mva=new Uint8Array(NT);
+  const items=[],dayList=[];for(let i=-2;i<days+2;i++)dayList.push(addDays(r.s,i));
+  for(const d of dayList){const eo=(state.entries||{})[d]||{};const off=P+Math.round((parseD(d)-parseD(r.s))/86400000)*1440;
     for(const k in eo){const en=eo[k];if(!en||en.del||en.noT||!en.s)continue;
       let a=off+hmMin(en.s),b;
       if(en.e){b=off+hmMin(en.e)+(Number(en.ed)||0)*1440;if(b<=a)b+=1440;}
-      else if(en.k==='sleep'&&d>=addDays(todayStr(),-1))b=nowIdx;else continue;
-      const kk=en.mv?'move':(ANA_IX[en.k]?en.k:'stay');
-      items.push({a,b,c:ANA_IX[kk],acts:en.mv?[]:(Array.isArray(en.acts)?en.acts:[]),off});}}
-  for(const x of rlogList()){if(!x.s||!x.e||x.d<dayList[0]||x.d>=r.e)continue;const off=Math.round((parseD(x.d)-parseD(r.s))/86400000)*1440;
-    let a=off+hmMin(x.s),b=off+hmMin(x.e);if(b<=a)b+=1440;items.push({a,b,c:ANA_IX.rtn,acts:[],off});}
+      else if(en.k==='sleep'&&d>=addDays(todayStr(),-1))b=P+nowIdx;else continue;   /* 終了時刻の無い記録は数えない（寝ている途中だけ今まで） */
+      const mv=!!en.mv,kk=mv?'move':(ANA_REC[en.k]?en.k:'stay'),tr=mv?TRS.findIndex(t=>t[0]===en.tr):-1;
+      items.push({a,b,c:IX[kk],acts:Array.isArray(en.acts)?en.acts:[],off,mv,tv:mv?(tr>=0?tr+1:ANA_NOTR):0,v2:mv&&Number(en.ts)>=MV_V2_TS,pf:prefOf(en.pf)?Number(en.pf):0});}}
+  for(const x of rlogList()){if(!x.s||!x.e||x.d<dayList[0]||x.d>dayList[dayList.length-1])continue;const off=P+Math.round((parseD(x.d)-parseD(r.s))/86400000)*1440;
+    let a=off+hmMin(x.s),b=off+hmMin(x.e);if(b<=a)b+=1440;items.push({a,b,c:IX.rtn,acts:[],off,rtn:1,mv:false,tv:0,v2:false,pf:0});}
   items.sort((p,q)=>p.a-q.a||q.b-p.b);
-  items.forEach((it,ix)=>{const a=Math.max(0,it.a),b=Math.min(limit,it.b);for(let m=a;m<b;m++){own[m]=ix;cat[m]=it.c;}});
-  /* 1行ずつの行の振り分け：時刻があればその時間、無ければ分数だけ、その記録が持っている分から振り替える */
-  items.forEach((it,ix)=>{for(const ac of it.acts){if(!ac||!ANA_IX[ac.k]||!(Number(ac.m)>0))continue;const c=ANA_IX[ac.k];
-    if(ac.s&&ac.e){let a=it.off+hmMin(ac.s),b=it.off+hmMin(ac.e);if(a<it.a)a+=1440;if(b<=a)b+=1440;a=Math.max(a,0);b=Math.min(b,limit);
-      for(let m=a;m<b;m++)if(own[m]===ix)cat[m]=c;}
-    else{let left=Number(ac.m);const a=Math.max(0,it.a),b=Math.min(limit,it.b);
-      for(let m=a;m<b&&left>0;m++)if(own[m]===ix&&cat[m]===it.c){cat[m]=c;left--;}}}});
-  const sum=new Array(ANA_K.length+1).fill(0);for(let m=0;m<limit;m++)sum[cat[m]]++;
-  return {sum,total:limit};
+  const v2=new Uint8Array(items.length);
+  /* 第1パス：記録。重なりは後から始まった記録が勝つ */
+  items.forEach((it,ix)=>{if(it.v2)v2[ix]=1;const a=Math.max(0,it.a),b=Math.min(NT,it.b);for(let m=a;m<b;m++){own[m]=ix;cat[m]=it.c;}});
+  /* 第2パス：1行ずつの行。時刻あり→分数だけ（前寄せ）→移動の「押すだけの行」は残りを等分 */
+  items.forEach((it,ix)=>{if(!it.acts.length)return;
+    const put=(m,ki,ti)=>{claimed[m]=1;if(it.mv)mva[m]=ki||255;else if(ki)cat[m]=ki;if(ti)tool[m]=ti;};
+    const timed=[],mins=[],whole=[];
+    for(const ac of it.acts){if(!ac)continue;const ki=kIx(ac.k),ti=tIx(ac.d);
+      if(!ki&&!ti&&!it.mv)continue;
+      if(ac.s&&ac.e)timed.push([ac,ki,ti]);else if(Number(ac.m)>0)mins.push([ac,ki,ti]);else if(it.mv&&ki)whole.push([ac,ki,ti]);}
+    for(const [ac,ki,ti] of timed){let a=it.off+hmMin(ac.s),b=it.off+hmMin(ac.e);if(a<it.a)a+=1440;if(b<=a)b+=1440;
+      for(let m=Math.max(a,0);m<b&&m<NT;m++)if(own[m]===ix)put(m,ki,ti);}
+    for(const [ac,ki,ti] of mins){let left=Number(ac.m);
+      for(let m=Math.max(0,it.a);m<it.b&&m<NT&&left>0;m++)if(own[m]===ix&&!claimed[m]){put(m,ki,ti);left--;}}
+    if(whole.length){let R=0;for(let m=Math.max(0,it.a);m<it.b&&m<NT;m++)if(own[m]===ix&&!claimed[m])R++;
+      const n=whole.length,q=Math.floor(R/n),sz=whole.map((_,j)=>q+(j===0?R-q*n:0));   /* 端数は先頭の行 */
+      let j=0,u=0;
+      for(let m=Math.max(0,it.a);m<it.b&&m<NT;m++){if(!(own[m]===ix&&!claimed[m]))continue;
+        while(j<n&&u>=sz[j]){j++;u=0;}if(j>=n)break;put(m,whole[j][1],whole[j][2]);u++;}}});
+  /* 第3パス：乗り物（勝った分だけ）／都道府県は別の層（pf の無い内側の記録は外側の pf に透ける） */
+  items.forEach((it,ix)=>{const a=Math.max(0,it.a),b=Math.min(NT,it.b);
+    if(it.mv)for(let m=a;m<b;m++)if(own[m]===ix)mvm[m]=it.tv;
+    if(it.pf)for(let m=a;m<b;m++)pfL[m]=it.pf;});
+  /* 集計は1回のループ */
+  const IXM=IX.move,IXR=IX.rtn,NK=K.length+1;
+  const sum=new Int32Array(NK+1),toolS=new Int32Array(256),mvT=new Int32Array((ANA_NOTR+1)*5),mvA=new Int32Array(256),mvD=new Int32Array(256),
+    pfS=new Int32Array(48),pfM=new Int32Array(48),pfB=new Int32Array(48),pfK=new Int32Array(48*256),mdK=new Int32Array(256);
+  let rec=0,mdBlank=0,mdTot=0;
+  for(let m=P;m<P+limit;m++){const c=cat[m],o=own[m];sum[c]++;if(o<0)continue;rec++;
+    const p=pfL[m],a=mva[m],t=tool[m];let md=0;
+    if(c===IXM){const v=mvm[m]||ANA_NOTR,bs=v*5,ok=v2[o]&&v!==ANA_WALK;mvT[bs]++;
+      if(a===0){if(ok){mvT[bs+3]++;md=1;mdBlank++;pfB[p]++;}else mvT[bs+4]++;}   /* 空白（ムダ）／未入力・徒歩（灰） */
+      else if(a<255&&kMu[a]){mvT[bs+2]++;md=1;mdK[a]++;}                 /* 移動中のムダ印の活動（徒歩・古い移動でもムダ。除くのは空白だけ） */
+      else mvT[bs+1]++;                                                            /* 活用 */
+      if(a)mvA[a]++;if(t)mvD[t]++;}
+    else if(c!==IXR&&kMu[c]){md=1;mdK[c]++;}
+    if(t)toolS[t]++;
+    if(p)pfS[p]++;else if(c!==IXR)pfS[0]++;
+    if(md){mdTot++;pfM[p]++;}
+    pfK[p*256+c]++;}
+  const kid=i=>i===255?'_untyped':(K[i-1]?K[i-1].id:'?'),obj=(arr,f,from)=>{const o={};for(let i=(from==null?1:from);i<arr.length;i++)if(arr[i])o[f(i)]=arr[i];return o;};
+  const sumO={_none:sum[0]};for(let i=1;i<=K.length;i++)if(sum[i])sumO[K[i-1].id]=sum[i];
+  const means={};let mt=0,mu=0,mb=0,mo=0,mm=0;
+  for(let v=1;v<=ANA_NOTR;v++){const bs=v*5;if(!mvT[bs])continue;const x={tot:mvT[bs],used:mvT[bs+1],mudaAct:mvT[bs+2],blank:mvT[bs+3],old:mvT[bs+4]};
+    means[v<=TRS.length?TRS[v-1][0]:'_none']=x;mt+=x.tot;mu+=x.used;mb+=x.blank;mo+=x.old;mm+=x.mudaAct;}
+  const prefKind={};for(let p=0;p<48;p++){if(!pfS[p])continue;const o={};for(let c=1;c<=K.length;c++){const v=pfK[p*256+c];if(v)o[K[c-1].id]=v;}prefKind[p]=o;}
+  return {total:limit,rec,K,sum:sumO,tool:obj(toolS,i=>TL[i-1]),pref:obj(pfS,i=>i,0),prefMuda:obj(pfM,i=>i,0),prefBlank:obj(pfB,i=>i,0),prefKind,
+    mv:{means,acts:obj(mvA,kid),tools:obj(mvD,i=>TL[i-1]),tot:mt,used:mu,blank:mb,old:mo,mudaAct:mm},
+    muda:{blank:mdBlank,kinds:obj(mdK,kid),total:mdTot},unknown:sum[IX['?']]||0};
 }
-function openAnaPage(){closeSheet();if(!anaBase)anaBase=todayStr();renderAnaPage();}
-function renderAnaPage(){
-  pageMode='ana';const p=$('page');
+function anaTr(k){if(k==='_none')return ['❔','乗り物なし'];const t=TRS.find(x=>x[0]===k);if(!t)return ['❔',String(k)];
+  const i=t[1].indexOf(' ');return [TRICON[k]||t[1].slice(0,i),t[1].slice(i+1)];}
+function anaOpenGet(){if(anaOpen)return anaOpen;try{anaOpen=JSON.parse(localStorage.getItem('hibiki-ana-open')||'{}')||{};}catch(e){anaOpen={};}return anaOpen;}
+function anaOpenSet(o){anaOpen=o;try{localStorage.setItem('hibiki-ana-open',JSON.stringify(o));}catch(e){}}
+function openAnaPage(){closeSheet();if(!anaBase)anaBase=todayStr();anaMore={};anaPfSel=-1;renderAnaPage();}
+function renderAnaPage(keep){
+  pageMode='ana';const p=$('page'),ob=p.querySelector('.page-body'),st=(keep&&ob)?ob.scrollTop:0;
   const r=anaRange(anaUnit,anaBase),cur=anaCount(r);
   const pb=anaRange(anaUnit,addDays(r.s,-1)),prev=anaCount(pb,cur.total);   /* 途中の期間は、前の期間も同じ経過分だけで比べる */
+  const U=({day:'日',week:'週',month:'月',year:'年'})[anaUnit];
   const hh=m=>{if(!m)return '0分';const x=Math.round(m/6)/10;return m<60?(m+'分'):(x+'時間');};
-  const rows=ANA_K.map((k,i)=>({k,m:cur.sum[i+1],pm:prev.sum[i+1]})).filter(x=>x.m||x.pm).sort((a,b)=>b.m-a.m);
-  const none=cur.sum[0],tot=cur.total||1,mx=Math.max(1,...rows.map(x=>x.m));
-  const bar='<div class="an-bar">'+rows.filter(x=>x.m).map(x=>'<i style="flex:'+x.m+';background:'+x.k[3]+'"></i>').join('')+(none?'<i style="flex:'+none+';background:#e3e6ee"></i>':'')+'</div>';
-  const dif=x=>{const d=x.m-x.pm;if(!x.pm&&!x.m)return '';const s=Math.round(Math.abs(d)/6)/10;return '<span class="an-d '+(d>0?'up':d<0?'dn':'')+'">'+(d===0?'±0':(d>0?'＋':'－')+(Math.abs(d)<60?Math.abs(d)+'分':s+'h'))+'</span>';};
+  const hs=m=>m<60?m+'分':(Math.round(m/6)/10)+'h';
+  const KM={};cur.K.forEach(k=>{KM[k.id]=k;});
+  const kOf=id=>id==='_untyped'?{id,ic:'✏️',lb:'種類なし',co:'#9aa3b5'}:(KM[id]||kindOf(id)||{id,ic:'❓',lb:String(id).slice(0,4),co:'#9aa3b5'});
+  const tOf=id=>toolOf(id)||{id,ic:'❓',lb:String(id).slice(0,4)};
+  const isMd=id=>kindMuda(id);
+  const op=anaOpenGet(),isOpen=s=>op[s]!==0,tot=cur.total||1,rec=cur.rec||1;
+  const sec=(id,ttl,body)=>'<div class="an-sec'+(isOpen(id)?' open':'')+'"><button class="an-sh" data-as="'+id+'"><span class="an-ar">▸</span>'+ttl+'</button>'+(isOpen(id)?'<div class="an-sb">'+body+'</div>':'')+'</div>';
+  const moreList=(key,n,list)=>(anaMore[key]||list.length<=n)?list:list.slice(0,n);
+  const moreBtn=(key,n,len)=>len>n?'<button class="an-more" data-am="'+key+'">'+(anaMore[key]?'▲ たたむ':'▼ もっと見る（あと'+(len-n)+'）')+'</button>':'';
+  const chips=(o,f)=>Object.keys(o).sort((a,b)=>o[b]-o[a]).map(id=>{const z=f(id);return '<span class="an-cp'+(z.md?' md':'')+'">'+esc(z.ic)+' '+esc(z.lb)+' <b>'+hs(o[id])+'</b></span>';}).join('');
   const isCur=r.s<=todayStr()&&todayStr()<r.e;
+  /* ムダのカード */
+  const md=cur.muda,mdd=md.total-prev.muda.total;
+  const mdDif=(md.total||prev.muda.total)?'<span class="an-md '+(mdd>0?'up':mdd<0?'dn':'')+'">'+(mdd===0?'±0':(mdd>0?'＋':'－')+hs(Math.abs(mdd)))+'</span>':'';
+  const parts=[];if(md.blank)parts.push('🕳️ 空白の移動 '+hs(md.blank));
+  Object.keys(md.kinds).sort((a,b)=>md.kinds[b]-md.kinds[a]).forEach(id=>{const k=kOf(id);parts.push(esc(k.ic)+esc(k.lb)+' '+hs(md.kinds[id]));});
+  let worst=null;
+  for(const tr in cur.mv.means){const x=cur.mv.means[tr];if(x.blank&&(!worst||x.blank>worst.m)){const t=anaTr(tr);worst={m:x.blank,t:t[0]+' '+esc(t[1])+'の空白'};}}
+  for(const id in md.kinds)if(!worst||md.kinds[id]>worst.m){const k=kOf(id);worst={m:md.kinds[id],t:esc(k.ic)+' '+esc(k.lb)};}
+  let wp=0;for(const c in cur.prefMuda)if(+c&&(!wp||cur.prefMuda[c]>cur.prefMuda[wp]))wp=+c;
+  const card=md.total?
+    '<div class="an-muda"><div class="an-m1"><span class="an-mi">🕳️</span><span class="an-mt">ムダ<b>'+hh(md.total)+'</b><small>記録の '+Math.round(md.total/rec*100)+'%</small></span>'+mdDif+'</div>'+
+      (parts.length?'<div class="an-m2">'+parts.slice(0,3).join(' ・ ')+'</div>':'')+
+      (worst?'<div class="an-m3">一番のムダ：<b>'+worst.t+' '+hs(worst.m)+'</b>'+(wp?' ／ 📍 '+esc(prefOf(wp).short):'')+'</div>':'')+'</div>'
+    :'<div class="an-muda zero"><div class="an-m1"><span class="an-mi">🎉</span><span class="an-mt">ムダ<b>0分</b></span>'+mdDif+'</div></div>';
+  /* 何をした（種類）：上位6＋もっと見る */
+  const ids=new Set(Object.keys(cur.sum).concat(Object.keys(prev.sum),Object.keys(cur.mv.acts)));ids.delete('_none');ids.delete('_untyped');
+  const rows=[...ids].map(id=>({id,k:kOf(id),m:cur.sum[id]||0,pm:prev.sum[id]||0,mv:cur.mv.acts[id]||0})).filter(x=>x.m||x.pm||x.mv).sort((a,b)=>b.m-a.m||b.mv-a.mv);
+  const none=cur.sum._none||0,mx=Math.max(1,...rows.map(x=>x.m));
+  const bar='<div class="an-bar">'+rows.filter(x=>x.m).map(x=>'<i style="flex:'+x.m+';background:'+x.k.co+'"></i>').join('')+(none?'<i style="flex:'+none+';background:#e3e6ee"></i>':'')+'</div>';
+  const dif=x=>{const d=x.m-x.pm;if(!x.pm&&!x.m)return '<span class="an-d"></span>';const s=Math.round(Math.abs(d)/6)/10;return '<span class="an-d '+(d>0?'up':d<0?'dn':'')+'">'+(d===0?'±0':(d>0?'＋':'－')+(Math.abs(d)<60?Math.abs(d)+'分':s+'h'))+'</span>';};
+  const kRow=x=>'<div class="an-row'+(isMd(x.id)?' md':'')+'"><span class="an-ic">'+esc(x.k.ic)+'</span><span class="an-nm">'+esc(x.k.lb)+(x.mv?'<small>'+(x.m?'移動中にも ':'移動中のみ ')+hs(x.mv)+'</small>':'')+'</span>'+
+    '<span class="an-mb"><i style="width:'+(x.m?Math.max(2,Math.round(x.m/mx*100)):0)+'%;background:'+x.k.co+'"></i></span>'+
+    '<span class="an-h">'+hh(x.m)+'<small>'+Math.round(x.m/tot*100)+'%</small></span>'+dif(x)+'</div>';
+  const kindBody='<div class="an-list">'+moreList('kind',6,rows).map(kRow).join('')+moreBtn('kind',6,rows.length)+
+    '<div class="an-row none"><span class="an-ic">⬜</span><span class="an-nm">記録なし</span><span class="an-mb"></span><span class="an-h">'+hh(none)+'<small>'+Math.round(none/tot*100)+'%</small></span><span class="an-d"></span></div></div>';
+  /* 🚗 移動の中身：乗り物ごとに2段（4色バー：活用／ムダ印の活動／空白／未入力・徒歩） */
+  const mv=cur.mv;let mvBody;
+  if(!mv.tot)mvBody='<div class="an-empty">この期間は移動なし</div>';
+  else{const seg=(v,co)=>v?'<i style="flex:'+v+';background:'+co+'"></i>':'';
+    mvBody='<div class="an-list">'+Object.keys(mv.means).sort((a,b)=>mv.means[b].tot-mv.means[a].tot).map(k=>{const x=mv.means[k],t=anaTr(k);
+      return '<div class="an-mvr"><div class="an-mv1"><span class="an-ic">'+t[0]+'</span><b>'+esc(t[1])+'</b><span class="an-h">'+hh(x.tot)+'</span></div>'+
+        '<div class="an-mv2"><span class="an-mvb">'+seg(x.used,'#0bc167')+seg(x.mudaAct,'#e0405a')+seg(x.blank,'#f7a8b6')+seg(x.old,'#d5d9e2')+'</span>'+
+        '<span class="an-mvt">'+[x.used?'<em class="g">活用 '+hs(x.used)+'</em>':'',x.blank?'<em class="r">空白 '+hs(x.blank)+'</em>':'',(x.mudaAct&&!x.blank)?'<em class="r">ムダ印 '+hs(x.mudaAct)+'</em>':'',(x.old&&!x.blank)?'<em>'+(k==='walk'?'徒歩 ':'未入力 ')+hs(x.old)+'</em>':''].filter(Boolean).slice(0,2).join('／')+'</span></div></div>';}).join('')+'</div>'+
+      '<div class="an-lg"><span><i style="background:#0bc167"></i>活用</span><span><i style="background:#e0405a"></i>ムダ印の活動</span><span><i style="background:#f7a8b6"></i>空白</span><span><i style="background:#d5d9e2"></i>未入力・徒歩</span></div>'+
+      '<div class="an-sub">移動中にしたこと</div><div class="an-cps">'+(Object.keys(mv.acts).length?chips(mv.acts,id=>{const k=kOf(id);return {ic:k.ic,lb:k.lb,md:isMd(id)};}):'<span class="an-empty">まだ無い（移動の記録で1行ずつ書くと出る）</span>')+'</div>'+
+      '<div class="an-sub">使った物</div><div class="an-cps">'+(Object.keys(mv.tools).length?chips(mv.tools,tOf):'<span class="an-empty">まだ無い</span>')+'</div>'+
+      (mv.old?'<div class="an-empty">灰色＝c1.1 より前の古い移動（移動中の行が書けなかった）と徒歩。ムダに数えない</div>':'');}
+  /* 🛠 何を使って */
+  const tl=Object.keys(cur.tool).map(id=>({id,t:tOf(id),m:cur.tool[id]})).sort((a,b)=>b.m-a.m),tmx=Math.max(1,...tl.map(x=>x.m));
+  const toolBody=tl.length?'<div class="an-list">'+tl.map(x=>'<div class="an-row"><span class="an-ic">'+esc(x.t.ic)+'</span><span class="an-nm">'+esc(x.t.lb)+'</span>'+
+      '<span class="an-mb"><i style="width:'+Math.max(2,Math.round(x.m/tmx*100))+'%;background:#5b7fa6"></i></span><span class="an-h">'+hh(x.m)+'<small>'+Math.round(x.m/rec*100)+'%</small></span><span class="an-d"></span></div>').join('')+'</div>'
+    :'<div class="an-empty">道具の記録なし（1行ずつの行で 💻📱 を押すと出る）</div>';
+  /* 🗾 どこで：上位5＋もっと見る。タップで内訳 */
+  const pl=Object.keys(cur.pref).filter(c=>+c).map(c=>({c:+c,p:prefOf(c),m:cur.pref[c]})).sort((a,b)=>b.m-a.m);
+  const named=pl.length;if(cur.pref[0])pl.push({c:0,p:{short:'未設定',co:'#c3c8d4'},m:cur.pref[0]});
+  const pmx=Math.max(1,...pl.filter(x=>x.c||!named).map(x=>x.m));
+  const pRow=x=>{const sel=anaPfSel===x.c,mdm=cur.prefMuda[x.c]||0,bl=cur.prefBlank[x.c]||0,pk=cur.prefKind[x.c]||{};
+    return '<div class="an-pfr'+(sel?' sel':'')+(x.c?'':' unset')+'" data-pf="'+x.c+'"><div class="an-pf1"><i class="an-dot" style="background:'+x.p.co+'"></i><b>'+esc(x.p.short)+'</b><span class="an-h">'+hh(x.m)+'<small>'+Math.round(x.m/rec*100)+'%</small></span></div>'+
+      '<div class="an-pf2"><span class="an-mb"><i style="width:'+Math.min(100,Math.max(2,Math.round(x.m/pmx*100)))+'%;background:'+x.p.co+'"></i></span>'+(mdm?'<span class="an-pm">ムダ '+hs(mdm)+'</span>':'')+'</div>'+
+      (sel?'<div class="an-cps">'+chips(pk,id=>{const k=kOf(id);return {ic:k.ic,lb:k.lb,md:isMd(id)};})+(bl?'<span class="an-cp md">🕳️ 空白の移動 <b>'+hs(bl)+'</b></span>':'')+'</div>':'')+'</div>';};
+  const shown=pl.filter((x,i)=>anaMore.pf||!x.c||i<5);
+  const pfBody=(named?'':'<div class="an-empty">都道府県の記録なし（記録の 🗾 を押すと出る）</div>')+
+    (pl.length?'<div class="an-list">'+shown.map(pRow).join('')+moreBtn('pf',5,named)+'</div>':'')+
+    '<div class="an-empty">移動は行き先の県に数える。％＝記録のある時間に対して。タップで内訳</div>';
   p.innerHTML='<div class="page-head"><button class="bk" id="pgBk">‹ 戻る</button><span class="tt">📊 分析</span><span style="width:36px"></span></div>'+
     '<div class="page-body">'+
     '<div class="an-tabs">'+[['day','日'],['week','週'],['month','月'],['year','年']].map(u=>'<button data-au="'+u[0]+'"'+(anaUnit===u[0]?' class="on"':'')+'>'+u[1]+'</button>').join('')+'</div>'+
     '<div class="an-nav"><button id="anPrev">‹</button><b>'+esc(anaLabel(anaUnit,r))+'</b><button id="anNext"'+(isCur?' disabled':'')+'>›</button></div>'+
-    (cur.total?(bar+
-      '<div class="an-list">'+rows.map(x=>'<div class="an-row"><span class="an-ic">'+x.k[1]+'</span><span class="an-nm">'+x.k[2]+'</span>'+
-        '<span class="an-mb"><i style="width:'+Math.max(2,Math.round(x.m/mx*100))+'%;background:'+x.k[3]+'"></i></span>'+
-        '<span class="an-h">'+hh(x.m)+'<small>'+Math.round(x.m/tot*100)+'%</small></span>'+dif(x)+'</div>').join('')+
-        '<div class="an-row none"><span class="an-ic">⬜</span><span class="an-nm">記録なし</span><span class="an-mb"></span><span class="an-h">'+hh(none)+'<small>'+Math.round(none/tot*100)+'%</small></span><span class="an-d"></span></div>'+
-      '</div>'+
-      '<div class="sh-note">右の数字＝前の'+({day:'日',week:'週',month:'月',year:'年'})[anaUnit]+'との差。'+(isCur?'（今の'+({day:'日',week:'週',month:'月',year:'年'})[anaUnit]+'は今の時刻まで。前の'+({day:'日',week:'週',month:'月',year:'年'})[anaUnit]+'も同じ長さで比べている）':'')+'</div>')
+    (cur.total?(card+bar+
+      sec('kind','何をした',kindBody)+sec('mv','🚗 移動の中身',mvBody)+sec('tool','🛠 何を使って',toolBody)+sec('pf','🗾 どこで',pfBody)+
+      '<div class="sh-note">右の数字＝前の'+U+'との差。'+(isCur?'（今の'+U+'は今の時刻まで。前の'+U+'も同じ長さで比べている）':'')+
+      '<br>ムダ＝ムダ印の種類の時間＋c1.1 以降の移動で何もしなかった時間（徒歩を除く）。終了時刻の無い移動は数えない。</div>')
     :'<div class="empty-hint">この期間はまだ来ていない</div>')+
     '</div>';
   p.classList.add('open');payReopenMark();
+  if(st){const nb=p.querySelector('.page-body');if(nb)nb.scrollTop=st;}
   $('pgBk').onclick=closePage;
-  p.querySelectorAll('[data-au]').forEach(b=>b.onclick=()=>{anaUnit=b.dataset.au;renderAnaPage();});
-  $('anPrev').onclick=()=>{anaBase=addDays(r.s,-1);renderAnaPage();};
-  $('anNext').onclick=()=>{if(isCur)return;anaBase=r.e;renderAnaPage();};
+  p.querySelectorAll('[data-au]').forEach(b=>b.onclick=()=>{anaUnit=b.dataset.au;anaMore={};anaPfSel=-1;renderAnaPage();});
+  $('anPrev').onclick=()=>{anaBase=addDays(r.s,-1);anaPfSel=-1;renderAnaPage();};
+  $('anNext').onclick=()=>{if(isCur)return;anaBase=r.e;anaPfSel=-1;renderAnaPage();};
+  p.querySelectorAll('[data-as]').forEach(b=>b.onclick=()=>{const o=Object.assign({},anaOpenGet()),s=b.dataset.as;o[s]=isOpen(s)?0:1;anaOpenSet(o);renderAnaPage(true);});
+  p.querySelectorAll('[data-am]').forEach(b=>b.onclick=()=>{anaMore[b.dataset.am]=!anaMore[b.dataset.am];renderAnaPage(true);});
+  p.querySelectorAll('[data-pf]').forEach(b=>b.onclick=()=>{const c=+b.dataset.pf;anaPfSel=anaPfSel===c?-1:c;renderAnaPage(true);});
 }
 function openRtnPage(){closeSheet();
   if(!state.rtn&&RTN_SEED.n){mutate(()=>{state.rtn={};state.rtn[RTN_SEED.id]={n:RTN_SEED.n,o:1,ts:Date.now()};});}
@@ -6107,7 +6492,7 @@ async function clRpc(name,body){
 }
 
 /* ---------- state ⇄ 項目（1行） ---------- */
-const CL_ID=['dreams','memos','pays','aims','moves','pins','steps','payrep','rtn','rlog','payppl','pha'];
+const CL_ID=['dreams','memos','pays','aims','moves','pins','steps','payrep','rtn','rlog','payppl','pha','kinds','tools'];
 const CL_DAY=['ai','rules'];
 const CL_DAY2=['entries','plans'];
 const CL_SKIP={updatedAt:1,photos:1};
@@ -6280,7 +6665,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c0.9";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c1.1";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 function openLoginSheet(opt){
   opt=opt||{};
