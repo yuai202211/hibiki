@@ -673,6 +673,7 @@
   .ks-none{font-size:12px;color:#9aa3b5;font-weight:700;padding:4px 2px}
   /* 都道府県（c1.1）：記録シートのチップ・エリアのタイル・ドラム・日記の札 */
   .pfrow{display:flex;gap:6px;flex-wrap:wrap;min-width:0}
+  #pfInl .pfchip{flex:0 0 auto;max-width:42%;padding:12px 10px;font-size:13px}
   .pfchip{display:inline-block;max-width:100%;padding:7px 14px;border-radius:999px;background:#eceef3;color:#8a90a0;font-weight:800;font-size:13.5px;border:2px solid transparent;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .pfchip.on{color:#fff;text-shadow:0 1px 1px rgba(0,0,0,.18)}
   .pfchip.auto{border-style:dashed;border-color:rgba(26,28,34,.4)}
@@ -3118,7 +3119,7 @@ function openSyncSheet(){
     row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして、いつものURLから開くと繋がる')+
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c1.6）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c1.7）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -3284,7 +3285,7 @@ function openEntrySheet(date,ref){
       '<button data-ty="rest">☕ 休憩</button><button data-ty="sleep">🌙 睡眠</button></div></div>'+
     '<div id="secTool"><div class="sh-label">🛠 使う物</div><div class="sh-chips" id="tdChips"></div><input type="text" id="tdX" maxlength="20" placeholder="その他（使った物を書く）" style="display:none;margin-top:6px"></div>'+   /* 記録全体の道具（行で選ばなければこれで数える） */
     '<div id="secStay"><div class="sh-label">📍 場所（自由に書ける・コピペOK）</div>'+
-      '<input type="text" id="shPlace" maxlength="120" data-need="1" placeholder="例：東京タワー">'+
+      '<div id="pfInl" style="display:flex;gap:6px;align-items:center"><input type="text" id="shPlace" maxlength="120" data-need="1" placeholder="例：東京タワー" style="flex:1;min-width:0"></div>'+   /* 左端に県のチップが入る */
       (chips.length?'<div class="sh-chips" id="pChips" style="margin-top:6px">'+
       chipListHtml(chips,chipsOpen())+'</div>':'')+'</div>'+
     '<div id="secMove" style="display:none">'+
@@ -3360,6 +3361,7 @@ function openEntrySheet(date,ref){
   tdPaint();
   /* 都道府県のチップ（記録の種類に関係なく1か所）。自動で入った値は点線、選び直すと実線 */
   function pfPaint(){if(!sheetSt)return;const mvT=eType==='move';
+    {const pc=$('pfChip'),pi=$('pfInl'),sp=$('secPf');if(pc&&pi&&sp){if(mvT){if(pc.parentNode!==sp)sp.appendChild(pc);sp.style.display='';}else{if(pc.parentNode!==pi)pi.insertBefore(pc,pi.firstChild);sp.style.display='none';}}}   /* 移動以外は場所の欄の左端 */
     if(mvT&&!sheetSt.pf0&&sheetSt.pfAuto&&sheetSt.pf){sheetSt.pf0=sheetSt.pf;sheetSt.pf0Auto=true;sheetSt.pf=0;sheetSt.pfAuto=false;}   /* 移動にしたら、自動で入った県は「出発」へ */
     if(!mvT&&!sheetSt.pf&&sheetSt.pf0Auto){sheetSt.pf=sheetSt.pf0;sheetSt.pfAuto=true;sheetSt.pf0=0;sheetSt.pf0Auto=false;}   /* 移動をやめたら戻す */
     const one=(b,code,auto,lab)=>{if(!b)return;const p=prefOf(code);b.textContent='🗾 '+lab+(p?p.short:(lab?'未選択':'都道府県'));b.style.background=p?p.co:'';b.classList.toggle('on',!!p);b.classList.toggle('auto',!!(p&&auto));};
@@ -6738,7 +6740,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c1.6";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c1.7";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 function openLoginSheet(opt){
   opt=opt||{};
