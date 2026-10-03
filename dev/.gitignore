@@ -1,0 +1,4 @@
+# 個人情報を含むファイルなので、公開リポジトリには絶対に入れない（検査用の禁止語・棚卸し・手元の状態控え）
+PERSONAL-DATA.md
+scan-words.json
+state-baseline*.json

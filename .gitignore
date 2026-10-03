@@ -1,0 +1,11 @@
+# 個人情報・鍵・作業ファイルは置かない（dev/ の一部だけ公開してよい）
+dev/PERSONAL-DATA.md
+dev/scan-words.json
+dev/cloud-config.json
+dev/state-baseline*.json
+dev/mock-data/
+dev/mock.log
+dev/_usage.js
+photos-export/
+*.log
+dev/build.js
