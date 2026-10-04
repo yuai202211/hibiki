@@ -18,7 +18,7 @@ const CL_KA_MAX=40000;    /* keepalive の本文の上限（バイト）。ブ�
 const CL={sess:null,seq:0,dirty:{},shadow:{},shadowOk:false,uid:'',lastPull:0,lastPush:0,lastTry:0,err:'',lastErr:'',ready:false,trackHot:false,firstPull:false,
   photoQ:[],photoBusy:false,log:[],bad:{},hot:{},curSig:{},pushedDuring:{},full:null,retryAt:0,retryMs:5000,quietSave:false,
   T:{rpc:25000,rpcMax:60000,refresh:15000,photo:90000,store:3000,fresh:20000,lock:20000,watch:70000,pre:8000},
-  chunkN:400,chunkBytes:200000,pullLim:500,mutSeq:0,tabId:Math.random().toString(36).slice(2,10),kaAt:0,authDead:false,auth401:0,
+  chunkN:400,chunkBytes:200000,pullLim:500,mutSeq:0,tabId:Math.random().toString(36).slice(2,10),kaAt:0,authDead:false,auth401:0,sigGen:0,
   integ:{at:0,res:'',sig:'',pend:'',rebuildAt:0,due:false},hiddenAt:0,storeOk:null,shadowLoadedAt:0,refreshP:null,persistT:null,outboxAt:0,perf:{},kaCheck:null};
 /* 同期の実行の管理（1本だけ走らせる）。epoch＝世代。打ち切った古い回は結果を使わない */
 const CLQ={run:null,again:false,epoch:0,ctl:null,beat:0,fails:0,due:0,t:null,startedAt:0,wake:false,firstFailAt:0};
@@ -104,7 +104,7 @@ function clTimed(ms,fn,parent){
     .catch(e=>{if(ctl.signal.aborted)throw mk();if(e&&e.kind)throw e;throw clErr(String((e&&e.message)||'通信失敗'),0,'net','net');})
     .finally(()=>{clearTimeout(t);if(parent)parent.removeEventListener('abort',onP);});
 }
-function clHdr(){const h={'apikey':CLOUD.key,'Content-Type':'application/json'};if(CL.sess&&CL.sess.access_token)h['Authorization']='Bearer '+CL.sess.access_token;return h;}
+function clHdr(){const h={'apikey':CLOUD.key,'Content-Type':'application/json','x-client-info':'hibiki/'+CL_APPVER};if(CL.sess&&CL.sess.access_token)h['Authorization']='Bearer '+CL.sess.access_token;return h;}
 /* 応答を読み切って {status,ok,text()} の形で返す（旧 clFetch と同じ使い方ができる） */
 async function clFetch(path,opt,noAuth){
   opt=opt||{};
@@ -265,9 +265,9 @@ function clHashOf(ts,d){
 const CL_SIGC=new WeakMap();   /* 項目オブジェクト→{ts,署名}。ts が同じなら計算し直さない（保存のたびに軽く） */
 function clSigOf(it,fresh){
   const d=it.data,ts=clTsOf(it.ts);
-  if(!fresh&&d&&typeof d==='object'){const c=CL_SIGC.get(d);if(c&&c.ts===ts)return c.h;}
+  if(!fresh&&d&&typeof d==='object'){const c=CL_SIGC.get(d);if(c&&c.ts===ts&&c.g===CL.sigGen)return c.h;}   /* 世代（保存のたびに進む）が同じ時だけ使い回す＝ts を進めないその場の書き換えも拾う */
   const h=clHashOf(ts,d);
-  if(d&&typeof d==='object')CL_SIGC.set(d,{ts,h});
+  if(d&&typeof d==='object')CL_SIGC.set(d,{ts,h,g:CL.sigGen});
   return h;
 }
 function clSig(it){return clSigOf(it,true);}   /* 旧版と同じ名前 */
@@ -670,7 +670,7 @@ function clOnVisible(src){
 }
 
 /* ---------- 旧版の関数を差し替え ---------- */
-schedulePublish=function(ms){if(CLQ.fails===0)clKick(ms||1500);};   /* 失敗中は再挑戦の予定に任せる */
+schedulePublish=function(ms){if(CLQ.fails>1)CLQ.fails=1;clKick(ms||1500);};   /* 旧版からの依頼も待たせない */
 doPublish=function(force){
   if(typeof document!=='undefined'&&document.hidden){clKeepalive('離脱');return Promise.resolve(false);}   /* 離れた瞬間：keepalive だけ（受信は始めない） */
   if(force)return cloudSync(true);
@@ -914,8 +914,9 @@ function clStripText(){
   saveLocal=function(synced){
     _sl(synced);
     if(CL.quietSave)return;
+    CL.sigGen++;   /* 署名の使い回しを一度切る（ts を進めない書き換えも差に出す） */
     let n=0;try{n=clMarkDirty();}catch(e){clNote('dirty','差の計算で例外：'+e.message);}
-    if(CL.ready){try{renderSync();}catch(e){}if(n&&CLQ.fails===0)clKick(1500);}
+    if(CL.ready){try{renderSync();}catch(e){}if(n){if(CLQ.fails>1)CLQ.fails=1;clKick(1500);}}   /* 本人が保存したら、失敗の待ち時間を待たずに1.5秒で送る */
   };
 }
 /* きっかけ：画面を離れる（capture＝旧版の処理より先に keepalive を撃つ）・戻る・ネット復帰・別タブの合言葉 */
