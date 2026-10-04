@@ -193,7 +193,7 @@ async function clRpcText(name,body,sig,ms){
   if(!r.ok){
     let j=null;try{j=JSON.parse(r.text);}catch(e){}
     const m=(j&&(j.message||j.msg||j.error||j.hint))||('HTTP '+r.status);const code=(j&&j.code!=null)?String(j.code):'';
-    if(r.status===401){CL.auth401++;if(CL.auth401>=2&&cloudLoggedIn()){CL.authDead=true;clNote('auth','合言葉を更新しても 401（要ログイン）');}}
+    if(r.status===401){CL.auth401++;if(CL.auth401>=2&&cloudLoggedIn()){CL.authDead=true;CL.authDeadAt=Date.now();clNote('auth','合言葉を更新しても 401。1分休んでまた試す');}}   /* 永久には止めない（1分の休み） */
     throw clErr(m,r.status,code,clKindOf(r.status,code));
   }
   CL.auth401=0;
@@ -570,7 +570,7 @@ async function clOnce(ep,sig){
 function cloudSync(force){
   if(!cloudConfigured()||!cloudLoggedIn()||!CL.ready)return Promise.resolve(false);
   if(force){CLQ.fails=0;CL.authDead=false;}
-  if(CL.authDead)return Promise.resolve(false);
+  if(CL.authDead){const w=60000-(Date.now()-(CL.authDeadAt||0));if(w>0){clKick(w);return Promise.resolve(false);}CL.authDead=false;CL.auth401=0;clNote('auth','1分たったので同期をもう一度試す');}   /* 401 が続いても1分後に必ず再開（止まりっぱなしにしない） */
   if(typeof document!=='undefined'&&document.hidden){CLQ.wake=true;clKeepalive('隠れている間');return Promise.resolve(false);}   /* 隠れている間は始めない（止められて宙に浮くだけ） */
   if(CLQ.run){CLQ.again=true;return CLQ.run;}
   clearTimeout(CLQ.t);CLQ.t=null;CLQ.due=0;
@@ -607,7 +607,8 @@ function clFail(e){
   const msg=String((e&&e.message)||'同期失敗').slice(0,80);
   CL.lastErr=msg;CL.err=msg;
   clNote((e&&e.kind)==='timeout'?'timeout':'sync','失敗：'+msg);
-  if(!cloudLoggedIn()||CL.authDead){try{renderSync();}catch(x){}return;}   /* ログインし直しが要る：叩き続けない */
+  if(!cloudLoggedIn()){try{renderSync();}catch(x){}return;}
+  if(CL.authDead){clKick(60000);try{renderSync();}catch(x){}return;}   /* 401 続き：1分後にもう一度（叩き続けない・止まりもしない） */
   clRetry();
   try{renderSync();}catch(x){}
 }
