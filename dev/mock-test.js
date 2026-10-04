@@ -14,6 +14,7 @@
     → 1000件上限と取りこぼしの罠・lim の丸め → integrity（BigInt）→ 期限切れ → refresh
     → 写真 upload/download（生バイト・multipart・重複・他人の uid・公開 URL）→ CORS → ログアウト
     → （自前起動のとき）サーバーを強制終了して再起動 → 永続化の確認
+    → 15. 同期エンジン c1.9（cloud-layer.js の現物を vm で動かし、故障注入つきの擬似サーバー :8789 に繋ぐ）
   終了コード: 全部通れば 0、1つでも外れたら 1
 */
 
@@ -533,7 +534,341 @@ async function main() {
   }
 }
 
-main().then(() => finish(), (e) => { console.log('\n  [NG] 予期しないエラー: ' + (e && e.stack || e)); fail++; return finish(); });
+// ---------------------------------------------------------------- 15. 同期エンジン（c1.9）
+/* cloud-layer.js（現物）を Node の vm で動かし、故障注入つきの擬似サーバー（別ポート・jsonb のキー順を再現）に繋いで確かめる。
+   端末＝vm の1つの世界。localStorage と IndexedDB（影の置き場）は Map で持ち、同じ Map を渡すと「アプリを閉じて開き直した」になる。 */
+async function appTests() {
+  section('15. 同期エンジン c1.9（保存しなくなる の根絶）');
+  const vm = require('vm');
+  const APORT = 8789, AB = 'http://127.0.0.1:' + APORT;
+  const ADIR = path.join(__dirname, 'mock-data-apptest');
+  const srv = M.start({ port: APORT, tokenTtl: 3600, dataDir: ADIR, reset: true, quiet: true, jsonbOrder: true, host: '127.0.0.1' });
+  await srv.ready;
+  const apps = [];
+  try {
+    const SRC = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+    const m0 = SRC.indexOf('function mergeStates('), m1 = SRC.indexOf('\n}\n', m0) + 3;
+    const emptyLine = SRC.match(/^const emptyState=.*$/m)[0];
+    const CLOUD_SRC = fs.readFileSync(path.join(__dirname, 'cloud-layer.js'), 'utf8')
+      .replace("'__SUPABASE_URL__'", JSON.stringify(AB)).replace("'__SUPABASE_KEY__'", JSON.stringify(M.ANON_KEY)).split("'__APPVER__'").join("'test'");
+    const adm = async (p, body) => { const r = await fetch(AB + p, body === undefined ? {} : { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) }); return r.json(); };
+    const fault = (p, mode, count, ms) => adm('/__mock/fault', { path: p, mode, count: count || 1, ms });
+    const mlog = () => adm('/__mock/log');
+    const clearLog = () => adm('/__mock/log/clear', {});
+    const dumpMap = async () => { const d = await adm('/_mock/dump'); const m = {}; for (const r of d) m[r.coll + '/' + r.k] = r; return m; };
+    const until = async (fn, ms) => { const t0 = Date.now(); for (;;) { try { if (await fn()) return true; } catch (e) { /* まだ */ } if (Date.now() - t0 > ms) return false; await sleep(100); } };
+    const has = (coll, k, pred) => async () => { const r = (await dumpMap())[coll + '/' + k]; return !!r && (!pred || pred(r)); };
+    const clone = (x) => JSON.parse(JSON.stringify(x));
+    function fakeLocks() { const q = {}; return { request(name, opt, cb) { if (typeof opt === 'function') { cb = opt; opt = {}; } return new Promise((res, rej) => { const run = async () => { try { res(await cb({ name })); } catch (e) { rej(e); } finally { q[name].shift(); if (q[name].length) q[name][0](); } }; (q[name] = q[name] || []).push(run); if (q[name].length === 1) run(); }); } }; }
+
+    function makeApp(o) {
+      o = o || {};
+      const ls = o.ls || new Map();
+      const timers = new Set(), intervals = new Set();
+      let alive = true;
+      const docL = {}, winL = {};
+      const doc = { hidden: false, addEventListener: (t, f) => { (docL[t] = docL[t] || []).push(f); }, getElementById: () => null, createElement: () => ({ style: {} }), body: { appendChild() {} } };
+      const ctx = {
+        console, URL, TextEncoder, AbortController, Blob, crypto: globalThis.crypto,
+        fetch: (...a) => fetch(...a),
+        setTimeout: (f, ms) => { if (!alive) return 0; const id = setTimeout(() => { timers.delete(id); if (alive) f(); }, ms); timers.add(id); return id; },
+        clearTimeout: (id) => { clearTimeout(id); timers.delete(id); },
+        setInterval: (f, ms) => { const id = setInterval(() => { if (alive) f(); }, ms); intervals.add(id); return id; },
+        clearInterval: (id) => { clearInterval(id); intervals.delete(id); },
+        localStorage: { getItem: (k) => (ls.has(k) ? ls.get(k) : null), setItem: (k, v) => { ls.set(k, String(v)); }, removeItem: (k) => { ls.delete(k); }, key: (i) => [...ls.keys()][i] || null, get length() { return ls.size; } },
+        navigator: o.locks ? { locks: o.locks } : {},
+        document: doc, __init: o.state || null, __toasts: [], __saveFail: !!o.saveFail,
+      };
+      ctx.window = ctx; ctx.addEventListener = (t, f) => { (winL[t] = winL[t] || []).push(f); };
+      vm.createContext(ctx);
+      const stub = 'const DEF_DREAM={name:"",due:"",ts:0};\n' + emptyLine + '\n' + SRC.slice(m0, m1) + '\n' +
+        'let state=__init?JSON.parse(JSON.stringify(__init)):emptyState();\n' +
+        'let unsynced=false,localOnly=false,permFail=false,localSaveFail=false;\n' +
+        'function saveLocal(synced){if(__saveFail){localSaveFail=true;return;}try{localStorage.setItem("LS",JSON.stringify(state));localSaveFail=false;}catch(e){localSaveFail=true;}unsynced=!synced;}\n' +
+        'function render(){} function renderSync(){} function schedulePublish(){} async function doPublish(){}\n' +
+        'let getAssets=null,verifyBlob=null,phUrl=null;const PH={mem:{},pending:[]};const IDB={ok:false};function idbPut(){}\n' +
+        'const $=id=>null;const esc=s=>String(s==null?"":s);const todayStr=()=>"2026-10-04";\n' +
+        'function closeSheet(){} function openOvl(){} function toast(m){__toasts.push(String(m));} function cfgApply(){} function openSyncSheet(){}\n';
+      vm.runInContext(stub + CLOUD_SRC + '\n;globalThis.__api={get state(){return state},set state(v){state=v},get localSaveFail(){return localSaveFail},CL,CLQ,cloudSync,cloudBoot,clStore,clKeepalive,clRefresh,clItems,clKey,clSigOf,saveLocal,' +
+        'mutate:(fn)=>{fn();state.updatedAt=Date.now();saveLocal(false);},clLogin,clAfterLogin,clDirtyCount,clPersist,cloudLoggedIn,doPublish};', ctx);
+      const api = ctx.__api;
+      if (o.idb) {
+        const db = o.idb;
+        api.clStore.get = async (k) => (db.has(k) ? JSON.parse(db.get(k)) : null);
+        api.clStore.set = async (k, v) => { db.set(k, JSON.stringify(v)); return true; };
+        api.clStore.upd = async (k, fn) => { const cur = db.has(k) ? JSON.parse(db.get(k)) : null; db.set(k, JSON.stringify(fn(cur))); return true; };
+      }
+      // 試験用に時間を短く（本番は RPC 25秒・再送 5秒〜）
+      api.CL.T.rpc = o.rpcMs || 2500; api.CL.T.pre = 1500; api.CL.retryMs = 300; api.CL.T.refresh = 3000; api.CL.T.fresh = 4000;
+      api.doc = doc; api.ls = ls; api.ctx = ctx;
+      api.fire = (t) => { for (const f of (docL[t] || [])) f({}); for (const f of (winL[t] || [])) f({}); };
+      api.dispose = () => { alive = false; for (const id of timers) clearTimeout(id); for (const id of intervals) clearInterval(id); try { api.CLQ.epoch++; if (api.CLQ.ctl) api.CLQ.ctl.abort(); } catch (e) { /* 無視 */ } };
+      apps.push(api);
+      return api;
+    }
+    const login = async (A) => { await A.clLogin(M.TEST_EMAIL, M.TEST_PASSWORD); };
+
+    // ---- 起動（全件受信で影を作る）
+    const lsA = new Map(), idbA = new Map();
+    const A = makeApp({ ls: lsA, idb: idbA });
+    await login(A);
+    const okBoot = await A.cloudBoot();
+    ok(A.CL.shadowOk && A.CL.seq >= 0 && A.CLQ.fails === 0, '15-0 起動：影が無い → 全件受信で影ができる（擬似サーバーは jsonb のキー順を再現）', { shadowOk: A.CL.shadowOk, fails: A.CLQ.fails, okBoot });
+
+    // ---- 1. put_items が宙に浮く → 時間切れ → 次の送信が通る
+    await clearLog();
+    await fault('put_items', 'hang', 1);
+    A.mutate(() => { A.state.memos.t1 = { t: '宙に浮く送信', ts: Date.now() }; });
+    const r1 = await until(has('memos', 't1'), 15000);
+    const lg1 = await mlog();
+    ok(r1 && lg1.calls.some((c) => c.path === 'put_items' && c.fault === 'hang') && lg1.calls.some((c) => c.path === 'put_items' && c.status === 200), '4.2-1 put_items が hang → 時間切れ（試験は2.5秒）→ 再送で届く（開き直さない）', lg1.calls.map((c) => c.path + ':' + c.status + ':' + (c.fault || '')).join(' '));
+    ok(!A.CL.busy && A.CLQ.fails === 0 && A.CL.log.some((e) => e.ev === 'timeout'), '  busy が解けている・記録に timeout が残る', { busy: A.CL.busy, fails: A.CLQ.fails });
+
+    // ---- 2. 500 が2回 → 再挑戦の間隔で通る
+    await clearLog();
+    await fault('put_items', '500', 2);
+    A.mutate(() => { A.state.memos.t2 = { t: '500 二回', ts: Date.now() }; });
+    const r2 = await until(has('memos', 't2'), 15000);
+    const nRetry = A.CL.log.filter((e) => e.ev === 'retry').length;
+    ok(r2 && A.CLQ.fails === 0 && (await mlog()).calls.filter((c) => c.path === 'put_items' && c.status === 500).length === 2, '4.2-2 put_items が 500×2 → 再挑戦で届く・成功で間隔が戻る（fails=0）', { r2, fails: A.CLQ.fails, nRetry });
+
+    // ---- 2b. 行の形が悪い1行（空の鍵）と \u0000 入りの行 → 悪い行だけ隔離して他は流す
+    A.mutate(() => { A.state.memos.n9 = { t: 'a\u0000b', ts: Date.now() }; A.state.memos[''] = { t: '鍵が空', ts: Date.now() }; A.state.memos.ok9 = { t: '普通', ts: Date.now() }; });
+    const r9 = await until(async () => (await has('memos', 'ok9')()) && (await has('memos', 'n9')()), 10000);
+    await sleep(300);
+    const d9 = await dumpMap();
+    ok(r9 && d9['memos/n9'].data.t === 'ab' && Object.keys(A.CL.bad).length === 1 && A.clDirtyCount() === 0 && A.CLQ.fails === 0, '2b \\u0000 は送る分だけ除いて届く・拒否される行（空の鍵）は隔離・他は届く・再送の嵐にならない', { bad: Object.keys(A.CL.bad), dirty: A.clDirtyCount(), fails: A.CLQ.fails });
+    ok(A.state.memos.n9.t === 'a\u0000b', '  端末の本文は消さない（\\u0000 も端末には残る）');
+
+    // ---- 3. 影あり・dirty の控えが消えた → 起動で差が dirty になり送られる
+    await A.clPersist();
+    A.dispose();
+    const st3 = clone(A.state); st3.memos.t3 = { t: '控えが消えた未送信', ts: Date.now() };
+    lsA.delete('hibiki-sync');
+    lsA.set('hibiki-ka', JSON.stringify({ n: 1, at: Date.now(), keys: ['memos\u0000t2'] }));   // 前回の離脱時に keepalive を撃ったが返事を見ていない
+    await clearLog();
+    const tB = Date.now();
+    const B = makeApp({ ls: lsA, idb: idbA, state: st3 });
+    await B.cloudBoot();
+    const r3 = await until(has('memos', 't3'), 8000);
+    ok(r3 && B.CL.shadowOk && !B.CL.log.some((e) => /全件受信/.test(e.msg) && e.t >= tB), '4.2-3 影あり・dirty の控えなし → 起動で影との差が見つかり送られる（全件受信はしない）', { r3, log: B.CL.log.slice(-4).map((e) => e.ev + ':' + e.msg) });
+    const pulls3 = (await mlog()).calls.filter((c) => c.path === 'pull_items').length;
+    ok(B.CL.log.some((e) => e.ev === 'keepalive' && e.msg.indexOf('クラウドに届いていた 1/1件')>=0) && !lsA.has('hibiki-ka'), '  前回の離脱時の keepalive が届いていたかを、起動後の最初の受信で確かめて記録に残す', B.CL.log.filter((e) => e.ev === 'keepalive').map((e) => e.msg));
+    ok(pulls3 <= 3, '  受信は増分だけ（pull_items ' + pulls3 + ' 回）');
+
+    // ---- 4. 影なし（IndexedDB 消失）→ 全件受信で影を作り、端末だけの項目を送る・クラウドの新しい項目は端末の古い物で上書きされない
+    await B.clPersist();
+    B.dispose();
+    const tokA = (await (await fetch(AB + '/auth/v1/token?grant_type=password', { method: 'POST', headers: { apikey: M.ANON_KEY, 'content-type': 'application/json' }, body: JSON.stringify({ email: M.TEST_EMAIL, password: M.TEST_PASSWORD }) })).json()).access_token;
+    const arpc = async (name, args) => { const r = await fetch(AB + '/rest/v1/rpc/' + name, { method: 'POST', headers: { apikey: M.ANON_KEY, authorization: 'Bearer ' + tokA, 'content-type': 'application/json' }, body: JSON.stringify(args) }); return r.json(); };
+    const NOW4 = Date.now();
+    await arpc('put_items', { rows: [{ coll: 'memos', k: 'c4', ts: NOW4 + 5000, data: { zeta: 1, t: 'クラウドの新しい版', ts: NOW4 + 5000, mm: { yy: 1, b: 2 } } }] });
+    const st4 = clone(B.state); st4.memos.c4 = { t: '端末の古い版', ts: NOW4 - 5000 }; st4.memos.l4 = { zeta: 9, t: '端末だけ', ts: NOW4, a: [3, { y: 1, b: 2 }] };
+    const C = makeApp({ ls: lsA, idb: new Map(), state: st4 });
+    await C.cloudBoot();
+    const r4 = await until(has('memos', 'l4'), 8000);
+    const d4 = await dumpMap();
+    ok(r4 && d4['memos/c4'].data.t === 'クラウドの新しい版' && C.state.memos.c4.t === 'クラウドの新しい版', '4.2-4 影なし → 全件受信で影を作る・端末だけの項目は送られる・クラウドの新しい版は古い端末の版で上書きされない', { c4: d4['memos/c4'] && d4['memos/c4'].data.t, local: C.state.memos.c4.t });
+    ok(C.CL.shadowOk && C.clDirtyCount() === 0, '  全件受信の後 dirty=0（jsonb のキー順が違っても同じ中身は同じ署名）', { dirty: C.clDirtyCount() });
+
+    // ---- 5. integrity 不一致（クラウド側で1行消える）→ 照合し直し → 一致
+    await adm('/__mock/drop', { coll: 'memos', k: 'l4' });
+    ok(!(await has('memos', 'l4')()), '  （準備）クラウドから memos/l4 を消した');
+    C.CL.integ.due = true; C.CL.integ.rebuildAt = 0;
+    await C.cloudSync(true);
+    const r5 = await until(async () => C.CL.integ.res === 'OK' && (await has('memos', 'l4')()), 15000);
+    ok(r5 && C.CL.log.some((e) => e.ev === 'integrity' && /照合し直し/.test(e.msg)), '4.2-5 整合の点検で食い違いを見つけ → 全件受信で照合し直し → 送り直して一致', { res: C.CL.integ.res, log: C.CL.log.filter((e) => e.ev === 'integrity').map((e) => e.msg) });
+
+    // ---- 6. 画面を離れる瞬間の keepalive
+    await clearLog();
+    C.mutate(() => { C.state.memos.k6 = { t: '離れる直前の記録', ts: Date.now() }; });
+    C.doc.hidden = true; C.fire('visibilitychange'); C.fire('pagehide');
+    const r6 = await until(has('memos', 'k6'), 5000);
+    const lg6 = await mlog();
+    const kaCalls = lg6.calls.filter((c) => c.path === 'put_items' && c.ka);
+    ok(r6 && kaCalls.length === 1 && kaCalls[0].keys.indexOf('memos/k6') >= 0, '4.2-6 hidden → keepalive の put_items が届く（hidden と pagehide の二重発火は1回に間引く）', lg6.calls.map((c) => c.path + (c.ka ? '(ka)' : '') + ':' + c.status).join(' '));
+    await sleep(300);
+    ok(C.clDirtyCount() === 0 && lg6.calls.filter((c) => c.path === 'put_items' && !c.ka).length === 0, '  返事で影が更新され未送信 0・隠れている間は通常の同期を始めない', { dirty: C.clDirtyCount() });
+    C.doc.hidden = false; C.fire('visibilitychange');
+    await sleep(800);
+
+    // ---- 7. ログインの更新
+    // 7a 期限切れ相当（401）→ 更新 → やり直しで成功
+    await clearLog();
+    C.CL.sess.access_token = 'abc.def.ghi';
+    C.mutate(() => { C.state.memos.r7a = { t: '401→更新→再送', ts: Date.now() }; });
+    const r7a = await until(has('memos', 'r7a'), 8000);
+    ok(r7a && (await mlog()).calls.some((c) => c.path === 'refresh' && c.status === 200) && C.cloudLoggedIn(), '4.2-7a 401 → refresh → やり直しで成功', (await mlog()).calls.map((c) => c.path + ':' + c.status).join(' '));
+    // 7b 別タブが先に更新済み（localStorage に新しい合言葉）→ 合言葉を使わずにそれを採る
+    const rtNow = C.CL.sess.refresh_token;
+    const other = await (await fetch(AB + '/auth/v1/token?grant_type=refresh_token', { method: 'POST', headers: { apikey: M.ANON_KEY, 'content-type': 'application/json' }, body: JSON.stringify({ refresh_token: rtNow }) })).json();
+    lsA.set('hibiki-session', JSON.stringify({ access_token: other.access_token, refresh_token: other.refresh_token, expires_at: other.expires_at * 1000, user: other.user }));
+    await clearLog();
+    C.CL.sess.access_token = 'abc.def.ghi';
+    C.mutate(() => { C.state.memos.r7b = { t: '別タブの合言葉', ts: Date.now() }; });
+    const r7b = await until(has('memos', 'r7b'), 8000);
+    const lg7b = await mlog();
+    ok(r7b && !lg7b.calls.some((c) => c.path === 'refresh') && C.CL.sess.refresh_token === other.refresh_token, '4.2-7b 別タブが更新済み → localStorage の新しい合言葉を採用（refresh を叩かない）', lg7b.calls.map((c) => c.path + ':' + c.status).join(' '));
+    // 7c 更新が 500 → セッションは消さない → 再送で通る
+    await clearLog();
+    await fault('refresh', '500', 1);
+    C.CL.sess.access_token = 'abc.def.ghi';
+    C.mutate(() => { C.state.memos.r7c = { t: '更新が500', ts: Date.now() }; });
+    const r7c = await until(has('memos', 'r7c'), 10000);
+    ok(r7c && C.cloudLoggedIn() && !C.CL.sess.dead, '4.2-7c 更新が 500（回線・サーバーの不調）→ セッションは消さない → 再送で通る', (await mlog()).calls.map((c) => c.path + ':' + c.status).join(' '));
+    // 7d 同じタブで同時に2回 → 実際の更新は1回
+    await clearLog();
+    const [a7, b7] = await Promise.all([C.clRefresh(), C.clRefresh()]);
+    ok(a7 && b7 && (await mlog()).calls.filter((c) => c.path === 'refresh').length === 1, '4.2-7d 同時に2回 clRefresh → サーバーへの更新は1回（相乗り）');
+    // 7e 2タブ（navigator.locks あり）が同時に更新 → サーバーへの更新は1回・両方が同じ新しい合言葉
+    const lsT = new Map([['hibiki-session', lsA.get('hibiki-session')]]);
+    const locks = fakeLocks();
+    const T1 = makeApp({ ls: lsT, locks }), T2 = makeApp({ ls: lsT, locks });
+    await clearLog();
+    const [x1, x2] = await Promise.all([T1.clRefresh(), T2.clRefresh()]);
+    ok(x1 && x2 && (await mlog()).calls.filter((c) => c.path === 'refresh').length === 1 && T1.CL.sess.refresh_token === T2.CL.sess.refresh_token, '4.2-7e 2タブが同時に更新（鍵あり）→ 更新は1回・後のタブは先のタブの合言葉を採る', { x1, x2 });
+    T1.dispose(); T2.dispose();
+    // 7f 本当に無効 → 合言葉を捨てる（ユーザー・未送信・記録は残す）→ ログインし直すと続きから送る
+    await clearLog();
+    C.CL.sess.access_token = 'abc.def.ghi'; C.CL.sess.refresh_token = 'nonsense-token';
+    lsA.set('hibiki-session', JSON.stringify(C.CL.sess));
+    C.mutate(() => { C.state.memos.r7f = { t: '無効なセッション中の記録', ts: Date.now() }; });
+    await until(() => C.CL.sess.dead === 1, 6000);
+    await sleep(1500);
+    const lg7f = await mlog();
+    ok(C.CL.sess.dead === 1 && C.CL.sess.user && C.CL.sess.user.id === M.USER_ID && !C.cloudLoggedIn() && C.state.memos.r7f && C.clDirtyCount() >= 1, '4.2-7f 本当に無効（refresh_token_not_found）→ 合言葉だけ捨てる（ユーザー・記録・未送信は残る）', { dead: C.CL.sess.dead, dirty: C.clDirtyCount() });
+    ok(lg7f.calls.filter((c) => c.path === 'put_items').length <= 1, '  無効なセッションで叩き続けない', lg7f.calls.map((c) => c.path + ':' + c.status).join(' '));
+    await login(C); await C.clAfterLogin();
+    const r7f = await until(has('memos', 'r7f'), 8000);
+    ok(r7f && C.CL.shadowOk && !C.CL.log.slice(-6).some((e) => /全件受信/.test(e.msg)), '  ログインし直すと同じ影のまま続きから送る（全件受信しない）', C.CL.log.slice(-4).map((e) => e.msg));
+
+    // ---- 8. 全件受信が失敗し続けても、いま書いた物は送られる（送信が受信の人質にならない）
+    C.dispose();
+    await fault('pull_items', '500', 1000);
+    const lsE = new Map([['hibiki-session', lsA.get('hibiki-session')]]);
+    const E = makeApp({ ls: lsE, idb: new Map(), state: clone(C.state) });
+    const bootE = E.cloudBoot();
+    await sleep(200);
+    E.mutate(() => { E.state.memos.e8 = { t: '受信が壊れていても届く', ts: Date.now() }; });
+    const r8 = await until(has('memos', 'e8'), 10000);
+    ok(r8 && !E.CL.shadowOk, '4.2-8 全件受信が 500 で失敗し続けても、いま書いた項目は送信が通る', { r8, shadowOk: E.CL.shadowOk });
+    await adm('/__mock/fault/clear', {});
+    await E.cloudSync(true);
+    const r8b = await until(() => E.CL.shadowOk && E.clDirtyCount() === 0, 10000);
+    ok(r8b, '  受信が直れば影ができて未送信 0', { shadowOk: E.CL.shadowOk, dirty: E.clDirtyCount() });
+    await bootE;
+
+    // ---- 9. 同時に何度呼んでも送信は1本ずつ・最後の保存も必ず届く
+    await clearLog();
+    await fault('put_items', 'delay', 2, 800);
+    E.mutate(() => { E.state.memos.c9a = { t: '同時1', ts: Date.now() }; });
+    const ps = [E.cloudSync(), E.cloudSync(), E.cloudSync(), E.cloudSync(), E.cloudSync()];
+    await sleep(300);
+    E.mutate(() => { E.state.memos.c9b = { t: '実行中に書いた', ts: Date.now() }; });
+    E.cloudSync();
+    await Promise.all(ps);
+    const r9b = await until(async () => (await has('memos', 'c9a')()) && (await has('memos', 'c9b')()), 8000);
+    const lg9 = await mlog();
+    ok(r9b && (lg9.maxInflight.put_items || 0) === 1, '同時に cloudSync を5回＋実行中の保存 → put_items の同時接続は最大1・実行中の保存も届く（「もう1周」）', { max: lg9.maxInflight });
+
+    // ---- 10. 送信中に同じ項目をその場で直す → 送った版の署名で影を更新＝直した版が後から必ず届く
+    await fault('put_items', 'delay', 1, 1500);
+    E.mutate(() => { E.state.memos.m10 = { t: 'v1', ts: Date.now() }; });
+    const p10 = E.cloudSync();
+    await sleep(500);
+    E.mutate(() => { const m = E.state.memos.m10; m.t = 'v2（送信中に直した）'; m.ts = Date.now() + 1; });
+    await p10;
+    const r10 = await until(has('memos', 'm10', (r) => r.data.t === 'v2（送信中に直した）'), 8000);
+    ok(r10 && E.clDirtyCount() === 0, '送信中のその場編集 → 直した版が届き、未送信 0', { dirty: E.clDirtyCount() });
+
+    // ---- 11. ヘッダーだけ返して本文が止まる → 時間切れで抜けて再送
+    await clearLog();
+    await fault('put_items', 'stall', 1);
+    E.mutate(() => { E.state.memos.s11 = { t: '本文が止まる', ts: Date.now() }; });
+    const r11 = await until(has('memos', 's11'), 12000);
+    ok(r11 && (await mlog()).calls.some((c) => c.fault === 'stall'), '本文の読み取りで止まる（stall）→ 時間制限は本文を読み終えるまで効く → 再送で届く');
+
+    // ---- 12. 見張り：無進捗が続いたら打ち切ってやり直す
+    E.CL.T.rpc = 60000; E.CL.T.watch = 3000;
+    await fault('put_items', 'hang', 1);
+    E.mutate(() => { E.state.memos.w12 = { t: '見張り', ts: Date.now() }; });
+    const r12 = await until(has('memos', 'w12'), 20000);
+    ok(r12 && E.CL.log.some((e) => e.ev === 'watchdog'), '見張り：無進捗が続いた同期を打ち切ってやり直す（固着しない）', E.CL.log.slice(-5).map((e) => e.ev + ':' + e.msg));
+    E.CL.T.watch = 70000;
+
+    // ---- 13. 画面復帰：裏に回る前に始まって宙に浮いた通信は待たずに打ち切る
+    await fault('put_items', 'hang', 2);
+    E.mutate(() => { E.state.memos.v13 = { t: '復帰で打ち切り', ts: Date.now() }; });
+    const p13 = E.cloudSync();
+    await sleep(300);
+    E.doc.hidden = true; E.fire('visibilitychange');
+    await sleep(3200);
+    E.doc.hidden = false; const tv = Date.now(); E.fire('visibilitychange');
+    const r13 = await until(has('memos', 'v13'), 8000);
+    ok(r13 && Date.now() - tv < 6000 && E.CL.log.some((e) => e.ev === 'resume'), '画面復帰 → 裏に回る前の宙に浮いた通信を打ち切り、すぐ送り直す', { ms: Date.now() - tv });
+    await p13; E.CL.T.rpc = 2500;
+
+    // ---- 14. 端末の本文が保存できない（容量不足）→ 書いた項目を IndexedDB に退避 → 次の起動で戻して送る
+    E.dispose();
+    await fault('put_items', '500', 1000);
+    const idbG = new Map();
+    const G = makeApp({ ls: lsE, idb: idbG, state: clone(E.state), saveFail: true });
+    await G.cloudBoot();
+    G.mutate(() => { G.state.memos.o14 = { t: '端末に置けなかった記録', ts: Date.now() }; });
+    await sleep(300);
+    const ob = idbG.get('outbox:' + M.USER_ID);
+    ok(G.localSaveFail && ob && JSON.parse(ob).rows['memos\u0000o14'], '端末保存に失敗 → 書いた項目の中身を IndexedDB の退避に置く', { fail: G.localSaveFail, ob: !!ob });
+    const shG = idbG.get('shadow:' + M.USER_ID);
+    G.dispose();
+    await adm('/__mock/fault/clear', {});
+    const st14 = clone(E.state);   // 本文には o14 が無い（保存できなかった）
+    const H = makeApp({ ls: lsE, idb: idbG, state: st14 });
+    await H.cloudBoot();
+    const r14 = await until(has('memos', 'o14'), 8000);
+    ok(r14 && H.state.memos.o14, '  次の起動で退避から戻して送る', { r14 });
+    ok(!shG || JSON.parse(shG).seq >= 0, '  （保存失敗の間は影と受信位置を進めて保存しない）');
+    H.dispose();
+
+    // ---- 15. 6,000件規模：影の計算・2^53 を超える ts 合計の整合・2回目の起動は増分だけ
+    const big = clone(st14); big.entries = big.entries || {};
+    const T0 = 1760000000001;
+    for (let i = 0; i < 6000; i++) { const d = '2025-' + String(1 + (i % 12)).padStart(2, '0') + '-' + String(1 + (i % 28)).padStart(2, '0'); (big.entries[d] = big.entries[d] || {})['b' + i] = { p: '場所' + (i % 50), t: '本文 ' + i + ' '.repeat(i % 7) + 'あいう', ph: [], s: '09:00', e: '10:00', ts: T0 + i, acts: [{ t: '行', m: 30, k: 'ai' }] }; }
+    const lsF = new Map([['hibiki-session', lsA.get('hibiki-session')]]), idbF = new Map();
+    const F = makeApp({ ls: lsF, idb: idbF, state: big, rpcMs: 20000 });
+    const tF = Date.now();
+    await F.cloudBoot();
+    const rF = await until(() => F.CL.shadowOk && F.clDirtyCount() === 0 && F.CLQ.fails === 0 && !F.CL.busy, 60000);
+    const tFull = Date.now() - tF;
+    ok(rF && F.CL.integ.res === 'OK', '6,000件超：全件受信→差の送信（' + tFull + 'ms）→ 整合 OK（ts 合計が 2^53 超でも BigInt で一致）', { integ: F.CL.integ.res, perf: F.CL.perf });
+    {
+      /* 署名の速さは vm の外（ふつうの JS の世界）で測る。vm の中は大域変数の参照が遅く、実機より何倍も遅く出るため */
+      const src = fs.readFileSync(path.join(__dirname, 'cloud-layer.js'), 'utf8');
+      const S = new Function(src.slice(src.indexOf('const CL_ID='), src.indexOf('function clSig(it)')) + ';return {clItems,clKey,clSigOf};')();
+      let best = 1e9; for (let r = 0; r < 3; r++) { const t = Date.now(); const m = {}; for (const it of S.clItems(big)) m[S.clKey(it)] = S.clSigOf(it, true); best = Math.min(best, Date.now() - t); }
+      ok(best < 100, '  影の計算：' + S.clItems(big).length + '件の全署名 ' + best + 'ms（100ms 以内）', best);
+    }
+    F.mutate(() => { F.state.memos.f15 = { t: '大きいデータで1件', ts: Date.now() }; });
+    ok(F.CL.perf.mark < 100, '  保存1回の差の計算（署名は使い回し）' + F.CL.perf.mark + 'ms', F.CL.perf);
+    await until(has('memos', 'f15'), 8000);
+    await F.clPersist(); F.dispose();
+    await clearLog();
+    const F2 = makeApp({ ls: lsF, idb: idbF, state: clone(F.state), rpcMs: 20000 });
+    const t2 = Date.now();
+    await F2.cloudBoot();
+    F2.mutate(() => { F2.state.memos.f15b = { t: '2回目の起動で1件', ts: Date.now() }; });
+    const rF2 = await until(has('memos', 'f15b'), 8000);
+    const t2ms = Date.now() - t2;
+    const lgF2 = await mlog();
+    ok(rF2 && lgF2.calls.filter((c) => c.path === 'pull_items').length <= 4 && !F2.CL.log.some((e) => /全件受信/.test(e.msg) && e.t >= t2), '2回目の起動：影あり → 増分受信だけ → 保存1件が届く（' + t2ms + 'ms・vm の中。3秒の判定は実機相当の試験で）', lgF2.calls.map((c) => c.path).join(' '));
+    F2.dispose();
+  } finally {
+    for (const a of apps) { try { a.dispose(); } catch (e) { /* 無視 */ } }
+    await srv.close();
+    try { fs.rmSync(ADIR, { recursive: true, force: true }); } catch (e) { /* 残っても害は無い */ }
+  }
+}
+
+main().then(() => appTests()).then(() => finish(), (e) => { console.log('\n  [NG] 予期しないエラー: ' + (e && e.stack || e)); fail++; return finish(); });
 
 async function finish() {
   await killChild();

@@ -58,6 +58,18 @@
 
   ■ 確認用の補助（本物には無い）
     GET /_mock/health  GET /_mock/config  GET /_mock/history?coll=&k=  GET /_mock/dump  POST /_mock/reset
+
+  ■ 故障注入と呼び出しの記録（同期エンジンの試験用。本物には無い）
+    POST /__mock/fault {path,mode,count,ms}   次の count 回だけ、その呼び出しを壊す
+        path : 'put_items' | 'pull_items' | 'integrity' | 'refresh' | 'password' | 'storage' | '*'
+        mode : 'hang'（返事をしない・120秒でソケットを切る）| 'timeout'（30秒待って 504）| '500' | '401' | '400'（22023）
+               | 'stall'（ヘッダーだけ返して本文を止める）| 'delay'（ms だけ待ってから普通に処理）
+    POST /__mock/fault/clear                   故障注入を全部やめる
+    GET  /__mock/log                           受けた呼び出しの一覧 {calls:[{t,method,path,status,ka,rows,fault}],maxInflight}
+                                               ka＝x-client-info が hibiki-ka（離脱時の keepalive 送信）
+    POST /__mock/log/clear                     記録を空にする
+    POST /__mock/drop {coll,k}                 1行だけ消す（クラウド側の取りこぼしを模擬。integrity の試験用）
+    --jsonb-order                              保存する data のキーを jsonb と同じ順（短い順→バイト順）に並べ替える
 */
 
 const http = require('http');
@@ -135,8 +147,16 @@ function hasNul(v) {
   return false;
 }
 
+// jsonb はオブジェクトのキーを「短い順→バイト順」に並べ替えて返す（本物の Postgres と同じ）
+function jsonbOrder(v) {
+  if (v === null || typeof v !== 'object') return v;
+  if (Array.isArray(v)) return v.map(jsonbOrder);
+  const ks = Object.keys(v).sort((a, b) => { const A = Buffer.from(a, 'utf8'), B = Buffer.from(b, 'utf8'); return (A.length - B.length) || Buffer.compare(A, B); });
+  const o = {}; for (const k of ks) o[k] = jsonbOrder(v[k]); return o;
+}
+
 function parseArgs(argv) {
-  const o = { port: 8787, tokenTtl: 3600, reset: false, dataDir: path.join(__dirname, 'mock-data'), host: null, maxRows: 1000, quiet: false, help: false };
+  const o = { port: 8787, tokenTtl: 3600, reset: false, dataDir: path.join(__dirname, 'mock-data'), host: null, maxRows: 1000, quiet: false, help: false, jsonbOrder: false };
   for (let i = 0; i < argv.length; i++) {
     let a = argv[i], v;
     const eq = a.indexOf('=');
@@ -150,6 +170,7 @@ function parseArgs(argv) {
       case '--host': o.host = next(); break;
       case '--max-rows': o.maxRows = Number(next()); break;
       case '--quiet': o.quiet = true; break;
+      case '--jsonb-order': o.jsonbOrder = true; break;
       case '--help': case '-h': o.help = true; break;
       default: throw new Error('不明なオプション: ' + a);
     }
@@ -162,7 +183,7 @@ function parseArgs(argv) {
 
 // ---------------------------------------------------------------- サーバー本体
 function start(opts) {
-  const cfg = Object.assign({ port: 8787, tokenTtl: 3600, reset: false, dataDir: path.join(__dirname, 'mock-data'), host: null, maxRows: 1000, quiet: false }, opts || {});
+  const cfg = Object.assign({ port: 8787, tokenTtl: 3600, reset: false, dataDir: path.join(__dirname, 'mock-data'), host: null, maxRows: 1000, quiet: false, jsonbOrder: false }, opts || {});
   const dir = cfg.dataDir;
   const F = {
     items: path.join(dir, 'items.jsonl'),
@@ -362,7 +383,7 @@ function start(opts) {
         history.push(old); fs.appendFileSync(F.history, JSON.stringify(old) + '\n');
         items.delete(key);
       }
-      const row = { coll: r.coll, k: r.k, ts: r.ts, data: r.data, seq: ++seqCounter };
+      const row = { coll: r.coll, k: r.k, ts: r.ts, data: cfg.jsonbOrder ? jsonbOrder(r.data) : r.data, seq: ++seqCounter };
       items.set(key, row);
       fs.appendFileSync(F.items, JSON.stringify(row) + '\n');
       n++;
@@ -412,6 +433,7 @@ function start(opts) {
       if (a.role !== 'user') throw new HttpError(401, { code: '42501', details: null, hint: null, message: 'permission denied for function ' + fn });
       const args = await readJson(req);
       if (args === null || typeof args !== 'object' || Array.isArray(args)) throw new HttpError(400, { code: 'PGRST102', details: null, hint: null, message: 'Empty or invalid json' });
+      if (req._log && Array.isArray(args.rows)) { req._log.rows = args.rows.length; req._log.keys = args.rows.slice(0, 50).map((r) => r && (r.coll + '/' + r.k)); }
       const have = Object.keys(args);
       if (have.some((n) => def.params.indexOf(n) < 0) || def.required.some((n) => have.indexOf(n) < 0)) throw fnNotFound(fn, args);
       const result = def.run(args);
@@ -532,6 +554,20 @@ function start(opts) {
     }
     if (p === '/_mock/dump') return send(res, 200, [...items.values()]);
     if (p === '/_mock/reset' && m === 'POST') { wipe(); loadAll(); loadMeta(); loadPhotos(); return send(res, 200, { ok: true }); }
+    if (p === '/__mock/fault' && m === 'POST') {
+      const b = await readJson(req);
+      const f = { path: String(b.path || '*'), mode: String(b.mode || '500'), count: Math.max(1, Number(b.count) || 1), ms: Number(b.ms) || 0 };
+      faults.push(f); return send(res, 200, { ok: true, faults });
+    }
+    if (p === '/__mock/fault/clear' && m === 'POST') { faults.length = 0; return send(res, 200, { ok: true }); }
+    if (p === '/__mock/log' && m === 'GET') return send(res, 200, { calls, maxInflight, faults });
+    if (p === '/__mock/log/clear' && m === 'POST') { calls.length = 0; for (const k of Object.keys(maxInflight)) delete maxInflight[k]; return send(res, 200, { ok: true }); }
+    if (p === '/__mock/drop' && m === 'POST') {
+      const b = await readJson(req); const key = keyOf(String(b.coll), String(b.k));
+      const had = items.delete(key);
+      if (had) fs.writeFileSync(F.items, [...items.values()].map((r) => JSON.stringify(r)).join('\n') + (items.size ? '\n' : ''));
+      return send(res, 200, { ok: true, dropped: had });
+    }
     throw new HttpError(404, { message: 'no such mock endpoint' });
   }
 
@@ -571,6 +607,29 @@ function start(opts) {
     if (req.headers['access-control-request-private-network']) res.setHeader('Access-Control-Allow-Private-Network', 'true');
   }
 
+  // ---- 故障注入と呼び出しの記録（/__mock/*）
+  const faults = [];            // {path, mode, count, ms}
+  const calls = [];             // 受けた呼び出し（最大 3000 件）
+  const inflight = {}, maxInflight = {};
+  function callName(url) {      // 故障注入・記録で使う呼び出しの名前
+    const p = url.pathname;
+    if (p.startsWith('/rest/v1/rpc/')) return p.slice('/rest/v1/rpc/'.length);
+    if (p === '/auth/v1/token') return url.searchParams.get('grant_type') === 'refresh_token' ? 'refresh' : 'password';
+    if (p.startsWith('/storage/v1/')) return 'storage';
+    return p;
+  }
+  function takeFault(name) {
+    const i = faults.findIndex((f) => f.path === name || f.path === '*');
+    if (i < 0) return null;
+    const f = faults[i]; f.count--; if (f.count <= 0) faults.splice(i, 1);
+    return f;
+  }
+  function hold(req, res, ms, after) { // 返事をしないまま持つ（相手が切ればそこで終わり）
+    const t = setTimeout(() => { try { if (after) after(); else { req.destroy(); res.destroy(); } } catch (e) { /* もう切れている */ } }, ms);
+    if (t.unref) t.unref();
+    res.on('close', () => clearTimeout(t));
+  }
+
   async function handler(req, res) {
     const t0 = Date.now();
     let url;
@@ -580,7 +639,26 @@ function start(opts) {
     try {
       if (req.method === 'OPTIONS') { res.writeHead(204); return res.end(); }
       const p = url.pathname;
-      if (p.startsWith('/_mock/')) return await mockApi(req, res, url);
+      if (p.startsWith('/_mock/') || p.startsWith('/__mock/')) return await mockApi(req, res, url);
+      // 呼び出しの記録と同時接続の数（同期エンジンが二重に送っていないかの確認用）
+      const name = callName(url);
+      const ent = { t: t0, method: req.method, path: name, status: 0, ka: String(req.headers['x-client-info'] || '') === 'hibiki-ka', rows: null, fault: null };
+      calls.push(ent); if (calls.length > 3000) calls.splice(0, calls.length - 3000);
+      req._log = ent;
+      inflight[name] = (inflight[name] || 0) + 1; maxInflight[name] = Math.max(maxInflight[name] || 0, inflight[name]);
+      let done = false; const fin = () => { if (!done) { done = true; inflight[name]--; ent.status = res.statusCode; ent.ms = Date.now() - t0; } };
+      res.on('finish', fin); res.on('close', fin);
+      const f = takeFault(name);
+      if (f) {
+        ent.fault = f.mode;
+        if (f.mode === 'hang') return hold(req, res, 120000);
+        if (f.mode === 'timeout') return hold(req, res, 30000, () => send(res, 504, { message: 'mock fault timeout' }));
+        if (f.mode === 'stall') { res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8', 'Content-Length': 1000 }); res.write('['); return hold(req, res, 120000); }
+        if (f.mode === '500') return send(res, 500, { message: 'mock fault 500' });
+        if (f.mode === '401') return send(res, 401, { code: 'PGRST301', details: null, hint: null, message: 'JWT expired' });
+        if (f.mode === '400') return send(res, 400, { code: '22023', details: null, hint: null, message: 'mock fault 400' });
+        if (f.mode === 'delay') await new Promise((r) => setTimeout(r, f.ms || 1000));
+      }
       if (!(p.startsWith('/auth/v1/') || p.startsWith('/rest/v1/') || p.startsWith('/storage/v1/'))) {
         return send(res, 404, { message: 'no Route matched with those values' });
       }
@@ -619,7 +697,7 @@ if (require.main === module) {
   let o;
   try { o = parseArgs(process.argv.slice(2)); } catch (e) { console.error('引数エラー: ' + e.message); process.exit(2); }
   if (o.help) {
-    console.log('使い方: node mock-supabase.js [--port 8787] [--token-ttl 60] [--reset] [--data-dir <dir>] [--host <addr>] [--max-rows 1000] [--quiet]');
+    console.log('使い方: node mock-supabase.js [--port 8787] [--token-ttl 60] [--reset] [--data-dir <dir>] [--host <addr>] [--max-rows 1000] [--quiet] [--jsonb-order]');
     process.exit(0);
   }
   let srv;

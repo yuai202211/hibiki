@@ -3124,7 +3124,8 @@ function openSyncSheet(){
     row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして、いつものURLから開くと繋がる')+
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c1.8）：'+
+    (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+   /* 同期の状態1行と記録（クラウド版 c1.9） */
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c1.9）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -6515,31 +6516,117 @@ try{
    旧版の「HTML全体を再公開して読み直す」方式をやめ、変わった項目だけをデータベースへ送る。
    合流の規則は旧版と同じ mergeStates（1件ずつ ts の新しい方が勝つ）。削除は del:1 の墓石。
    このブロックは build.js が boot(); の直前に差し込む。既存の名前（state・saveLocal・render・renderSync・
-   unsynced・localOnly・permFail・schedulePublish・doPublish・getAssets・phUpload・toast・$）に乗る。 */
+   unsynced・localOnly・permFail・schedulePublish・doPublish・getAssets・phUpload・toast・$）に乗る。
+   c1.9（「保存しなくなる」の根絶）：
+   ・全部の通信に時間制限。止まった同期は見張りが打ち切ってやり直す（フラグの固着をなくす）
+   ・同期の入口は cloudSync の1本だけ。実行中に来た依頼は「もう1周」で拾う（捨てない）
+   ・送信は全件受信を待たない。失敗したら 5秒→最大120秒の間隔で必ず再挑戦
+   ・影（クラウドが持っている中身の署名）を IndexedDB に保存。未送信は毎回「影との差」で計算する
+   ・整合の点検（件数と ts の合計）で黙った食い違いを見つけて直す
+   ・画面を離れる瞬間に keepalive で送る。ログインの更新は1本にまとめ、別タブの更新を先に読む
+   ・同期の記録（直近40件）を「保存ランプの意味」の画面に出す */
 const CLOUD={url:"https://rrvwryabpxedpcqpmpbh.supabase.co",key:"sb_publishable_NVJgPseGx5FbccTOaRDQEA_G2HYAUk8",bucket:'photos'};
-const CL_SESS='hibiki-session',CL_SYNC='hibiki-sync';
-const CL={sess:null,seq:0,dirty:{},shadow:{},busy:false,pulling:false,timer:null,lastPull:0,lastPush:0,err:'',ready:false,firstPull:false,uid:'',pullTimer:null,photoQ:[],photoBusy:false};
+const CL_SESS='hibiki-session',CL_SYNC='hibiki-sync',CL_LOGK='hibiki-cl-log',CL_KA='hibiki-ka';
+const CL_SHVER='c19-2';   /* 影の形式（署名の作り方）の版。変えたら影は作り直し */
+const CL_KA_MAX=40000;    /* keepalive の本文の上限（バイト）。ブラウザの上限 64KB に余裕を見る */
+const CL={sess:null,seq:0,dirty:{},shadow:{},shadowOk:false,uid:'',lastPull:0,lastPush:0,lastTry:0,err:'',lastErr:'',ready:false,trackHot:false,firstPull:false,
+  photoQ:[],photoBusy:false,log:[],bad:{},hot:{},curSig:{},pushedDuring:{},full:null,retryAt:0,retryMs:5000,quietSave:false,
+  T:{rpc:25000,rpcMax:60000,refresh:15000,photo:90000,store:3000,fresh:20000,lock:20000,watch:70000,pre:8000},
+  chunkN:400,chunkBytes:200000,pullLim:500,mutSeq:0,tabId:Math.random().toString(36).slice(2,10),kaAt:0,authDead:false,auth401:0,
+  integ:{at:0,res:'',sig:'',pend:'',rebuildAt:0,due:false},hiddenAt:0,storeOk:null,shadowLoadedAt:0,refreshP:null,persistT:null,outboxAt:0,perf:{},kaCheck:null};
+/* 同期の実行の管理（1本だけ走らせる）。epoch＝世代。打ち切った古い回は結果を使わない */
+const CLQ={run:null,again:false,epoch:0,ctl:null,beat:0,fails:0,due:0,t:null,startedAt:0,wake:false,firstFailAt:0};
+Object.defineProperty(CL,'busy',{get:()=>!!CLQ.run});
+Object.defineProperty(CL,'pulling',{get:()=>!!CLQ.run});
 
 function cloudConfigured(){return !!(CLOUD.url&&CLOUD.key&&CLOUD.url.indexOf('__')!==0&&/^https?:\/\//.test(CLOUD.url));}
 function cloudLoggedIn(){return !!(CL.sess&&CL.sess.access_token&&CL.sess.user&&CL.sess.user.id);}
-function clSaveSess(){try{if(CL.sess)localStorage.setItem(CL_SESS,JSON.stringify(CL.sess));else localStorage.removeItem(CL_SESS);}catch(e){}}
-function clSaveSync(){try{localStorage.setItem(CL_SYNC,JSON.stringify({seq:CL.seq,dirty:CL.dirty,uid:CL.uid,lastPull:CL.lastPull}));}catch(e){}}
+/* 同期の記録（直近40件）。端末に小さく残す＝止まった時に原因が1行で分かる */
+function clNote(ev,msg){
+  const e={t:Date.now(),ev:String(ev),msg:String(msg==null?'':msg).slice(0,160)};
+  CL.log.push(e);if(CL.log.length>40)CL.log.splice(0,CL.log.length-40);
+  try{localStorage.setItem(CL_LOGK,JSON.stringify(CL.log));}catch(x){}
+}
+function clSaveSess(){
+  let ok=true;
+  try{if(CL.sess)localStorage.setItem(CL_SESS,JSON.stringify(CL.sess));else localStorage.removeItem(CL_SESS);}catch(e){ok=false;}
+  if(!ok)clNote('sess','セッション保存NG（端末の空き不足）');
+  clStore.set('session',CL.sess||null);   /* IndexedDB にも控える（空き不足で古い合言葉に戻らないように） */
+}
+/* hibiki-sync：uid・最終受信・未送信の鍵（旧版 c1.8 に戻った時の保険。2000件まで）。受信位置 seq は影の側だけに持つ */
+function clSaveSync(){
+  const ks=Object.keys(CL.dirty),d={};if(ks.length<=2000)for(const k of ks)d[k]=1;
+  try{localStorage.setItem(CL_SYNC,JSON.stringify({dirty:d,uid:CL.uid,lastPull:CL.lastPull}));}catch(e){}
+}
 function clLoad(){
   try{CL.sess=JSON.parse(localStorage.getItem(CL_SESS)||'null');}catch(e){CL.sess=null;}
-  try{const s=JSON.parse(localStorage.getItem(CL_SYNC)||'null');if(s){CL.seq=Number(s.seq)||0;CL.dirty=s.dirty||{};CL.uid=s.uid||'';CL.lastPull=Number(s.lastPull)||0;}}catch(e){}
+  try{const s=JSON.parse(localStorage.getItem(CL_SYNC)||'null');if(s){CL.uid=s.uid||'';CL.lastPull=Number(s.lastPull)||0;
+    for(const k in (s.dirty||{}))CL.hot[k]=1;}}catch(e){}   /* 前回の未送信の鍵＝影が無い時に先に送る候補 */
+  try{const l=JSON.parse(localStorage.getItem(CL_LOGK)||'[]');if(Array.isArray(l))CL.log=l.slice(-40);}catch(e){}
 }
+
+/* ---------- 端末の控え（IndexedDB。使えない時はこの起動の間だけメモリ） ----------
+   影は本文（localStorage）の容量を食わないよう localStorage には書かない。どの操作も3秒で諦める＝起動を止めない */
+const clStore=(()=>{
+  let dbP=null;const mem={};
+  const open=()=>{
+    if(typeof indexedDB==='undefined'||!indexedDB)return Promise.resolve(null);
+    if(!dbP)dbP=new Promise(res=>{let done=false;const fin=v=>{if(!done){done=true;res(v);}};
+      try{const rq=indexedDB.open('hibiki-cl',1);
+        rq.onupgradeneeded=()=>{try{if(!rq.result.objectStoreNames.contains('kv'))rq.result.createObjectStore('kv');}catch(e){}};
+        rq.onsuccess=()=>{const db=rq.result;try{db.onclose=()=>{dbP=null;};db.onversionchange=()=>{try{db.close();}catch(e){}dbP=null;};}catch(e){}
+          if(done){try{db.close();}catch(e){}}fin(db);};
+        rq.onerror=()=>fin(null);rq.onblocked=()=>fin(null);setTimeout(()=>fin(null),CL.T.store);
+      }catch(e){fin(null);}
+    }).then(db=>{if(!db)dbP=null;return db;});
+    return dbP;};
+  /* undefined＝使えなかった（時間切れ・失敗）。null＝無い */
+  const tx=(mode,fn)=>Promise.race([open().then(db=>{if(!db)return undefined;return new Promise(res=>{
+      try{const t=db.transaction('kv',mode),s=t.objectStore('kv');let out=null;fn(s,v=>{out=v;});
+        t.oncomplete=()=>res(out);t.onerror=()=>res(undefined);t.onabort=()=>res(undefined);}
+      catch(e){dbP=null;res(undefined);}   /* 接続が死んでいる＝次は開き直す */
+    });}),new Promise(r=>setTimeout(()=>r(undefined),CL.T.store))]);
+  return {
+    async get(k){const v=await tx('readonly',(s,set)=>{const r=s.get(k);r.onsuccess=()=>set(r.result===undefined?null:r.result);});
+      if(v===undefined){CL.storeOk=false;return Object.prototype.hasOwnProperty.call(mem,k)?mem[k]:undefined;}CL.storeOk=true;return v;},
+    async set(k,v){mem[k]=v;const r=await tx('readwrite',(s,set)=>{s.put(v,k);set(true);});if(r===undefined){CL.storeOk=false;return false;}CL.storeOk=true;return true;},
+    /* 読んで書き直す（1つの取引の中で。別タブと同時に書いても片方が消えない） */
+    async upd(k,fn){let nv;const r=await tx('readwrite',(s,set)=>{const g=s.get(k);g.onsuccess=()=>{nv=fn(g.result===undefined?null:g.result);s.put(nv,k);set(true);};});
+      if(r===undefined){CL.storeOk=false;mem[k]=fn(Object.prototype.hasOwnProperty.call(mem,k)?mem[k]:null);return false;}CL.storeOk=true;mem[k]=nv;return true;}
+  };
+})();
 clLoad();
 
-/* ---------- Supabase への最小クライアント（fetch だけ） ---------- */
+/* ---------- 通信（どれも時間制限つき） ---------- */
+function clErr(msg,status,code,kind){const e=new Error(msg);e.status=status||0;e.code=code||'';e.kind=kind||'net';return e;}
+function clKindOf(status,code){
+  if(status===401)return 'auth';
+  if(status===413||(status===400&&/^(22|54)/.test(String(code||''))))return 'row';      /* 行の形が悪い＝その行だけ隔離する */
+  if(status>=500||status===408||status===425||status===429)return 'server';
+  return 'client';
+}
+/* fn(signal) を ms で打ち切る。本文を読み終えるまでを fn の中に入れること。parent が止まれば一緒に止まる */
+function clTimed(ms,fn,parent){
+  const ctl=new AbortController();let why='';
+  const t=setTimeout(()=>{why='timeout';ctl.abort();},ms);
+  const onP=()=>{why=why||'aborted';ctl.abort();};
+  if(parent){if(parent.aborted)onP();else parent.addEventListener('abort',onP);}
+  const mk=()=>why==='timeout'?clErr('timeout（'+Math.round(ms/1000)+'秒）',0,'timeout','timeout'):clErr('中断',0,'aborted','aborted');
+  const dead=new Promise((_,rej)=>ctl.signal.addEventListener('abort',()=>rej(mk())));
+  dead.catch(()=>{});
+  return Promise.race([Promise.resolve().then(()=>fn(ctl.signal)),dead])
+    .catch(e=>{if(ctl.signal.aborted)throw mk();if(e&&e.kind)throw e;throw clErr(String((e&&e.message)||'通信失敗'),0,'net','net');})
+    .finally(()=>{clearTimeout(t);if(parent)parent.removeEventListener('abort',onP);});
+}
+function clHdr(){const h={'apikey':CLOUD.key,'Content-Type':'application/json'};if(CL.sess&&CL.sess.access_token)h['Authorization']='Bearer '+CL.sess.access_token;return h;}
+/* 応答を読み切って {status,ok,text()} の形で返す（旧 clFetch と同じ使い方ができる） */
 async function clFetch(path,opt,noAuth){
   opt=opt||{};
-  const h=Object.assign({'apikey':CLOUD.key,'Content-Type':'application/json'},opt.headers||{});
-  if(!noAuth&&CL.sess&&CL.sess.access_token)h['Authorization']='Bearer '+CL.sess.access_token;
-  let r=await fetch(CLOUD.url+path,Object.assign({},opt,{headers:h}));
-  if(r.status===401&&!noAuth&&CL.sess&&CL.sess.refresh_token&&!opt._retried){
-    const ok=await clRefresh();
-    if(ok){h['Authorization']='Bearer '+CL.sess.access_token;r=await fetch(CLOUD.url+path,Object.assign({},opt,{headers:h,_retried:1}));}
-  }
+  const go=()=>clTimed(CL.T.rpc,s=>{const h=Object.assign({'apikey':CLOUD.key,'Content-Type':'application/json'},opt.headers||{});
+      if(!noAuth&&CL.sess&&CL.sess.access_token)h['Authorization']='Bearer '+CL.sess.access_token;
+      return fetch(CLOUD.url+path,Object.assign({},opt,{headers:h,signal:s})).then(async r=>{const t=await r.text();return {status:r.status,ok:r.ok,text:()=>Promise.resolve(t)};});});
+  let r=await go();
+  if(r.status===401&&!noAuth&&CL.sess&&CL.sess.refresh_token){if(await clRefresh())r=await go();}
   return r;
 }
 async function clJson(r){const t=await r.text();try{return t?JSON.parse(t):null;}catch(e){return {raw:t};}}
@@ -6548,37 +6635,86 @@ async function clLogin(email,password){
   const j=await clJson(r);
   if(!r.ok||!j||!j.access_token){const m=(j&&(j.msg||j.message||j.error_description||j.error))||('HTTP '+r.status);throw new Error(m);}
   CL.sess={access_token:j.access_token,refresh_token:j.refresh_token,expires_at:(j.expires_at||0)*1000,user:j.user};
-  clSaveSess();return CL.sess.user;
+  CL.authDead=false;CL.auth401=0;
+  clSaveSess();clNote('login','ログインした');return CL.sess.user;
 }
+function clReadSessLS(){try{return JSON.parse(localStorage.getItem(CL_SESS)||'null');}catch(e){return null;}}
+/* 別タブ（同じ端末）が先に更新した合言葉があれば、それを採る（更新用の合言葉は使い捨て＝二重に使うと失効する） */
+function clAdoptOther(){
+  const ls=clReadSessLS();
+  if(ls&&ls.user&&ls.access_token&&ls.refresh_token&&CL.sess&&CL.sess.user&&ls.user.id===CL.sess.user.id&&
+     ls.refresh_token!==CL.sess.refresh_token&&(ls.expires_at||0)>Date.now()+60000){CL.sess=ls;clNote('refresh','別タブの新しい合言葉を採用');return true;}
+  return false;
+}
+/* ログインの更新：1本にまとめ（同じタブの同時呼び出しは相乗り）、別タブとは navigator.locks で順番に */
 async function clRefresh(){
   if(!CL.sess||!CL.sess.refresh_token)return false;
-  try{
-    const r=await fetch(CLOUD.url+'/auth/v1/token?grant_type=refresh_token',{method:'POST',headers:{'apikey':CLOUD.key,'Content-Type':'application/json'},body:JSON.stringify({refresh_token:CL.sess.refresh_token})});
-    const j=await clJson(r);
-    if(!r.ok||!j||!j.access_token){
-      /* 更新用の合言葉が無効＝ログインし直しが要る（400/401/403）。回線の不調（他）ならセッションは残す */
-      if(r.status===400||r.status===401||r.status===403){CL.sess=null;clSaveSess();renderSync();}
-      return false;
+  if(CL.refreshP)return CL.refreshP;
+  CL.refreshP=(async()=>{try{return await clRefreshLocked();}catch(e){return false;}finally{CL.refreshP=null;}})();
+  return CL.refreshP;
+}
+async function clRefreshLocked(){
+  const run=async()=>{
+    if(!CL.sess||!CL.sess.refresh_token)return false;
+    if(clAdoptOther())return true;   /* 先に読む＝合言葉を無駄に使わない */
+    let r,j;
+    try{r=await clTimed(CL.T.refresh,s=>fetch(CLOUD.url+'/auth/v1/token?grant_type=refresh_token',{method:'POST',headers:{'apikey':CLOUD.key,'Content-Type':'application/json'},
+        body:JSON.stringify({refresh_token:CL.sess.refresh_token}),signal:s}).then(async x=>({status:x.status,ok:x.ok,text:await x.text()})));}
+    catch(e){clNote('refresh','更新失敗（'+e.message+'）。合言葉は残す');return false;}   /* 回線・時間切れではセッションを消さない */
+    try{j=r.text?JSON.parse(r.text):null;}catch(e){j=null;}
+    if(r.ok&&j&&j.access_token){
+      CL.sess={access_token:j.access_token,refresh_token:j.refresh_token||CL.sess.refresh_token,expires_at:(j.expires_at||0)*1000,user:j.user||CL.sess.user};
+      CL.authDead=false;clSaveSess();clNote('refresh','合言葉を更新');return true;}
+    if(r.status===400||r.status===401||r.status===403){
+      if(clAdoptOther())return true;   /* その間に別タブが更新していた */
+      if(/refresh_token_not_found|refresh_token_already_used|invalid_grant|Invalid Refresh Token|session_not_found/i.test(r.text||'')){
+        /* 本当に無効：合言葉だけ捨てる。ユーザー（影の鍵）・未送信・記録は残す。ログインし直せば続きから */
+        CL.sess={user:CL.sess.user,access_token:'',refresh_token:'',expires_at:0,dead:1};CL.authDead=false;
+        clSaveSess();clNote('auth','ログインが切れた（要ログイン）');try{renderSync();}catch(e){}
+        return false;}
     }
-    CL.sess={access_token:j.access_token,refresh_token:j.refresh_token||CL.sess.refresh_token,expires_at:(j.expires_at||0)*1000,user:j.user||CL.sess.user};
-    clSaveSess();return true;
-  }catch(e){return false;}
+    clNote('refresh','更新失敗 HTTP '+r.status+'。合言葉は残す');return false;
+  };
+  if(typeof navigator!=='undefined'&&navigator.locks&&navigator.locks.request){
+    const ac=new AbortController();const t=setTimeout(()=>ac.abort(),CL.T.lock);
+    let got=false;
+    try{return await navigator.locks.request('hibiki-refresh',{signal:ac.signal},()=>{got=true;clearTimeout(t);return run();});}
+    catch(e){if(got)return false;clearTimeout(t);return run();}   /* 鍵が取れない・使えない（file:// など）＝鍵なしで続ける */
+  }
+  return run();
 }
 async function clEnsureFresh(){
-  /* 期限の5分前になったら先に更新しておく（送信中に切れて二度手間にならないように） */
-  if(CL.sess&&CL.sess.expires_at&&Date.now()>CL.sess.expires_at-300000)await clRefresh();
+  /* 期限の10分前から先回りで更新。隠れている時は（まだ切れていなければ）始めない。最大20秒で諦めて今の合言葉で送る */
+  if(!CL.sess||!CL.sess.expires_at||!CL.sess.refresh_token)return;
+  const left=CL.sess.expires_at-Date.now();
+  if(left>600000)return;
+  if(typeof document!=='undefined'&&document.hidden&&left>30000)return;
+  await Promise.race([clRefresh(),new Promise(r=>setTimeout(()=>r(false),CL.T.fresh))]);
 }
 async function clLogout(){
+  CLQ.epoch++;try{if(CLQ.ctl)CLQ.ctl.abort();}catch(e){}CLQ.run=null;
   try{await clFetch('/auth/v1/logout',{method:'POST'});}catch(e){}
-  CL.sess=null;clSaveSess();renderSync();
+  CL.sess=null;clSaveSess();clNote('login','ログアウト');renderSync();
 }
-async function clRpc(name,body){
+function clRpcMs(){return Math.min(CL.T.rpcMax,Math.round(CL.T.rpc*(1+0.6*Math.min(CLQ.fails,2))));}   /* 失敗が続くと 25→40→55秒 */
+/* RPC を1回（401 なら更新して1回だけやり直す）。body は文字列。送る中身はこの関数に入る前に確定させる */
+async function clRpcText(name,body,sig,ms){
   await clEnsureFresh();
-  const r=await clFetch('/rest/v1/rpc/'+name,{method:'POST',body:JSON.stringify(body||{})});
-  const j=await clJson(r);
-  if(!r.ok){const m=(j&&(j.message||j.msg||j.error||j.hint))||('HTTP '+r.status);const e=new Error(m);e.status=r.status;throw e;}
-  return j;
+  const url=CLOUD.url+'/rest/v1/rpc/'+name;
+  const go=()=>{CLQ.beat=Date.now();return clTimed(ms||clRpcMs(),s=>fetch(url,{method:'POST',headers:clHdr(),body,signal:s}).then(async r=>({status:r.status,ok:r.ok,text:await r.text()})),sig);};
+  let r=await go();
+  if(r.status===401&&CL.sess&&CL.sess.refresh_token){if(await clRefresh())r=await go();}
+  if(!r.ok){
+    let j=null;try{j=JSON.parse(r.text);}catch(e){}
+    const m=(j&&(j.message||j.msg||j.error||j.hint))||('HTTP '+r.status);const code=(j&&j.code!=null)?String(j.code):'';
+    if(r.status===401){CL.auth401++;if(CL.auth401>=2&&cloudLoggedIn()){CL.authDead=true;clNote('auth','合言葉を更新しても 401（要ログイン）');}}
+    throw clErr(m,r.status,code,clKindOf(r.status,code));
+  }
+  CL.auth401=0;
+  return r.text;
 }
+async function clRpcJson(name,body,sig,ms){const t=await clRpcText(name,typeof body==='string'?body:JSON.stringify(body||{}),sig,ms);try{return t?JSON.parse(t):null;}catch(e){throw clErr('応答が読めない',0,'parse','server');}}
+async function clRpc(name,body){return clRpcJson(name,body);}   /* 旧版と同じ名前（他から呼ばれても動く） */
 
 /* ---------- state ⇄ 項目（1行） ---------- */
 const CL_ID=['dreams','memos','pays','aims','moves','pins','steps','payrep','rtn','rlog','payppl','pha','kinds','tools'];
@@ -6610,106 +6746,468 @@ function clRowsToState(rows){
   }
   return st;
 }
-const clKey=it=>it.coll+'\u0000'+it.k;
-function clSig(it){try{return String(it.ts)+'|'+JSON.stringify(it.data);}catch(e){return String(it.ts)+'|?';}}
-/* 影（CL.shadow）＝「クラウドが持っていると分かっている中身」。state と影が違う項目が dirty（送る物）。
-   影を更新するのは、受信した時と、送信が通った時だけ。saveLocal のたびに state と影を比べ直す（何度やっても同じ結果） */
+const clClean=s=>(typeof s==='string'&&s.indexOf('\u0000')>=0)?s.replace(/\u0000/g,''):s;   /* \u0000 はクラウド（jsonb）に入らない＝送る分だけ除く */
+const clKey=it=>clClean(String(it.coll))+'\u0000'+clClean(String(it.k));
+const clTsOf=ts=>{const n=Number(ts);return isFinite(n)?Math.max(0,Math.floor(n)):0;};   /* サーバーと同じ丸め（負→0・小数→切り捨て） */
+/* 署名＝ts と中身のハッシュ（53bit・cyrb53 を流し込み式で）。キーの順に依存しない（jsonb はキー順を並べ替えて返すので、
+   そのままの JSON.stringify では同じ中身でも食い違う）。\u0000 は数えない（送る時に除くので、戻ってきた版と同じ署名になる）。
+   区切りに 65536 以上の値（文字には出てこない）を使う＝文字列の中身と区切りが混ざらない */
+let CL_H1=0,CL_H2=0;
+function clHc(c){CL_H1=Math.imul(CL_H1^c,2654435761);CL_H2=Math.imul(CL_H2^c,1597334677);}
+function clHs(s){for(let i=0;i<s.length;i++){const c=s.charCodeAt(i);if(c!==0){CL_H1=Math.imul(CL_H1^c,2654435761);CL_H2=Math.imul(CL_H2^c,1597334677);}}}
+function clHv(v){
+  switch(typeof v){
+    case 'string':clHs(v);clHc(65537);return true;
+    case 'number':clHs(isFinite(v)?''+v:'null');clHc(65538);return true;
+    case 'boolean':clHc(v?65539:65540);return true;
+    case 'object':
+      if(v===null){clHc(65541);return true;}
+      if(typeof v.toJSON==='function')return clHv(v.toJSON());
+      if(Array.isArray(v)){clHc(65542);for(let i=0;i<v.length;i++){if(!clHv(v[i]))clHc(65541);}clHc(65543);return true;}
+      {const ks=Object.keys(v);if(ks.length>1)ks.sort();clHc(65544);
+        for(let i=0;i<ks.length;i++){const x=v[ks[i]],t=typeof x;if(x===undefined||t==='function'||t==='symbol')continue;clHs(ks[i]);clHc(65545);clHv(x);}
+        clHc(65546);return true;}
+    default:return false;   /* undefined・関数（JSON に出ない物） */
+  }
+}
+function clHashOf(ts,d){
+  CL_H1=0xdeadbeef;CL_H2=0x41c6ce57;clHs(''+ts);clHc(65547);if(!clHv(d))clHc(65548);
+  const h1=Math.imul(CL_H1^(CL_H1>>>16),2246822507)^Math.imul(CL_H2^(CL_H2>>>13),3266489909);
+  const h2=Math.imul(CL_H2^(CL_H2>>>16),2246822507)^Math.imul(h1^(h1>>>13),3266489909);
+  return (4294967296*(2097151&h2)+(h1>>>0)).toString(36);
+}
+const CL_SIGC=new WeakMap();   /* 項目オブジェクト→{ts,署名}。ts が同じなら計算し直さない（保存のたびに軽く） */
+function clSigOf(it,fresh){
+  const d=it.data,ts=clTsOf(it.ts);
+  if(!fresh&&d&&typeof d==='object'){const c=CL_SIGC.get(d);if(c&&c.ts===ts)return c.h;}
+  const h=clHashOf(ts,d);
+  if(d&&typeof d==='object')CL_SIGC.set(d,{ts,h});
+  return h;
+}
+function clSig(it){return clSigOf(it,true);}   /* 旧版と同じ名前 */
+function clCleanDeep(v){if(typeof v==='string')return clClean(v);if(!v||typeof v!=='object')return v;if(Array.isArray(v))return v.map(clCleanDeep);const o={};for(const k in v)o[clClean(k)]=clCleanDeep(v[k]);return o;}
+function clHasNul(v){if(typeof v==='string')return v.indexOf('\u0000')>=0;if(!v||typeof v!=='object')return false;if(Array.isArray(v)){for(const x of v)if(clHasNul(x))return true;return false;}for(const k in v){if(k.indexOf('\u0000')>=0||clHasNul(v[k]))return true;}return false;}
+/* 送る1行（端末の state は触らず、送る分だけ掃除する） */
+function clRowOf(it){return {coll:clClean(String(it.coll)),k:clClean(String(it.k)),ts:clTsOf(it.ts),data:clHasNul(it.data)?clCleanDeep(it.data):it.data};}
+const CL_KNOWN_TOP={updatedAt:1,dream:1,entries:1,plans:1,ai:1,dreams:1,memos:1,life:1,photos:1,pha:1,pays:1,rules:1,aims:1,moves:1,pins:1,steps:1,payrep:1,rtn:1,rlog:1,payppl:1,kinds:1,tools:1};
+const CL_COLLS=new Set(CL_ID.concat(CL_DAY,CL_DAY2,['_top']));
+/* 受け取った行が state に入る形か（clItems の逆と同じ条件）。入らない行は影にも入れない＝件数の比べ合いで迷わない */
+function clRowUsable(r){
+  const c=r.coll,d=r.data;
+  if(CL_DAY2.indexOf(c)>=0)return String(r.k).indexOf('/')>0&&!!d&&typeof d==='object';
+  if(c==='pha')return !!(d&&d.a);
+  if(CL_DAY.indexOf(c)>=0||CL_ID.indexOf(c)>=0)return !!d&&typeof d==='object';
+  if(c==='_top'){if(CL_SKIP[r.k]||CL_DAY2.indexOf(r.k)>=0||CL_DAY.indexOf(r.k)>=0||CL_ID.indexOf(r.k)>=0)return false;
+    const v=(d&&typeof d==='object'&&'v' in d&&Object.keys(d).length===1)?d.v:d;return v!=null;}
+  return false;
+}
+/* 鍵から端末の1項目（clItems と同じ形）を取る */
+function clItemByKey(key){
+  const i=key.indexOf('\u0000');if(i<0)return null;const c=key.slice(0,i),k=key.slice(i+1);
+  if(CL_DAY2.indexOf(c)>=0){const j=k.indexOf('/');if(j<0)return null;const v=state[c]&&state[c][k.slice(0,j)]&&state[c][k.slice(0,j)][k.slice(j+1)];return (v&&typeof v==='object')?{coll:c,k,ts:Number(v.ts)||0,data:v}:null;}
+  if(CL_DAY.indexOf(c)>=0){const v=state[c]&&state[c][k];return (v&&typeof v==='object')?{coll:c,k,ts:Number(v.ts)||0,data:v}:null;}
+  if(c==='pha'){const v=state.pha&&state.pha[k];return v!=null?{coll:c,k,ts:1,data:{a:v}}:null;}
+  if(CL_ID.indexOf(c)>=0){const v=state[c]&&state[c][k];return (v&&typeof v==='object')?{coll:c,k,ts:Number(v.ts)||0,data:v}:null;}
+  if(c==='_top'){if(CL_SKIP[k]||!CL_COLLS.has(c))return null;const v=state[k];if(v==null||CL_DAY2.indexOf(k)>=0||CL_DAY.indexOf(k)>=0||CL_ID.indexOf(k)>=0)return null;
+    return {coll:c,k,ts:(typeof v==='object'&&Number(v.ts))||0,data:(typeof v==='object')?v:{v}};}
+  return null;
+}
+function clLocalRef(c,k){
+  if(CL_DAY2.indexOf(c)>=0){const j=String(k).indexOf('/');const d=state[c]&&state[c][k.slice(0,j)];return d?d[k.slice(j+1)]:undefined;}
+  if(c==='_top')return state[k];
+  return state[c]?state[c][k]:undefined;
+}
+
+/* ---------- 未送信（dirty）＝影との差 ----------
+   影（CL.shadow）＝「クラウドが持っていると分かっている中身」の署名。影が無い間（作成中）は、
+   この起動で書いた項目（hot）だけを送る。dirty はメモリだけ（毎回計算し直すので、消えても次の起動で見つかる） */
+function clItemSkip(it,k,h){
+  const b=CL.bad[k];if(b&&b.h===h)return true;   /* 送れない行として隔離中（中身が変われば外れる） */
+  /* ts の無い設定値（pha・_cfg など）は、クラウドに既にあるなら送らない＝2台で上書きし合わない */
+  if(clTsOf(it.ts)<=1&&CL.shadow[k]!==undefined&&it.coll!=='pays'&&it.coll!=='steps')return true;
+  return false;
+}
+function clIsDirty(it,k,h){return (CL.shadowOk||!!CL.hot[k])&&CL.shadow[k]!==h&&!clItemSkip(it,k,h);}
+/* 全項目を比べ直す（起動時・受信後）。fresh＝署名を全部計算し直す */
+function clRecomputeDirty(fresh){
+  const t0=Date.now(),nd={};
+  for(const it of clItems(state)){const k=clKey(it),h=clSigOf(it,!!fresh);CL.curSig[k]=h;if(clIsDirty(it,k,h))nd[k]=1;}
+  CL.dirty=nd;CL.perf.recompute=Date.now()-t0;clSaveSync();
+}
+/* 一部の鍵だけ比べ直す（送信が通った後） */
+function clRecomputeKeys(keys){
+  for(const k of keys){const it=clItemByKey(k);if(!it){delete CL.dirty[k];continue;}const h=clSigOf(it,false);if(clIsDirty(it,k,h))CL.dirty[k]=1;else delete CL.dirty[k];}
+}
+/* 保存のたび：変わった項目を hot に入れ、dirty を作り直す（署名は前回と同じ物を使い回すので軽い） */
 function clMarkDirty(){
-  if(!CL.ready)return 0;
-  let n=0,changed=false;
-  for(const it of clItems(state)){const k=clKey(it);const d=(CL.shadow[k]!==clSig(it));if(d&&!CL.dirty[k]){CL.dirty[k]=1;changed=true;}if(d)n++;}
-  if(changed)clSaveSync();
+  if(!CL.trackHot)return 0;
+  CL.mutSeq++;
+  const t0=Date.now(),now=Date.now(),nd={};let n=0;
+  for(const it of clItems(state)){const k=clKey(it),h=clSigOf(it,false);
+    if(CL.curSig[k]!==h){CL.curSig[k]=h;CL.hot[k]=now;}
+    if(CL.ready&&clIsDirty(it,k,h)){nd[k]=1;n++;}}
+  if(CL.ready){CL.dirty=nd;clSaveSync();}
+  CL.perf.mark=Date.now()-t0;
+  if(typeof localSaveFail!=='undefined'&&localSaveFail)clOutbox();
   return n;
 }
 function clDirtyCount(){return Object.keys(CL.dirty).length;}
-/* 起動時の影：今の state を「クラウドと同じ」とみなす。ただし前回までに送れていない項目（dirty に残っている物）は除く */
-function clShadowFromState(){CL.shadow={};for(const it of clItems(state)){const k=clKey(it);if(!CL.dirty[k])CL.shadow[k]=clSig(it);}}
-/* 受信・送信の後：state と影を比べ直して dirty を作り直す */
-function clRecomputeDirty(){CL.dirty={};for(const it of clItems(state)){const k=clKey(it);if(CL.shadow[k]!==clSig(it))CL.dirty[k]=1;}clSaveSync();}
+/* 起動時：全項目の署名（以後の保存で「何が変わったか」を見るための基準） */
+function clBaseSigs(){const t0=Date.now();for(const it of clItems(state))CL.curSig[clKey(it)]=clSigOf(it,true);CL.perf.baseSigs=Date.now()-t0;}
 
-/* ---------- 送信（dirty の項目だけ） ---------- */
-async function cloudPush(){
-  if(!cloudConfigured()||!cloudLoggedIn()||CL.busy||!CL.firstPull)return false;
-  const keys=Object.keys(CL.dirty);if(!keys.length){unsynced=false;renderSync();return true;}
-  CL.busy=true;renderSync();
-  try{
-    const all=clItems(state),byKey={};for(const it of all)byKey[clKey(it)]=it;
-    const rows=[];for(const k of keys){const it=byKey[k];if(it)rows.push(it);else delete CL.dirty[k];}   /* 影にあって state に無い＝通常は無い。あれば dirty から外すだけ（消さない） */
-    for(let i=0;i<rows.length;i+=400){
-      const part=rows.slice(i,i+400);
-      await clRpc('put_items',{rows:part});
-      for(const it of part){const k=clKey(it);CL.shadow[k]=clSig(it);delete CL.dirty[k];}   /* 通った分＝クラウドが持っている */
-      clSaveSync();
-    }
-    CL.lastPush=Date.now();CL.err='';
-    unsynced=clDirtyCount()>0;
-    return true;
-  }catch(e){
-    CL.err=(e&&e.message)||'送信失敗';
-    if(e&&e.status===401){/* ログインし直しが要る。データは端末に残っている */}
-    return false;
-  }finally{CL.busy=false;renderSync();}
+/* 端末の本文が保存できない時（容量不足）だけ、書いた項目の中身を IndexedDB に退避する。次の起動で戻して送る */
+function clOutbox(){
+  if(!CL.uid||Date.now()-CL.outboxAt<2000)return;CL.outboxAt=Date.now();
+  const rows={};for(const k in CL.hot){const it=clItemByKey(k);if(it)rows[k]=clRowOf(it);}
+  if(!Object.keys(rows).length)return;
+  clStore.upd('outbox:'+CL.uid,cur=>{const o=(cur&&cur.rows)||{};Object.assign(o,rows);return {rows:o,at:Date.now()};});
+  clNote('outbox','端末保存に失敗中：'+Object.keys(rows).length+'件を退避');
 }
-/* ---------- 受信（seq より新しい行） ---------- */
-async function cloudPull(full){
-  if(!cloudConfigured()||!cloudLoggedIn()||CL.pulling)return false;
-  CL.pulling=true;
-  try{
-    let since=full?0:CL.seq,got=0,changed=false,guard=0;
-    if(full)CL.shadow={};   /* 全件取り直し＝クラウドの中身を影として作り直す（端末だけにある物は全部 dirty になる＝送られる） */
-    const before=JSON.stringify(state);
-    while(guard++<200){
-      const rows=await clRpc('pull_items',{since_seq:since,lim:1000});
-      if(!Array.isArray(rows)||!rows.length)break;
-      /* 受け取った行＝クラウドが持っている中身。影に入れる（自分の方が新しい項目は合流で勝つので影と差が出て、次の送信で送られる） */
-      for(const r of rows){if(!r||!r.coll)continue;const d=(r.coll==='_top')?((r.data&&typeof r.data==='object'&&'v' in r.data&&Object.keys(r.data).length===1)?{v:r.data.v}:r.data):r.data;
-        CL.shadow[r.coll+'\u0000'+r.k]=clSig({ts:Number(r.ts)||0,data:d});since=Math.max(since,Number(r.seq)||0);}
-      const part=clRowsToState(rows);
-      state=mergeStates(state,part);
-      /* 本人の設定（_cfg）は mergeStates の「知らない項目」扱い（端末側が常に勝つ）なので、ts で新しい方を採る */
-      if(part._cfg&&typeof part._cfg==='object'&&(!state._cfg||(Number(part._cfg.ts)||0)>(Number(state._cfg.ts)||0)))state._cfg=part._cfg;
-      got+=rows.length;
-      if(rows.length<1000)break;
-    }
-    changed=(JSON.stringify(state)!==before);
-    if(changed){try{cfgApply();}catch(e){}}
-    if(since>CL.seq){CL.seq=since;}
-    CL.lastPull=Date.now();CL.err='';
-    clRecomputeDirty();
-    if(changed){saveLocal(clDirtyCount()===0);render();}
-    else{unsynced=clDirtyCount()>0;renderSync();}
-    if(!CL.firstPull){CL.firstPull=true;try{afterCloudReady();}catch(e){}}
-    return true;
-  }catch(e){CL.err=(e&&e.message)||'受信失敗';renderSync();return false;}
-  finally{CL.pulling=false;}
+async function clOutboxRestore(){
+  if(!CL.uid)return;
+  const ob=await clStore.get('outbox:'+CL.uid);if(!ob||!ob.rows)return;
+  const rows=Object.values(ob.rows).filter(r=>r&&r.coll&&clRowUsable(r));if(!rows.length)return;
+  state=mergeStates(state,clRowsToState(rows));
+  for(const r of rows)CL.hot[clKey(r)]=Date.now();
+  CL.outboxKeys=Object.keys(ob.rows);
+  clNote('outbox','退避した '+rows.length+'件を戻した');
 }
-async function cloudSync(force){
+function clOutboxPrune(){
+  if(!CL.outboxKeys||!CL.outboxKeys.length||!CL.uid)return;
+  const left=CL.outboxKeys.filter(k=>CL.dirty[k]||CL.hot[k]);
+  if(left.length===CL.outboxKeys.length)return;
+  const keep=new Set(left);CL.outboxKeys=left;
+  clStore.upd('outbox:'+CL.uid,cur=>{const o={};for(const k in ((cur&&cur.rows)||{}))if(keep.has(k))o[k]=cur.rows[k];return {rows:o,at:Date.now()};});
+}
+
+/* ---------- 影の保存（IndexedDB）と読み込み ---------- */
+async function clLoadShadow(uid){
+  CL.uid=uid;CL.shadowFor=uid;CL.shadow={};CL.seq=0;CL.shadowOk=false;CL.full=null;CL.pushedDuring={};CL.bad={};
+  const rec=await clStore.get('shadow:'+uid);
+  if(rec&&rec.ver===CL_SHVER&&rec.uid===uid&&rec.map&&typeof rec.map==='object'&&Number(rec.seq)>0){CL.shadow=rec.map;CL.seq=Number(rec.seq);CL.shadowOk=true;}
+  CL.shadowLoadedAt=Date.now();
+  if(CL.shadowOk){
+    /* 影にあって端末に無い項目＝受信した中身を本文に保存できなかった → 全件受信で取り直す */
+    const have=new Set();for(const it of clItems(state))have.add(clKey(it));
+    let miss=0;for(const k in CL.shadow){if(!have.has(k)&&CL_COLLS.has(k.slice(0,k.indexOf('\u0000'))))miss++;}
+    if(miss){clNote('shadow','影にあって端末に無い '+miss+'件 → 全件受信で取り直す');CL.full={since:0,nsh:{},rebuild:true};}
+  }
+  clSaveSync();
+}
+function clPersistSoon(){clearTimeout(CL.persistT);CL.persistT=setTimeout(()=>{clPersist();},2000);}
+async function clPersist(){
+  if(!CL.uid||!CL.shadowOk||CL.seq<=0)return false;
+  if(typeof localSaveFail!=='undefined'&&localSaveFail){   /* 本文が置けていない＝受信位置を進めて保存すると、その行を二度と取りに来ない */
+    if(!CL.persistWarned){CL.persistWarned=1;clNote('shadow','端末保存に失敗中のため、影と受信位置は保存しない');}return false;}
+  CL.persistWarned=0;
+  const uid=CL.uid,map=CL.shadow,seq=CL.seq,loaded=CL.shadowLoadedAt,me=CL.tabId;
+  return clStore.upd('shadow:'+uid,cur=>{
+    let m=map,s=seq;
+    /* 別タブが後から書いていた：両方で一致する所だけ残す（影は「クラウドにある」と確かな物だけ＝足りない分は送り直すだけで安全） */
+    if(cur&&cur.ver===CL_SHVER&&cur.writer&&cur.writer!==me&&(cur.savedAt||0)>loaded&&cur.map){m={};for(const k in map)if(cur.map[k]===map[k])m[k]=map[k];s=Math.min(seq,Number(cur.seq)||0);}
+    return {ver:CL_SHVER,uid,seq:s,map:m,writer:me,savedAt:Date.now()};
+  });
+}
+
+/* ---------- 送信 ---------- */
+function clApplyPushed(keys,hs){
+  keys.forEach((k,j)=>{CL.shadow[k]=hs[j];if(CL.full)CL.pushedDuring[k]=hs[j];if(CL.hot[k]&&CL.curSig[k]===hs[j])delete CL.hot[k];});
+  clRecomputeKeys(keys);clSaveSync();clPersistSoon();clOutboxPrune();
+}
+/* 1束を送る。行の形が悪くて拒否されたら半分ずつに割って犯人の行だけ隔離し、残りは流す */
+async function clPutSafe(part,rs,hs,ep,sig){
+  let n;
+  try{n=await clRpcJson('put_items','{"rows":['+rs.join(',')+']}',sig);}
+  catch(e){
+    if(e.kind!=='row')throw e;
+    if(ep!==CLQ.epoch)return false;
+    if(part.length===1){const k=clKey(part[0]);CL.bad[k]={h:hs[0],msg:e.message,at:Date.now()};delete CL.dirty[k];
+      clNote('quarantine','送れない行：'+k.replace('\u0000','/')+'（'+e.message+'）');return 0;}
+    const m=part.length>>1;
+    const a=await clPutSafe(part.slice(0,m),rs.slice(0,m),hs.slice(0,m),ep,sig);if(a===false)return false;
+    const b=await clPutSafe(part.slice(m),rs.slice(m),hs.slice(m),ep,sig);if(b===false)return false;
+    return a+b;
+  }
+  if(ep!==CLQ.epoch)return false;
+  clApplyPushed(part.map(clKey),hs);
+  return Number(n)||0;
+}
+async function clPushStep(ep,sig){
+  const keys=Object.keys(CL.dirty);if(!keys.length)return 0;
+  const want=new Set(keys),items=[];
+  for(const it of clItems(state)){if(want.has(clKey(it)))items.push(it);}
+  items.sort((a,b)=>(CL.hot[clKey(b)]||0)-(CL.hot[clKey(a)]||0));   /* いま書いた物から先に */
+  let i=0,sent=0,wrote=0,shrink=0;
+  while(i<items.length){
+    /* 束：件数 chunkN 以内・本文 chunkBytes 以内。本文と署名はここで同時に確定（送信中の編集は次の回で送る） */
+    const part=[],rs=[],hs=[];let bytes=0;
+    while(i+part.length<items.length&&part.length<CL.chunkN){
+      const it=items[i+part.length],s=JSON.stringify(clRowOf(it));
+      if(part.length&&bytes+s.length>CL.chunkBytes)break;
+      part.push(it);rs.push(s);hs.push(clSigOf(it,true));bytes+=s.length;}
+    let n;
+    try{n=await clPutSafe(part,rs,hs,ep,sig);}
+    catch(e){
+      if(e.kind==='timeout'&&part.length>25&&shrink<2&&ep===CLQ.epoch){shrink++;CL.chunkN=Math.max(25,part.length>>1);CL.chunkBytes=Math.max(30000,CL.chunkBytes>>1);
+        clNote('push','時間切れ → 束を '+CL.chunkN+' 件に縮めて再挑戦');continue;}
+      throw e;}
+    if(n===false)return false;
+    i+=part.length;sent+=part.length;wrote+=n;CLQ.beat=Date.now();
+  }
+  if(!shrink){CL.chunkN=Math.min(400,CL.chunkN*2);CL.chunkBytes=Math.min(200000,CL.chunkBytes*2);}
+  CL.lastPush=Date.now();
+  clNote('push','送信 '+sent+'件（新しく書いた '+wrote+'件）');
+  return sent;
+}
+
+/* ---------- 受信 ---------- */
+/* 受け取った行を影に入れて state へ合流。端末の中身が変わったかを返す（JSON.stringify(state) の前後比較はしない） */
+function clMergeRows(rows,full){
+  const tgt=full?CL.full.nsh:CL.shadow,use=[];
+  for(const r of rows){if(!r||!r.coll||!clRowUsable(r))continue;tgt[clKey(r)]=clSigOf({ts:r.ts,data:r.data},true);use.push(r);}
+  if(!use.length)return false;
+  const part=clRowsToState(use);
+  const refs=use.map(r=>clLocalRef(r.coll,r.k));
+  state=mergeStates(state,part);
+  /* mergeStates が知らない上位項目（_cfg など）は「端末が常に勝つ」ので、ts で新しい方を採る */
+  const tsOf=v=>(v&&typeof v==='object')?(Number(v.ts)||0):0;
+  for(const k in part){if(CL_KNOWN_TOP[k])continue;const c=part[k],l=state[k];if(l===undefined||tsOf(c)>tsOf(l))state[k]=c;}
+  let changed=false,tie=0;
+  use.forEach((r,i)=>{
+    const now=clLocalRef(r.coll,r.k);if(now!==refs[i])changed=true;
+    /* 同じ ts で中身が違う（払った印などの合流が要る pays・steps 以外）＝送り合いにしない。端末の中身を影とみなす */
+    if(r.coll!=='pays'&&r.coll!=='steps'){const k=clKey(r),it=clItemByKey(k);
+      if(it&&clTsOf(it.ts)===clTsOf(r.ts)){const h=clSigOf(it,false);if(h!==tgt[k]){tgt[k]=h;tie++;}}}
+  });
+  if(tie)CL.tieN=(CL.tieN||0)+tie;
+  return changed;
+}
+async function clPullStep(ep,sig,ms){
+  const full=!!CL.full;let since=full?CL.full.since:CL.seq,changed=false,got=0,guard=0;
+  while(guard++<1000){
+    let rows;
+    try{rows=await clRpcJson('pull_items',{since_seq:since,lim:CL.pullLim},sig,ms);}
+    catch(e){if(e.kind==='timeout'&&CL.pullLim>100)CL.pullLim=Math.max(100,CL.pullLim>>1);throw e;}   /* 時間切れ＝次は小さく取る */
+    if(ep!==CLQ.epoch)return false;
+    if(!Array.isArray(rows))throw clErr('受信の形が違う',0,'parse','server');
+    if(!rows.length)break;   /* 0件が返るまで回す（返った件数 < lim で終わりと決めない） */
+    CLQ.beat=Date.now();
+    if(clMergeRows(rows,full))changed=true;
+    for(const r of rows){const s=Number(r&&r.seq)||0;if(s>since)since=s;}
+    if(full)CL.full.since=since;else CL.seq=Math.max(CL.seq,since);
+    got+=rows.length;
+  }
+  let fullDone=false;
+  if(full){   /* 最後まで読めた時だけ影を差し替える（途中で失敗したら続きから） */
+    CL.shadow=Object.assign(CL.full.nsh,CL.pushedDuring);CL.pushedDuring={};CL.seq=Math.max(CL.seq,since);
+    const rb=CL.full.rebuild;CL.full=null;CL.shadowOk=true;fullDone=true;
+    clNote('pull','全件受信 完了 '+got+'件'+(rb?'（照合し直し）':''));
+  }else if(got)clNote('pull','受信 '+got+'件');
+  CL.lastPull=Date.now();
+  if(CL.kaCheck)clKaVerify();
+  if(changed){try{cfgApply();}catch(e){}}
+  clRecomputeDirty(fullDone);
+  if(changed){
+    CL.quietSave=true;
+    try{saveLocal(clDirtyCount()===0);}catch(e){clNote('save','端末保存で例外：'+e.message);}finally{CL.quietSave=false;}
+    try{render();}catch(e){clNote('render','描画で例外：'+e.message);}
+  }else{try{renderSync();}catch(e){}}
+  clPersistSoon();
+  if(!CL.firstPull&&CL.shadowOk){CL.firstPull=true;try{afterCloudReady();}catch(e){clNote('ready','起動後の修復で例外：'+e.message);}}
+  return {got,fullDone};
+}
+
+/* 前回の離脱時の keepalive が届いていたかを、起動後の最初の受信で確かめて記録に残す（iPhone 実機で効いているかの実測） */
+function clKaVerify(){
+  const ka=CL.kaCheck;CL.kaCheck=null;try{localStorage.removeItem(CL_KA);}catch(e){}
+  const ks=Array.isArray(ka.keys)?ka.keys:[];if(!ks.length)return;
+  let got=0;for(const k of ks){const it=clItemByKey(k);const tgt=CL.full?CL.full.nsh:CL.shadow;if(it&&tgt[k]===clSigOf(it,true))got++;}
+  clNote('keepalive','前回の離脱時の kA '+ka.n+'件 → クラウドに届いていた '+got+'/'+ks.length+'件');
+}
+/* ---------- 整合の点検（件数と ts の合計を、クラウドと端末で比べる） ---------- */
+async function clIntegrity(ep,sig){
+  if(clDirtyCount()>0||CL.full)return 'skip';
+  const mut=CL.mutSeq;
+  const txt=await clRpcText('integrity','{}',sig);
+  if(ep!==CLQ.epoch)return 'skip';
+  if(CL.mutSeq!==mut||clDirtyCount()>0)return 'skip';   /* 比べている間に書いた＝今回は比べない */
+  /* tsum は 2^53 を超える＝文字列のまま BigInt で読む */
+  const srv={};for(const m of String(txt).match(/\{[^{}]*\}/g)||[]){const c=/"coll"\s*:\s*"((?:[^"\\]|\\.)*)"/.exec(m),n=/"n"\s*:\s*(\d+)/.exec(m),t=/"tsum"\s*:\s*(-?\d+)/.exec(m);
+    if(c&&n&&t){let name;try{name=JSON.parse('"'+c[1]+'"');}catch(e){name=c[1];}srv[name]={n:Number(n[1]),t:BigInt(t[1])};}}
+  const lim=Date.now()+3600000,loc={};
+  for(const it of clItems(state)){const k=clKey(it);if(CL.bad[k])continue;const c=loc[it.coll]||(loc[it.coll]={n:0,t:0n});c.n++;c.t+=BigInt(Math.min(clTsOf(it.ts),lim));}
+  const bad=[];
+  for(const c of new Set(Object.keys(srv).concat(Object.keys(loc)))){if(!CL_COLLS.has(c))continue;const a=srv[c]||{n:0,t:0n},b=loc[c]||{n:0,t:0n};
+    if(a.n!==b.n||a.t!==b.t)bad.push(c+'(雲'+a.n+'/端'+b.n+')');}
+  CL.integ.at=Date.now();CL.integ.due=false;
+  if(!bad.length){CL.integ.res='OK';CL.integ.sig='';CL.integ.pend='';clNote('integrity','整合 OK');return 'ok';}
+  const s=bad.join(' ');
+  if(CL.integ.sig===s){CL.integ.res='NG（保留）'+s;return 'hold';}
+  if(CL.integ.pend===s){CL.integ.sig=s;CL.integ.res='NG（保留）'+s;clNote('integrity','照合し直しても一致しない：'+s+'（同じ食い違いの間は再実行しない）');return 'hold';}
+  if(Date.now()-CL.integ.rebuildAt<600000){CL.integ.res='NG（10分待ち）'+s;clNote('integrity','整合NG（保留・10分に1回まで）：'+s);return 'wait';}
+  CL.integ.rebuildAt=Date.now();CL.integ.pend=s;CL.integ.res='NG → 照合し直し';CL.integ.due=true;
+  clNote('integrity','整合NG：'+s+' → 全件受信で照合し直し');
+  CL.full={since:0,nsh:{},rebuild:true};
+  return 'rebuild';
+}
+function clIntegDue(){
+  if(typeof document!=='undefined'&&document.hidden)return false;
+  return CL.integ.due||(Date.now()-CL.integ.at>600000);
+}
+
+/* ---------- 同期の1周：[全件受信が要るなら先にいま書いた物を送る] → 受信 → 送信 → 整合 ---------- */
+async function clOnce(ep,sig){
+  CL.lastTry=Date.now();
+  if(!CL.shadowOk&&!CL.full)CL.full={since:0,nsh:{}};
+  if(CL.full){
+    /* 影を作る全件受信の前に、いま書いた物（影が無い時は hot だけ）を送る＝受信の成否に関係なく届く */
+    if(clDirtyCount()){const r=await clPushStep(ep,sig);if(r===false)return false;}
+    const p=await clPullStep(ep,sig);if(p===false)return false;
+    if(clDirtyCount()){const r=await clPushStep(ep,sig);if(r===false)return false;}
+  }else{
+    const dirty=clDirtyCount()>0;
+    let pre=false;
+    if(dirty&&CL.seq>0){   /* 先に増分を軽く受信（払った印などを合流してから送る）。遅い・失敗しても送信は止めない */
+      try{const p=await clPullStep(ep,sig,CL.T.pre);if(p===false)return false;pre=true;}
+      catch(e){if(ep!==CLQ.epoch)return false;clNote('pull','先読み失敗（'+e.message+'）→ 送信を先に');}}
+    if(clDirtyCount()){const r=await clPushStep(ep,sig);if(r===false)return false;}
+    if(!pre){const p=await clPullStep(ep,sig);if(p===false)return false;}
+  }
+  if(ep!==CLQ.epoch)return false;
+  if(clIntegDue()&&!clDirtyCount()){
+    try{const r=await clIntegrity(ep,sig);if(r==='rebuild')CLQ.again=true;}
+    catch(e){if(ep!==CLQ.epoch)return false;clNote('integrity','整合の確認に失敗（'+e.message+'）');}
+  }
+  return true;
+}
+/* 同期の入口（これ1本）。実行中なら「もう1周」の印を立てて、その回の結果を待つ */
+function cloudSync(force){
+  if(!cloudConfigured()||!cloudLoggedIn()||!CL.ready)return Promise.resolve(false);
+  if(force){CLQ.fails=0;CL.authDead=false;}
+  if(CL.authDead)return Promise.resolve(false);
+  if(typeof document!=='undefined'&&document.hidden){CLQ.wake=true;clKeepalive('隠れている間');return Promise.resolve(false);}   /* 隠れている間は始めない（止められて宙に浮くだけ） */
+  if(CLQ.run){CLQ.again=true;return CLQ.run;}
+  clearTimeout(CLQ.t);CLQ.t=null;CLQ.due=0;
+  const ep=++CLQ.epoch,ctl=CLQ.ctl=new AbortController(),sig=ctl.signal;
+  CLQ.beat=Date.now();CLQ.startedAt=Date.now();
+  const dead=new Promise(r=>sig.addEventListener('abort',()=>r('abort')));
+  CLQ.run=(async()=>{
+    let ok=false,err=null;
+    try{renderSync();}catch(e){}
+    try{
+      do{CLQ.again=false;const r=await Promise.race([clOnce(ep,sig),dead]);
+        if(r==='abort'){err=clErr('中断（見張り・復帰）',0,'aborted','aborted');ok=false;break;}
+        ok=(r===true);
+      }while(ok&&CLQ.again&&ep===CLQ.epoch);
+    }catch(e){ok=false;err=e;}
+    finally{if(CLQ.ctl===ctl){CLQ.run=null;CLQ.ctl=null;}}
+    if(ep!==CLQ.epoch)return false;   /* 打ち切られた古い回：結果を使わない（打ち切った側がやり直しを予約済み） */
+    if(ok)clOk();else clFail(err);
+    return ok;
+  })();
+  return CLQ.run;
+}
+/* 動いている回を打ち切る（見張り・画面復帰・ログイン） */
+function clAbortRun(){
+  CLQ.epoch++;const c=CLQ.ctl;CLQ.run=null;CLQ.ctl=null;
+  try{if(c)c.abort();}catch(e){}
+}
+function clOk(){
+  if(CLQ.fails)clNote('sync','再送で通った');
+  CLQ.fails=0;CLQ.firstFailAt=0;CL.retryAt=0;CL.lastErr='';CL.err='';
+  try{renderSync();}catch(e){}
+}
+function clFail(e){
+  const msg=String((e&&e.message)||'同期失敗').slice(0,80);
+  CL.lastErr=msg;CL.err=msg;
+  clNote((e&&e.kind)==='timeout'?'timeout':'sync','失敗：'+msg);
+  if(!cloudLoggedIn()||CL.authDead){try{renderSync();}catch(x){}return;}   /* ログインし直しが要る：叩き続けない */
+  clRetry();
+  try{renderSync();}catch(x){}
+}
+/* 再挑戦：5秒→10→20→40→最大120秒（ゆらぎ付き）。成功で戻る */
+function clRetry(){
+  CLQ.fails++;if(!CLQ.firstFailAt)CLQ.firstFailAt=Date.now();
+  const ms=Math.round(Math.min(120000,CL.retryMs*Math.pow(2,CLQ.fails-1))*(0.8+Math.random()*0.4));
+  CL.retryAt=Date.now()+ms;
+  clNote('retry',Math.round(ms/1000)+'秒後に再送（'+CLQ.fails+'回目）');
+  clearTimeout(CLQ.t);CLQ.t=null;CLQ.due=0;clKick(ms);
+}
+/* 予約タイマーは1本だけ（早い方が勝つ）。隠れている時に来たら、戻った時に起こす */
+function clKick(ms){
   if(!cloudConfigured()||!cloudLoggedIn())return;
-  if(!CL.firstPull)await cloudPull(true);
-  await cloudPush();
-  await cloudPull(false);
+  ms=Math.max(0,Number(ms)||0);const at=Date.now()+ms;
+  if(CLQ.t&&CLQ.due<=at)return;
+  clearTimeout(CLQ.t);CLQ.due=at;
+  CLQ.t=setTimeout(()=>{CLQ.t=null;CLQ.due=0;if(typeof document!=='undefined'&&document.hidden){CLQ.wake=true;return;}cloudSync();},ms);
 }
-function scheduleSync(ms){clearTimeout(CL.timer);CL.timer=setTimeout(()=>{cloudSync();},ms||1500);}
+function scheduleSync(ms){clKick(ms||1500);}   /* 旧版と同じ名前 */
+
+/* ---------- 画面を離れる瞬間の送信（keepalive。返事を待たない） ---------- */
+function clBytes(s){try{return new TextEncoder().encode(s).length;}catch(e){return s.length*3;}}
+function clKeepalive(why){
+  try{
+    if(!cloudConfigured()||!cloudLoggedIn()||!CL.ready||CL.authDead)return false;
+    if(Date.now()-CL.kaAt<3000)return false;   /* hidden と pagehide の二重発火を間引く */
+    if(CL.sess.expires_at&&Date.now()>CL.sess.expires_at-20000){clNote('keepalive','合言葉の期限が近いので送らない（次の起動で送る）');return false;}
+    const keys=Object.keys(CL.dirty);if(!keys.length)return false;
+    const want=new Set(keys),list=[];
+    for(const it of clItems(state)){if(want.has(clKey(it)))list.push(it);}
+    list.sort((a,b)=>((CL.hot[clKey(b)]||0)-(CL.hot[clKey(a)]||0))||(clTsOf(b.ts)-clTsOf(a.ts)));   /* いま書いた物・新しい物から */
+    const rs=[],ks=[],hs=[];let size=12;
+    for(const it of list){const s=JSON.stringify(clRowOf(it)),b=clBytes(s);if(b+12>CL_KA_MAX)continue;if(size+b+1>CL_KA_MAX)break;rs.push(s);ks.push(clKey(it));hs.push(clSigOf(it,true));size+=b+1;}
+    if(!rs.length)return false;
+    CL.kaAt=Date.now();
+    clNote('keepalive','kA送信 '+rs.length+'件（'+why+'）');
+    try{localStorage.setItem(CL_KA,JSON.stringify({n:rs.length,at:CL.kaAt,keys:ks.slice(0,50)}));}catch(e){}
+    const h=clHdr();h['x-client-info']='hibiki-ka';
+    fetch(CLOUD.url+'/rest/v1/rpc/put_items',{method:'POST',keepalive:true,headers:h,body:'{"rows":['+rs.join(',')+']}'})
+      .then(r=>{if(r.ok){clApplyPushed(ks,hs);clPersist();try{renderSync();}catch(e){}clNote('keepalive','kA 届いた '+ks.length+'件');try{localStorage.removeItem(CL_KA);}catch(e){}}else clNote('keepalive','kA 失敗 HTTP '+r.status);})
+      .catch(()=>{});
+    return true;
+  }catch(e){return false;}
+}
+function clOnHidden(){
+  CL.hiddenAt=Date.now();
+  if(CL.ready&&CL.persistT){clearTimeout(CL.persistT);CL.persistT=null;clPersist();}   /* 予約中の影の保存を今すぐ（凍結・終了の前に） */
+  if(cloudLoggedIn()&&clDirtyCount())clKeepalive('離脱');
+}
+function clOnVisible(src){
+  const hidFor=CL.hiddenAt?Date.now()-CL.hiddenAt:0;
+  if(!cloudLoggedIn())return;
+  /* 裏に回る前に始まった通信は iOS が殺している事がある＝待たずに打ち切ってやり直す（put_items は何度送っても同じ結果） */
+  if(CLQ.run&&CLQ.startedAt<=CL.hiddenAt&&hidFor>=3000){clNote('resume','裏に回る前の通信を打ち切ってやり直す（'+src+'）');clAbortRun();}
+  if(hidFor>3600000)CL.integ.due=true;
+  CLQ.fails=0;CLQ.wake=false;
+  clKick(300);
+}
 
 /* ---------- 旧版の関数を差し替え ---------- */
-schedulePublish=function(ms){scheduleSync(ms||1500);};
-doPublish=async function(force){await cloudSync(force);};
+schedulePublish=function(ms){if(CLQ.fails===0)clKick(ms||1500);};   /* 失敗中は再挑戦の予定に任せる */
+doPublish=function(force){
+  if(typeof document!=='undefined'&&document.hidden){clKeepalive('離脱');return Promise.resolve(false);}   /* 離れた瞬間：keepalive だけ（受信は始めない） */
+  if(force)return cloudSync(true);
+  if(CLQ.fails)return Promise.resolve(false);
+  return cloudSync();
+};
 /* 写真の置き場（旧版の assets 機能の代わり）。upload(blob)→{id} の形を合わせる */
 function clNewAssetId(){const a=new Uint8Array(16);(window.crypto&&crypto.getRandomValues)?crypto.getRandomValues(a):a.forEach((_,i)=>a[i]=Math.floor(Math.random()*256));return Array.from(a).map(b=>b.toString(16).padStart(2,'0')).join('');}
 async function cloudPhotoUpload(blob){
   if(!cloudLoggedIn())throw Object.assign(new Error('not_logged_in'),{code:'not_granted'});
   await clEnsureFresh();
   const id=clNewAssetId(),path='/storage/v1/object/'+CLOUD.bucket+'/'+CL.sess.user.id+'/'+id;
-  const r=await fetch(CLOUD.url+path,{method:'POST',headers:{'apikey':CLOUD.key,'Authorization':'Bearer '+CL.sess.access_token,'Content-Type':blob.type||'image/jpeg','x-upsert':'false'},body:blob});
-  if(!r.ok){const j=await clJson(r);const e=new Error((j&&(j.message||j.error))||('HTTP '+r.status));e.code=(r.status===429)?'rate_limited':(r.status===401||r.status===403)?'not_granted':'ERR';throw e;}
+  const r=await clTimed(CL.T.photo,s=>fetch(CLOUD.url+path,{method:'POST',headers:{'apikey':CLOUD.key,'Authorization':'Bearer '+CL.sess.access_token,'Content-Type':blob.type||'image/jpeg','x-upsert':'false'},body:blob,signal:s})
+    .then(async x=>({ok:x.ok,status:x.status,text:x.ok?'':await x.text()})));
+  if(!r.ok){let j=null;try{j=JSON.parse(r.text);}catch(e){}const e=new Error((j&&(j.message||j.error))||('HTTP '+r.status));e.code=(r.status===429)?'rate_limited':(r.status===401||r.status===403)?'not_granted':'ERR';throw e;}
   return {id};
 }
 async function cloudPhotoFetch(assetId){
   if(!cloudLoggedIn())return null;
   await clEnsureFresh();
-  const r=await fetch(CLOUD.url+'/storage/v1/object/authenticated/'+CLOUD.bucket+'/'+CL.sess.user.id+'/'+assetId,{headers:{'apikey':CLOUD.key,'Authorization':'Bearer '+CL.sess.access_token}});
-  if(!r.ok)return null;
-  const b=await r.blob();if(!b||!b.size)return null;
+  let b=null;
+  try{b=await clTimed(CL.T.photo,s=>fetch(CLOUD.url+'/storage/v1/object/authenticated/'+CLOUD.bucket+'/'+CL.sess.user.id+'/'+assetId,{headers:{'apikey':CLOUD.key,'Authorization':'Bearer '+CL.sess.access_token},signal:s})
+    .then(r=>r.ok?r.blob():null));}catch(e){return null;}
+  if(!b||!b.size)return null;
   return await new Promise(res=>{const fr=new FileReader();fr.onload=()=>res(String(fr.result));fr.onerror=()=>res(null);fr.readAsDataURL(b);});
 }
 getAssets=async function(){return cloudLoggedIn()?{upload:cloudPhotoUpload}:null;};
@@ -6754,13 +7252,23 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c1.8";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c1.9";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
+/* ログインの後：同じユーザーなら影はそのまま（全件受信をやり直さない）。違うユーザーならそのユーザーの影を読む */
+async function clAfterLogin(){
+  if(!cloudLoggedIn())return;
+  CLQ.fails=0;CL.authDead=false;CL.auth401=0;
+  const uid=CL.sess.user.id;
+  if(uid!==CL.shadowFor){clAbortRun();await clLoadShadow(uid);clRecomputeDirty(true);}
+  else clRecomputeDirty(false);
+  try{renderSync();}catch(e){}
+  clKick(0);
+}
 function openLoginSheet(opt){
   opt=opt||{};
   const u=cloudLoggedIn()?CL.sess.user:null;
   const daily=!!(u&&(opt.daily||clDailyDue()));   /* ログイン済みだが「今日のパスワード確認」がまだ */
-  const remEmail=clGet(CL_EMAIL,'')||(u&&u.email)||'';
+  const remEmail=clGet(CL_EMAIL,'')||(u&&u.email)||(CL.sess&&CL.sess.dead&&CL.sess.user&&CL.sess.user.email)||'';
   const loginForm=(title,note)=>
       '<div class="sh-note" style="text-align:left;margin-bottom:6px">'+note+'</div>'+
       '<div><div class="sh-label">メールアドレス</div><input type="email" id="clEmail" autocomplete="username" inputmode="email" placeholder="登録したメールアドレス" value="'+esc(remEmail)+'" style="width:100%;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 13px;outline:none'+(daily?';background:#f1f3f8;color:#6a7080'+'" readonly':'"')+'></div>'+
@@ -6779,21 +7287,22 @@ function openLoginSheet(opt){
         '<button class="bkbtn" id="clImpJsonBtn">📥 バックアップ JSON を取り込む（消さずに合流）</button>'+
         '<button class="bkbtn" id="clImpPhBtn" style="margin-top:6px">📦 写真をクラウドへ（ファイルを選ぶ）</button>'+
         '<div class="sh-note" id="clImpMsg" style="text-align:left"></div>'):
-      (loginForm('ログイン','ログインすると、どの端末でも同じ記録が出る。しなくても記録はできる（この端末に保存）')))));
+      (loginForm('ログイン',(CL.sess&&CL.sess.dead)?'ログインが切れた。記録はこの端末に残っている。ログインし直すと続きから送る':'ログインすると、どの端末でも同じ記録が出る。しなくても記録はできる（この端末に保存）')))));
   const inB=$('clIn');
+  const wasIn=!!u;   /* 画面を開いた時点でログインしていたか（送信の時点では判定しない） */
   if(inB)inB.onclick=async()=>{
     const em=$('clEmail').value.trim(),pw=$('clPass').value;
     if(!em||!pw){toast('メールとパスワードを入れてくれ');return;}
     inB.disabled=true;inB.textContent='ログイン中…';
     try{
-      const wasIn=cloudLoggedIn();
       await clLogin(em,pw);
       clSet(CL_EMAIL,($('clRem')&&$('clRem').checked)?em:null);
       clSet(CL_AUTO,($('clAuto')&&$('clAuto').checked)?'1':'0');
       clSet(CL_PWDAY,todayStr());
       closeSheet();
-      if(wasIn){toast('✓ 今日のパスワード確認 OK');renderSync();}
-      else{toast('✓ ログインした。同期を始める');CL.firstPull=false;CL.seq=0;clSaveSync();cloudSync();}
+      if(wasIn){toast('✓ 今日のパスワード確認 OK');}
+      else{toast('✓ ログインした。同期を始める');}
+      clAfterLogin();
     }
     catch(e){const m=$('clMsg');m.style.display='';m.textContent='ログインできない：'+String((e&&e.message)||e).slice(0,80);inB.disabled=false;inB.textContent='ログイン';}
   };
@@ -6834,7 +7343,7 @@ async function clImportJson(f){
     state.updatedAt=Math.max(state.updatedAt||0,Date.now());
     saveLocal(false);render();
     clImpSay('📥 取り込んだ：記録 '+before+'→'+cnt(state)+'件・支払い '+Object.keys(state.pays||{}).length+'・写真番号 '+Object.keys(state.pha||{}).length+'。クラウドへ送っている…');
-    scheduleSync(300);
+    CLQ.fails=0;clKick(300);
   }catch(e){clImpSay('取り込みに失敗：'+String((e&&e.message)||e).slice(0,60));}
 }
 /* 写真ファイル（名前＝保管番号）をクラウドの写真置き場へ。pha に無い番号は飛ばす。同じ物が既にあれば成功扱い */
@@ -6848,8 +7357,9 @@ async function clImportPhotos(files){
   const uid=CL.sess.user.id;
   const one=async(x)=>{
     try{await clEnsureFresh();
-      const r=await fetch(CLOUD.url+'/storage/v1/object/'+CLOUD.bucket+'/'+uid+'/'+x.aid,{method:'POST',headers:{'apikey':CLOUD.key,'Authorization':'Bearer '+CL.sess.access_token,'Content-Type':x.f.type||'image/jpeg','x-upsert':'false'},body:x.f});
-      if(r.ok)ok++;else{const j=await clJson(r);if(r.status===400&&j&&/exists/i.test(String(j.message||j.error||'')))dup++;else ng++;}
+      const r=await clTimed(CL.T.photo,s=>fetch(CLOUD.url+'/storage/v1/object/'+CLOUD.bucket+'/'+uid+'/'+x.aid,{method:'POST',headers:{'apikey':CLOUD.key,'Authorization':'Bearer '+CL.sess.access_token,'Content-Type':x.f.type||'image/jpeg','x-upsert':'false'},body:x.f,signal:s})
+        .then(async y=>({ok:y.ok,status:y.status,text:y.ok?'':await y.text()})));
+      if(r.ok)ok++;else{let j=null;try{j=JSON.parse(r.text);}catch(e){}if(r.status===400&&j&&/exists/i.test(String(j.message||j.error||'')))dup++;else ng++;}
     }catch(e){ng++;}
     i++;if(i%10===0||i===todo.length)clImpSay('📦 写真 '+i+'/'+todo.length+'（新規 '+ok+'・既にあった '+dup+'・失敗 '+ng+'）');
   };
@@ -6858,49 +7368,111 @@ async function clImportPhotos(files){
   clImpSay('📦 写真の引っ越し：新規 '+ok+'・既にあった '+dup+'・失敗 '+ng+(skip?'・番号が合わず飛ばした '+skip:'')+'（全 '+todo.length+'）');
   PH.mem={};render();
 }
+const clHM=t=>t?new Date(t).toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'}):'—';
 function cloudStatusText(){
   const n=clDirtyCount();
-  return (CL.err?('⚠ '+CL.err+'｜'):'')+(n?('未送信 '+n+'件'):'送信済み')+(CL.lastPull?('｜最終受信 '+new Date(CL.lastPull).toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'})):'');
+  return (CL.lastErr?('⚠ '+CL.lastErr+'｜'):'')+(n?('未送信 '+n+'件'):'送信済み')+(CL.lastPull?('｜最終受信 '+clHM(CL.lastPull)):'')+(CL.retryAt>Date.now()?('｜再送 '+Math.ceil((CL.retryAt-Date.now())/1000)+'秒後'):'');
+}
+/* 「保存ランプの意味」の画面に出す、同期の状態1行と記録（旧HTML側の openSyncSheet から呼ばれる） */
+function clSyncDiagHtml(){
+  try{
+    if(!cloudConfigured())return '';
+    const now=Date.now(),n=clDirtyCount(),nb=Object.keys(CL.bad).length;
+    const fmt=t=>{const d=new Date(t);return (d.getMonth()+1)+'/'+d.getDate()+' '+d.toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit',second:'2-digit'});};
+    const line='状態：'+(cloudLoggedIn()?'ログイン中':((CL.sess&&CL.sess.dead)?'ログイン切れ':'未ログイン'))+'｜未送信 '+n+'件｜最後の送信 '+clHM(CL.lastPush)+'｜最後の受信 '+clHM(CL.lastPull)+
+      '｜次の再送 '+(CL.retryAt>now?Math.ceil((CL.retryAt-now)/1000)+'秒後':'—')+'｜整合 '+(CL.integ.res||'未確認')+'｜影 '+(CL.shadowOk?(CL.full?'照合し直し中':'あり'):'作成中')+
+      '｜控え '+(CL.storeOk===false?'メモリのみ':'IndexedDB')+(CLQ.run?'｜同期中':'')+(CL.lastErr?'｜エラー '+CL.lastErr:'')+
+      (nb?'｜送れない行 '+nb+'件：'+Object.keys(CL.bad).slice(0,5).map(k=>k.replace('\u0000','/')).join('、'):'');
+    const rows=CL.log.slice().reverse().map(e=>'<div>'+esc(fmt(e.t))+' 〔'+esc(e.ev)+'〕'+esc(e.msg)+'</div>').join('');
+    return '<div class="sh-label" style="margin-top:12px">同期の記録</div>'+
+      '<div class="sh-note" id="clDiag" style="text-align:left;word-break:break-all">'+esc(line)+'</div>'+
+      '<div class="sh-note" id="clLog" style="text-align:left;font-size:11.5px;line-height:1.5;max-height:220px;overflow:auto;word-break:break-all">'+(rows||'（まだ記録なし）')+'</div>';
+  }catch(e){return '';}
 }
 /* ランプと診断帯：旧版の renderSync を包む（未ログイン＝灰色・タップでログイン） */
+function clStripText(){
+  const now=Date.now(),n=clDirtyCount();
+  const showErr=CL.lastErr&&(CLQ.fails>=2||(CLQ.firstFailAt&&now-CLQ.firstFailAt>20000));   /* 復帰直後の1回の失敗では騒がない */
+  return ((typeof localSaveFail!=='undefined'&&localSaveFail)?'🔴 端末保存に失敗｜':'🟠 ')+'未送信 '+n+'件'+(CL.lastPush?'｜最後の送信 '+clHM(CL.lastPush):'')+
+    (showErr?'｜'+CL.lastErr:'')+(CL.retryAt>now?'｜再送 '+Math.ceil((CL.retryAt-now)/1000)+'秒後':(CLQ.run?'｜送信中':''));
+}
 {
   const _rs=renderSync;
   renderSync=function(){
-    unsynced=clDirtyCount()>0;
+    const noSh=cloudConfigured()&&cloudLoggedIn()&&CL.ready&&!CL.shadowOk;   /* 影が無い間（最初の全件受信が終わるまで）は緑にしない＝端末だけの記録が残っているかもしれない */
+    unsynced=clDirtyCount()>0||noSh;
     localOnly=!(cloudConfigured()&&cloudLoggedIn());
     _rs();
     const d=$('syncdot');if(d){d.onclick=openLoginSheet;if(localOnly&&cloudConfigured())d.title='未ログイン（タップでログイン）';}
     const s=$('diagstrip');
-    if(s&&cloudConfigured()&&!cloudLoggedIn()){s.style.display='';s.className='diagstrip';s.textContent='⚪ 未ログイン：この端末だけに保存中（タップしてログインすると全端末で同期）';s.onclick=openLoginSheet;}
-    else if(s&&CL.err&&cloudLoggedIn()){s.style.display='';s.className='diagstrip';s.textContent='🟠 '+CL.err+'（記録は端末に保存済み。電波を確認）';s.onclick=openLoginSheet;}
+    if(s&&cloudConfigured()&&!cloudLoggedIn()){s.style.display='';s.className='diagstrip';
+      s.textContent=(CL.sess&&CL.sess.dead)?'⚪ ログインが切れた：記録はこの端末に保存中（タップしてログインし直す）':'⚪ 未ログイン：この端末だけに保存中（タップしてログインすると全端末で同期）';s.onclick=openLoginSheet;}
+    else if(s&&cloudLoggedIn()){
+      const showErr=CL.lastErr&&(CLQ.fails>=2||(CLQ.firstFailAt&&Date.now()-CLQ.firstFailAt>20000));
+      if(clDirtyCount()||showErr||noSh||(typeof localSaveFail!=='undefined'&&localSaveFail)){s.style.display='';s.className='diagstrip'+((typeof localSaveFail!=='undefined'&&localSaveFail)?' bad':'');s.textContent=(noSh&&!clDirtyCount()&&!(typeof localSaveFail!=='undefined'&&localSaveFail))?('🟠 クラウドと突き合わせ中（最初の受信。終わるまで緑にしない）'+(showErr?'｜'+CL.lastErr:'')):clStripText();s.onclick=openSyncSheet;}
+    }
   };
 }
-/* 保存のたびに dirty を更新して、1.5秒後に送る */
+/* 「保存ランプの意味」：☁ボタンを新しい同期に（失敗の間隔をリセットして今すぐ） */
+{
+  const _os=openSyncSheet;
+  openSyncSheet=function(){
+    _os.apply(this,arguments);
+    const b=$('syncNow');if(b){b.textContent='☁ いまクラウドに保存';b.onclick=()=>{closeSheet();cloudSync(true);toast('☁ クラウドへ保存中…少し待て');};}
+  };
+}
+/* 保存のたびに dirty を更新して、1.5秒後に送る（早い方の予約が勝つ＝書き続けても送信が後ろへずれない） */
 {
   const _sl=saveLocal;
   saveLocal=function(synced){
     _sl(synced);
-    if(CL.ready&&clMarkDirty())scheduleSync(1500);
+    if(CL.quietSave)return;
+    let n=0;try{n=clMarkDirty();}catch(e){clNote('dirty','差の計算で例外：'+e.message);}
+    if(CL.ready){try{renderSync();}catch(e){}if(n&&CLQ.fails===0)clKick(1500);}
   };
 }
-/* 受信のきっかけ：画面に戻った・ネット復帰・60秒ごと */
-document.addEventListener('visibilitychange',()=>{if(!document.hidden&&cloudLoggedIn())scheduleSync(300);});
-window.addEventListener('online',()=>{if(cloudLoggedIn())scheduleSync(500);});
-setInterval(()=>{if(cloudLoggedIn()&&!document.hidden&&Date.now()-CL.lastPull>55000)cloudPull(false);},60000);
-/* 起動：端末のデータで先に画面を出し、ログイン済みなら裏で受信→送信 */
+/* きっかけ：画面を離れる（capture＝旧版の処理より先に keepalive を撃つ）・戻る・ネット復帰・別タブの合言葉 */
+document.addEventListener('visibilitychange',()=>{if(document.hidden)clOnHidden();else clOnVisible('visible');},true);
+window.addEventListener('pagehide',()=>{clOnHidden();},true);
+window.addEventListener('pageshow',e=>{if(e&&e.persisted)clOnVisible('pageshow');});
+document.addEventListener('resume',()=>{clOnVisible('resume');});
+window.addEventListener('online',()=>{if(cloudLoggedIn()){CLQ.fails=0;clKick(500);}});
+window.addEventListener('storage',e=>{
+  if(!e||e.key!==CL_SESS||!e.newValue)return;
+  try{const s=JSON.parse(e.newValue);if(s&&s.user&&s.access_token&&CL.sess&&CL.sess.user&&s.user.id===CL.sess.user.id&&(s.expires_at||0)>(CL.sess.expires_at||0)){CL.sess=s;clNote('refresh','別タブの新しい合言葉を採用');}}catch(x){}
+});
+/* 見張りと定期処理（10秒ごと）：止まった同期を打ち切る／未送信があれば20秒、無くても60秒ごとに同期（受信） */
+setInterval(()=>{
+  if(CLQ.run&&Date.now()-CLQ.beat>CL.T.watch){clNote('watchdog','無進捗 '+Math.round((Date.now()-CLQ.beat)/1000)+'秒 → 打ち切ってやり直す');clAbortRun();clKick(500);return;}
+  if(!cloudLoggedIn()||!CL.ready||CLQ.run||CLQ.fails||(typeof document!=='undefined'&&document.hidden))return;
+  const idle=Date.now()-Math.max(CL.lastTry,CL.lastPull);
+  if((clDirtyCount()>0&&idle>20000)||idle>60000)clKick(0);
+},10000);
+/* 再送までの秒数を帯に出す（帯が出ている間だけ） */
+setInterval(()=>{try{const s=$('diagstrip');if(s&&s.style.display!=='none'&&cloudLoggedIn()&&(CL.retryAt>Date.now()||clDirtyCount()))s.textContent=clStripText();}catch(e){}},1000);
+/* 起動：端末のデータで先に画面を出し、ログイン済みなら裏で 受信→送信 */
 let afterCloudReady=function(){};
 async function cloudBoot(){
-  CL.ready=true;
-  clShadowFromState();
+  clBaseSigs();CL.trackHot=true;   /* ここから先の保存は「書いた項目」として追う */
   if(clGet('hibiki-ver','')!==CL_APPVER){clSet('hibiki-ver',CL_APPVER);clSet(CL_PWDAY,null);}   /* 版が上がった＝今日のパスワード確認をやり直す */
-  /* 前回までの未送信（dirty）はそのまま。影は今の state を基準にする */
+  if(!cloudConfigured()){CL.ready=true;renderSync();return;}
+  try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().then(p=>(navigator.storage.estimate?navigator.storage.estimate():Promise.resolve({})).then(es=>{
+    const mb=x=>x?(x/1048576).toFixed(1):'?';clNote('storage','永続保存 '+(p?'許可':'未許可')+'・使用 '+mb(es.usage)+'/'+mb(es.quota)+'MB');})).catch(()=>{});}catch(e){}
+  /* セッション：localStorage に無い・古い時は IndexedDB の控えを使う */
+  try{const is=await clStore.get('session');
+    if(is&&is.user&&is.access_token&&(!CL.sess||(CL.sess.user&&CL.sess.user.id===is.user.id&&(is.expires_at||0)>(CL.sess.expires_at||0)))){CL.sess=is;try{localStorage.setItem(CL_SESS,JSON.stringify(is));}catch(e){}clNote('sess','IndexedDB の控えから合言葉を戻した');}}catch(e){}
+  try{const ka=JSON.parse(localStorage.getItem(CL_KA)||'null');if(ka&&ka.n)CL.kaCheck=ka;}catch(e){}
+  if(CL.sess&&CL.sess.user&&CL.sess.user.id){await clLoadShadow(CL.sess.user.id);await clOutboxRestore();}
+  CL.ready=true;
+  clRecomputeDirty(false);
   unsynced=clDirtyCount()>0;renderSync();
-  if(!cloudConfigured())return;
   /* 起動した最初の画面：未ログインならログイン画面、ログイン済みでも今日まだならパスワード確認（自動ログインなら出さない）。
      起動フラッシュ（毎日のルールの画面）が出ている間は、閉じられてから出す */
   /* 本人の決め事（2026-10-03）：ログインは「毎日のルールの画面より前の、本当の最初」。起動フラッシュの上に重ねて出す */
   if(!cloudLoggedIn()||clDailyDue()){try{$('ovl').classList.add('cl-first');openLoginSheet();}catch(e){}}
   if(!cloudLoggedIn()){return;}
+  clNote('boot','起動 '+CL_APPVER+'｜影 '+(CL.shadowOk?'あり（受信位置 '+CL.seq+'）':'なし → 全件受信')+'｜未送信 '+clDirtyCount()+'件｜署名 '+CL.perf.baseSigs+'ms');
+  CL.integ.due=true;   /* 起動ごとに1回は整合を確かめる */
   await cloudSync();
 }
 
