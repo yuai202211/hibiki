@@ -200,6 +200,14 @@
   .hour.wr .bed{font-size:13.5px;font-weight:800;padding:9px 13px;border-radius:999px;background:#ece8ff;color:#5b4fd6;white-space:nowrap}
   .hour.wr .bed.warn{background:#fff3c9;color:#a8790a}
   .hour.wr .bed.hot,.hour.wr .bed.over{background:#ffe9ec;color:#e0405a}
+  /* 🚗出発（緑）／🏁到着（橙）：書くの行から1タップで移動を記録 */
+  .hour.wr .chip.mvb{height:40px;display:inline-flex;align-items:center;gap:4px;padding:0 12px}
+  .hour.wr .chip.mvb.go{background:#d9f4e4;color:#13864a}
+  .hour.wr .chip.mvb.arr{background:#ffe6cf;color:#c4560c}
+  .hour.wr .chip.mvb b{font-size:12px;font-weight:800;background:#fff;border-radius:999px;padding:2px 7px}
+  .hour.wr .wr-r.tight .chip.mvb .mvl{display:none}
+  .hour.wr .wr-r.tight .bed{font-size:12px;padding:9px 8px}
+  .hour.wr .wr-r.wrap{flex-shrink:1;min-width:0;flex-wrap:wrap;justify-content:flex-end;row-gap:4px}
   .sgoal{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:6px 0 8px}
   /* HIBIKI 日々記 のロゴの組み方（本人選択 B・2026-10-03）：1行・同じ下線（ベースライン）。段差を作らない */
   .hb-logo{display:inline-flex;align-items:baseline;gap:.42em;line-height:1;white-space:nowrap}
@@ -2691,7 +2699,7 @@ function renderTimeline(pane){
     if(isToday){
       const os=openSleep(),night=(nowH>=21||nowH<5),op=nowCardOpen();
       const bp=os?'':sleepBedPill();   /* 夜の締切の札＝「寝る」ボタンを兼ねる（幅を増やさない） */
-      right='<span class="wr-r">'+
+      right='<span class="wr-r">'+mvBtnHtml()+   /* 🚗出発／🏁到着（いちばん優先） */
         (os?'<button class="chip" id="wrWake" style="background:#fff3c9;color:#a8790a">☀ 起きた</button>'
            :bp?bp:(night?'<button class="chip" id="wrSleep" style="background:#ece8ff;color:#5b4fd6">😴 寝る</button>':''))+
         ((os||bp||night)?'':wrSlpChip())+
@@ -2742,7 +2750,7 @@ function renderTimeline(pane){
         const dm=(en.e&&!en.noT)?durMin(en.s,en.e,en.ed):0;
         const pill=dm?'<span class="dpill">⏱ '+esc(durText(dm))+'</span>':'';
         html+='<button class="hour filled" data-k="'+esc(it.k)+'"><span class="hh">'+(en.noT?'<b style="color:#c3c8d4">—</b>':('<b>'+esc(en.s||(pad(h)+':00'))+'</b>'+(en.e?'<small>'+(en.ed?(en.ed===1?'翌':'+'+en.ed+'日'):'')+esc(en.e)+'</small>':'')))+'</span><div class="body">'+
-          pfTag(en)+(en.mv?'<span class="loc big" style="color:#4d7dff">'+(TRICON[en.tr]||'🚗')+' '+esc(en.rt||'移動')+'</span>'
+          pfTag(en)+(en.mv?'<span class="loc big" style="color:#4d7dff">'+(TRICON[en.tr]||'🚗')+' '+esc(en.rt||'移動')+(mvOpenOk(ui.date,en)?'　（移動中…🏁到着を押す）':'')+'</span>'
                 :en.k==='rest'?'<span class="loc big" style="color:#c98a2f">☕ 休憩'+(en.p?'　📍'+esc(en.p):'')+'</span>'
                 :en.k==='work'?'<span class="loc big" style="color:#1e3a8a">💼 仕事'+(en.p?'　📍'+esc(en.p):'')+'</span>'
                 :en.k==='ai'?'<span class="loc big" style="color:#7a6ef3">🤖 AI'+(en.p?'　📍'+esc(en.p):'')+'</span>'
@@ -2830,6 +2838,8 @@ function renderTimeline(pane){
   wB('bedPill',quickSleepStart);
   wB('wrSleep',quickSleepStart);
   wB('wrSlp',openSleepPage);
+  wB('wrGo',quickMoveStart);wB('wrArr',quickMoveArrive);
+  if(isToday)wrFit();   /* 幅が足りなければ昨夜の睡眠チップを隠す */
   nowCardSet(false);   /* ワンタップの開閉（⋯）はやめた。カードは閉じたまま */
   pane.querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>openEntrySheet(ui.date,{key:b.dataset.k}));
   pane.querySelectorAll('[data-rlk]').forEach(b=>b.onclick=()=>{const x=(state.rlog||{})[b.dataset.rlk];if(x)openRlogSheet(x.r,b.dataset.rlk);});
@@ -3125,7 +3135,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+   /* 同期の状態1行と記録（クラウド版 c1.9） */
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c1.9.3）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c2.0）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -3269,7 +3279,7 @@ function openEntrySheet(date,ref){
   let defS=pad(hour)+':00';
   if(!ex&&date===todayStr()&&hour===nowD.getHours())defS=pad(hour)+':'+pad(Math.floor(nowD.getMinutes()/10)*10);
   let tS=(ex&&ex.s)||defS;
-  const openSl=!!(ex&&ex.k==='sleep'&&ex.s&&!ex.e&&!ex.noT);   /* 寝ている最中（☀起きた を押す前）。終了は空のまま開き、空のまま保存する（2026-10-03レビュー指摘） */
+  const openSl=!!(ex&&ex.s&&!ex.e&&!ex.noT&&(ex.k==='sleep'||mvOpenOk(date,ex)));   /* 寝ている最中（☀起きた を押す前）・移動中（🏁到着を押す前）。終了は空のまま開き、空のまま保存する（2026-10-03レビュー指摘） */
   let tE=(ex&&ex.e)||(openSl?'':(pad((hour+1)%24)+':'+defS.slice(3,5)));
   const chips=placeChips();
   $('sheet').innerHTML=
@@ -3327,15 +3337,7 @@ function openEntrySheet(date,ref){
   $('mvRt').value=(ex&&(ex.rt||''))||'';
   if(!ex){
     /* 新規なら「どこから→」を直前の記録の場所から先回りで入れておく */
-    let bestM='',bestV='';
-    for(const k in eo){
-      const en=eo[k];if(en.del)continue;
-      const sm=en.s||((/^\d+$/.test(k)?pad(Number(k)):'12')+':00');
-      if(sm<=defS&&sm>=bestM){
-        bestM=sm;
-        bestV=en.mv?String(en.rt||'').split('→').pop().trim():(en.p||'');
-      }
-    }
+    const bestV=placeBefore(date,defS);
     if(bestV){$('mvRt').value=bestV+' → ';$('mvRt').classList.add('auto');}   /* アプリが先回りで入れた＝青 */
   }
   $('mvArrow').onclick=()=>{
@@ -3559,7 +3561,7 @@ function openEntrySheet(date,ref){
     else if(eType==='stay'){if(!t&&!p&&!sheetSt.ph.length&&!actsS.length){toast('場所・内容・写真、どれかは入れてくれ');return;}}
     /* 休憩・睡眠は時間だけで1件成立（何も書かなくてOK） */
     /* 終了が開始より前＝日をまたいだと解釈して自動で翌日扱い */
-    if(!tE&&eType!=='sleep')tE=pad((hour+1)%24)+':'+defS.slice(3,5);   /* 寝ている最中の睡眠を、別の種類に変えて保存した時だけ、終了を入れる */
+    if(!tE&&eType!=='sleep'&&!(eType==='move'&&openSl&&ex.mv))tE=pad((hour+1)%24)+':'+defS.slice(3,5);   /* 移動中の移動も空のまま */   /* 寝ている最中の睡眠を、別の種類に変えて保存した時だけ、終了を入れる */
     if(tE&&tE<=tS&&tEd===0){tEd=1;toast('終了を翌日として記録した');}
     const d0=sheetSt.date;
     const saveKey=(sheetSt.key!=null)?sheetSt.key:('e'+Date.now()+Math.floor(Math.random()*1e4));
@@ -5366,6 +5368,56 @@ function quickWake(){
   const mn=durMin(o.en.s,e,ed);
   toast('☀ おはよう。睡眠 '+durText(mn)+(mn>=SLEEP_MIN?' ✅':' 😵 7時間未満')+((o.d===todayStr()&&o.en.s>=SLEEP_BED&&o.en.s<'11:00')?'　🦉 2:00すぎに就寝':''));
 }
+/* ===== 🚗出発／🏁到着（本人決定 2026-10-04 案A）：書くの行から1タップ。何も聞かない ===== */
+/* 直前の記録の場所（移動なら到着地）。新規の「どこから→」に使う */
+function placeBefore(date,hm){const eo=state.entries[date]||{};let bestM='',bestV='';
+  for(const k in eo){const en=eo[k];if(!en||en.del)continue;
+    const sm=en.s||((/^[0-9]+$/.test(k)?pad(Number(k)):'12')+':00');
+    if(sm<=hm&&sm>=bestM){bestM=sm;bestV=en.mv?String(en.rt||'').split('→').pop().trim():(en.p||'');}}
+  return bestV;}
+/* 移動中＝開始あり・終了なしの移動（今日か昨日の分だけ） */
+function mvOpenOk(d,en){return !!(en&&!en.del&&en.mv&&en.s&&!en.e&&!en.noT&&(d===todayStr()||d===addDays(todayStr(),-1)));}
+function openMove(){
+  for(const d of [todayStr(),addDays(todayStr(),-1)]){const eo=state.entries[d]||{};let b=null;
+    for(const k in eo){const en=eo[k];if(mvOpenOk(d,en)&&(!b||en.s>b.en.s))b={d,k,en};}
+    if(b)return b;}
+  return null;}
+/* 直近の移動で使った乗り物 */
+function lastTr(){const td=todayStr(),ds=Object.keys(state.entries||{}).filter(d=>d<=td).sort().reverse();
+  for(const d of ds){const eo=state.entries[d]||{};let bs='',bt='';
+    for(const k in eo){const en=eo[k];if(en&&!en.del&&en.mv&&TRICON[en.tr]&&(en.s||'')>=bs){bs=en.s||'';bt=en.tr;}}
+    if(bt)return bt;}
+  return '';}
+function mvElapsed(o){const n=new Date();return durMin(o.en.s,pad(n.getHours())+':'+pad(n.getMinutes()),o.d===todayStr()?0:1);}
+function mvElText(m){if(m<60)return m+'分';return Math.floor(m/60)+'時間'+(m%60?(m%60)+'分':'');}
+function mvBtnHtml(){const o=openMove();
+  return o?'<button class="chip mvb arr" id="wrArr">🏁<span class="mvl"> 到着</span> <b>⏱'+esc(mvElText(mvElapsed(o)))+'</b></button>'
+          :'<button class="chip mvb go" id="wrGo">🚗<span class="mvl"> 出発</span></button>';}
+function quickMoveStart(){
+  if(openMove()){toast('もう移動中。着いたら🏁到着を押す');return;}
+  const d=todayStr(),s=nowHM(),from=placeBefore(d,s),tr=lastTr()||'car',pf0=pfAuto(d,s);
+  const key='e'+Date.now()+Math.floor(Math.random()*1e4);
+  mutate(()=>{state.entries[d]=state.entries[d]||{};
+    const ne={mv:1,s,rt:from?from+' → ':'',tr,p:'',t:'',ph:[],ts:Date.now()};if(pf0)ne.pf0=pf0;
+    state.entries[d][key]=ne;});
+  toast((TRICON[tr]||'🚗')+' 出発 '+s);
+}
+function quickMoveArrive(){
+  const o=openMove();
+  if(!o){toast('移動中の記録がない');return;}
+  const e=nowHM(),s=o.en.s;
+  const ed=(o.d!==todayStr()||e<s)?1:0;   /* 昨日に出た／0時をまたいだ＝翌日。同じ10分の中で着いたら0分 */
+  mutate(()=>{const en=state.entries[o.d][o.k];en.e=e;if(ed)en.ed=ed;else delete en.ed;en.ts=Date.now();});
+  toast('🏁 到着 '+e+'（'+(durText(durMin(s,e,ed))||'10分未満')+'）');
+}
+/* 1分ごとに到着ボタンの経過時間だけ描き直す */
+function mvBtnTick(){try{const b=$('wrArr'),o=b&&openMove();if(!o)return;const t=b.querySelector('b');if(t)t.textContent='⏱'+mvElText(mvElapsed(o));wrFit();}catch(e){}}
+/* 書くの行が横にはみ出す時：昨夜の睡眠チップを隠す→出発・到着の文字を隠して札を詰める（絵と時間は残す）→2段 */
+function wrFit(){try{const row=document.querySelector('.hour.wr'),r=row&&row.querySelector('.wr-r'),bd=row&&row.querySelector('.body');if(!r||!bd)return;
+  const over=()=>bd.scrollWidth>bd.clientWidth+1||row.scrollWidth>row.clientWidth+1;
+  if(over()){const s=$('wrSlp');if(s)s.remove();}
+  if(over())r.classList.add('tight');
+  if(over())r.classList.add('wrap');}catch(e){}}   /* 最後の手段：2段にする */
 function quickPlace(p){
   if(ui.date!==todayStr()){ui.date=todayStr();ui.tab='di';render();}
   openEntrySheet(todayStr(),{hour:new Date().getHours()});
@@ -5404,11 +5456,14 @@ function sleepBedTick(){
   try{
     const el=$('bedPill'),html=(ui.date===todayStr())?sleepBedPill():'';
     if(el){if(!html)el.remove();else el.outerHTML=html;}
-    else if(html){const r=document.querySelector('.hour.wr .wr-r');if(r)r.insertAdjacentHTML('afterbegin',html);}
+    else if(html){const r=document.querySelector('.hour.wr .wr-r'),mb=$('wrGo')||$('wrArr');   /* 並びは描画と同じ：🚗/🏁 の後ろ */
+      if(mb&&r&&r.contains(mb))mb.insertAdjacentHTML('afterend',html);else if(r)r.insertAdjacentHTML('afterbegin',html);}
     const b=$('bedPill');if(b)b.onclick=ev=>{ev.stopPropagation();quickSleepStart();};
     /* 札が出ている間は「😴寝る」のチップは重ねて出さない */
     const ws=$('wrSleep');if(ws&&$('bedPill'))ws.remove();
   }catch(e){}
+  mvBtnTick();   /* 🏁到着の経過時間 */
+  wrFit();   /* 札が増えた時もはみ出さないように詰める */
   sleepBarTick();
 }
 /* ===== 実時間の注意（本人指示 2026-10-01「スマホの時計などリアルタイムな時間を拾い、就寝時間や寝不足がある場合、注意表示」） =====
@@ -5647,7 +5702,7 @@ function anaCount0(r,days,N,limit,nowIdx){
     for(const k in eo){const en=eo[k];if(!en||en.del||en.noT||!en.s)continue;
       let a=off+hmMin(en.s),b;
       if(en.e){b=off+hmMin(en.e)+(Number(en.ed)||0)*1440;if(b<=a)b+=1440;}
-      else if(en.k==='sleep'&&d>=addDays(todayStr(),-1))b=P+nowIdx;else continue;   /* 終了時刻の無い記録は数えない（寝ている途中だけ今まで） */
+      else if((en.k==='sleep'||en.mv)&&d>=addDays(todayStr(),-1))b=P+nowIdx;else continue;   /* 終了時刻の無い記録は数えない（寝ている途中・移動中だけ今まで） */
       const mv=!!en.mv,kk=mv?'move':(ANA_REC[en.k]?en.k:'stay'),tr=mv?TRS.findIndex(t=>t[0]===en.tr):-1;
       items.push({a,b,c:IX[kk],acts:Array.isArray(en.acts)?en.acts:[],off,mv,tv:mv?(tr>=0?tr+1:ANA_NOTR):0,v2:mv&&Number(en.ts)>=MV_V2_TS,pf:prefOf(en.pf)?Number(en.pf):0,pf0:(mv&&prefOf(en.pf0))?Number(en.pf0):0,lb:mv?String(en.rt||'移動'):String(en.p||((kindOf(en.k||'stay')||{}).lb)||''),et:(mv||en.k==='sleep')?0:((typeof en.d==='string'&&en.d)?tIx(en.d):(en.dx?tIx('_other'):0))});}}
   for(const x of rlogList()){if(!x.s||!x.e||x.d<dayList[0]||x.d>dayList[dayList.length-1])continue;const off=P+Math.round((parseD(x.d)-parseD(r.s))/86400000)*1440;
@@ -7286,7 +7341,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c1.9.3";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c2.0";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 /* ログインの後：同じユーザーなら影はそのまま（全件受信をやり直さない）。違うユーザーならそのユーザーの影を読む */
 async function clAfterLogin(){
