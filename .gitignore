@@ -3,7 +3,7 @@ dev/PERSONAL-DATA.md
 dev/scan-words.json
 dev/cloud-config.json
 dev/state-baseline*.json
-dev/mock-data/
+dev/mock-data*/
 dev/mock.log
 dev/_usage.js
 photos-export/

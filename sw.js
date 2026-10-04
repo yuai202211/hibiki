@@ -1,7 +1,7 @@
 /* HIBIKI Service Worker：オフラインでも開けるようにする。
    index.html は「まずネット、だめならキャッシュ」（新しい版をすぐ拾う）。アイコン類は「キャッシュ優先」。
    データ（Supabase の API）と写真はここでは触らない（アプリが自分で端末に控える）。 */
-const VER='hibiki-c1.9.2';
+const VER='hibiki-c1.9.3';
 const CORE=['./','./index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png','./icon-512-maskable.png','./apple-touch-icon.png'];
 self.addEventListener('install',e=>{
   e.waitUntil(caches.open(VER).then(c=>c.addAll(CORE).catch(()=>{})).then(()=>self.skipWaiting()));
@@ -17,7 +17,7 @@ self.addEventListener('fetch',e=>{
   const isPage=(req.mode==='navigate')||/\/index\.html$/.test(url.pathname)||url.pathname.endsWith('/');
   if(isPage){
     e.respondWith((async()=>{
-      const net=fetch(req,{cache:'no-store'}).then(r=>{const cp=r.clone();caches.open(VER).then(c=>c.put('./index.html',cp)).catch(()=>{});return r;});
+      const net=fetch(req,{cache:'no-store'}).then(r=>{if(r.ok&&String(r.headers.get('content-type')||'').toLowerCase().indexOf('text/html')>=0){const cp=r.clone();caches.open(VER).then(c=>c.put('./index.html',cp)).catch(()=>{});}return r;});   /* 壊れた応答（404・中継ページ）で控えを上書きしない */
       const hit=await caches.match('./index.html');
       if(!hit)return net.catch(()=>caches.match('./index.html'));
       /* 控えがある時はネットを4秒だけ待つ（電波はあるのに通らない時、白い画面で止めない）。ネットの取得は裏で続けて次回に備える */
