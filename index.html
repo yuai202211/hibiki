@@ -896,6 +896,7 @@
   .prbtns{display:flex;gap:5px;flex-wrap:wrap}
   .prbtns button{flex:1 1 auto;min-width:56px;border-radius:11px;padding:7px 2px;font-weight:800;background:#f1f3f8;color:#6a7080;white-space:nowrap}
   .prbtns .sel{background:var(--ink);color:#fff}
+  #eType button:not(.ty-ai){flex:1 1 calc(25% - 5px);min-width:0}   /* 種類の小さいボタンは4つずつ2段（車内を足した） */
   /* 記録の種別（AI/滞在/移動/食事/休憩/睡眠）は3個×2行で全部同じ大きさ。折り返した1個だけが横に伸びるのを防ぐ */
   #eType button{flex:0 0 calc((100% - 10px)/3)}
   /* 🤖AIは一番上に1つだけ・横いっぱい・紫で光らせる（本人指示 2026-10-02） */
@@ -2559,7 +2560,7 @@ function placeChips(){
 }
 
 /* 場所チップの折りたたみ：最初は8個＋「＋N」、タップで全部出す（本人指示 2026-09-28） */
-const CHIP_FOLD=8;
+const CHIP_FOLD=5;   /* 場所のボタンは5つまで出す（残りは＋で開く・本人指示 2026-10-06） */
 /* 開いた／たたんだ状態は覚えておく（次にシートを開いた時も同じ状態） */
 function chipsOpen(){try{return localStorage.getItem('nippo10-chips-open')==='1';}catch(e){return false;}}
 function chipsSetOpen(v){try{localStorage.setItem('nippo10-chips-open',v?'1':'0');}catch(e){}}
@@ -3179,7 +3180,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+   /* 同期の状態1行と記録（クラウド版 c1.9） */
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c2.9）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c3.0）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -3342,7 +3343,7 @@ function openEntrySheet(date,ref){
       '<button data-ty="ai" class="ty-ai">🤖 AI</button>'+
       '<button data-ty="work">💼 仕事</button><button data-ty="stay">📍 滞在</button><button data-ty="move">🚗 移動</button>'+
       '<button data-ty="meal">🍚 食事</button>'+
-      '<button data-ty="rest">☕ 休憩</button><button data-ty="sleep">🌙 睡眠</button></div></div>'+
+      '<button data-ty="rest">☕ 休憩</button><button data-ty="sleep">🌙 睡眠</button><button data-ty="incar">🚙 車内</button></div></div>'+
     '<div id="secTool"><div class="sh-label">🛠 使う物</div><div class="sh-chips" id="tdChips"></div><input type="text" id="tdX" maxlength="20" placeholder="その他（使った物を書く）" style="display:none;margin-top:6px"></div>'+   /* 記録全体の道具（行で選ばなければこれで数える） */
     '<div id="secStay"><div class="sh-label">📍 場所（自由に書ける・コピペOK）</div>'+
       '<div id="pfInl" style="display:flex;gap:6px;align-items:center"><input type="text" id="shPlace" maxlength="120" data-need="1" placeholder="例：東京タワー" style="flex:1;min-width:0"></div>'+   /* 左端に県のチップが入る */
@@ -3374,7 +3375,7 @@ function openEntrySheet(date,ref){
   $('shTa').value=(ex&&ex.t)||'';
   $('shPlace').value=(ex&&ex.p)||'';$('tdX').value=(ex&&ex.dx)||'';
   /* 滞在／移動／休憩／睡眠の切り替え */
-  let eType=(ex&&ex.mv)?'move':(ex&&ex.k==='work')?'work':((ex&&ex.k==='rest')?'rest':((ex&&ex.k==='sleep')?'sleep':((ex&&ex.k==='meal')?'meal':((ex&&ex.k==='ai')?'ai':'stay'))));
+  let eType=(ex&&ex.mv)?'move':(ex&&ex.k==='work')?'work':((ex&&ex.k==='rest')?'rest':((ex&&ex.k==='sleep')?'sleep':((ex&&ex.k==='meal')?'meal':((ex&&ex.k==='ai')?'ai':((ex&&ex.k==='incar')?'incar':'stay')))));
   let trSel=(ex&&ex.tr)||null;
   let tdSel=(ex&&typeof ex.d==='string'&&ex.d)?ex.d:((ex&&ex.dx)?'_other':'');   /* 記録の「使う物」（_other＝手入力） */
   if(!ex){sheetSt.pf=pfAuto(date,tS);sheetSt.pfAuto=!!sheetSt.pf;}   /* 新規の都道府県＝直前の記録から（自動＝点線） */
@@ -3532,7 +3533,7 @@ function openEntrySheet(date,ref){
   /* 移動の時だけ、1タップで行を足すチップ（運転・徒歩・未選択＝耳と口でできる事／乗客＝手も使える事）。押すだけで「移動中ずっと」に数える */
   acCh=()=>{const el=$('acChips'),qe=$('acQ');if(!el)return;
     const drv=(!trSel||trSel==='car'||trSel==='carrier'||trSel==='walk');   /* 運転・徒歩・未選択＝耳と口でできる事を先に。画面を使う物は「＋ほか」の中（後で記録する時用） */
-    const isCar=(eType==='stay'&&ex&&ex.k==='incar');   /* 車内滞在＝中で何をしたか */
+    const isCar=(eType==='incar');   /* 車内滞在＝中で何をしたか */
     const q=isCar?['rest','pcwork','ai','bizcall','famcall','nap','sleep','spplay','chat']:(eType!=='move')?[]:(drv?(qMore?['audio','bizcall','famcall','think','chat','ai','work','read','doc','vstudy']:['audio','bizcall','famcall','think']):['ai','work','bizcall','read','doc','vstudy','audio','chat']);
     const qh=q.map(id=>{const k=kindOf(id);return (k&&!k.off)?'<button class="chip ac-q" data-aq="'+id+'" style="--kc:'+k.co+'">'+esc(k.ic)+' '+esc(k.lb)+'</button>':'';}).join('')+((eType==='move'&&drv)?'<button class="chip ac-qm" id="acQm">'+(qMore?'－ たたむ':'＋ ほか')+'</button>':'');
     if(qe){qe.innerHTML=isCar?'':qh;const w=$('acQw');(w||qe).style.display=(qh&&!isCar)?'':'none';}   /* 1タップは行の上（シートを開いてすぐ見える所） */
@@ -3610,7 +3611,7 @@ function openEntrySheet(date,ref){
     /* 種類を「移動」に変えても、書いてあった行は捨てない（隠れているだけ。2026-10-03レビュー指摘）。並べ替えは、時刻が決まった後（下）でやる */
     const actsS=acts.map(a=>{const o={t:a.t.trim(),m:Number(a.m)||0};if(a.s)o.s=a.s;if(a.e)o.e=a.e;if(a.k)o.k=a.k;if(a.d)o.d=a.d;if(a.d==='_other'&&a.dx)o.dx=String(a.dx).slice(0,20);if(a.c&&a.c.trim())o.c=a.c.trim();if(a.ph&&a.ph.length)o.ph=a.ph.slice();return o;}).filter(a=>a.t);
     if(isMv){if(!rt&&!t&&!sheetSt.ph.length){toast('どこから→どこまでを入れてくれ');return;}}
-    else if(eType==='stay'){if(tE&&!t&&!p&&!sheetSt.ph.length&&!actsS.length){toast('場所・内容・写真、どれかは入れてくれ');return;}}
+    else if(eType==='stay'||eType==='incar'){if(eType==='stay'&&tE&&!t&&!p&&!sheetSt.ph.length&&!actsS.length){toast('場所・内容・写真、どれかは入れてくれ');return;}}
     /* 休憩・睡眠は時間だけで1件成立（何も書かなくてOK） */
     /* 終了が開始より前＝日をまたいだと解釈して自動で翌日扱い */
     /* 終わりが空＝途中の記録としてそのまま保存（後で日記から開いて終わりを入れる） */   /* 移動中の移動も空のまま */   /* 寝ている最中の睡眠を、別の種類に変えて保存した時だけ、終了を入れる */
@@ -3635,7 +3636,7 @@ function openEntrySheet(date,ref){
       if(eType==='meal')ne.k='meal';
       if(eType==='ai')ne.k='ai';
       if(eType==='work')ne.k='work';
-      if(eType==='stay'&&ex&&ex.k==='incar')ne.k='incar';   /* 車内滞在は滞在のまま保つ */
+      if(eType==='incar')ne.k='incar';   /* 🚙車内滞在 */
       if(pfS)ne.pf=pfS;if(pf0S)ne.pf0=pf0S;   /* 出発の県（移動） */
       if(tdS==='_other'){if(tdXS)ne.dx=tdXS;}else if(tdS)ne.d=tdS;   /* 使う物（その他は手入力の文字） */   /* 都道府県（［なし］にした時は付けない） */
       if(actsS.length)ne.acts=actsSort(actsS,actsBase(ne));   /* 時刻の早い順に並べて保存 */
@@ -7422,7 +7423,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c2.9";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c3.0";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 /* ログインの後：同じユーザーなら影はそのまま（全件受信をやり直さない）。違うユーザーならそのユーザーの影を読む */
 async function clAfterLogin(){
