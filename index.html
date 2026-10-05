@@ -3262,7 +3262,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+   /* 同期の状態1行と記録（クラウド版 c1.9） */
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c3.9）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c4.0）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -7539,7 +7539,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c3.9";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c4.0";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 /* ログインの後：同じユーザーなら影はそのまま（全件受信をやり直さない）。違うユーザーならそのユーザーの影を読む */
 async function clAfterLogin(){
@@ -7566,7 +7566,7 @@ function openLoginSheet(opt){
       '<div class="sh-btns"><button class="savebtn" id="clIn">'+title+'</button></div>';
   $('sheet').innerHTML='<div class="grab"></div><div class="sh-time" style="justify-content:center"><span><span class="hb-logo"><b>HIBIKI</b><i>日々記</i></span></span></div>'+
     (!cloudConfigured()?'<div class="sh-note">このアプリはまだクラウドの設定が入っていない（配信前の状態）。記録は端末に保存されている</div>':
-    (daily?(loginForm('ログイン','🔑 <b>今日のパスワード確認</b>（忘れないように1日1回）。記録はこのまま続けられる')+
+    (daily?(loginForm('ログイン',opt.ver?('🆕 <b>新しい版（'+esc(CL_APPVER)+'）になった</b>。パスワードを入れて続ける（記録はそのまま）'):'🔑 <b>今日のパスワード確認</b>（忘れないように1日1回）。記録はこのまま続けられる')+
             '<div class="sh-note"><button class="chip" id="clLater" style="background:#f1f3f8;color:#8a90a0">あとで</button></div>'):
     (u?('<div class="sh-note" style="text-align:left">ログイン中：<b>'+esc(u.email||'')+'</b><br>クラウド '+esc(cloudStatusText())+'</div>'+
         '<div class="sh-btns"><button class="delbtn" id="clOut">ログアウト</button><button class="savebtn" id="clSyncNow">今すぐ同期</button></div>'+
@@ -7720,7 +7720,23 @@ function clStripText(){
   };
 }
 /* きっかけ：画面を離れる（capture＝旧版の処理より先に keepalive を撃つ）・戻る・ネット復帰・別タブの合言葉 */
-document.addEventListener('visibilitychange',()=>{if(document.hidden)clOnHidden();else clOnVisible('visible');},true);
+document.addEventListener('visibilitychange',()=>{if(document.hidden)clOnHidden();else{clOnVisible('visible');clCheckUpdate();}},true);
+/* ---------- 新しい版があるか（index.html の CL_APPVER を見る）。あれば上に出す：押すと送り切ってから最新を読み込む ---------- */
+let clUpAt=0;
+async function clCheckUpdate(){try{if(!cloudConfigured()||Date.now()-clUpAt<20000)return;clUpAt=Date.now();
+  const r=await fetch('./index.html?up='+Date.now(),{cache:'no-store'});if(!r.ok)return;const t=await r.text();
+  const m=/const CL_APPVER="([^"]+)"/.exec(t);if(!m||m[1]===CL_APPVER)return;clShowUpdate(m[1]);}catch(e){}}
+function clShowUpdate(v){if(document.getElementById('clUp'))return;const d=document.createElement('div');d.id='clUp';
+  d.style.cssText='position:fixed;left:12px;right:12px;top:calc(10px + env(safe-area-inset-top,0px));z-index:250;max-width:420px;margin:0 auto;background:#1f2430;color:#fff;border-radius:16px;padding:12px 14px;box-shadow:0 10px 30px rgba(0,0,0,.25);display:flex;gap:10px;align-items:center;font:800 13.5px -apple-system,BlinkMacSystemFont,sans-serif';
+  d.innerHTML='<span style="flex:1">🆕 新しい版（'+esc(v)+'）があります</span><button id="clUpGo" style="background:#0bc167;color:#fff;border:0;border-radius:12px;padding:9px 14px;font-weight:800">更新する</button>';
+  document.body.appendChild(d);
+  document.getElementById('clUpGo').onclick=async()=>{const b=document.getElementById('clUpGo');b.disabled=true;b.textContent='送っています…';
+    try{if(cloudLoggedIn())await cloudSync(true);}catch(e){}
+    try{const ks=await caches.keys();await Promise.all(ks.map(k=>caches.delete(k)));}catch(e){}
+    try{const rs=await navigator.serviceWorker.getRegistrations();await Promise.all(rs.map(x=>x.update().catch(()=>{})));}catch(e){}
+    location.reload();};}
+setInterval(()=>{if(typeof document==='undefined'||!document.hidden)clCheckUpdate();},15*60000);
+setTimeout(()=>{clCheckUpdate();},3000);   /* 開いた時 */
 window.addEventListener('pagehide',()=>{clOnHidden();},true);
 window.addEventListener('pageshow',e=>{if(e&&e.persisted)clOnVisible('pageshow');});
 document.addEventListener('resume',()=>{clOnVisible('resume');});
@@ -7743,7 +7759,8 @@ setInterval(()=>{try{const s=$('diagstrip');if(s&&s.style.display!=='none'&&clou
 let afterCloudReady=function(){};
 async function cloudBoot(){
   clBaseSigs();CL.trackHot=true;   /* ここから先の保存は「書いた項目」として追う */
-  if(clGet('hibiki-ver','')!==CL_APPVER){clSet('hibiki-ver',CL_APPVER);clSet(CL_PWDAY,null);}   /* 版が上がった＝今日のパスワード確認をやり直す */
+  const verUp=clGet('hibiki-ver','')!==CL_APPVER&&!!clGet('hibiki-ver','');   /* 版が上がった（初めての起動は除く） */
+  if(clGet('hibiki-ver','')!==CL_APPVER){clSet('hibiki-ver',CL_APPVER);clSet(CL_PWDAY,null);}   /* 版が上がった＝パスワード確認をやり直す */
   if(!cloudConfigured()){CL.ready=true;renderSync();return;}
   try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().then(p=>(navigator.storage.estimate?navigator.storage.estimate():Promise.resolve({})).then(es=>{
     const mb=x=>x?(x/1048576).toFixed(1):'?';clNote('storage','永続保存 '+(p?'許可':'未許可')+'・使用 '+mb(es.usage)+'/'+mb(es.quota)+'MB');})).catch(()=>{});}catch(e){}
@@ -7758,7 +7775,7 @@ async function cloudBoot(){
   /* 起動した最初の画面：未ログインならログイン画面、ログイン済みでも今日まだならパスワード確認（自動ログインなら出さない）。
      起動フラッシュ（毎日のルールの画面）が出ている間は、閉じられてから出す */
   /* 本人の決め事（2026-10-03）：ログインは「毎日のルールの画面より前の、本当の最初」。起動フラッシュの上に重ねて出す */
-  if(!cloudLoggedIn()||clDailyDue()){try{$('ovl').classList.add('cl-first');openLoginSheet();}catch(e){}}
+  if(!cloudLoggedIn()||clDailyDue()||verUp){try{$('ovl').classList.add('cl-first');openLoginSheet({daily:cloudLoggedIn(),ver:verUp});}catch(e){}}   /* 版が上がった最初の起動は、自動ログインでもログイン画面（本人指示 2026-10-06） */
   if(!cloudLoggedIn()){return;}
   clNote('boot','起動 '+CL_APPVER+'｜影 '+(CL.shadowOk?'あり（受信位置 '+CL.seq+'）':'なし → 全件受信')+'｜未送信 '+clDirtyCount()+'件｜署名 '+CL.perf.baseSigs+'ms');
   CL.integ.due=true;   /* 起動ごとに1回は整合を確かめる */
