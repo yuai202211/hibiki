@@ -2643,7 +2643,8 @@ function kCatHtml(k,path,d){const P=String(path||'').split('/').filter(Boolean),
   const has=topOf(k),cur=k?(kindOf(k)||{id:k,ic:'❓',lb:String(k).slice(0,4),co:'#9aa3b5'}):null;
   const nb=(nd,on,pth)=>'<button class="ac-kc'+(on?' on':'')+(pth===has?' has':'')+'" data-akp="'+pth+'">'+nd.ic+'<span>'+esc(nd.lb)+'</span></button>';
   const kb=(id,t)=>{const x=kindOf(id);if(!x||(x.off&&id!==k))return '';return '<button data-ak="'+esc(id)+'" data-akd="'+(t.d||'')+'" style="--kc:'+esc(x.co)+'"'+(k===id?' class="sel"':'')+'>'+esc(x.ic)+'<span>'+esc(x.lb)+'</span></button>';};
-  let s=cur?'<button class="ac-ksel sel" data-ak="'+esc(cur.id)+'" style="--kc:'+esc(cur.co)+'" aria-label="この種類を外す">'+esc(cur.ic)+'<span>'+esc(cur.lb)+'</span><i>✕</i></button>':'';
+  const dv=(cur&&d&&(d==='pc'||d==='phone'))?toolOf(d):null;
+  let s=cur?'<button class="ac-ksel sel" data-ak="'+esc(cur.id)+'" style="--kc:'+esc(cur.co)+'" aria-label="この種類を外す">'+esc(cur.ic)+'<span>'+esc(cur.lb)+(dv?' '+esc(dv.ic):'')+'</span><i>✕</i></button>':'';
   s+=KIND_TREE.map(t=>nb(t,P[0]===t.id,t.id)).join('');
   const t=KIND_TREE.find(x=>x.id===P[0]);
   if(t){const ch=t.ch||etc;s+='<div class="ac-kl">'+ch.map(c=>typeof c==='string'?kb(c,t):nb(c,P[1]===c.id,t.id+'/'+c.id)).join('');
@@ -3175,7 +3176,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+   /* 同期の状態1行と記録（クラウド版 c1.9） */
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c2.5）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c2.6）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -3461,7 +3462,8 @@ function openEntrySheet(date,ref){
   const acKBtns=k=>{const ls=kindList();if(k&&!ls.some(x=>x.id===k))ls.unshift(kindOf(k)||{id:k,ic:'❓',lb:String(k).slice(0,4),co:'#9aa3b5'});
     return ls.map(x=>'<button data-ak="'+esc(x.id)+'" style="--kc:'+esc(x.co)+'"'+(k===x.id?' class="sel"':'')+'>'+esc(x.ic)+'<span>'+esc(x.lb)+'</span></button>').join('');};
   /* 道具の帯＝絵だけの小さいチップ（選ぶと名前が出る） */
-  const acDBtns=d=>{const ls=toolList();if(d&&d!=='_other'&&!ls.some(x=>x.id===d))ls.unshift(toolOf(d)||{id:d,ic:'❓',lb:String(d).slice(0,4)});
+  const kDev=k=>{if(!k)return false;for(const t of KIND_TREE){if(!t.d||!t.ch)continue;for(const c of t.ch){if(c===k||(typeof c!=='string'&&c.ch.indexOf(k)>=0))return true;}}return false;};   /* PC／スマホの木にある種類か */
+  const acDBtns=(d,k)=>{let ls=toolList();if(kDev(k))ls=ls.filter(x=>x.id!=='pc'&&x.id!=='phone');if(d&&d!=='_other'&&!ls.some(x=>x.id===d)&&!(kDev(k)&&(d==='pc'||d==='phone')))ls.unshift(toolOf(d)||{id:d,ic:'❓',lb:String(d).slice(0,4)});
     return ls.map(x=>{const ab=(x.own&&x.ic==='📌')?'<em>'+esc(Array.from(x.lb).slice(0,2).join(''))+'</em>':'';   /* 絵が既定の📌の物は頭2文字で見分ける */
       return '<button data-ad="'+esc(x.id)+'" title="'+esc(x.lb)+'"'+(d===x.id?' class="sel"':'')+'>'+esc(x.ic)+ab+'<span>'+esc(x.lb)+'</span></button>';}).join('')+
       '<button data-ad="_other" title="その他（その場で書く）"'+(d==='_other'?' class="sel"':'')+'>✍️<em>他</em><span>その他</span></button>';};   /* その他＝その行だけの手書き。一覧には足さない */
@@ -3481,7 +3483,7 @@ function openEntrySheet(date,ref){
           '<input type="time" class="ac-e" step="300" lang="ja-JP" aria-label="何時まで" value="'+esc(a.e||'')+'">'+
           '<span class="ac-d">'+(a.m?('⏱ '+esc(durText(a.m))):'')+'</span></div>'+
         '<div class="ac-kw"><div class="ac-k ac-kg">'+kCatHtml(a.k,'',a.d)+'</div><button class="ac-add" data-ak-add="1" aria-label="種類を足す・直す">＋</button></div>'+
-        '<div class="ac-dw"><div class="ac-dv">'+acDBtns(a.d)+'</div><button class="ac-add" data-ad-add="1" aria-label="道具を足す・直す">＋</button></div>'+
+        '<div class="ac-dw"><div class="ac-dv">'+acDBtns(a.d,a.k)+'</div><button class="ac-add" data-ad-add="1" aria-label="道具を足す・直す">＋</button></div>'+
         '<input type="text" class="ac-dx" maxlength="20" placeholder="使った物を書く（この行だけ）" value="'+esc(a.dx||'')+'"'+(a.d==='_other'?'':' style="display:none"')+'>'+
         '<textarea class="ac-c" rows="2" maxlength="1000" placeholder="詳細（自由に書く）"'+(a.c?'':' style="display:none"')+'>'+esc(a.c||'')+'</textarea>'+((a.ph&&a.ph.length)?'<div class="ac-ph">'+a.ph.map(id=>'<img class="phth" data-v="'+esc(id)+'" src="'+esc(phUrl(id))+'" alt="" onerror="this.style.visibility=\'hidden\'">').join('')+'</div>':'')+'</div>';}).join('');
     [...$('acRows').querySelectorAll('.actrow')].forEach((r,i)=>{
@@ -3495,13 +3497,14 @@ function openEntrySheet(date,ref){
       const kBind=()=>{const st=r.querySelector('.ac-k');if(!st)return;const paint=()=>{st.innerHTML=kCatHtml(r.dataset.k,r.dataset.kc,r.dataset.d);kBind();};
         st.querySelectorAll('[data-akp]').forEach(b=>b.onclick=()=>{const p=b.dataset.akp,c=r.dataset.kc||'';r.dataset.kc=(c===p)?(p.indexOf('/')>0?p.split('/')[0]:''):p;paint();});   /* 大きい所：押すと開く、もう一度で閉じる */
         st.querySelectorAll('[data-ak]').forEach(b=>b.onclick=()=>{const k=b.dataset.ak,isSel=b.classList.contains('ac-ksel');r.dataset.k=(r.dataset.k===k)?'':k;
-          if(!isSel&&b.dataset.akd&&r.dataset.k){r.dataset.d=b.dataset.akd;r.querySelectorAll('[data-ad]').forEach(x=>x.classList.toggle('sel',x.dataset.ad===r.dataset.d));const dx=r.querySelector('.ac-dx');if(dx){dx.style.display='none';dx.value='';}}   /* PC／スマホから選んだら道具も付ける */
-          r.dataset.kc='';paint();});};   /* 細かい所：選ぶと閉じる。選んだ物を押すと外す */
+          if(!isSel&&b.dataset.akd&&r.dataset.k){r.dataset.d=b.dataset.akd;const dx=r.querySelector('.ac-dx');if(dx){dx.style.display='none';dx.value='';}}   /* PC／スマホから選んだら道具も付ける */
+          r.dataset.kc='';paint();dPaint();});};   /* 細かい所：選ぶと閉じる。選んだ物を押すと外す */
       kBind();
       /* 道具：押すと付く、もう一度で外れる（1つだけ） */
-      r.querySelectorAll('[data-ad]').forEach(b=>b.onclick=()=>{const d=b.dataset.ad;r.dataset.d=(r.dataset.d===d)?'':d;
+      const dBind=()=>r.querySelectorAll('[data-ad]').forEach(b=>b.onclick=()=>{const d=b.dataset.ad;r.dataset.d=(r.dataset.d===d)?'':d;
         r.querySelectorAll('[data-ad]').forEach(x=>x.classList.toggle('sel',x.dataset.ad===r.dataset.d));
         const dx=r.querySelector('.ac-dx');if(dx){const on=r.dataset.d==='_other';dx.style.display=on?'':'none';if(on){try{dx.focus();}catch(e){}}else dx.value='';}});
+      dBind();const dPaint=()=>{const dv=r.querySelector('.ac-dv');if(dv){dv.innerHTML=acDBtns(r.dataset.d,r.dataset.k);dBind();}};   /* 種類が変わったら道具の帯も描き直す（PC／スマホの行では 💻📱 を出さない） */
       /* ＋：種類・道具を足す／直すシート（#ovl2）。閉じたら描き直す。足した物は、この行が空なら付ける */
       r.querySelector('[data-ak-add]').onclick=()=>{acRead();openKindSheet('kind',nid=>{if(!sheetSt)return;if(nid&&acts[i]&&!acts[i].k)acts[i].k=nid;acPaint();});};
       r.querySelector('[data-ad-add]').onclick=()=>{acRead();openKindSheet('tool',nid=>{if(!sheetSt)return;if(nid&&acts[i]&&!acts[i].d)acts[i].d=nid;acPaint();});};
@@ -7400,7 +7403,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c2.5";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c2.6";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 /* ログインの後：同じユーザーなら影はそのまま（全件受信をやり直さない）。違うユーザーならそのユーザーの影を読む */
 async function clAfterLogin(){
