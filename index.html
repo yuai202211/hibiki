@@ -2723,11 +2723,17 @@ async function appLogout(){try{
 function placeKey(s){return String(s||'').replace(/[\s\u3000]+/g,'').replace(/\(株\)|（株）|株式会社/g,'').toLowerCase();}
 function strHash(s){let h1=0xdeadbeef,h2=0x41c6ce57;for(let i=0;i<s.length;i++){const c=s.charCodeAt(i);h1=Math.imul(h1^c,2654435761);h2=Math.imul(h2^c,1597334677);}
   h1=Math.imul(h1^(h1>>>16),2246822507)^Math.imul(h2^(h2>>>13),3266489909);h2=Math.imul(h2^(h2>>>16),2246822507)^Math.imul(h1^(h1>>>13),3266489909);return (h2>>>0).toString(36)+'.'+(h1>>>0).toString(36);}
-function placePf(name){if(!name)return 0;const o=(state.places||{})[name];if(o&&!o.del&&prefOf(o.pf))return Number(o.pf);
+function placePf(name){if(!name)return 0;const o=(state.places||{})[name];if(o&&!o.del&&o.h&&prefOf(o.pf))return Number(o.pf);   /* 手で選んだ対応だけ使う */
   {const v=PLACE_SEED[strHash(placeKey(name))];if(v)return v;}   /* 本人が決めた場所の県 */
-  let best=0,bd='';for(const d in state.entries){if(d<bd)continue;const eo=state.entries[d];for(const k in eo){const en=eo[k];if(en&&!en.del&&!en.mv&&en.p===name&&prefOf(en.pf)&&d>=bd){bd=d;best=Number(en.pf);}}}
-  if(best)return best;return (typeof PIN_PLACES!=='undefined'&&PIN_PLACES.indexOf(name)>=0)?13:0;}
-function placeSet(name,pf){if(!name||!prefOf(pf))return;state.places=state.places||{};const o=state.places[name];if(o&&Number(o.pf)===Number(pf)&&!o.del)return;state.places[name]={pf:Number(pf),ts:Date.now()};}
+  return 13;}   /* それ以外は全部 東京 */
+function pfFix1(){try{if(localStorage.getItem('hibiki-pffix2'))return;}catch(e){}
+  let has=false;for(const d in state.entries){if(d>='2026-10-04'){has=true;break;}}if(!has)return;
+  let n=0;mutate(()=>{for(const d in state.entries){if(d<'2026-10-04')continue;const eo=state.entries[d];for(const k in eo){const en=eo[k];if(!en||en.del||en.mv||!en.p)continue;
+      const v=placePf(en.p);if(v&&Number(en.pf)!==v){en.pf=v;en.ts=Date.now();n++;}}}
+    for(const nm in (state.places||{})){const o=state.places[nm];if(o&&!o.del&&!o.h){state.places[nm]={del:1,ts:Date.now()};n++;}}});
+  try{localStorage.setItem('hibiki-pffix2','1');}catch(e){}if(n)toast('🗾 場所の県を決まりどおりに直した（'+n+'件）');}
+setTimeout(()=>{try{pfFix1();}catch(e){}},6000);setTimeout(()=>{try{pfFix1();}catch(e){}},90000);
+function placeSet(name,pf){if(!name||!prefOf(pf))return;state.places=state.places||{};const o=state.places[name];if(o&&Number(o.pf)===Number(pf)&&!o.del)return;state.places[name]={pf:Number(pf),h:1,ts:Date.now()};}
 /* 使った物の当て方：前に同じ題名で使った物 */
 function toolSuggest(title,ix){const t=String(title||'').replace(/\s+/g,'').toLowerCase(),o=ix[''+t]||{};return Object.keys(o).filter(d=>toolOf(d)).sort((a,b)=>o[b]-o[a]);}
 function kindOwnIds(){const ks=state.kinds||{};return Object.keys(ks).filter(id=>!KIND_BASE.some(b=>b[0]===id)&&ks[id]&&ks[id].lb).sort();}
@@ -3262,7 +3268,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+   /* 同期の状態1行と記録（クラウド版 c1.9） */
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c4.0）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c4.1）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -3461,7 +3467,7 @@ function openEntrySheet(date,ref){
   let eType=(ex&&ex.mv)?'move':(ex&&ex.k==='work')?'work':((ex&&ex.k==='rest')?'rest':((ex&&ex.k==='sleep')?'sleep':((ex&&ex.k==='meal')?'meal':((ex&&ex.k==='ai')?'ai':((ex&&ex.k==='incar')?'incar':'stay')))));
   let trSel=(ex&&ex.tr)||null,eTouched=!!ex;   /* eTouched＝記録の種類を本人が選んだ（前からある記録も触らない扱い） */
   let tdSel=(ex&&typeof ex.d==='string'&&ex.d)?ex.d:((ex&&ex.dx)?'_other':'');   /* 記録の「使う物」（_other＝手入力） */
-  if(!ex){sheetSt.pf=pfAuto(date,tS);sheetSt.pfAuto=!!sheetSt.pf;}   /* 新規の都道府県＝直前の記録から（自動＝点線） */
+  if(!ex){sheetSt.pf=(eType==='move')?pfAuto(date,tS):13;sheetSt.pfAuto=!!sheetSt.pf;}   /* 新規：移動は直前の記録の県（出発）、それ以外は東京（本人指示 2026-10-06） */
   $('mvRt').value=(ex&&(ex.rt||''))||'';
   if(!ex){
     /* 新規なら「どこから→」を直前の記録の場所から先回りで入れておく */
@@ -3753,7 +3759,7 @@ function openEntrySheet(date,ref){
       if(eType==='work')ne.k='work';
       if(eType==='incar')ne.k='incar';   /* 🚙車内滞在 */
       if(pfS)ne.pf=pfS;if(pf0S)ne.pf0=pf0S;   /* 出発の県（移動） */
-      if(!isMv&&p&&pfS)placeSet(p,pfS);   /* この場所はこの県、と覚える */
+      if(!isMv&&p&&pfS&&!sheetSt.pfAuto)placeSet(p,pfS);   /* 本人が手で選んだ時だけ覚える */
       if(tdS==='_other'){if(tdXS)ne.dx=tdXS;}else if(tdS)ne.d=tdS;   /* 使う物（その他は手入力の文字） */   /* 都道府県（［なし］にした時は付けない） */
       if(actsS.length)ne.acts=actsSort(actsS,actsBase(ne));   /* 時刻の早い順に並べて保存 */
       state.entries[d0][saveKey]=ne;
@@ -7539,7 +7545,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c4.0";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c4.1";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 /* ログインの後：同じユーザーなら影はそのまま（全件受信をやり直さない）。違うユーザーならそのユーザーの影を読む */
 async function clAfterLogin(){
