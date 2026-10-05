@@ -2615,7 +2615,7 @@ const KIND_BASE=[['ai','🤖','AI','#7a6ef3','A',0,'h'],['aibiz','💡','AIビ�
  ['c_buy','🤝','買取商談','#15803d','V',0,'h'],['c_sell','💰','販売商談','#16a34a','V',0,'h'],['c_cust','🙋','客対応','#2563eb','V',0,'h'],['c_dmv','🏛️','陸自対応','#4b5563','V',0,'h'],
  ['gyg','⛩️','GetYourGuide','#be123c','T',0,'h'],
  ['m_tr','🏦','振込み対応','#4338ca','Y',0,'h'],['m_io','💳','入出金対応','#4f46e5','Y',0,'h'],['m_atm','🏧','ATM対応','#6366f1','Y',0,'h'],['m_tax','🧾','確定申告','#3730a3','Y',0,'h'],
- ['sleep','🌙','睡眠','#475569','S',0,''],['meal','🍚','食事','#f08a24','S',0,''],['move','🚗','移動','#12a6a0','S',0,''],['exer','🏃','運動','#16a34a','S',0,'b'],['bath','🛁','身支度','#06b6d4','S',0,''],['rest','☕','休憩','#c98a2f','S',0,''],['nap','😴','仮眠','#64748b','S',0,''],['incar','🚙','車内滞在','#0f766e','S',0,''],['spplay','📲','スマホ操作','#d946ef','S',1,''],['wc','🚻','トイレ','#94a3b8','S',0,''],
+ ['sleep','🌙','睡眠','#475569','S',0,''],['meal','🍚','食事','#f08a24','S',0,''],['move','🚗','移動','#12a6a0','S',0,''],['exer','🏃','運動','#16a34a','S',0,'b'],['bath','🛁','身支度','#06b6d4','S',0,''],['rest','☕','休憩','#c98a2f','S',0,''],['nap','😴','仮眠','#64748b','S',0,''],['incar','🚙','車内滞在','#0f766e','S',1,''],['spplay','📲','スマホ操作','#d946ef','S',1,''],['wc','🚻','トイレ','#94a3b8','S',0,''],
  ['son','👦','息子','#f472b6','F',0,''],['family','🏡','家族の用事','#ec4899','F',0,''],
  ['work','💼','仕事','#1e3a8a','X',0,'h'],['think','🧠','企画・考える','#6b7280','X',0,'h'],['money','🧮','お金・事務','#4338ca','X',0,'h'],['doc','📄','資料確認','#5b7fa6','X',0,'h'],['call','📞','電話・連絡','#2f8fcf','X',0,'h'],['meet','🤝','商談・人と会う','#d9633b','X',0,'h'],
  ['study','🎓','勉強','#c2410c','X',0,'h'],['read','📖','読書','#8b5e3c','X',0,'h'],['audio','🔊','音声で学ぶ','#9333ea','X',0,'h'],['vstudy','🎬','動画で学ぶ','#0891b2','X',0,'h'],['write','✍️','書く・発信','#be123c','X',0,'h'],['reflect','📝','振り返り','#15803d','X',0,'h'],
@@ -2623,7 +2623,7 @@ const KIND_BASE=[['ai','🤖','AI','#7a6ef3','A',0,'h'],['aibiz','💡','AIビ�
 const KIND_GRP=[['A','🤖','AI','#7a6ef3'],['D','💻','PC・スマホ作業','#475569'],['V','🚗','中古車','#b45309'],['T','⛩️','Torii Link','#be123c'],['Y','💴','お金','#4338ca'],['S','👤','自分','#0891b2'],['F','👦','家族','#f472b6'],['M','🕳️','ムダ','#e0405a'],['X','📍','その他','#9aa3b5']];
 /* 選ぶ時の木：大きい所 → 細かい所。d＝そこから選んだら道具も付ける */
 const KIND_TREE=[{id:'pc',ic:'💻',lb:'PC',d:'pc',ch:[{id:'ai',ic:'🤖',lb:'AI',ch:['ai','aibiz','aiwork']},'pcwork']},
- {id:'sp',ic:'📱',lb:'スマホ',d:'phone',ch:[{id:'ai',ic:'🤖',lb:'AI',ch:['ai','aibiz','aiwork']},'spwork']},
+ {id:'sp',ic:'📱',lb:'スマホ',d:'phone',ch:[{id:'ai',ic:'🤖',lb:'AI',ch:['ai','aibiz','aiwork']},'spwork','spplay']},
  {id:'car',ic:'🚗',lb:'中古車',ch:['mkt','c_list','c_aaadj','c_aalive','c_aapick','c_aaafter','c_aaclaim','repair','c_buy','c_sell','c_cust','c_dmv']},
  {id:'torii',ic:'⛩️',lb:'Torii Link',ch:['gyg']},{id:'yen',ic:'💴',lb:'お金',ch:['m_tr','m_io','m_atm','m_tax']},
  {id:'self',ic:'👤',lb:'自分',ch:['sleep','meal','move','exer','bath','rest','nap','incar','spplay','wc']},{id:'fam',ic:'👦',lb:'家族',ch:['son','family']},{id:'etc',ic:'📍',lb:'その他',ch:null}];
@@ -3179,7 +3179,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+   /* 同期の状態1行と記録（クラウド版 c1.9） */
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c2.7）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c2.8）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -3532,11 +3532,12 @@ function openEntrySheet(date,ref){
   /* 移動の時だけ、1タップで行を足すチップ（運転・徒歩・未選択＝耳と口でできる事／乗客＝手も使える事）。押すだけで「移動中ずっと」に数える */
   acCh=()=>{const el=$('acChips'),qe=$('acQ');if(!el)return;
     const drv=(!trSel||trSel==='car'||trSel==='carrier'||trSel==='walk');   /* 運転・徒歩・未選択＝耳と口でできる事を先に。画面を使う物は「＋ほか」の中（後で記録する時用） */
-    const q=(eType!=='move')?[]:(drv?(qMore?['audio','call','think','ai','work','read','doc','vstudy']:['audio','call','think']):['ai','work','read','doc','vstudy','audio']);
+    const isCar=(eType==='stay'&&ex&&ex.k==='incar');   /* 車内滞在＝中で何をしたか */
+    const q=isCar?['rest','pcwork','ai','nap','sleep','spplay']:(eType!=='move')?[]:(drv?(qMore?['audio','call','think','ai','work','read','doc','vstudy']:['audio','call','think']):['ai','work','read','doc','vstudy','audio']);
     const qh=q.map(id=>{const k=kindOf(id);return (k&&!k.off)?'<button class="chip ac-q" data-aq="'+id+'" style="--kc:'+k.co+'">'+esc(k.ic)+' '+esc(k.lb)+'</button>':'';}).join('')+((eType==='move'&&drv)?'<button class="chip ac-qm" id="acQm">'+(qMore?'－ たたむ':'＋ ほか')+'</button>':'');
-    if(qe){qe.innerHTML=qh;const w=$('acQw');(w||qe).style.display=qh?'':'none';}   /* 1タップは行の上（シートを開いてすぐ見える所） */
-    el.innerHTML=(qe?'':qh)+'<button class="chip" id="acAdd" style="background:#eefaf3;color:#0a9a54">＋ 行を足す</button>';
-    (qe||el).querySelectorAll('[data-aq]').forEach(b=>b.onclick=()=>{acRead();const k=kindOf(b.dataset.aq);if(!k)return;
+    if(qe){qe.innerHTML=isCar?'':qh;const w=$('acQw');(w||qe).style.display=(qh&&!isCar)?'':'none';}   /* 1タップは行の上（シートを開いてすぐ見える所） */
+    el.innerHTML=((qe&&!isCar)?'':(isCar&&qh?'<div class="sh-label" style="width:100%;margin:0 0 2px">🚙 車内で何をした（押すだけで車内滞在の間ずっと）</div>':'')+qh)+'<button class="chip" id="acAdd" style="background:#eefaf3;color:#0a9a54">＋ 行を足す</button>';
+    ((qe&&!isCar)?qe:el).querySelectorAll('[data-aq]').forEach(b=>b.onclick=()=>{acRead();const k=kindOf(b.dataset.aq);if(!k)return;
       const row={t:k.lb,k:k.id,m:0,s:'',e:''},last=acts[acts.length-1];
       if(last&&!last.t.trim()&&!last.s&&!last.e&&!last.k&&!last.d&&!(last.c&&last.c.trim()))acts[acts.length-1]=row;else acts.push(row);   /* 空の行があればそこに入れる */
       acPaint();});
@@ -5760,7 +5761,7 @@ function anaCount0(r,days,N,limit,nowIdx){
   const tIx=d=>{if(!d||typeof d!=='string')return 0;if(TX[d])return TX[d];if(TL.length>=254)return 0;TL.push(d);return TX[d]=TL.length;};   /* 知らない道具も1行で出す */
   const kIx=k=>(!k||typeof k!=='string')?0:(IX[k]||IX['?']);
   const P=2880,NT=P+N+2880;   /* 期間の前後2日も塗る（境界をまたぐ記録の行を、どの期間で数えても同じにする）。数えるのは P..P+limit だけ */
-  const own=new Int32Array(NT).fill(-1),cat=new Uint8Array(NT),claimed=new Uint8Array(NT),tool=new Uint8Array(NT),pfL=new Uint8Array(NT),mvm=new Uint8Array(NT),mva=new Uint8Array(NT);
+  const nx=new Uint8Array(NT),own=new Int32Array(NT).fill(-1),cat=new Uint8Array(NT),claimed=new Uint8Array(NT),tool=new Uint8Array(NT),pfL=new Uint8Array(NT),mvm=new Uint8Array(NT),mva=new Uint8Array(NT);
   const items=[],dayList=[];for(let i=-2;i<days+2;i++)dayList.push(addDays(r.s,i));
   for(const d of dayList){const eo=(state.entries||{})[d]||{};const off=P+Math.round((parseD(d)-parseD(r.s))/86400000)*1440;
     for(const k in eo){const en=eo[k];if(!en||en.del||en.noT||!en.s)continue;
@@ -5768,7 +5769,7 @@ function anaCount0(r,days,N,limit,nowIdx){
       if(en.e){b=off+hmMin(en.e)+(Number(en.ed)||0)*1440;if(b<=a)b+=1440;}
       else if(d>=addDays(todayStr(),-1))b=P+nowIdx;else continue;   /* 終了時刻の無い記録は数えない（寝ている途中・移動中だけ今まで） */
       const mv=!!en.mv,kk=mv?'move':(ANA_REC[en.k]?en.k:'stay'),tr=mv?TRS.findIndex(t=>t[0]===en.tr):-1;
-      items.push({a,b,c:IX[kk],acts:Array.isArray(en.acts)?en.acts:[],off,mv,tv:mv?(tr>=0?tr+1:ANA_NOTR):0,v2:mv&&Number(en.ts)>=MV_V2_TS,pf:prefOf(en.pf)?Number(en.pf):0,pf0:(mv&&prefOf(en.pf0))?Number(en.pf0):0,lb:mv?String(en.rt||'移動'):String(en.p||((kindOf(en.k||'stay')||{}).lb)||''),et:(mv||en.k==='sleep')?0:((typeof en.d==='string'&&en.d)?tIx(en.d):(en.dx?tIx('_other'):0))});}}
+      items.push({a,b,c:IX[kk],acts:Array.isArray(en.acts)?en.acts:[],off,mv,car:en.k==='incar',tv:mv?(tr>=0?tr+1:ANA_NOTR):0,v2:mv&&Number(en.ts)>=MV_V2_TS,pf:prefOf(en.pf)?Number(en.pf):0,pf0:(mv&&prefOf(en.pf0))?Number(en.pf0):0,lb:mv?String(en.rt||'移動'):String(en.p||((kindOf(en.k||'stay')||{}).lb)||''),et:(mv||en.k==='sleep')?0:((typeof en.d==='string'&&en.d)?tIx(en.d):(en.dx?tIx('_other'):0))});}}
   for(const x of rlogList()){if(!x.s||!x.e||x.d<dayList[0]||x.d>dayList[dayList.length-1])continue;const off=P+Math.round((parseD(x.d)-parseD(r.s))/86400000)*1440;
     let a=off+hmMin(x.s),b=off+hmMin(x.e);if(b<=a)b+=1440;items.push({a,b,c:IX.rtn,acts:[],off,rtn:1,mv:false,tv:0,v2:false,pf:0});}
   items.sort((p,q)=>p.a-q.a||q.b-p.b);
@@ -5777,20 +5778,21 @@ function anaCount0(r,days,N,limit,nowIdx){
   items.forEach((it,ix)=>{if(it.v2)v2[ix]=1;const a=Math.max(0,it.a),b=Math.min(NT,it.b);for(let m=a;m<b;m++){own[m]=ix;cat[m]=it.c;}});
   /* 第2パス：1行ずつの行。時刻あり→分数だけ（前寄せ）→移動の「押すだけの行」は残りを等分 */
   items.forEach((it,ix)=>{if(!it.acts.length)return;
-    const put=(m,ki,ti)=>{claimed[m]=1;if(it.mv)mva[m]=ki||255;else if(ki)cat[m]=ki;if(ti)tool[m]=ti;};
+    const NAPX=30,isNap=ki=>ki&&(ki===IX.nap||((it.car||it.mv)&&ki===IX.sleep));   /* 仮眠の上限（本人決定：1回30分を超えた分はムダ） */
+    const put=(m,ki,ti,u)=>{claimed[m]=1;if(it.mv)mva[m]=ki||255;else if(ki)cat[m]=ki;if(ti)tool[m]=ti;if(u!=null&&u>=NAPX&&isNap(ki))nx[m]=1;};
     const timed=[],mins=[],whole=[];
     for(const ac of it.acts){if(!ac)continue;const ki=kIx(ac.k),ti=tIx(ac.d);
-      if(!ki&&!ti&&!it.mv)continue;
-      if(ac.s&&ac.e)timed.push([ac,ki,ti]);else if(Number(ac.m)>0)mins.push([ac,ki,ti]);else if(it.mv&&ki)whole.push([ac,ki,ti]);}
+      if(!ki&&!ti&&!it.mv&&!it.car)continue;
+      if(ac.s&&ac.e)timed.push([ac,ki,ti]);else if(Number(ac.m)>0)mins.push([ac,ki,ti]);else if((it.mv||it.car)&&ki)whole.push([ac,ki,ti]);}
     for(const [ac,ki,ti] of timed){let a=it.off+hmMin(ac.s),b=it.off+hmMin(ac.e);if(a<it.a)a+=1440;if(b<=a)b+=1440;
-      for(let m=Math.max(a,0);m<b&&m<NT;m++)if(own[m]===ix)put(m,ki,ti);}
+      let u=0;for(let m=Math.max(a,0);m<b&&m<NT;m++)if(own[m]===ix)put(m,ki,ti,u++);}
     for(const [ac,ki,ti] of mins){let left=Number(ac.m);
-      for(let m=Math.max(0,it.a);m<it.b&&m<NT&&left>0;m++)if(own[m]===ix&&!claimed[m]){put(m,ki,ti);left--;}}
+      for(let m=Math.max(0,it.a);m<it.b&&m<NT&&left>0;m++)if(own[m]===ix&&!claimed[m]){put(m,ki,ti,Number(ac.m)-left);left--;}}
     if(whole.length){let R=0;for(let m=Math.max(0,it.a);m<it.b&&m<NT;m++)if(own[m]===ix&&!claimed[m])R++;
       const n=whole.length,q=Math.floor(R/n),sz=whole.map((_,j)=>q+(j===0?R-q*n:0));   /* 端数は先頭の行 */
       let j=0,u=0;
       for(let m=Math.max(0,it.a);m<it.b&&m<NT;m++){if(!(own[m]===ix&&!claimed[m]))continue;
-        while(j<n&&u>=sz[j]){j++;u=0;}if(j>=n)break;put(m,whole[j][1],whole[j][2]);u++;}}});
+        while(j<n&&u>=sz[j]){j++;u=0;}if(j>=n)break;put(m,whole[j][1],whole[j][2],u);u++;}}});
   /* 第3パス：乗り物（勝った分だけ）／都道府県は別の層（pf の無い内側の記録は外側の pf に透ける） */
   items.forEach((it,ix)=>{const a=Math.max(0,it.a),b=Math.min(NT,it.b);
     if(it.mv)for(let m=a;m<b;m++)if(own[m]===ix)mvm[m]=it.tv;
@@ -5806,10 +5808,10 @@ function anaCount0(r,days,N,limit,nowIdx){
     const p=pfL[m],a=mva[m],t=tool[m];let md=0;
     if(c===IXM){const v=mvm[m]||ANA_NOTR,bs=v*5,ok=v2[o]&&v!==ANA_WALK;mvT[bs]++;
       if(a===0){if(ok){mvT[bs+3]++;md=1;mdBlank++;pfB[p]++;}else mvT[bs+4]++;}   /* 空白（ムダ）／未入力・徒歩（灰） */
-      else if(a<255&&kMu[a]){mvT[bs+2]++;md=1;mdK[a]++;}                 /* 移動中のムダ印の活動（徒歩・古い移動でもムダ。除くのは空白だけ） */
+      else if((a<255&&kMu[a])||nx[m]){mvT[bs+2]++;md=1;mdK[a]++;}                 /* 移動中のムダ印の活動（徒歩・古い移動でもムダ。除くのは空白だけ） */
       else mvT[bs+1]++;                                                            /* 活用 */
       if(a)mvA[a]++;if(t)mvD[t]++;}
-    else if(c!==IXR&&kMu[c]){md=1;mdK[c]++;}
+    else if(c!==IXR&&(kMu[c]||nx[m])){md=1;mdK[c]++;}   /* ムダ印の種類＋30分を超えた仮眠 */
     if(t)toolS[t]++;
     if(p)pfS[p]++;else if(c!==IXR)pfS[0]++;
     if(md){mdTot++;pfM[p]++;}
@@ -5926,7 +5928,7 @@ function renderAnaPage(keep){
     (cur.total?(card+bar+
       sec('grp','📦 分野（AI・中古車・自分…）',grpBody)+sec('kind','何をした',kindBody)+sec('mv','🚗 移動の中身',mvBody)+sec('tool','🛠 何を使って',toolBody)+sec('pf','🗾 どこで',pfBody)+
       '<div class="sh-note">右の数字＝前の'+U+'との差。'+(isCur?'（今の'+U+'は今の時刻まで。前の'+U+'も同じ長さで比べている）':'')+
-      '<br>ムダ＝ムダ印の種類の時間＋10/4 以降の移動で何もしなかった時間（徒歩を除く）。終了時刻の無い移動は数えない。</div>')
+      '<br>ムダ＝ムダ印の種類（📲スマホ操作・何もしなかった🚙車内滞在など）の時間＋1回30分を超えた仮眠＋10/4 以降の移動で何もしなかった時間（徒歩を除く）。途中の記録（今日・昨日）は今までの分を数える。</div>')
     :'<div class="empty-hint">この期間はまだ来ていない</div>')+
     '</div>';
   p.classList.add('open');payReopenMark();
@@ -7420,7 +7422,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c2.7";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c2.8";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 /* ログインの後：同じユーザーなら影はそのまま（全件受信をやり直さない）。違うユーザーならそのユーザーの影を読む */
 async function clAfterLogin(){
