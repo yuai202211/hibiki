@@ -2706,7 +2706,12 @@ function kindSuggest(title,ix){const nm=s=>String(s||'').replace(/\s+/g,'').toLo
   KIND_WORDS.forEach(([re,k],i)=>{if(re.test(title))sc[k]=(sc[k]||0)+5-i*0.01;});
   return Object.keys(sc).filter(k=>{const x=kindOf(k);return x&&!x.off;}).sort((a,b)=>sc[b]-sc[a]).slice(0,3);}
 /* 場所の県：①本人が付けた対応（state.places）②その場所の最後の記録の県 ③よく行く場所のボタンなら東京（本人指示 2026-10-06） */
+const PLACE_SEED={"v62u8s.1szvt2s":8,"hujhxr.l6zyue":11,"g2w6wb.1kbrn6l":11,"a8q07h.1x3hdoy":11,"15uhzli.twww4a":11,"i0720v.nugwqp":11};   /* 場所→県の初期値（名前は伏せた番号。build.js が入れる） */
+function placeKey(s){return String(s||'').replace(/[\s\u3000]+/g,'').replace(/\(株\)|（株）|株式会社/g,'').toLowerCase();}
+function strHash(s){let h1=0xdeadbeef,h2=0x41c6ce57;for(let i=0;i<s.length;i++){const c=s.charCodeAt(i);h1=Math.imul(h1^c,2654435761);h2=Math.imul(h2^c,1597334677);}
+  h1=Math.imul(h1^(h1>>>16),2246822507)^Math.imul(h2^(h2>>>13),3266489909);h2=Math.imul(h2^(h2>>>16),2246822507)^Math.imul(h1^(h1>>>13),3266489909);return (h2>>>0).toString(36)+'.'+(h1>>>0).toString(36);}
 function placePf(name){if(!name)return 0;const o=(state.places||{})[name];if(o&&!o.del&&prefOf(o.pf))return Number(o.pf);
+  {const v=PLACE_SEED[strHash(placeKey(name))];if(v)return v;}   /* 本人が決めた場所の県 */
   let best=0,bd='';for(const d in state.entries){if(d<bd)continue;const eo=state.entries[d];for(const k in eo){const en=eo[k];if(en&&!en.del&&!en.mv&&en.p===name&&prefOf(en.pf)&&d>=bd){bd=d;best=Number(en.pf);}}}
   if(best)return best;return (typeof PIN_PLACES!=='undefined'&&PIN_PLACES.indexOf(name)>=0)?13:0;}
 function placeSet(name,pf){if(!name||!prefOf(pf))return;state.places=state.places||{};const o=state.places[name];if(o&&Number(o.pf)===Number(pf)&&!o.del)return;state.places[name]={pf:Number(pf),ts:Date.now()};}
@@ -3239,7 +3244,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+   /* 同期の状態1行と記録（クラウド版 c1.9） */
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c3.6）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c3.7）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -7516,7 +7521,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c3.6";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c3.7";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 /* ログインの後：同じユーザーなら影はそのまま（全件受信をやり直さない）。違うユーザーならそのユーザーの影を読む */
 async function clAfterLogin(){
