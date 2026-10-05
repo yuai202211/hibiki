@@ -1656,7 +1656,7 @@ function mergeStates(a,b){
       out.payrep=out.payrep||{};const cur=out.payrep[k];
       if(!cur||((nu.ts||0)>(cur.ts||0)))out.payrep[k]=nu;}
     /* 📚 ルーティン（rtn）とその記録（rlog）。1件ずつ新しい方が勝つ。使うまで項目を作らない */
-    for(const k of ['rtn','rlog','payppl','kinds','tools'])for(const id in (src[k]||{})){   /* kinds／tools＝行の種類・道具（c1.1） */const nu=src[k][id];if(!nu)continue;
+    for(const k of ['rtn','rlog','payppl','kinds','tools','places'])for(const id in (src[k]||{})){   /* kinds／tools＝行の種類・道具（c1.1） */const nu=src[k][id];if(!nu)continue;
       out[k]=out[k]||{};const cur=out[k][id];if(!cur||((nu.ts||0)>(cur.ts||0)))out[k][id]=nu;}
     for(const id in (src.pins||{})){const nu=src.pins[id];if(!nu)continue;
       out.pins=out.pins||{};const cur=out.pins[id];
@@ -1676,7 +1676,7 @@ function mergeStates(a,b){
   /* 知らないトップレベル項目も捨てない（新旧バージョン混在でもデータを失わない） */
   /* payrep も必ずここに入れる。入れ忘れると、下の「知らない項目」の写しが、1件ずつ合わせた結果を丸ごと上書きする
      ＝別の端末で止めた・再開した印が消える（2026-09-30レビュー指摘） */
-  const known={updatedAt:1,dream:1,entries:1,plans:1,ai:1,dreams:1,memos:1,life:1,photos:1,pha:1,pays:1,rules:1,aims:1,moves:1,pins:1,steps:1,payrep:1,rtn:1,rlog:1,payppl:1,kinds:1,tools:1};
+  const known={updatedAt:1,dream:1,entries:1,plans:1,ai:1,dreams:1,memos:1,life:1,photos:1,pha:1,pays:1,rules:1,aims:1,moves:1,pins:1,steps:1,payrep:1,rtn:1,rlog:1,payppl:1,kinds:1,tools:1,places:1};
   const newer=((b.updatedAt||0)>=(a.updatedAt||0))?b:a;
   const older=(newer===b)?a:b;
   for(const k in older)if(!known[k]&&older[k]!==undefined)out[k]=older[k];
@@ -2698,6 +2698,11 @@ function kindSuggest(title,ix){const nm=s=>String(s||'').replace(/\s+/g,'').toLo
   for(const key in ix){if(key!==t&&key.length>=2&&(t.indexOf(key)>=0||key.indexOf(t)>=0))add(ix[key],10);}
   KIND_WORDS.forEach(([re,k],i)=>{if(re.test(title))sc[k]=(sc[k]||0)+5-i*0.01;});
   return Object.keys(sc).filter(k=>{const x=kindOf(k);return x&&!x.off;}).sort((a,b)=>sc[b]-sc[a]).slice(0,3);}
+/* 場所の県：①本人が付けた対応（state.places）②その場所の最後の記録の県 ③よく行く場所のボタンなら東京（本人指示 2026-10-06） */
+function placePf(name){if(!name)return 0;const o=(state.places||{})[name];if(o&&!o.del&&prefOf(o.pf))return Number(o.pf);
+  let best=0,bd='';for(const d in state.entries){if(d<bd)continue;const eo=state.entries[d];for(const k in eo){const en=eo[k];if(en&&!en.del&&!en.mv&&en.p===name&&prefOf(en.pf)&&d>=bd){bd=d;best=Number(en.pf);}}}
+  if(best)return best;return (typeof PIN_PLACES!=='undefined'&&PIN_PLACES.indexOf(name)>=0)?13:0;}
+function placeSet(name,pf){if(!name||!prefOf(pf))return;state.places=state.places||{};const o=state.places[name];if(o&&Number(o.pf)===Number(pf)&&!o.del)return;state.places[name]={pf:Number(pf),ts:Date.now()};}
 function kindOwnIds(){const ks=state.kinds||{};return Object.keys(ks).filter(id=>!KIND_BASE.some(b=>b[0]===id)&&ks[id]&&ks[id].lb).sort();}
 function kindList(){return KIND_BASE.map(b=>kindOf(b[0])).concat(kindOwnIds().map(kindOf)).filter(k=>k&&!k.off);}
 function kindMuda(id){const k=kindOf(id);return !!(k&&!KIND_NOMUDA[id]&&k.muda);}
@@ -3225,7 +3230,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+   /* 同期の状態1行と記録（クラウド版 c1.9） */
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c3.4）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c3.5）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -3467,6 +3472,7 @@ function openEntrySheet(date,ref){
     const b0=$('pf0Chip');if(b0)b0.style.display=mvT?'':'none';if(mvT)one(b0,sheetSt.pf0,sheetSt.pf0Auto,'出発：');
     one($('pfChip'),sheetSt.pf,sheetSt.pfAuto,mvT?'到着：':'');
     if(mvT&&!prefOf(sheetSt.pf)&&prefOf(sheetSt.pf0))$('pfChip').textContent='🗾 到着：出発と同じ';}   /* 同じ県なら選ばなくていい */
+  $('shPlace').addEventListener('change',()=>{if(!sheetSt||(sheetSt.pf&&!sheetSt.pfAuto))return;const v=placePf($('shPlace').value.trim());if(v){sheetSt.pf=v;sheetSt.pfAuto=true;pfPaint();}});
   $('pfChip').onclick=()=>{if(!sheetSt)return;openPrefPicker(sheetSt.pf,c=>{sheetSt.pf=c;sheetSt.pfAuto=false;pfPaint();});};
   $('pf0Chip').onclick=()=>{if(!sheetSt)return;openPrefPicker(sheetSt.pf0,c=>{sheetSt.pf0=c;sheetSt.pf0Auto=false;pfPaint();});};
   $('eType').querySelectorAll('button').forEach(b=>b.onclick=()=>{const et=$('eType');if(et.classList.contains('col')&&b.dataset.ty===eType){et.classList.remove('col');return;}eTouched=true;eType=b.dataset.ty;mty();et.classList.add('col');});   /* 選んだ物を押すと全部出る→選ぶと閉じる */
@@ -3611,7 +3617,7 @@ function openEntrySheet(date,ref){
   const pc=$('pChips');
   const bindChips=()=>{
     if(!pc)return;
-    pc.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{$('shPlace').value=b.dataset.p;});
+    pc.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{$('shPlace').value=b.dataset.p;const v=placePf(b.dataset.p);if(v&&sheetSt){sheetSt.pf=v;sheetSt.pfAuto=true;pfPaint();}});   /* 押した場所の県も自動で */
     const more=pc.querySelector('#pMore');
     if(more)more.onclick=()=>{chipsSetOpen(true);pc.innerHTML=chipListHtml(chips,true);bindChips();};    /* 開く */
     const less=pc.querySelector('#pLess');
@@ -3712,6 +3718,7 @@ function openEntrySheet(date,ref){
       if(eType==='work')ne.k='work';
       if(eType==='incar')ne.k='incar';   /* 🚙車内滞在 */
       if(pfS)ne.pf=pfS;if(pf0S)ne.pf0=pf0S;   /* 出発の県（移動） */
+      if(!isMv&&p&&pfS)placeSet(p,pfS);   /* この場所はこの県、と覚える */
       if(tdS==='_other'){if(tdXS)ne.dx=tdXS;}else if(tdS)ne.d=tdS;   /* 使う物（その他は手入力の文字） */   /* 都道府県（［なし］にした時は付けない） */
       if(actsS.length)ne.acts=actsSort(actsS,actsBase(ne));   /* 時刻の早い順に並べて保存 */
       state.entries[d0][saveKey]=ne;
@@ -6933,7 +6940,7 @@ async function clRpcJson(name,body,sig,ms){const t=await clRpcText(name,typeof b
 async function clRpc(name,body){return clRpcJson(name,body);}   /* 旧版と同じ名前（他から呼ばれても動く） */
 
 /* ---------- state ⇄ 項目（1行） ---------- */
-const CL_ID=['dreams','memos','pays','aims','moves','pins','steps','payrep','rtn','rlog','payppl','pha','kinds','tools'];
+const CL_ID=['dreams','memos','pays','aims','moves','pins','steps','payrep','rtn','rlog','payppl','pha','kinds','tools','places'];
 const CL_DAY=['ai','rules'];
 const CL_DAY2=['entries','plans'];
 const CL_SKIP={updatedAt:1,photos:1};
@@ -7497,7 +7504,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c3.4";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c3.5";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 /* ログインの後：同じユーザーなら影はそのまま（全件受信をやり直さない）。違うユーザーならそのユーザーの影を読む */
 async function clAfterLogin(){
