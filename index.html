@@ -203,6 +203,7 @@
   /* 🚗出発（緑）／🏁到着（橙）：書くの行から1タップで移動を記録 */
   .hour.wr .chip.mvb{height:40px;display:inline-flex;align-items:center;gap:4px;padding:0 12px}
   .hour.wr .chip.mvb.go{background:#d9f4e4;color:#13864a}
+  .hour.wr .chip.mvb.car{background:#d7f0ec;color:#0f766e}
   .hour.wr .chip.mvb.arr{background:#ffe6cf;color:#c4560c}
   .hour.wr .chip.mvb b{font-size:12px;font-weight:800;background:#fff;border-radius:999px;padding:2px 7px}
   .hour.wr .wr-r.tight .chip.mvb .mvl{display:none}
@@ -2614,7 +2615,7 @@ const KIND_BASE=[['ai','🤖','AI','#7a6ef3','A',0,'h'],['aibiz','💡','AIビ�
  ['c_buy','🤝','買取商談','#15803d','V',0,'h'],['c_sell','💰','販売商談','#16a34a','V',0,'h'],['c_cust','🙋','客対応','#2563eb','V',0,'h'],['c_dmv','🏛️','陸自対応','#4b5563','V',0,'h'],
  ['gyg','⛩️','GetYourGuide','#be123c','T',0,'h'],
  ['m_tr','🏦','振込み対応','#4338ca','Y',0,'h'],['m_io','💳','入出金対応','#4f46e5','Y',0,'h'],['m_atm','🏧','ATM対応','#6366f1','Y',0,'h'],['m_tax','🧾','確定申告','#3730a3','Y',0,'h'],
- ['sleep','🌙','睡眠','#475569','S',0,''],['meal','🍚','食事','#f08a24','S',0,''],['move','🚗','移動','#12a6a0','S',0,''],['exer','🏃','運動','#16a34a','S',0,'b'],['bath','🛁','身支度','#06b6d4','S',0,''],['rest','☕','休憩','#c98a2f','S',0,''],['nap','😴','仮眠','#64748b','S',0,''],
+ ['sleep','🌙','睡眠','#475569','S',0,''],['meal','🍚','食事','#f08a24','S',0,''],['move','🚗','移動','#12a6a0','S',0,''],['exer','🏃','運動','#16a34a','S',0,'b'],['bath','🛁','身支度','#06b6d4','S',0,''],['rest','☕','休憩','#c98a2f','S',0,''],['nap','😴','仮眠','#64748b','S',0,''],['incar','🚙','車内滞在','#0f766e','S',0,''],['spplay','📲','スマホ操作','#d946ef','S',1,''],['wc','🚻','トイレ','#94a3b8','S',0,''],
  ['son','👦','息子','#f472b6','F',0,''],['family','🏡','家族の用事','#ec4899','F',0,''],
  ['work','💼','仕事','#1e3a8a','X',0,'h'],['think','🧠','企画・考える','#6b7280','X',0,'h'],['money','🧮','お金・事務','#4338ca','X',0,'h'],['doc','📄','資料確認','#5b7fa6','X',0,'h'],['call','📞','電話・連絡','#2f8fcf','X',0,'h'],['meet','🤝','商談・人と会う','#d9633b','X',0,'h'],
  ['study','🎓','勉強','#c2410c','X',0,'h'],['read','📖','読書','#8b5e3c','X',0,'h'],['audio','🔊','音声で学ぶ','#9333ea','X',0,'h'],['vstudy','🎬','動画で学ぶ','#0891b2','X',0,'h'],['write','✍️','書く・発信','#be123c','X',0,'h'],['reflect','📝','振り返り','#15803d','X',0,'h'],
@@ -2625,7 +2626,7 @@ const KIND_TREE=[{id:'pc',ic:'💻',lb:'PC',d:'pc',ch:[{id:'ai',ic:'🤖',lb:'AI
  {id:'sp',ic:'📱',lb:'スマホ',d:'phone',ch:[{id:'ai',ic:'🤖',lb:'AI',ch:['ai','aibiz','aiwork']},'spwork']},
  {id:'car',ic:'🚗',lb:'中古車',ch:['mkt','c_list','c_aaadj','c_aalive','c_aapick','c_aaafter','c_aaclaim','repair','c_buy','c_sell','c_cust','c_dmv']},
  {id:'torii',ic:'⛩️',lb:'Torii Link',ch:['gyg']},{id:'yen',ic:'💴',lb:'お金',ch:['m_tr','m_io','m_atm','m_tax']},
- {id:'self',ic:'👤',lb:'自分',ch:['sleep','meal','move','exer','bath','rest','nap']},{id:'fam',ic:'👦',lb:'家族',ch:['son','family']},{id:'etc',ic:'📍',lb:'その他',ch:null}];
+ {id:'self',ic:'👤',lb:'自分',ch:['sleep','meal','move','exer','bath','rest','nap','incar','spplay','wc']},{id:'fam',ic:'👦',lb:'家族',ch:['son','family']},{id:'etc',ic:'📍',lb:'その他',ch:null}];
 /* 道具（何を使って）。行に1つだけ付く（d） */
 const TOOL_BASE=[['pc','💻','PC'],['phone','📱','スマホ'],['tab','📟','タブレット'],['paper','📕','紙・本'],['ear','🎧','イヤホン'],['tool','🔧','工具']];
 const KIND_NOMUDA={move:1,stay:1,sleep:1};   /* ムダ印を出さない種類 */
@@ -2740,7 +2741,7 @@ function renderTimeline(pane){
     if(isToday){
       const os=openSleep(),night=(nowH>=21||nowH<5),op=nowCardOpen();
       const bp=os?'':sleepBedPill();   /* 夜の締切の札＝「寝る」ボタンを兼ねる（幅を増やさない） */
-      right='<span class="wr-r">'+mvBtnHtml()+   /* 🚗出発／🏁到着（いちばん優先） */
+      right='<span class="wr-r">'+mvBtnHtml()+carBtnHtml()+   /* 🚗出発／🏁到着（いちばん優先） */
         (os?'<button class="chip" id="wrWake" style="background:#fff3c9;color:#a8790a">☀ 起きた</button>'
            :bp?bp:(night?'<button class="chip" id="wrSleep" style="background:#ece8ff;color:#5b4fd6">😴 寝る</button>':''))+
         ((os||bp||night)?'':wrSlpChip())+
@@ -2796,8 +2797,10 @@ function renderTimeline(pane){
                 :en.k==='work'?'<span class="loc big" style="color:#1e3a8a">💼 仕事'+(en.p?'　📍'+esc(en.p):'')+'</span>'
                 :en.k==='ai'?'<span class="loc big" style="color:#7a6ef3">🤖 AI'+(en.p?'　📍'+esc(en.p):'')+'</span>'
                 :en.k==='meal'?'<span class="loc big" style="color:#e0603c">🍚 食事'+(en.p?'　📍'+esc(en.p):'')+'</span>'
+                :en.k==='incar'?'<span class="loc big" style="color:#0f766e">🚙 車内滞在'+(en.p?'　📍'+esc(en.p):'')+'</span>'
                 :en.k==='sleep'?'<span class="loc big" style="color:#7a6ef3">🌙 睡眠'+(en.e?'':'　（寝てる…☀起きたを押す）')+(en.p?'　📍'+esc(en.p):'')+'</span>'
                 :(en.p?'<span class="loc big">📍'+esc(en.p)+'</span>':''))+
+          ((!en.mv&&en.k!=='sleep'&&recOpenOk(ui.date,en))?'<span class="loc" style="color:#e0603c;font-weight:800">⏳ 途中（押して終わりを入れる）</span>':'')+
           pill+actsHtml(en)+
           (en.t?'<div class="txt">'+txtHtml(en.t)+'</div>':'')+
           (en.ph&&en.ph.length?'<span class="phrow">'+en.ph.slice(0,4).map(id=>'<img class="phth" src="'+esc(phUrl(id))+'" alt="" onerror="this.style.visibility=\'hidden\'">').join('')+(en.ph.length>4?'<span class="phmore">+'+(en.ph.length-4)+'</span>':'')+'</span>':'')+
@@ -2879,7 +2882,7 @@ function renderTimeline(pane){
   wB('bedPill',quickSleepStart);
   wB('wrSleep',quickSleepStart);
   wB('wrSlp',openSleepPage);
-  wB('wrGo',quickMoveStart);wB('wrArr',quickMoveArrive);
+  wB('wrGo',quickMoveStart);wB('wrArr',quickMoveArrive);wB('wrCar',quickCarStart);wB('wrCarE',quickCarEnd);
   if(isToday)wrFit();   /* 幅が足りなければ昨夜の睡眠チップを隠す */
   nowCardSet(false);   /* ワンタップの開閉（⋯）はやめた。カードは閉じたまま */
   pane.querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>openEntrySheet(ui.date,{key:b.dataset.k}));
@@ -3176,7 +3179,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+   /* 同期の状態1行と記録（クラウド版 c1.9） */
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c2.6）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c2.7）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -3320,7 +3323,7 @@ function openEntrySheet(date,ref){
   let defS=pad(hour)+':00';
   if(!ex&&date===todayStr()&&hour===nowD.getHours())defS=pad(hour)+':'+pad(Math.floor(nowD.getMinutes()/10)*10);
   let tS=(ex&&ex.s)||defS;
-  const openSl=!!(ex&&ex.s&&!ex.e&&!ex.noT&&(ex.k==='sleep'||mvOpenOk(date,ex)));   /* 寝ている最中（☀起きた を押す前）・移動中（🏁到着を押す前）。終了は空のまま開き、空のまま保存する（2026-10-03レビュー指摘） */
+  const openSl=!!(ex&&ex.s&&!ex.e&&!ex.noT&&(ex.k==='sleep'||recOpenOk(date,ex)));   /* 寝ている最中（☀起きた を押す前）・移動中（🏁到着を押す前）。終了は空のまま開き、空のまま保存する（2026-10-03レビュー指摘） */
   let tE=(ex&&ex.e)||(openSl?'':(pad((hour+1)%24)+':'+defS.slice(3,5)));
   const chips=placeChips();
   $('sheet').innerHTML=
@@ -3333,7 +3336,7 @@ function openEntrySheet(date,ref){
     '<select id="tEd" lang="ja-JP">'+
     ['当日','翌日','翌々日','3日後','4日後','5日後','6日後','7日後'].map((x,i)=>'<option value="'+i+'">'+x+'</option>').join('')+
     '</select>'+
-    '</div><div id="tDur" style="font-size:11px;color:#8a90a0;font-weight:700;margin-top:4px;text-align:right"></div></div>'+
+    '</div><div style="display:flex;align-items:center;gap:8px;margin-top:4px"><button class="chip" id="tLater" style="padding:5px 10px;font-size:11.5px">⏳ 終わりは後で</button><div id="tDur" style="flex:1;font-size:11px;color:#8a90a0;font-weight:700;text-align:right"></div></div></div>'+
     '<div><div class="prbtns" id="eType" style="font-size:11px">'+
       /* 💼仕事＝利益に結びつきそうな事も仕事（本人の定義 2026-10-02） */
       '<button data-ty="ai" class="ty-ai">🤖 AI</button>'+
@@ -3438,9 +3441,10 @@ function openEntrySheet(date,ref){
   $('tEin').onchange=()=>{const v=$('tEin').value;if(v){tE=v;eHand=true;}};
   $('tEd').onchange=()=>{tEd=Number($('tEd').value)||0;};
   /* 何時間かをその場で表示（睡眠なら「😴 睡眠 7時間30分」） */
-  const updDur=()=>{const el=$('tDur');if(!el)return;if(ex&&ex.noT&&!timeTouched&&eType!=='sleep'){el.textContent='';return;}const wrap=(tE<=tS&&tEd===0);const m=durMin(tS,tE,wrap?1:tEd);el.textContent=m?((eType==='sleep'?'😴 睡眠 ':'⏱ ')+durText(m)+(wrap?'（翌日扱い）':'')):'';};
+  const updDur=()=>{const el=$('tDur');if(!el)return;if(!tE){el.textContent='⏳ 開始だけで記録（終わりは後で日記から）';return;}if(ex&&ex.noT&&!timeTouched&&eType!=='sleep'){el.textContent='';return;}const wrap=(tE<=tS&&tEd===0);const m=durMin(tS,tE,wrap?1:tEd);el.textContent=m?((eType==='sleep'?'😴 睡眠 ':'⏱ ')+durText(m)+(wrap?'（翌日扱い）':'')):'';};
   updDur();
   ['tSin','tEin','tEd'].forEach(id=>$(id).addEventListener('change',updDur));
+  $('tLater').onclick=()=>{tE='';$('tEin').value='';$('tEin').classList.remove('auto');timeTouched=true;eHand=true;updDur();};   /* 終わりは後で */
   $('eType').querySelectorAll('button').forEach(b=>b.addEventListener('click',updDur));
   /* ここでやったこと（何を・どれくらい）。acts＝[{t:何を,m:分}]。時間は選んだ時だけ入る（0＝未選択） */
   const okT=v=>/^\d{2}:\d{2}$/.test(String(v||''));
@@ -3605,10 +3609,10 @@ function openEntrySheet(date,ref){
     /* 種類を「移動」に変えても、書いてあった行は捨てない（隠れているだけ。2026-10-03レビュー指摘）。並べ替えは、時刻が決まった後（下）でやる */
     const actsS=acts.map(a=>{const o={t:a.t.trim(),m:Number(a.m)||0};if(a.s)o.s=a.s;if(a.e)o.e=a.e;if(a.k)o.k=a.k;if(a.d)o.d=a.d;if(a.d==='_other'&&a.dx)o.dx=String(a.dx).slice(0,20);if(a.c&&a.c.trim())o.c=a.c.trim();if(a.ph&&a.ph.length)o.ph=a.ph.slice();return o;}).filter(a=>a.t);
     if(isMv){if(!rt&&!t&&!sheetSt.ph.length){toast('どこから→どこまでを入れてくれ');return;}}
-    else if(eType==='stay'){if(!t&&!p&&!sheetSt.ph.length&&!actsS.length){toast('場所・内容・写真、どれかは入れてくれ');return;}}
+    else if(eType==='stay'){if(tE&&!t&&!p&&!sheetSt.ph.length&&!actsS.length){toast('場所・内容・写真、どれかは入れてくれ');return;}}
     /* 休憩・睡眠は時間だけで1件成立（何も書かなくてOK） */
     /* 終了が開始より前＝日をまたいだと解釈して自動で翌日扱い */
-    if(!tE&&eType!=='sleep'&&!(eType==='move'&&openSl&&ex.mv))tE=pad((hour+1)%24)+':'+defS.slice(3,5);   /* 移動中の移動も空のまま */   /* 寝ている最中の睡眠を、別の種類に変えて保存した時だけ、終了を入れる */
+    /* 終わりが空＝途中の記録としてそのまま保存（後で日記から開いて終わりを入れる） */   /* 移動中の移動も空のまま */   /* 寝ている最中の睡眠を、別の種類に変えて保存した時だけ、終了を入れる */
     if(tE&&tE<=tS&&tEd===0){tEd=1;toast('終了を翌日として記録した');}
     const d0=sheetSt.date;
     const saveKey=(sheetSt.key!=null)?sheetSt.key:('e'+Date.now()+Math.floor(Math.random()*1e4));
@@ -3630,6 +3634,7 @@ function openEntrySheet(date,ref){
       if(eType==='meal')ne.k='meal';
       if(eType==='ai')ne.k='ai';
       if(eType==='work')ne.k='work';
+      if(eType==='stay'&&ex&&ex.k==='incar')ne.k='incar';   /* 車内滞在は滞在のまま保つ */
       if(pfS)ne.pf=pfS;if(pf0S)ne.pf0=pf0S;   /* 出発の県（移動） */
       if(tdS==='_other'){if(tdXS)ne.dx=tdXS;}else if(tdS)ne.d=tdS;   /* 使う物（その他は手入力の文字） */   /* 都道府県（［なし］にした時は付けない） */
       if(actsS.length)ne.acts=actsSort(actsS,actsBase(ne));   /* 時刻の早い順に並べて保存 */
@@ -5423,6 +5428,7 @@ function placeBefore(date,hm){const eo=state.entries[date]||{};let bestM='',best
     if(sm<=hm&&sm>=bestM){bestM=sm;bestV=en.mv?String(en.rt||'').split('→').pop().trim():(en.p||'');}}
   return bestV;}
 /* 移動中＝開始あり・終了なしの移動（今日か昨日の分だけ） */
+function recOpenOk(d,en){return !!(en&&!en.del&&en.s&&!en.e&&!en.noT&&(d===todayStr()||d===addDays(todayStr(),-1)));}
 function mvOpenOk(d,en){return !!(en&&!en.del&&en.mv&&en.s&&!en.e&&!en.noT&&(d===todayStr()||d===addDays(todayStr(),-1)));}
 function openMove(){
   for(const d of [todayStr(),addDays(todayStr(),-1)]){const eo=state.entries[d]||{};let b=null;
@@ -5458,7 +5464,18 @@ function quickMoveArrive(){
   toast('🏁 到着 '+e+'（'+(durText(durMin(s,e,ed))||'10分未満')+'）');
 }
 /* 1分ごとに到着ボタンの経過時間だけ描き直す */
-function mvBtnTick(){try{const b=$('wrArr'),o=b&&openMove();if(!o)return;const t=b.querySelector('b');if(t)t.textContent='⏱'+mvElText(mvElapsed(o));wrFit();}catch(e){}}
+function openInCar(){for(const d of [todayStr(),addDays(todayStr(),-1)]){const eo=state.entries[d]||{};let b=null;
+  for(const k in eo){const en=eo[k];if(en&&en.k==='incar'&&recOpenOk(d,en)&&(!b||en.s>b.en.s))b={d,k,en};}if(b)return b;}return null;}
+function carBtnHtml(){const o=openInCar();return o?'<button class="chip mvb arr" id="wrCarE">🚙 <b>⏱'+esc(mvElText(mvElapsed(o)))+'</b><span class="mvl"> ⏹</span></button>':'<button class="chip mvb car" id="wrCar">🚙<span class="mvl"> 車内</span></button>';}
+function quickCarStart(){if(openInCar()){toast('もう車内滞在中。終わったら🚙⏹を押す');return;}
+  const d=todayStr(),s=nowHM(),p=placeBefore(d,s),pf=pfAuto(d,s),key='e'+Date.now()+Math.floor(Math.random()*1e4);
+  mutate(()=>{state.entries[d]=state.entries[d]||{};const ne={k:'incar',s,p:p||'',t:'',ph:[],ts:Date.now()};if(pf)ne.pf=pf;state.entries[d][key]=ne;});
+  toast('🚙 車内滞在 '+s+(p?'（'+p+'）':''));}
+function quickCarEnd(){const o=openInCar();if(!o){toast('車内滞在中の記録がない');return;}
+  const e=nowHM(),s=o.en.s,ed=(o.d!==todayStr()||e<s)?1:0;
+  mutate(()=>{const en=state.entries[o.d][o.k];en.e=e;if(ed)en.ed=ed;else delete en.ed;en.ts=Date.now();});
+  toast('🚙 車内滞在 おわり '+e+'（'+(durText(durMin(s,e,ed))||'10分未満')+'）');}
+function mvBtnTick(){try{const c=$('wrCarE'),oc=c&&openInCar();if(oc){const t=c.querySelector('b');if(t)t.textContent='⏱'+mvElText(mvElapsed(oc));}}catch(e){}try{const b=$('wrArr'),o=b&&openMove();if(!o)return;const t=b.querySelector('b');if(t)t.textContent='⏱'+mvElText(mvElapsed(o));wrFit();}catch(e){}}
 /* 書くの行が横にはみ出す時：昨夜の睡眠チップを隠す→出発・到着の文字を隠して札を詰める（絵と時間は残す）→2段 */
 function wrFit(){try{const row=document.querySelector('.hour.wr'),r=row&&row.querySelector('.wr-r'),bd=row&&row.querySelector('.body');if(!r||!bd)return;
   const over=()=>bd.scrollWidth>bd.clientWidth+1||row.scrollWidth>row.clientWidth+1;
@@ -5705,7 +5722,7 @@ function rtnRowHtml(d){
    重なった記録は、後から始まった記録（＝中の細かい記録）が勝つ。1分ずつ塗り分けるので、合計が24時間を超えない。記録の無い時間は「記録なし」 */
 /* 種類の idx 表は毎回作る（基本＋自分で足した物（隠した物も）＋ルーティン＋不明）。idx は 1 から */
 const ANA_RTN={id:'rtn',ic:'📚',lb:'ルーティン',co:'#e0559b',muda:false,g:'A',hb:'h'},ANA_UNK={id:'?',ic:'❓',lb:'不明',co:'#9aa3b5',muda:false};
-const ANA_REC={sleep:1,work:1,ai:1,stay:1,meal:1,rest:1};   /* 記録の種類（ボタン）。それ以外は滞在 */
+const ANA_REC={sleep:1,work:1,ai:1,stay:1,meal:1,rest:1,incar:1};   /* 記録の種類（ボタン）。それ以外は滞在 */
 function anaKinds(){const a=KIND_BASE.map(b=>kindOf(b[0])).concat(kindOwnIds().map(kindOf)).filter(Boolean).slice(0,250);a.push(ANA_RTN,ANA_UNK);return a;}
 const MV_V2_TS=1791039600000;   /* c1.1（2026-10-04）以降に保存した移動だけ、空白をムダに数える */
 const ANA_NOTR=10,ANA_WALK=9;   /* mvm：TRS の順で 1..9（徒歩＝9）、乗り物なし＝10 */
@@ -5749,7 +5766,7 @@ function anaCount0(r,days,N,limit,nowIdx){
     for(const k in eo){const en=eo[k];if(!en||en.del||en.noT||!en.s)continue;
       let a=off+hmMin(en.s),b;
       if(en.e){b=off+hmMin(en.e)+(Number(en.ed)||0)*1440;if(b<=a)b+=1440;}
-      else if((en.k==='sleep'||en.mv)&&d>=addDays(todayStr(),-1))b=P+nowIdx;else continue;   /* 終了時刻の無い記録は数えない（寝ている途中・移動中だけ今まで） */
+      else if(d>=addDays(todayStr(),-1))b=P+nowIdx;else continue;   /* 終了時刻の無い記録は数えない（寝ている途中・移動中だけ今まで） */
       const mv=!!en.mv,kk=mv?'move':(ANA_REC[en.k]?en.k:'stay'),tr=mv?TRS.findIndex(t=>t[0]===en.tr):-1;
       items.push({a,b,c:IX[kk],acts:Array.isArray(en.acts)?en.acts:[],off,mv,tv:mv?(tr>=0?tr+1:ANA_NOTR):0,v2:mv&&Number(en.ts)>=MV_V2_TS,pf:prefOf(en.pf)?Number(en.pf):0,pf0:(mv&&prefOf(en.pf0))?Number(en.pf0):0,lb:mv?String(en.rt||'移動'):String(en.p||((kindOf(en.k||'stay')||{}).lb)||''),et:(mv||en.k==='sleep')?0:((typeof en.d==='string'&&en.d)?tIx(en.d):(en.dx?tIx('_other'):0))});}}
   for(const x of rlogList()){if(!x.s||!x.e||x.d<dayList[0]||x.d>dayList[dayList.length-1])continue;const off=P+Math.round((parseD(x.d)-parseD(r.s))/86400000)*1440;
@@ -7403,7 +7420,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c2.6";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c2.7";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 /* ログインの後：同じユーザーなら影はそのまま（全件受信をやり直さない）。違うユーザーならそのユーザーの影を読む */
 async function clAfterLogin(){
