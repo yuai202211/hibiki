@@ -754,6 +754,7 @@
   .tpin{flex-shrink:0;position:sticky;top:-10px;z-index:7;margin:-10px -18px 0;padding:0 18px;height:0;overflow:hidden;opacity:0;transition:opacity .15s;pointer-events:none;font-size:12px;font-weight:800;color:#6b7280;background:rgba(246,247,251,.92);text-align:center;line-height:24px}
   .tpin.on{height:24px;opacity:1;box-shadow:0 2px 6px rgba(0,0,0,.05)}
   .tref{font-size:11px;font-weight:700;color:#9aa3b5;margin-left:4px}
+  .pfflt{display:flex;gap:6px;align-items:center;margin-top:14px;padding-top:10px;border-top:1px dashed var(--line)}.pfflt span{font-size:11.5px;font-weight:800;color:#8a93a6;margin-right:2px}.pfflt button{padding:7px 14px;border-radius:12px;background:#f1f3f8;color:#3b4252;font-weight:800;font-size:13px}.pfflt button.sel{background:#7c3aed;color:#fff}
   .cnt2{display:flex;gap:6px;margin:10px 0 0}.cnt2 button{flex:1;padding:9px 4px;border-radius:12px;background:#f1f3f8;color:#5b6475;font-weight:800;font-size:13.5px}.cnt2 button.sel{background:#0a9a54;color:#fff}
   .et3{display:flex;gap:6px;margin:10px 0 6px}.et3 button{flex:1;padding:10px 4px;border-radius:14px;background:#f1f3f8;color:#5b6475;font-weight:800;font-size:14px;white-space:nowrap}.et3 button.sel{background:#1f2430;color:#fff}
   .et2{display:flex;align-items:center;gap:6px;margin:8px 0 2px}.et2 button{flex:0 0 auto;white-space:nowrap;width:auto;min-width:0;padding:7px 12px;border-radius:12px;background:#f1f3f8;color:#5b6475;font-weight:800;font-size:13px}.et2 button.sel{background:#1f2430;color:#fff}.et2 span{font-size:11px;color:#9aa3b5;font-weight:700}
@@ -2681,14 +2682,26 @@ function render(){
 
 /* 常に出す場所（本人指定・2026-08-31）。ここに足せば固定チップが増える */
 let PIN_PLACES=[];   /* よく行く場所の固定候補は本人の設定（state._cfg.pinPlaces）。無ければ履歴から */
+/* c7.8：普段の5つ（本人が決めた順）。公開の版は名前を伏せた番号だけ（build.js が入れる） */
+const PIN5_N=[];
+const PIN5_H=["ue2nxa.tmqo9s","xf5hig.1ffvq55","1c1e6wt.tlqooj","jx70r0.1fry0z","1tl5emo.o26ut"];
+function pin5(){if(PIN5_N.length)return PIN5_N.slice();const want=PIN5_H;if(!want.length)return [];const hit={};
+  const look=nm=>{if(!nm)return;const k=strHash(placeKey(nm));if(want.indexOf(k)>=0&&!hit[k])hit[k]=nm;};
+  for(const d in state.entries){const eo=state.entries[d];for(const k in eo){const en=eo[k];if(en&&!en.del&&en.p)look(en.p);}}
+  (PIN_PLACES||[]).forEach(look);return want.map(k=>hit[k]).filter(Boolean);}
+/* c7.8：場所の県＝その場所で最後に付けた県（無ければ決まり） */
+function placePrefOf(nm){let best=null;for(const d in state.entries){const eo=state.entries[d];for(const k in eo){const en=eo[k];if(!en||en.del||en.mv||en.p!==nm||!prefOf(en.pf))continue;if(!best||d>best.d||(d===best.d&&(en.s||'')>(best.s||'')))best={d,s:en.s,pf:Number(en.pf)};}}return best?best.pf:placePf(nm);}
+function placeChipsPref(code){const c={},last={};for(const d in state.entries){const eo=state.entries[d];for(const k in eo){const en=eo[k];if(!en||en.del||en.mv||!en.p)continue;c[en.p]=(c[en.p]||0)+1;if(!last[en.p]||d>last[en.p])last[en.p]=d;}}
+  return Object.keys(c).filter(nm=>placePrefOf(nm)===code).sort((a,b)=>(last[b]||'').localeCompare(last[a]||'')||c[b]-c[a]);}
 function placeChips(){
   /* 固定チップ＋自分がよく書く場所（育つ）。重複は出さない */
   const seen={},rc={},lim=addDays(todayStr(),-14);
   for(const d in state.entries)for(const h in state.entries[d]){const en=state.entries[d][h];const p=en.p;if(p&&!en.del){seen[p]=(seen[p]||0)+1;if(d>=lim)rc[p]=(rc[p]||0)+1;}}
-  const recent=Object.keys(rc).sort((a,b)=>rc[b]-rc[a]||seen[b]-seen[a]).slice(0,CHIP_FOLD);   /* c4.8：直近14日の多い順（本人決定 2026-10-06）。固定は＋の中 */
+  const recent=Object.keys(rc).sort((a,b)=>rc[b]-rc[a]||seen[b]-seen[a]).slice(0,CHIP_FOLD);
+  const top=pin5();   /* c7.8：普段の5つは本人が決めた順 */   /* c4.8：直近14日の多い順（本人決定 2026-10-06）。固定は＋の中 */
   const learned=Object.keys(seen).sort((a,b)=>seen[b]-seen[a]).slice(0,4);
   const out=[];
-  for(const p of recent.concat(PIN_PLACES,learned))if(p&&out.indexOf(p)<0)out.push(p);
+  for(const p of top.concat(recent,PIN_PLACES,learned))if(p&&out.indexOf(p)<0)out.push(p);
   return out;
 }
 
@@ -3465,7 +3478,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+   /* 同期の状態1行と記録（クラウド版 c1.9） */
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c7.7）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c7.8）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -3628,6 +3641,7 @@ function openEntrySheet(date,ref){
     '<div class="et3" id="eType"><button data-ty="stay">📍 場所</button><button data-ty="move">🚗 移動</button><button data-ty="incar">🚙 車内</button></div>'+   /* c6.3：時間のすぐ下で「何の記録か」（本人指示）。新しい記録は📍いた */
     '<div id="secStay"><div class="sh-label">📍 場所（自由に書ける・コピペOK）</div>'+
       '<div id="pfInl" style="display:flex;gap:6px;align-items:center"><input type="text" id="shPlace" maxlength="120" data-need="1" placeholder="例：東京タワー" style="flex:1;min-width:0"></div>'+   /* 左端に県のチップが入る */
+      '<div class="pfflt" id="pFlt"><span>県で選ぶ</span><button data-pfl="13">🗼 東京</button><button data-pfl="11">🌾 埼玉</button></div>'+   /* c7.8 */
       (chips.length?'<div class="sh-chips" id="pChips" style="margin-top:6px">'+
       chipListHtml(chips,chipsOpen())+'</div>':'')+'</div>'+
     '<div class="cnt2" id="cntSw"><button data-cn="1">☝️ 1つ</button><button data-cn="2">✌️ 2つ以上</button></div>'+   /* c6.8 */
@@ -3916,8 +3930,9 @@ function openEntrySheet(date,ref){
     sheetSt.isDirty=()=>{try{return snapE()!==d0;}catch(e){return false;}};}
   /* 場所チップは入力欄に入れるだけ（自由に書き換えOK） */
   const pc=$('pChips');
+  let pfl=0,curChips=chips;
   const bindChips=()=>{
-    if(!pc)return;
+    if(!pc)return;const chips=curChips;
     pc.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{$('shPlace').value=b.dataset.p;const v=placePf(b.dataset.p);if(sheetSt){arFill(b.dataset.p);if(v){sheetSt.pf=v;sheetSt.pfAuto=true;}pfPaint();if(sheetSt.flowNext)sheetSt.flowNext('do');}});   /* 押した場所の県も自動で */
     const more=pc.querySelector('#pMore');
     if(more)more.onclick=()=>{chipsSetOpen(true);pc.innerHTML=chipListHtml(chips,true);bindChips();};    /* 開く */
@@ -3925,6 +3940,9 @@ function openEntrySheet(date,ref){
     if(less)less.onclick=()=>{chipsSetOpen(false);pc.innerHTML=chipListHtml(chips,false);bindChips();};  /* たたむ */
   };
   bindChips();
+  {const fl=$('pFlt');if(fl&&pc){const paintF=()=>{fl.querySelectorAll('[data-pfl]').forEach(b=>b.classList.toggle('sel',Number(b.dataset.pfl)===pfl));curChips=pfl?placeChipsPref(pfl):chips;
+      pc.innerHTML=curChips.length?chipListHtml(curChips,pfl?false:chipsOpen()):'<span class="sh-note">この県の場所はまだ無い</span>';bindChips();};
+    fl.querySelectorAll('[data-pfl]').forEach(b=>b.onclick=()=>{const v=Number(b.dataset.pfl);pfl=(pfl===v)?0:v;paintF();});}}   /* c7.8：押すとその県の場所だけ・もう一度で元へ */
   /* 写真 */
   function renderShPhotos(){
     const w=$('shPhotos');
@@ -8102,7 +8120,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c7.7";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c7.8";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 /* ログインの後：同じユーザーなら影はそのまま（全件受信をやり直さない）。違うユーザーならそのユーザーの影を読む */
 async function clAfterLogin(){
