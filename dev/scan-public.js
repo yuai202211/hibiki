@@ -30,7 +30,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const DEFAULT_MAX_KB = 700;        // [c] 上限（KB=1024バイト）。これ未満なら合格
+const DEFAULT_MAX_KB = 900;        // [c] 上限（KB=1024バイト）。これ未満なら合格（2026-10-06 c7.9：やる事の追加で700KBを超えたので900KBへ。本人データの混入は [b][d][e] で別に見る）
 const LONG_LINE = 20000;           // [e] この文字数を超える行は異常（通常のコードの最長行は約1万）
 const DATA_URI_MIN = 2000;         // [e] base64 がこの長さ以上続くデータURIは写真/状態の貼り付けとみなす
 const CTX_MAX_LINE = 2000;         // 文脈を画面に出してよい行の最大文字数
