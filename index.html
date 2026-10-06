@@ -765,6 +765,13 @@
   .bed-q{display:flex;gap:10px;margin:8px 0}.bed-q button{flex:1;padding:16px 6px;border-radius:16px;background:#f1f3f8;color:var(--ink);font-size:32px;display:flex;flex-direction:column;align-items:center;gap:4px;font-weight:800}.bed-q button span{font-size:13px}
   .al-row{display:flex;align-items:center;gap:8px;margin:8px 0;font-weight:800;font-size:14px}.al-row span{flex:1}.al-row input{font:inherit;padding:6px 8px;border-radius:10px;border:1px solid var(--line)}
   .an-pjb.sr{background:#fff3f4;color:#b91c1c}
+  .sm-h{font-size:12px;font-weight:800;color:#5b6475;margin-top:8px}
+  .sm-g{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin:6px 0 12px}.sm-g i{position:relative;height:44px;border-radius:8px;background:#f1f3f8;display:block;overflow:hidden;font-style:normal}
+  .sm-g i.sm-w{height:16px;background:none;text-align:center;font-size:11px;color:#8a93a6;font-weight:800;line-height:16px}.sm-g i.sm-e{background:none}
+  .sm-g i b{position:absolute;left:4px;top:2px;font-size:10px;color:#6b7280;z-index:2;font-weight:800}.sm-g i u{position:absolute;left:0;right:0;bottom:0;display:block;opacity:.85}
+  .sm-g i.sm-c:after,.sm-g i.sm-n:after{content:'';position:absolute;left:0;right:0;bottom:70%;border-top:1px dashed rgba(0,0,0,.28);z-index:1}
+  .sm-g i s{position:absolute;right:2px;top:1px;font-size:11px;text-decoration:none;z-index:2}
+  .an-sl{display:flex;gap:8px;margin:0 0 10px}.an-sc{flex:1;background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px 12px;font-weight:800;font-size:13px}.an-sc b{font-size:20px;margin:0 2px}.an-sc.warn{background:#fff3f4;color:#b91c1c}.an-sc small{display:block;font-weight:600;color:#8a93a6;font-size:11px}
   .an-m2.mc{display:flex;flex-wrap:wrap;gap:4px 6px}.an-mc{display:inline-flex;align-items:center;gap:3px;background:rgba(255,255,255,.75);border-radius:999px;padding:3px 9px;font-size:12.5px;font-weight:800;color:#5b1a22}.an-mc.sr{background:#1f2430;color:#fff}.an-mc.sr b{margin-right:6px}
   .pfchip.ar{padding:0 8px}.pfchip.ar.on{background:#e3f1fb;color:#1f5f8f}
   .sr-dh{margin:10px 0 4px;font-weight:800;color:#8a93a6;font-size:12.5px}.sr-it{display:block;width:100%;text-align:left;padding:10px 12px;border-radius:14px;background:#fff;border:1px solid var(--line);margin-top:6px;font-weight:700}.sr-it small{display:block;color:#8a93a6;font-weight:600}
@@ -3387,7 +3394,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+   /* 同期の状態1行と記録（クラウド版 c1.9） */
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c4.8）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c4.9）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -5949,7 +5956,7 @@ function sleepSessions(){
   for(const d in state.entries){const eo=state.entries[d];for(const k in eo){const en=eo[k];
     if(!en||en.del||en.k!=='sleep'||!en.s||!en.e)continue;
     const wd=en.ed?addDays(d,en.ed):d;const min=durMin(en.s,en.e,en.ed);if(min<=0)continue;
-    (by[wd]=by[wd]||[]).push({date:d,k,s:en.s,e:en.e,ed:en.ed||0,min,p:en.p||''});}}
+    (by[wd]=by[wd]||[]).push({date:d,k,s:en.s,e:en.e,ed:en.ed||0,min,p:en.p||'',bd:(en.bd===0?0:(en.bd===1?1:-1))});}}   /* c4.9：🛏️/🪑 も持つ */
   for(const wd in by)by[wd].sort((a,b)=>(a.date+a.s)<(b.date+b.s)?-1:1);
   return by;
 }
@@ -5974,6 +5981,20 @@ function sleepDay(wd,by){alarmCfg();
 function wrSlpChip(){try{const sd=sleepDay(todayStr());if(!sd)return '';return '<button class="chip slp" id="wrSlp" style="color:'+sleepColor(sd)+'">🌙 '+esc(durText(sd.total))+(sd.good?' ✓':' '+esc(String(sd.flags[0]).split(' ')[0]))+'</button>';}catch(e){return '';}}
 function sleepColor(sd){return sd.good?'var(--green)':(sd.flags.some(f=>/寝坊|寝すぎ|寝不足/.test(f))?'#e0405a':'#c98a2f');}
 function openSleepPage(){closeSheet();renderSleepPage();}
+/* c4.9：😴 今月のマス（棒＝睡眠の長さ、点線＝7時間、色＝朝の判定、🪑＝座ったまま寝た）。文字は日付だけ */
+function sleepMonthHtml(by){const t=todayStr(),y=t.slice(0,4),mo=t.slice(5,7);const dim=new Date(Number(y),Number(mo),0).getDate();
+  const fd=parseD(y+'-'+mo+'-01').getDay();let cells='';for(let i=0;i<fd;i++)cells+='<i class="sm-e"></i>';
+  for(let d=1;d<=dim;d++){const ds=y+'-'+mo+'-'+pad(d);if(ds>t){cells+='<i class="sm-e"><b>'+d+'</b></i>';continue;}const sd=sleepDay(ds,by);
+    if(!sd){cells+='<i class="sm-n"><b>'+d+'</b></i>';continue;}
+    const h=Math.min(100,Math.round(sd.total/600*100)),col=sleepColor(sd),seat=sd.main.bd===0;
+    cells+='<i class="sm-c" title="'+esc(ds+' '+durText(sd.total))+'"><b>'+d+'</b><u style="height:'+h+'%;background:'+col+'"></u>'+(seat?'<s>🪑</s>':'')+'</i>';}
+  return '<div class="sm-h">🗓️ '+Number(mo)+'月　棒＝睡眠の長さ・点線＝7時間・色＝朝の判定・🪑＝座ったまま</div><div class="sm-g">'+YOBI.map(x=>'<i class="sm-w">'+x+'</i>').join('')+cells+'</div>';}
+/* c4.9：🔥 AIの連続日数（🤖AI・AIビジネス・AI作業のどれかが1つでもある日）／👦 息子と会ってから何日（👦息子の種類が付いた記録） */
+function aiDays(){const A={ai:1,aibiz:1,aiwork:1};const set={};for(const d in state.entries){const eo=state.entries[d];for(const k in eo){const en=eo[k];if(!en||en.del)continue;if(A[en.k]||(Array.isArray(en.acts)&&en.acts.some(a=>a&&A[a.k]))){set[d]=1;break;}}}return set;}
+function aiStreak(){const s=aiDays();let d=todayStr(),n=0;if(!s[d])d=addDays(d,-1);while(s[d]){n++;d=addDays(d,-1);if(n>3650)break;}return n;}
+function sonLast(){let best='';for(const d in state.entries){const eo=state.entries[d];for(const k in eo){const en=eo[k];if(!en||en.del)continue;if(en.k==='son'||(Array.isArray(en.acts)&&en.acts.some(a=>a&&a.k==='son'))){if(d>best)best=d;break;}}}return best;}
+function anaStreakHtml(){const ai=aiStreak(),sl=sonLast();const sdays=sl?Math.round((parseD(todayStr())-parseD(sl))/86400000):null;
+  return '<div class="an-sl"><span class="an-sc">🔥 AI '+(ai?'<b>'+ai+'</b>日連続':'<b>0</b>日')+'</span><span class="an-sc'+(sdays!=null&&sdays>=30?' warn':'')+'">👦 '+(sl?'前回から<b>'+sdays+'</b>日':'<b>—</b><small>👦息子の種類を付けると数える</small>')+'</span></div>';}
 function renderSleepPage(){
   pageMode='sleep';
   const p=$('page');const by=sleepSessions();const t=todayStr();
@@ -6000,7 +6021,7 @@ function renderSleepPage(){
     '<div class="sgoal"><span>🌙 2:00までに寝る</span><span>😴 7時間以上</span><span>☀ 9時までに起きる</span></div>'+
     '<div class="ghint" style="background:'+(allGood?'#e7f9f0':'#fff4e5')+';color:'+(allGood?'#0a9a54':'#a8790a')+'">'+esc(verdict)+'</div>'+
     '<div class="sh-note" style="text-align:left;line-height:1.7">判定：⏰寝坊＝10時以降に起床／☀9時すぎ＝9時より後に起床／🔁二度寝＝午前中に2回以上／🦉夜更かし＝2:00以降に就寝／😪寝すぎ＝9時間半以上／😵寝不足＝7時間未満（米国睡眠医学会・睡眠研究学会の合同声明2015＝成人は7時間以上）／💤昼寝＝11〜20時に就寝</div>'+
-    days.map(row).join('')+'</div>';
+    sleepMonthHtml(by)+days.map(row).join('')+'</div>';   /* c4.9：今月のマス */
   p.classList.add('open');
   $('pgBk').onclick=closePage;
 }
@@ -6315,7 +6336,7 @@ function renderAnaPage(keep){
     '<button class="an-pjb sr" id="anSr">🕳️😤 困り事の一覧（自分で押した申告）</button>'+
     '<div class="an-tabs">'+[['day','日'],['week','週'],['month','月'],['year','年']].map(u=>'<button data-au="'+u[0]+'"'+(anaUnit===u[0]?' class="on"':'')+'>'+u[1]+'</button>').join('')+'</div>'+
     '<div class="an-nav"><button id="anPrev">‹</button><b>'+esc(anaLabel(anaUnit,r))+'</b><button id="anNext"'+(isCur?' disabled':'')+'>›</button></div>'+
-    (cur.total?(card+bar+
+    (cur.total?(card+anaStreakHtml()+bar+
       sec('grp','📦 分野（AI・中古車・自分…）',grpBody)+sec('kind','何をした',kindBody)+sec('mv','🚗 移動の中身',mvBody)+sec('tool','🛠 何を使って',toolBody)+sec('pf','🗾 どこで',pfBody)+
       '<div class="sh-note">右の数字＝前の'+U+'との差。'+(isCur?'（今の'+U+'は今の時刻まで。前の'+U+'も同じ長さで比べている）':'')+
       '<br>ムダ＝ムダ印の種類（📲スマホ操作・何もしなかった🚙車内滞在など）の時間＋1回30分を超えた仮眠＋10/4 以降の移動で何もしなかった時間（徒歩を除く）。途中の記録（今日・昨日）は今までの分を数える。</div>')
@@ -7813,7 +7834,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c4.8";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c4.9";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 /* ログインの後：同じユーザーなら影はそのまま（全件受信をやり直さない）。違うユーザーならそのユーザーの影を読む */
 async function clAfterLogin(){
