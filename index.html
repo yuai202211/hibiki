@@ -3502,7 +3502,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+   /* 同期の状態1行と記録（クラウド版 c1.9） */
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c8.4）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c8.5）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -5948,14 +5948,21 @@ function openSelfReport(id){const ex=id&&state.marks&&state.marks[id]&&!state.ma
       mutate(()=>{state.marks=state.marks||{};if(ex){state.marks[id]=Object.assign({},ex,{k,r,m,ts:Date.now()});}else{const d=todayStr(),t=nowMin(),nid='m'+Date.now()+Math.floor(Math.random()*1e4);state.marks[nid]={d,t,k,r,m,p:placeBefore(d,t),ts:Date.now()};}});
       closeSub();const R=srReason(r);toast(SR_K[k][0]+' '+SR_K[k][1]+'を残した'+(R?'（'+R[2]+'）':''));};};
   paint();}
+/* c8.5：その日の日記に入っている📲（スマホ作業・操作）と📞（電話・雑談など）の分。行と「ここで何をした」の両方を数える */
+function scrAuto(d){let sp=0,tel=0;const SPK={spplay:1,spwork:1},TK={};TEL_KS.forEach(k=>TK[k]=1);const eo=(state.entries||{})[d]||{};
+  for(const k in eo){const en=eo[k];if(!en||en.del)continue;
+    if(en.s&&en.e&&(SPK[en.k]||TK[en.k])){const m=durMin(en.s,en.e,en.ed)||0;if(SPK[en.k])sp+=m;else tel+=m;}
+    (en.acts||[]).forEach(a=>{if(!a||!(SPK[a.k]||TK[a.k]))return;const m=(a.s&&a.e)?(durMin(a.s,a.e,0)||0):(Number(a.m)||0);if(SPK[a.k])sp+=m;else tel+=m;});}
+  return {sp,tel};}
 function srDayHtml(d){let h='';const ms=srList(d);
   if(ms.length)h+='<div class="sr-day">'+ms.map(x=>{const R=srReason(x.r);return '<button class="chip" data-mk="'+esc(x.id)+'">'+(SR_K[x.k]||SR_K.muda)[0]+' '+esc(x.t)+(R?' '+R[1]+esc(R[2]):'')+(x.m?' '+esc(x.m.slice(0,14)):'')+'</button>';}).join('')+'</div>';
   const sc=(state.scr||{})[d];const late=(d<todayStr())||(d===todayStr()&&new Date().getHours()>=20);
-  if(sc&&!sc.del)h+='<button class="scr-row" id="scrRow">📲 '+esc(durText(sc.sp||0)||'0分')+'　📞 '+esc(durText(sc.tel||0)||'0分')+'<span>✎</span></button>';
+  const au=scrAuto(d),man=sc&&!sc.del,sp=man?Math.max(Number(sc.sp)||0,au.sp):au.sp,tel=man?Math.max(Number(sc.tel)||0,au.tel):au.tel;
+  if(man||sp||tel)h+='<button class="scr-row" id="scrRow">📲 スマホ '+esc(durText(sp)||'0分')+'　📞 電話 '+esc(durText(tel)||'0分')+'<span>✎</span></button>';   /* c8.5：日記から自動 */
   else if(late)h+='<button class="scr-row ask" id="scrRow">📲📞 今日のスマホ・電話の時間</button>';
   return h;}
-function openScrSheet(d){const sc=(state.scr||{})[d]||{};const sp=Number(sc.sp)||0,tel=Number(sc.tel)||0;
-  openSub('<div class="sh-time"><span>📲📞 '+esc(d.slice(5).replace('-','/'))+' の数字</span></div><div class="sh-note" style="text-align:left">iPhoneの 設定→スクリーンタイム の数字をそのまま。夜に1回でいい（本人決定 2026-10-06）</div>'+
+function openScrSheet(d){const sc=(state.scr||{})[d]||{},au=scrAuto(d);const sp=Math.max(Number(sc.sp)||0,au.sp),tel=Math.max(Number(sc.tel)||0,au.tel);
+  openSub('<div class="sh-time"><span>📲📞 '+esc(d.slice(5).replace('-','/'))+' の数字</span></div><div class="sh-note" style="text-align:left">日記から自動で入っている。スクリーンタイムの方が多い時だけ直す</div>'+
     '<div class="scr-in"><span>📲 スマホ</span><input type="number" id="scH" min="0" max="24" inputmode="numeric" value="'+Math.floor(sp/60)+'">時間<input type="number" id="scM" min="0" max="59" inputmode="numeric" value="'+(sp%60)+'">分</div>'+
     '<div class="scr-in"><span>📞 電話</span><input type="number" id="scT" min="0" max="1440" inputmode="numeric" value="'+tel+'">分</div>'+
     '<div class="sh-btns"><button class="delbtn" id="scNo">やめる</button><button class="savebtn" id="scOk">残す</button></div>',null);
@@ -8258,7 +8265,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c8.4";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c8.5";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 /* ログインの後：同じユーザーなら影はそのまま（全件受信をやり直さない）。違うユーザーならそのユーザーの影を読む */
 async function clAfterLogin(){
