@@ -2725,7 +2725,7 @@ const KIND_BASE=[['ai','🤖','AI','#7a6ef3','A',0,'h'],['aibiz','💡','AIビ�
  ['pcwork','💻','PC作業','#475569','D',0,'h'],['spwork','📱','スマホ作業','#64748b','D',0,'h'],
  ['mkt','📈','相場リサーチ','#0f766e','V',0,'h'],['c_list','📸','出品準備','#0d9488','V',0,'h'],['c_aaadj','🔁','AA調整','#0e7490','V',0,'h'],['c_aalive','🔴','AAライブ','#dc2626','V',0,'h'],
  ['c_aapick','🚛','AA落札分引取','#b45309','V',0,'b'],['c_aaafter','📋','AA落札後対応','#a16207','V',0,'h'],['c_aaclaim','⚠️','AAクレーム対応','#b91c1c','V',0,'h'],['repair','🔧','整備','#c2410c','V',0,'b'],
- ['c_buy','🤝','買取商談','#15803d','V',0,'h'],['c_sell','💰','販売商談','#16a34a','V',0,'h'],['c_cust','🙋','客対応','#2563eb','V',0,'h'],['c_dmv','🏛️','陸自対応','#4b5563','V',1,'h'],
+ ['c_buy','🤝','買取商談','#15803d','V',0,'h'],['c_sell','💰','販売商談','#16a34a','V',0,'h'],['c_cust','🙋','客対応','#2563eb','V',0,'h'],['c_dmv','🏛️','陸自対応','#4b5563','V',1,'h'],['c_garage','🅿️','車庫証明 申請・受取','#334155','V',1,'b'],
  ['gyg','⛩️','GetYourGuide','#be123c','T',0,'h'],
  ['m_tr','🏦','振込み対応','#4338ca','Y',0,'h'],['m_io','💳','入出金対応','#4f46e5','Y',0,'h'],['m_atm','🏧','ATM対応','#6366f1','Y',1,'h'],['m_tax','🧾','確定申告','#3730a3','Y',0,'h'],['gov','🏢','役所・警察・郵便','#4b5563','Y',1,'b'],
  ['sleep','🌙','睡眠','#475569','S',0,''],['meal','🍚','食事','#f08a24','S',0,''],['move','🚗','移動','#12a6a0','S',0,''],['exer','🏃','運動','#16a34a','S',0,'b'],['bath','🛁','身支度','#06b6d4','S',0,''],['spa','♨️','風呂・サウナ','#0891b2','S',0,''],['shop','🛒','買い物','#f59e0b','S',0,''],['rest','☕','休憩','#c98a2f','S',0,''],['nap','😴','仮眠','#64748b','S',0,''],['incar','🚙','車内滞在','#0f766e','S',1,''],['spplay','📲','スマホ操作','#d946ef','S',1,''],['wc','🚻','トイレ','#94a3b8','S',0,''],
@@ -2737,7 +2737,7 @@ const KIND_GRP=[['A','🤖','AI','#7a6ef3'],['D','💻','PC・スマホ作業','
 /* 選ぶ時の木：大きい所 → 細かい所。d＝そこから選んだら道具も付ける */
 const KIND_TREE=[{id:'pc',ic:'💻',lb:'PC',d:'pc',ch:[{id:'ai',ic:'🤖',lb:'AI',ch:['ai','aibiz','aiwork']},'pcwork']},
  {id:'sp',ic:'📱',lb:'スマホ',d:'phone',ch:[{id:'ai',ic:'🤖',lb:'AI',ch:['ai','aibiz','aiwork']},'spwork','spplay']},
- {id:'car',ic:'🚗',lb:'中古車',ch:['mkt','c_list','c_aaadj','c_aalive','c_aapick','c_aaafter','c_aaclaim','repair','c_buy','c_sell','c_cust','c_dmv']},
+ {id:'car',ic:'🚗',lb:'中古車',ch:['mkt','c_list','c_aaadj','c_aalive','c_aapick','c_aaafter','c_aaclaim','repair','c_buy','c_sell','c_cust','c_dmv','c_garage']},
  {id:'torii',ic:'⛩️',lb:'Torii Link',ch:['gyg']},{id:'yen',ic:'💴',lb:'お金',ch:['m_tr','m_io','m_atm','m_tax','gov']},{id:'tel',ic:'📞',lb:'連絡',ch:['bizcall','famcall','errand','chat']},
  {id:'self',ic:'👤',lb:'自分',ch:['sleep','meal','move','exer','bath','spa','rest','nap','incar','spplay','shop','wc']},{id:'fam',ic:'👦',lb:'家族',ch:['son','family','famcall']},{id:'etc',ic:'📍',lb:'その他',ch:null}];
 /* 道具（何を使って）。行に1つだけ付く（d） */
@@ -2774,7 +2774,7 @@ function kCatHtml(k,path,d,dx){const P=String(path||'').split('/').filter(Boolea
   return '<button class="ac-kc on" data-akp="">▴<span>とじる</span></button><div class="ac-kall">'+KIND_TREE.map(t=>{const fo=!!FD[t.id];
     const lv=t.ch?t.ch.map(c=>typeof c==='string'?kb(c,t):c.ch.map(x=>kb(x,t)).join('')).join(''):(etc.map(id=>kb(id,t)).join('')+'<button class="ac-plus" data-ak-add="1" aria-label="種類を足す">＋</button>');
     return '<div class="ac-kgp"><button class="ac-kgh'+(fo?' f':'')+'" data-akf="'+t.id+'">'+t.ic+'<span>'+esc(t.lb)+'</span><i>'+(fo?'▸':'▾')+'</i></button>'+(fo?'':'<div class="ac-kl">'+lv+'</div>')+'</div>';}).join('')+'</div>';}
-const KIND_WORDS=[[/役所|区役所|市役所|警察|郵便局|免許|年金|税務署/,'gov'],[/オイル|整備|修理|交換|洗車|磨き|板金|タイヤ|バッテリー/,'repair'],[/相場|リサーチ|価格調査/,'mkt'],[/出品|撮影|写真撮り|掲載/,'c_list'],[/落札後|名変|書類/,'c_aaafter'],[/引取|陸送|回送/,'c_aapick'],[/クレーム/,'c_aaclaim'],
+const KIND_WORDS=[[/車庫証明|車庫/,'c_garage'],[/役所|区役所|市役所|警察|郵便局|免許|年金|税務署/,'gov'],[/オイル|整備|修理|交換|洗車|磨き|板金|タイヤ|バッテリー/,'repair'],[/相場|リサーチ|価格調査/,'mkt'],[/出品|撮影|写真撮り|掲載/,'c_list'],[/落札後|名変|書類/,'c_aaafter'],[/引取|陸送|回送/,'c_aapick'],[/クレーム/,'c_aaclaim'],
  [/AAライブ|ライブ入札|入札/,'c_aalive'],[/AA|オークション/,'c_aaadj'],[/陸自|陸運|車検|登録|ナンバー/,'c_dmv'],[/買取/,'c_buy'],[/販売|成約|納車/,'c_sell'],[/客|問い合わせ|問合せ|見積/,'c_cust'],
  [/GetYourGuide|GYG|Torii/i,'gyg'],[/確定申告/,'m_tax'],[/振込|振り込/,'m_tr'],[/ATM/i,'m_atm'],[/入金|出金|入出金/,'m_io'],
  [/(家族|親|母|父|妻|子).*(電話|連絡|LINE)|(電話|連絡|LINE).*(家族|親|母|父|息子)/,'famcall'],[/息子/,'son'],[/雑談|友達|友人/,'chat'],[/病院|役所|区役所|手続/,'errand'],[/電話|連絡|メール|LINE|返信|メッセージ/,'bizcall'],
@@ -3434,7 +3434,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+   /* 同期の状態1行と記録（クラウド版 c1.9） */
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c5.9）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c6.0）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -7978,7 +7978,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c5.9";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c6.0";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 /* ログインの後：同じユーザーなら影はそのまま（全件受信をやり直さない）。違うユーザーならそのユーザーの影を読む */
 async function clAfterLogin(){
