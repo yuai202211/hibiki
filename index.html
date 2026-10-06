@@ -1790,7 +1790,7 @@ function mergeStates(a,b){
       out.payrep=out.payrep||{};const cur=out.payrep[k];
       if(!cur||((nu.ts||0)>(cur.ts||0)))out.payrep[k]=nu;}
     /* 📚 ルーティン（rtn）とその記録（rlog）。1件ずつ新しい方が勝つ。使うまで項目を作らない */
-    for(const k of ['rtn','rlog','payppl','kinds','tools','places','projects','marks','bedp','arp','todos'])for(const id in (src[k]||{})){   /* kinds／tools＝行の種類・道具（c1.1） */const nu=src[k][id];if(!nu)continue;
+    for(const k of ['rtn','rlog','payppl','kinds','tools','places','projects','marks','bedp','arp','todos','plreg'])for(const id in (src[k]||{})){   /* kinds／tools＝行の種類・道具（c1.1） */const nu=src[k][id];if(!nu)continue;
       out[k]=out[k]||{};const cur=out[k][id];if(!cur||((nu.ts||0)>(cur.ts||0)))out[k][id]=nu;}
     for(const id in (src.pins||{})){const nu=src.pins[id];if(!nu)continue;
       out.pins=out.pins||{};const cur=out.pins[id];
@@ -1810,7 +1810,7 @@ function mergeStates(a,b){
   /* 知らないトップレベル項目も捨てない（新旧バージョン混在でもデータを失わない） */
   /* payrep も必ずここに入れる。入れ忘れると、下の「知らない項目」の写しが、1件ずつ合わせた結果を丸ごと上書きする
      ＝別の端末で止めた・再開した印が消える（2026-09-30レビュー指摘） */
-  const known={updatedAt:1,dream:1,entries:1,plans:1,ai:1,dreams:1,memos:1,life:1,photos:1,pha:1,pays:1,rules:1,aims:1,moves:1,pins:1,steps:1,payrep:1,rtn:1,rlog:1,payppl:1,kinds:1,tools:1,places:1,projects:1,marks:1,bedp:1,scr:1,alarm:1,arp:1,todos:1};
+  const known={updatedAt:1,dream:1,entries:1,plans:1,ai:1,dreams:1,memos:1,life:1,photos:1,pha:1,pays:1,rules:1,aims:1,moves:1,pins:1,steps:1,payrep:1,rtn:1,rlog:1,payppl:1,kinds:1,tools:1,places:1,projects:1,marks:1,bedp:1,scr:1,alarm:1,arp:1,todos:1,plreg:1};
   const newer=((b.updatedAt||0)>=(a.updatedAt||0))?b:a;
   const older=(newer===b)?a:b;
   for(const k in older)if(!known[k]&&older[k]!==undefined)out[k]=older[k];
@@ -2718,10 +2718,27 @@ function placePrefOf(nm){let best=null;for(const d in state.entries){const eo=st
 function placeChipsPref(code){const c={},last={};for(const d in state.entries){const eo=state.entries[d];for(const k in eo){const en=eo[k];if(!en||en.del||en.mv||!en.p)continue;c[en.p]=(c[en.p]||0)+1;if(!last[en.p]||d>last[en.p])last[en.p]=d;}}
   return Object.keys(c).filter(nm=>placePrefOf(nm)===code).sort((a,b)=>(last[b]||'').localeCompare(last[a]||'')||c[b]-c[a]);}
 /* c8.7：県ごとの5つ。東京は本人が決めた普段の5つ（無ければよく使う順）。ほかの県は直近60日→全期間の多い順 */
-function placeTop(code){if(code===13){const p=pin5();if(p.length)return p;}
+function placeTop0(code){if(code===13){const p=pin5();if(p.length)return p;}
   const c60={},c={},lo=addDays(todayStr(),-60);for(const d in state.entries){const eo=state.entries[d];for(const k in eo){const en=eo[k];if(!en||en.del||en.mv||!en.p)continue;c[en.p]=(c[en.p]||0)+1;if(d>=lo)c60[en.p]=(c60[en.p]||0)+1;}}
   return Object.keys(c).filter(nm=>placePrefOf(nm)===code).sort((a,b)=>(c60[b]||0)-(c60[a]||0)||c[b]-c[a]).slice(0,5);}
-function placeOther(){const sh={};placeTop(13).concat(placeTop(11)).forEach(p=>sh[p]=1);return placeChips().filter(p=>!sh[p]);}
+function placeOther0(){const sh={};placeTop0(13).concat(placeTop0(11)).forEach(p=>sh[p]=1);return placeChips().filter(p=>!sh[p]);}
+/* c8.8：登録した場所（g＝tk東京／st埼玉／ot ほか、o＝並び。no＝「しない」で次に聞く日） */
+function plId(nm){return 'r'+strHash(placeKey(nm));}
+function plHas(){const r=state.plreg||{};for(const id in r)if(r[id]&&r[id].g)return true;return false;}
+function plSeed(){if(plHas())return;state.plreg=state.plreg||{};const now=Date.now();
+  const add=(arr,g)=>arr.forEach((p,i)=>{const id=plId(p);if(!state.plreg[id]||!state.plreg[id].g)state.plreg[id]={p,g,o:i,ts:now};});
+  add(placeTop0(13),'tk');add(placeTop0(11),'st');add(placeOther0(),'ot');}
+function placeReg(g){const r=state.plreg||{},out=[];for(const id in r){const x=r[id];if(x&&x.g===g&&x.p)out.push(x);}return out.sort((a,b)=>(a.o||0)-(b.o||0)).map(x=>x.p);}
+function plAsk(p,pf,isMv){try{if(isMv||!p||!plHas())return false;const id=plId(p),r=(state.plreg||{})[id],t=todayStr();
+  if(r&&r.g)return false;if(r&&r.no&&r.no>t)return false;
+  const lo=addDays(t,-6);let c=0;for(const d in state.entries){if(d<lo||d>t)continue;const eo=state.entries[d];for(const k in eo){const en=eo[k];if(en&&!en.del&&!en.mv&&en.p===p)c++;}}
+  if(c<2)return false;const sug=Number(pf)===13?'tk':Number(pf)===11?'st':'ot';
+  openSub('<div class="sh-time"><span>📍 場所のボタンに登録する？</span></div><div class="sh-note" style="text-align:left"><b>'+esc(p)+'</b>（直近7日で'+c+'回書いた）</div>'+
+    '<div class="sr-r big">'+[['tk','🗼 東京'],['st','🌾 埼玉'],['ot','📂 ほか']].map(x=>'<button class="chip'+(x[0]===sug?' sel':'')+'" data-plg="'+x[0]+'">'+x[1]+' に登録</button>').join('')+'</div>'+
+    '<div class="sh-btns"><button class="delbtn" id="plNo">しない（30日後にまた聞く）</button></div>',null);
+  $('sheet2').querySelectorAll('[data-plg]').forEach(b=>b.onclick=()=>{const g=b.dataset.plg;const o=placeReg(g).length;mutate(()=>{state.plreg=state.plreg||{};state.plreg[id]={p,g,o,ts:Date.now()};});closeSub();toast('📍 '+p+' を登録した');});
+  $('plNo').onclick=()=>{mutate(()=>{state.plreg=state.plreg||{};state.plreg[id]={p,no:addDays(t,30),ts:Date.now()};});closeSub();};
+  return true;}catch(e){return false;}}
 function placeChips(){
   /* 固定チップ＋自分がよく書く場所（育つ）。重複は出さない */
   const seen={},rc={},lim=addDays(todayStr(),-14);
@@ -3507,7 +3524,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+   /* 同期の状態1行と記録（クラウド版 c1.9） */
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c8.7）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c8.8）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -3970,7 +3987,8 @@ function openEntrySheet(date,ref){
   };
   bindChips();
   {const fl=$('pFlt');if(fl&&pc){let picked=false;const auto=()=>{const c=Number(sheetSt&&sheetSt.pf)||0;return c===13||c===11?c:-1;};
-    const paintF=()=>{fl.querySelectorAll('[data-pfl]').forEach(b=>b.classList.toggle('sel',Number(b.dataset.pfl)===pfl));curChips=pfl===-1?placeOther():placeTop(pfl);
+    if(!plHas())mutate(plSeed);   /* c8.8：初めての時だけ、今の東京5・埼玉5・ほかを登録済みにする */
+    const paintF=()=>{fl.querySelectorAll('[data-pfl]').forEach(b=>b.classList.toggle('sel',Number(b.dataset.pfl)===pfl));curChips=placeReg(pfl===-1?'ot':pfl===13?'tk':'st');
       pc.innerHTML=curChips.length?curChips.map(p=>'<button class="chip" data-p="'+esc(p)+'">'+esc(p)+'</button>').join(''):'<span class="sh-note">'+(pfl===-1?'ほかの場所はまだ無い':'この県の場所はまだ無い')+'</span>';bindChips();};
     fl.querySelectorAll('[data-pfl]').forEach(b=>b.onclick=()=>{picked=true;pfl=Number(b.dataset.pfl);paintF();});
     pfl=auto();paintF();
@@ -4095,7 +4113,7 @@ function openEntrySheet(date,ref){
       state.entries[d0][saveKey]=ne;
     });
     closeSheet();toast(d0!==ui.date?('✓ '+payMD(d0)+' に記録した'):'✓ 記録した');   /* 0時をまたいだ時など、見ている日と違う日に保存した時は日付を添える */
-    if(!prev&&d0===todayStr())stepNudge();   /* 今日の記録を新しく書いた直後＝きっかけ。「今日の1個」を1回だけ見せる */
+    if(!plAsk(p,pfS,isMv)&&!prev&&d0===todayStr())stepNudge();   /* c8.8：登録する？を聞いた時は出さない */   /* 今日の記録を新しく書いた直後＝きっかけ。「今日の1個」を1回だけ見せる */
   };
   const del=$('shDel');
   if(del)del.onclick=()=>{
@@ -7709,7 +7727,7 @@ async function clRpcJson(name,body,sig,ms){const t=await clRpcText(name,typeof b
 async function clRpc(name,body){return clRpcJson(name,body);}   /* 旧版と同じ名前（他から呼ばれても動く） */
 
 /* ---------- state ⇄ 項目（1行） ---------- */
-const CL_ID=['dreams','memos','pays','aims','moves','pins','steps','payrep','rtn','rlog','payppl','pha','kinds','tools','places','projects','marks','bedp','arp','todos'];   /* c7.9：todos＝📋やる事 */   /* c4.8：arp＝場所ごとの区・市町村 */   /* c4.7：marks＝🕳️😤😫の申告、bedp＝場所ごとの🛏️/🪑 */
+const CL_ID=['dreams','memos','pays','aims','moves','pins','steps','payrep','rtn','rlog','payppl','pha','kinds','tools','places','projects','marks','bedp','arp','todos','plreg'];   /* c7.9：todos＝📋やる事 */   /* c4.8：arp＝場所ごとの区・市町村 */   /* c4.7：marks＝🕳️😤😫の申告、bedp＝場所ごとの🛏️/🪑 */
 const CL_DAY=['ai','rules','scr'];   /* c4.7：scr＝夜に入れる📲📞の数字（日ごと） */
 const CL_DAY2=['entries','plans'];
 const CL_SKIP={updatedAt:1,photos:1};
@@ -8273,7 +8291,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c8.7";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c8.8";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 /* ログインの後：同じユーザーなら影はそのまま（全件受信をやり直さない）。違うユーザーならそのユーザーの影を読む */
 async function clAfterLogin(){
