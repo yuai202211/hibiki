@@ -806,6 +806,8 @@
   .st-al{display:block;width:calc(100% - 24px);margin:2px 12px 6px;padding:9px 12px;border-radius:12px;background:#fff1e6;color:#c2410c;font-weight:800;text-align:left;font-size:13px}.st-al span{float:right}.st-al b{color:#e0405a}
   .st-top{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:4px 0 6px}.st-top div{background:#fff;border:1px solid var(--line);border-radius:14px;padding:8px 4px;text-align:center}.st-top b{display:block;font-size:22px;color:#0a9a54}.st-top .w b{color:#c2410c}.st-top span{font-size:11px;font-weight:800;color:#6b7280}
   .st-it{display:block;width:100%;text-align:left;padding:10px 12px;border-radius:14px;background:#fff;border:1px solid var(--line);margin-top:6px;font-weight:700}.st-it.wip{border-color:#fdd9b5}.st-it em{float:right;font-style:normal;font-size:12px;font-weight:800;color:#c2410c}.st-it em.ov,.st-it em.un{color:#e0405a}.st-it small{display:block;color:#8a93a6;font-weight:600;margin-top:2px}
+  .an-grp{cursor:pointer}.an-grp .an-nm small{display:block;font-size:10.5px;color:#9aa3b5;font-weight:700}.an-grp.op{background:#f6f7fb}
+  .an-sub{margin:-2px 0 6px 18px;padding-left:8px;border-left:3px solid #e3e6ee}.an-row.sm{padding-top:4px;padding-bottom:4px}.an-row.sm .an-nm{font-size:12.5px}
   .an-multi{margin:6px 0 10px;padding:8px 12px;border-radius:12px;background:#fff8e1;color:#a16207;font-weight:800;font-size:13px}.an-multi b{font-size:16px;margin-left:4px}.an-multi small{display:block;font-weight:600;color:#a8790a;font-size:11px}
   .sm-h{font-size:12px;font-weight:800;color:#5b6475;margin-top:8px}
   .sm-g{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin:6px 0 12px}.sm-g i{position:relative;height:44px;border-radius:8px;background:#f1f3f8;display:block;overflow:hidden;font-style:normal}
@@ -3456,7 +3458,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+   /* 同期の状態1行と記録（クラウド版 c1.9） */
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c7.3）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c7.4）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -6323,7 +6325,7 @@ const ANA_REC={sleep:1,work:1,ai:1,stay:1,meal:1,rest:1,incar:1,spplay:1,spwork:
 function anaKinds(){const a=KIND_BASE.map(b=>kindOf(b[0])).concat(kindOwnIds().map(kindOf)).filter(Boolean).slice(0,250);a.push(ANA_RTN,ANA_UNK);return a;}
 const MV_V2_TS=1791039600000;   /* c1.1（2026-10-04）以降に保存した移動だけ、空白をムダに数える */
 const ANA_NOTR=10,ANA_WALK=9;   /* mvm：TRS の順で 1..9（徒歩＝9）、乗り物なし＝10 */
-let anaUnit='week',anaBase=null,anaMore={},anaPfSel=-1,anaOpen=null;
+let anaUnit='week',anaBase=null,anaMore={},anaPfSel=-1,anaOpen=null,anaGrpSel='';
 const anaCache=[];
 const hmMin=s=>{const a=String(s||'').split(':').map(Number);return (a[0]||0)*60+(a[1]||0);};
 function anaRange(unit,base){
@@ -6365,7 +6367,7 @@ function anaCount0(r,days,N,limit,nowIdx){
       if(en.e){b=off+hmMin(en.e)+(Number(en.ed)||0)*1440;if(b<=a)b+=1440;}
       else if(d>=addDays(todayStr(),-1))b=P+nowIdx;else continue;   /* 終了時刻の無い記録は数えない（寝ている途中・移動中だけ今まで） */
       const mv=!!en.mv,kk=mv?'move':(ANA_REC[en.k]?en.k:'stay'),tr=mv?TRS.findIndex(t=>t[0]===en.tr):-1;
-      items.push({a,b,c:IX[kk],acts:Array.isArray(en.acts)?en.acts:[],off,mv,car:en.k==='incar',aiT:(en.k==='ai'&&Array.isArray(en.ai))?en.ai:null,bd:(en.bd===0?0:(en.bd===1?1:-1)),trip:mv&&mvTrip(en),tv:mv?(tr>=0?tr+1:ANA_NOTR):0,v2:mv&&(d>='2026-10-04'||(Number(en.ts)||0)>=MV_V2_TS),pf:prefOf(en.pf)?Number(en.pf):0,pf0:(mv&&prefOf(en.pf0))?Number(en.pf0):0,lb:mv?String(en.rt||'移動'):String(en.p||((kindOf(en.k||'stay')||{}).lb)||''),et:(mv||en.k==='sleep')?0:((typeof en.d==='string'&&en.d)?tIx(en.d):(en.dx?tIx('_other'):0))});}}
+      items.push({a,b,c:IX[kk],acts:Array.isArray(en.acts)?en.acts:[],off,mv,car:en.k==='incar',ar:mv?'':String(en.ar||''),plc:mv?'':String(en.p||''),aiT:(en.k==='ai'&&Array.isArray(en.ai))?en.ai:null,bd:(en.bd===0?0:(en.bd===1?1:-1)),trip:mv&&mvTrip(en),tv:mv?(tr>=0?tr+1:ANA_NOTR):0,v2:mv&&(d>='2026-10-04'||(Number(en.ts)||0)>=MV_V2_TS),pf:prefOf(en.pf)?Number(en.pf):0,pf0:(mv&&prefOf(en.pf0))?Number(en.pf0):0,lb:mv?String(en.rt||'移動'):String(en.p||((kindOf(en.k||'stay')||{}).lb)||''),et:(mv||en.k==='sleep')?0:((typeof en.d==='string'&&en.d)?tIx(en.d):(en.dx?tIx('_other'):0))});}}
   for(const x of rlogList()){if(!x.s||!x.e||x.d<dayList[0]||x.d>dayList[dayList.length-1])continue;const off=P+Math.round((parseD(x.d)-parseD(r.s))/86400000)*1440;
     let a=off+hmMin(x.s),b=off+hmMin(x.e);if(b<=a)b+=1440;items.push({a,b,c:IX.rtn,acts:[],off,rtn:1,mv:false,tv:0,v2:false,pf:0});}
   items.sort((p,q)=>p.a-q.a||q.b-p.b);
@@ -6375,7 +6377,8 @@ function anaCount0(r,days,N,limit,nowIdx){
   /* 第2パス：1行ずつの行。時刻あり→分数だけ（前寄せ）→移動の「押すだけの行」は残りを等分 */
   items.forEach((it,ix)=>{if(!it.acts.length)return;
     const NAPX=alarmCfg().nap,isNap=ki=>ki&&(ki===IX.nap||((it.car||it.mv)&&ki===IX.sleep));   /* 仮眠の上限（本人決定：1回30分を超えた分はムダ。分は⏰で変えられる） */
-    const seated=ac=>(ac&&ac.bd===0)||(ac&&ac.bd!==1&&(it.bd===0||(it.car&&it.bd!==1)));   /* c4.7：🪑座ったまま（車内は🛏️と言わない限り🪑） */
+    const seated=ac=>(ac&&ac.bd===0)||(ac&&ac.bd!==1&&(it.bd===0||(it.car&&it.bd!==1)));
+    if(it.bd!==1&&it.acts.some(ac=>ac&&(ac.k==='sleep'||ac.k==='nap')&&ac.bd===1))it.bd=1;   /* c7.4：行で🛏️と答えた寝方 */   /* c4.7：🪑座ったまま（車内は🛏️と言わない限り🪑） */
     const put=(m,ki,ti,u,ac)=>{claimed[m]=1;if(it.mv)mva[m]=ki||255;else if(ki)cat[m]=ki;if(ti)tool[m]=ti;if(u!=null&&u>=NAPX&&isNap(ki))nx[m]=1;if((ki===IX.sleep||ki===IX.nap)&&seated(ac))bz[m]=1;};
     const timed=[],mins=[],whole=[];
     for(const ac of it.acts){if(!ac)continue;const ki=kIx(ac.k),ti=tIx(ac.d);
@@ -6401,6 +6404,7 @@ function anaCount0(r,days,N,limit,nowIdx){
   const IXM=IX.move,IXR=IX.rtn,NK=K.length+1;
   const sum=new Int32Array(NK+1),toolS=new Int32Array(256),mvT=new Int32Array((ANA_NOTR+1)*5),mvA=new Int32Array(256),mvD=new Int32Array(256),
     pfS=new Int32Array(48),pfM=new Int32Array(48),pfB=new Int32Array(48),pfK=new Int32Array(48*256),mdK=new Int32Array(256);
+  const plM={},arM={};let slLy=0,slSe=0,slUn=0;   /* c7.4：場所・区市町村（1分1つ）／寝方 */
   let rec=0,mdBlank=0,mdTot=0,mdBz=0,mdMeal=0,mdTrip=0;const A0=alarmCfg(),mealMin=hmMin(A0.meal),lateMeal=tod=>mealMin>=720?(tod>=mealMin||tod<300):(tod>=mealMin&&tod<300);   /* c4.8：深夜の食事（⏰の時刻〜5時） */
   for(let m=P;m<P+limit;m++){const c=cat[m],o=own[m];sum[c]++;if(o<0)continue;rec++;
     const p=pfL[m],a=mva[m],t=tool[m];let md=0;
@@ -6415,6 +6419,8 @@ function anaCount0(r,days,N,limit,nowIdx){
     if(t)toolS[t]++;
     if(p)pfS[p]++;else if(c!==IXR)pfS[0]++;
     if(md){mdTot++;pfM[p]++;}
+    {const it=items[o];if(it&&!it.mv&&!it.rtn){if(it.plc)plM[it.plc]=(plM[it.plc]||0)+1;if(it.ar)arM[it.ar]=(arM[it.ar]||0)+1;}
+      if(c===IX.sleep||c===IX.nap||(it&&it.mv&&(a===IX.sleep||a===IX.nap))){if(bz[m])slSe++;else if(it&&(it.bd===1))slLy++;else slUn++;}}
     pfK[p*256+c]++;}
   /* c4.8：生活リズムのムダ（本人決定 2026-10-06）：🦉寝る時刻を過ぎた分・⏰起きる時刻を過ぎた分・🔁二度寝の分・😪寝すぎ（9.5時間超の分）。期間の起きた日ごと */
   let mdLate=0,mdOver=0,mdNap2=0,mdExcess=0;{const by=sleepSessions(),bedM=hmMin(A0.bed),wakeM=hmMin(A0.wake);
@@ -6462,7 +6468,7 @@ function anaCount0(r,days,N,limit,nowIdx){
   for(let v=1;v<=ANA_NOTR;v++){const bs=v*5;if(!mvT[bs])continue;const x={tot:mvT[bs],used:mvT[bs+1],mudaAct:mvT[bs+2],blank:mvT[bs+3],old:mvT[bs+4]};
     means[v<=TRS.length?TRS[v-1][0]:'_none']=x;mt+=x.tot;mu+=x.used;mb+=x.blank;mo+=x.old;mm+=x.mudaAct;}
   const prefKind={};for(let p=0;p<48;p++){if(!pfS[p])continue;const o={};for(let c=1;c<=K.length;c++){const v=pfK[p*256+c];if(v)o[K[c-1].id]=v;}prefKind[p]=o;}
-  return {total:limit,rec,K,sum:sumO,sum1:sum1O,multi,aiUse,tool:obj(toolS,i=>TL[i-1]),pref:obj(pfS,i=>i,0),prefMuda:obj(pfM,i=>i,0),prefBlank:obj(pfB,i=>i,0),prefKind,
+  return {total:limit,rec,K,sum:sumO,sum1:sum1O,multi,aiUse,places:plM,areas:arM,sleepHow:{lying:slLy,seated:slSe,unknown:slUn},tool:obj(toolS,i=>TL[i-1]),pref:obj(pfS,i=>i,0),prefMuda:obj(pfM,i=>i,0),prefBlank:obj(pfB,i=>i,0),prefKind,
     mv:{means,acts:obj(mvA,kid),tools:obj(mvD,i=>TL[i-1]),tot:mt,used:mu,blank:mb,old:mo,mudaAct:mm},
     muda:{blank:mdBlank,kinds:obj(mdK,kid),bedx:mdBz,meal:mdMeal,trip:mdTrip,late:mdLate,over:mdOver,nap2:mdNap2,excess:mdExcess,scrSp:mdScrSp,scrTel:mdScrTel,rh:mdRh,marks:mk,total:mdTot,all:mdTot+mdRh},unknown:sum[IX['?']]||0,visits:vis};
 }
@@ -6522,8 +6528,11 @@ function renderAnaPage(keep){
   const hbT=G1.hb.h+G1.hb.b;
   const grpBody=(hbT?'<div class="an-hb"><div class="an-hb1"><b>🧠 頭脳 '+hh(G1.hb.h)+'</b><b>💪 肉体 '+hh(G1.hb.b)+'</b></div><div class="an-bar"><i style="flex:'+(G1.hb.h||0.0001)+';background:#7a6ef3"></i><i style="flex:'+(G1.hb.b||0.0001)+';background:#b45309"></i></div></div>':'')+
     '<div class="an-list">'+KIND_GRP.filter(g=>(G1.o[g[0]]||0)>0||(G0.o[g[0]]||0)>0).map(g=>{const m=Math.max(0,G1.o[g[0]]||0),pm=Math.max(0,G0.o[g[0]]||0);
-      return '<div class="an-row'+(g[0]==='M'?' md':'')+'"><span class="an-ic">'+g[1]+'</span><span class="an-nm">'+g[2]+'</span><span class="an-mb"><i style="width:'+(m?Math.max(2,Math.round(m/gmx*100)):0)+'%;background:'+g[3]+'"></i></span><span class="an-h">'+hh(m)+'<small>'+Math.round(m/rec*100)+'%</small></span>'+gd(m,pm)+'</div>';}).join('')+'</div>'+
-    '<div class="an-empty">移動中にした事（🔊音声で学ぶ など）は、その分野に数える。％＝記録のある時間に対して</div>';
+      const op=anaGrpSel===g[0];const kin=op?Object.keys(cur.sum).filter(id=>{if(id==='_none'||id==='_untyped'||!cur.sum[id])return false;const k=id==='rtn'?{g:'A'}:kindOf(id);return ((kindMuda(id)?'M':((k&&k.g)||'X'))===g[0]);}).sort((a,b)=>cur.sum[b]-cur.sum[a]):[];
+      const kx=kin.length?Math.max(...kin.map(id=>cur.sum[id])):1;
+      const sub=op?'<div class="an-sub">'+(kin.length?kin.map(id=>{const k=kOf(id);return '<div class="an-row sm"><span class="an-ic">'+esc(k.ic)+'</span><span class="an-nm">'+esc(k.lb)+'</span><span class="an-mb"><i style="width:'+Math.max(2,Math.round(cur.sum[id]/kx*100))+'%;background:'+esc(k.co||g[3])+'"></i></span><span class="an-h">'+hh(cur.sum[id])+'</span><span class="an-d"></span></div>';}).join(''):'<div class="an-empty">中身なし</div>')+'</div>':'';
+      return '<div class="an-row an-grp'+(g[0]==='M'?' md':'')+(op?' op':'')+'" data-agp="'+g[0]+'"><span class="an-ic">'+g[1]+'</span><span class="an-nm">'+g[2]+'<small>'+(op?'▾ たたむ':'▸ 中身')+'</small></span><span class="an-mb"><i style="width:'+(m?Math.max(2,Math.round(m/gmx*100)):0)+'%;background:'+g[3]+'"></i></span><span class="an-h">'+hh(m)+'<small>'+Math.round(m/rec*100)+'%</small></span>'+gd(m,pm)+'</div>'+sub;}).join('')+'</div>'+
+    '<div class="an-empty">分野を押すと中身（種類ごとの時間）。移動中にした事（🔊音声で学ぶ など）は、その分野に数える。％＝記録のある時間に対して</div>';
   const kindBody='<div class="an-list">'+moreList('kind',6,rows).map(kRow).join('')+moreBtn('kind',6,rows.length)+
     '<div class="an-row none"><span class="an-ic">⬜</span><span class="an-nm">記録なし</span><span class="an-mb"></span><span class="an-h">'+hh(none)+'<small>'+Math.round(none/tot*100)+'%</small></span><span class="an-d"></span></div></div>';
   /* 🚗 移動の中身：乗り物ごとに2段（4色バー：活用／ムダ印の活動／空白／未入力・徒歩） */
@@ -6567,7 +6576,18 @@ function renderAnaPage(keep){
     '<div class="an-tabs">'+[['day','日'],['week','週'],['month','月'],['year','年']].map(u=>'<button data-au="'+u[0]+'"'+(anaUnit===u[0]?' class="on"':'')+'>'+u[1]+'</button>').join('')+'</div>'+
     '<div class="an-nav"><button id="anPrev">‹</button><b>'+esc(anaLabel(anaUnit,r))+'</b><button id="anNext"'+(isCur?' disabled':'')+'>›</button></div>'+
     (cur.total?(card+anaStreakHtml()+bar+(cur.multi?'<div class="an-multi">⚡ 同時にやった時間 <b>'+hh(cur.multi)+'</b><small>重なった分は、どの事にも丸ごと数える（合計は24時間を超えてよい）</small></div>':'')+
-      sec('grp','📦 分野（AI・中古車・自分…）',grpBody)+(Object.keys(cur.aiUse||{}).length?sec('aitl','🤖 使ったAI',(()=>{const u=cur.aiUse,pu=prev.aiUse||{},ks=Object.keys(u).sort((a,b)=>u[b]-u[a]),mx=Math.max(1,...ks.map(k=>u[k]));return '<div class="an-list">'+ks.map(k=>{const z=aiTool(k)||{lb:k,co:'#7a6ef3'};return '<div class="an-row"><span class="an-ic" style="color:'+z.co+'">●</span><span class="an-nm">'+esc(z.lb)+'</span><span class="an-mb"><i style="width:'+Math.max(2,Math.round(u[k]/mx*100))+'%;background:'+z.co+'"></i></span><span class="an-h">'+hh(u[k])+'</span>'+gd(u[k],pu[k]||0)+'</div>';}).join('')+'</div><div class="an-empty">同時に使った分は、どのAIにも丸ごと数える</div>';})()):'')+sec('kind','何をした',kindBody)+sec('mv','🚗 移動の中身',mvBody)+sec('tool','🛠 何を使って',toolBody)+sec('pf','🗾 どこで',pfBody)+
+      sec('grp','📦 分野（AI・中古車・自分…）',grpBody)+(Object.keys(cur.aiUse||{}).length?sec('aitl','🤖 使ったAI',(()=>{const u=cur.aiUse,pu=prev.aiUse||{},ks=Object.keys(u).sort((a,b)=>u[b]-u[a]),mx=Math.max(1,...ks.map(k=>u[k]));return '<div class="an-list">'+ks.map(k=>{const z=aiTool(k)||{lb:k,co:'#7a6ef3'};return '<div class="an-row"><span class="an-ic" style="color:'+z.co+'">●</span><span class="an-nm">'+esc(z.lb)+'</span><span class="an-mb"><i style="width:'+Math.max(2,Math.round(u[k]/mx*100))+'%;background:'+z.co+'"></i></span><span class="an-h">'+hh(u[k])+'</span>'+gd(u[k],pu[k]||0)+'</div>';}).join('')+'</div><div class="an-empty">同時に使った分は、どのAIにも丸ごと数える</div>';})()):'')+sec('kind','何をした',kindBody)+sec('mv','🚗 移動の中身',mvBody)+sec('tool','🛠 何を使って',toolBody)+(()=>{   /* c7.4 */
+      const lst=(o,ic,n0)=>{const ks=Object.keys(o||{}).sort((a,b)=>o[b]-o[a]);if(!ks.length)return '';const mx2=o[ks[0]];const key='x'+ic;const sh=(anaMore[key]||ks.length<=n0)?ks:ks.slice(0,n0);
+        return '<div class="an-list">'+sh.map(k=>'<div class="an-row"><span class="an-ic">'+ic+'</span><span class="an-nm">'+esc(k)+'</span><span class="an-mb"><i style="width:'+Math.max(2,Math.round(o[k]/mx2*100))+'%;background:#0bc167"></i></span><span class="an-h">'+hh(o[k])+'</span><span class="an-d"></span></div>').join('')+moreBtn(key,n0,ks.length)+'</div>';};
+      const sh=cur.sleepHow||{},slT=(sh.lying||0)+(sh.seated||0)+(sh.unknown||0);
+      const slB=slT?'<div class="an-bar">'+(sh.lying?'<i style="flex:'+sh.lying+';background:#5b4fd6"></i>':'')+(sh.seated?'<i style="flex:'+sh.seated+';background:#e0405a"></i>':'')+(sh.unknown?'<i style="flex:'+sh.unknown+';background:#e3e6ee"></i>':'')+'</div><div class="db-lg" style="margin-top:6px"><span class="db-l"><i style="background:#5b4fd6"></i>🛏️ 横になれた <b>'+hh(sh.lying||0)+'</b></span><span class="db-l m"><i style="background:#e0405a"></i>🪑 座ったまま <b>'+hh(sh.seated||0)+'</b></span><span class="db-l n"><i style="background:#e3e6ee"></i>❔ 答えていない <b>'+hh(sh.unknown||0)+'</b></span></div>':'';
+      const stL=stList().filter(x=>{const dd=x.a.st==='done'?(x.a.dn||x.d):x.d;return dd>=r.s&&dd<r.e;}),stD=stL.filter(x=>x.a.st==='done').length,stW=stL.filter(x=>x.a.st==='wip').length;
+      let scS=0,scT=0,scN=0;for(const d in (state.scr||{})){const v=state.scr[d];if(!v||v.del||d<r.s||d>=r.e)continue;scS+=Number(v.sp)||0;scT+=Number(v.tel)||0;scN++;}
+      return (Object.keys(cur.places||{}).length?sec('place','📍 場所ごと',lst(cur.places,'📍',6)):'')+
+        (Object.keys(cur.areas||{}).length?sec('area','🏙️ 区・市町村ごと',lst(cur.areas,'🏙️',6)):'')+
+        (slT?sec('slh','😴 寝方（睡眠・仮眠）',slB):'')+
+        ((stD||stW)?sec('stk','🧱 積み上げ','<div class="an-list"><div class="an-row"><span class="an-ic">✅</span><span class="an-nm">完了</span><span class="an-mb"></span><span class="an-h">'+stD+'件</span><span class="an-d"></span></div><div class="an-row"><span class="an-ic">⏸</span><span class="an-nm">途中で終了</span><span class="an-mb"></span><span class="an-h">'+stW+'件</span><span class="an-d"></span></div></div><button class="an-pjb" id="anSt">🧱 積み上げを開く</button>'):'')+
+        (scN?sec('scr','📲📞 夜に入れた数字','<div class="an-list"><div class="an-row"><span class="an-ic">📲</span><span class="an-nm">スマホ（'+scN+'日分）</span><span class="an-mb"></span><span class="an-h">'+hh(scS)+'</span><span class="an-d"></span></div><div class="an-row"><span class="an-ic">📞</span><span class="an-nm">電話</span><span class="an-mb"></span><span class="an-h">'+hh(scT)+'</span><span class="an-d"></span></div></div>'):'');})()+sec('pf','🗾 どこで',pfBody)+
       '<div class="sh-note">右の数字＝前の'+U+'との差。'+(isCur?'（今の'+U+'は今の時刻まで。前の'+U+'も同じ長さで比べている）':'')+
       '<br>ムダ＝ムダ印の種類（📲スマホ操作・何もしなかった🚙車内滞在など）の時間＋1回30分を超えた仮眠＋10/4 以降の移動で何もしなかった時間（徒歩を除く）。途中の記録（今日・昨日）は今までの分を数える。</div>')
     :'<div class="empty-hint">この期間はまだ来ていない</div>')+
@@ -6579,6 +6599,8 @@ function renderAnaPage(keep){
   p.querySelectorAll('[data-au]').forEach(b=>b.onclick=()=>{anaUnit=b.dataset.au;anaMore={};anaPfSel=-1;renderAnaPage();});
   $('anPrev').onclick=()=>{anaBase=addDays(r.s,-1);anaPfSel=-1;renderAnaPage();};
   $('anNext').onclick=()=>{if(isCur)return;anaBase=r.e;anaPfSel=-1;renderAnaPage();};
+  p.querySelectorAll('[data-agp]').forEach(b=>b.onclick=()=>{anaGrpSel=(anaGrpSel===b.dataset.agp)?'':b.dataset.agp;renderAnaPage(true);});   /* c7.4：分野→中身 */
+  {const sb=p.querySelector('#anSt');if(sb)sb.onclick=()=>navGo(openStPage);}
   p.querySelectorAll('[data-as]').forEach(b=>b.onclick=()=>{const o=Object.assign({},anaOpenGet()),s=b.dataset.as;o[s]=isOpen(s)?0:1;anaOpenSet(o);renderAnaPage(true);});
   p.querySelectorAll('[data-am]').forEach(b=>b.onclick=()=>{anaMore[b.dataset.am]=!anaMore[b.dataset.am];renderAnaPage(true);});
   p.querySelectorAll('[data-pf]').forEach(b=>b.onclick=()=>{const c=+b.dataset.pf;anaPfSel=anaPfSel===c?-1:c;renderAnaPage(true);});
@@ -8070,7 +8092,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c7.3";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c7.4";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 /* ログインの後：同じユーザーなら影はそのまま（全件受信をやり直さない）。違うユーザーならそのユーザーの影を読む */
 async function clAfterLogin(){
