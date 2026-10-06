@@ -813,6 +813,9 @@
   .an-grp{cursor:pointer}.an-grp .an-nm small{display:block;font-size:10.5px;color:#9aa3b5;font-weight:700}.an-grp.op{background:#f6f7fb}
   .an-sub{margin:-2px 0 6px 18px;padding-left:8px;border-left:3px solid #e3e6ee}.an-row.sm{padding-top:4px;padding-bottom:4px}.an-row.sm .an-nm{font-size:12.5px}
   .td-line{display:flex;align-items:center;gap:6px;width:calc(100% - 24px);margin:2px 12px 6px;padding:10px 12px;border-radius:14px;background:#eef3ff;color:#1f2a5c;font-size:13.5px;font-weight:700;text-align:left}.td-line b{font-weight:800;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.td-line i{font-style:normal;color:#5b6475;font-size:12px}.td-line span{color:#3b63d9;font-weight:800;font-size:12px}
+  .te-dt{margin-top:8px;padding:8px 10px;border-radius:14px;background:#f6f7fb}.te-dt summary{font-weight:800;font-size:13px;color:#5b6475;cursor:pointer}
+  .te-dtb{display:flex;gap:6px;align-items:center;margin-top:8px}.te-dtb input{min-width:0;font:inherit;padding:6px;border-radius:10px;border:1px solid var(--line)}.te-dtb input[type=date]{flex:1.3}.te-dtb input[type=time]{flex:1}.te-dtb span{flex:0}
+  .te-dtq{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.te-dtq .chip{font-size:12px}
   .td-add{display:flex;gap:6px;align-items:center;margin-bottom:10px}.td-add input{flex:1;min-width:0;font-size:16px}
   .td-it{display:flex;flex-wrap:wrap;align-items:flex-start;gap:8px;padding:10px;border-radius:16px;background:#fff;border:1px solid var(--line);margin-top:8px}.td-it.pin{border:2px solid #3b63d9;background:#f5f8ff}
   .td-ck{font-size:24px;line-height:1;padding:2px}.td-b{flex:1;min-width:0;text-align:left;display:flex;flex-wrap:wrap;gap:4px 8px;align-items:center}.td-b b{font-size:15px;font-weight:800;width:100%}.td-b i{font-style:normal;font-size:12px;color:#5b6475;font-weight:700}.td-b small{width:100%;color:#8a93a6;font-size:12px}
@@ -3491,7 +3494,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+   /* 同期の状態1行と記録（クラウド版 c1.9） */
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c7.9）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c8.0）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -6099,13 +6102,23 @@ function tdQuitSheet(id,after){let r='';const paint=()=>{openSub('<div class="sh
 function tdEditSheet(id,after){const x=(state.todos||{})[id];if(!x)return;const t=todayStr();
   openSub('<div class="sh-time"><span>📋 やる事</span></div><input type="text" id="teT" maxlength="60" value="'+esc(x.t)+'" style="width:100%">'+
     '<textarea id="teC" rows="3" placeholder="詳細（このタイトルの中身・書かなくてもいい）" style="width:100%;margin-top:6px">'+esc(x.c||'')+'</textarea>'+
-    '<div class="sr-r big" style="margin-top:6px"><button class="chip" id="teDone">✅ 完了</button><button class="chip" id="tePin">'+(x.pin===t?'🎯 今やるを外す':'🎯 今やる')+'</button><button class="chip" id="teTime">🕐 '+(x.s?esc((x.sd&&x.sd!==t?x.sd.slice(5).replace('-','/')+' ':'')+x.s+'–'+(x.e||'')):'時間')+'</button>'+(tdDays(x)>=2?'<button class="chip" id="teSmall">🪄 小さくする</button>':'')+'<button class="chip" id="teQuit">🗑 やめる</button></div>'+
+    '<details class="te-dt"'+(x.s?' open':'')+'><summary>🕐 日時（任意）'+(x.s?'：'+esc((x.sd&&x.sd!==t?x.sd.slice(5).replace('-','/')+' ':'')+x.s+'–'+(x.e||'')):'')+'</summary>'+
+      '<div class="te-dtb"><input type="date" id="teD" value="'+esc(x.sd||t)+'"><input type="time" id="teS" step="300" value="'+esc(x.s||'')+'"><span>→</span><input type="time" id="teE" step="300" value="'+esc(x.e||'')+'"></div>'+
+      '<div class="te-dtq"><button class="chip" data-teq="now">今から30分</button><button class="chip" data-teq="night">今日の夜 21:00</button><button class="chip" data-teq="morn">明日の朝 9:00</button>'+(x.s?'<button class="chip" data-teq="clr">日時を外す</button>':'')+'</div>'+
+      '<div class="sh-note" style="text-align:left;margin:4px 0 0">入れると、その時間の日記の記録に1行で入る</div></details>'+
+    '<div class="sr-r big" style="margin-top:6px"><button class="chip" id="teDone">✅ 完了</button><button class="chip" id="tePin">'+(x.pin===t?'🎯 今やるを外す':'🎯 今やる')+'</button>'+(tdDays(x)>=2?'<button class="chip" id="teSmall">🪄 小さくする</button>':'')+'<button class="chip" id="teQuit">🗑 やめる</button></div>'+
     '<div class="sh-btns"><button class="delbtn" id="teDel">消す</button><button class="savebtn" id="teOk">保存</button></div>',null);
-  const save=()=>{const tt=($('teT').value||'').trim(),cc=($('teC').value||'').trim();if(tt&&(tt!==x.t||cc!==(x.c||''))){tdSet(id,{t:tt,c:cc||null});if(x.s)tdPlace(id);}};
+  const rd=m=>pad(Math.floor(m/60)%24)+':'+pad(m%60);
+  $('sheet2').querySelectorAll('[data-teq]').forEach(b=>b.onclick=()=>{const v=b.dataset.teq,n=new Date(),now=Math.ceil((n.getHours()*60+n.getMinutes())/5)*5;
+    if(v==='clr'){$('teS').value='';$('teE').value='';$('teD').value=t;return;}
+    if(v==='now'){$('teD').value=t;$('teS').value=rd(now);$('teE').value=rd(now+30);}else if(v==='night'){$('teD').value=t;$('teS').value='21:00';$('teE').value='22:00';}else{$('teD').value=addDays(t,1);$('teS').value='09:00';$('teE').value='10:00';}});
+  const save=()=>{const tt=($('teT').value||'').trim()||x.t,cc=($('teC').value||'').trim(),s=$('teS').value||'',e=$('teE').value||'',d=$('teD').value||t;
+    const e2=s?(e||rd(hmMin(s)+30)):'';const tChg=(s||'')!==(x.s||'')||(e2||'')!==(x.e||'')||(s?d:'')!==(x.s?(x.sd||t):'');
+    if(tt!==x.t||cc!==(x.c||'')||tChg){tdSet(id,{t:tt,c:cc||null,s:s||null,e:e2||null,sd:s?d:null});if(s||x.s)tdPlace(id);}};   /* c8.0：日時はこの画面で（任意） */
   $('teOk').onclick=()=>{save();closeSub();if(after)after();};
   $('teDone').onclick=()=>{save();closeSub();tdComplete(id);if(after)after();};
   $('tePin').onclick=()=>{save();closeSub();tdSet(id,{pin:x.pin===t?null:t});if(after)after();};
-  $('teTime').onclick=()=>{save();tdTimeSheet(id,after);};
+
   {const b=$('teSmall');if(b)b.onclick=()=>{save();closeSub();tdNew('最初の5分だけ：'+x.t,{pin:t,par:id});toast('🪄 最初の5分だけ、を今やるにした');if(after)after();};}
   $('teQuit').onclick=()=>{save();tdQuitSheet(id,after);};
   $('teDel').onclick=()=>{if(!confirm('このやる事を消す？（やめるなら🗑やめるの方が記録が残る）'))return;closeSub();mutate(()=>{tdUnplace(id);state.todos[id]={del:1,ts:Date.now()};});if(after)after();};}
@@ -8230,7 +8243,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c7.9";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c8.0";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 /* ログインの後：同じユーザーなら影はそのまま（全件受信をやり直さない）。違うユーザーならそのユーザーの影を読む */
 async function clAfterLogin(){
