@@ -203,6 +203,8 @@
   /* 🚗出発（緑）／🏁到着（橙）：書くの行から1タップで移動を記録 */
   .hour.wr .chip.mvb{height:40px;display:inline-flex;align-items:center;gap:4px;padding:0 12px}
   .hour.wr .chip.mvb.go{background:#d9f4e4;color:#13864a}
+  .hour.wr .chip.mvb.pz{background:#fff6e5;color:#a8790a;padding:0 10px}
+  .hour.wr .chip.mvb.pz.on{background:#ffe2b8;color:#8a5a00}
   .hour.wr .chip.mvb.slp{background:#ece8ff;color:#5b4fd6}
   .hour.wr .chip.mvb.wake{background:#fff3c9;color:#a8790a}
   .hour.wr .chip.mvb.car{background:#d7f0ec;color:#0f766e}
@@ -716,6 +718,14 @@
   .frrow .fr-mic svg{width:20px;height:20px}
   .so-row{padding:9px 0;border-bottom:1px solid var(--line)}
   .lgo{margin:22px 0 8px;text-align:center}
+  .pjrow{display:flex}.pjchip{padding:8px 14px;border-radius:999px;background:#f1f3f8;color:#8a90a0;font-weight:800;font-size:13px}.pjchip.on{background:#4d7dff;color:#fff}
+  .pj-l{display:flex;gap:6px;flex-wrap:wrap}.pj-l .chip.sel{background:#4d7dff;color:#fff}
+  .an-pjb{width:100%;margin:0 0 8px;padding:10px;border-radius:14px;background:#eef3ff;color:#3b63d9;font-weight:800;font-size:13px}
+  .pj-card{display:grid;grid-template-columns:1fr auto;gap:2px 8px;width:100%;text-align:left;margin-top:8px;padding:12px 14px;border-radius:16px;background:#fff;border:1px solid var(--line)}
+  .pj-card b{font-size:14.5px}.pj-card span{font-weight:800;color:#3b63d9}.pj-card small{grid-column:1 / -1;color:#8a90a0;font-weight:700}
+  .pj-h{display:grid;grid-template-columns:1fr auto;gap:2px 8px;padding:12px 14px;border-radius:16px;background:#eef3ff;margin-bottom:10px}.pj-h b{font-size:16px}.pj-h span{font-weight:800;color:#3b63d9;font-size:16px}.pj-h small{grid-column:1 / -1;color:#6a7080;font-weight:700}
+  .pj-rows{display:grid;gap:4px}.pj-r{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:8px;font-size:12.5px;align-items:baseline}.pj-r span{color:#8a90a0;font-variant-numeric:tabular-nums;white-space:nowrap}.pj-r b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.pj-r small{color:#0a9a54;font-weight:800}
+  .pj-cks{display:grid;gap:4px;max-height:320px;overflow:auto;margin-top:8px;padding:6px;border-radius:12px;background:#f7f8fb}.pj-ck{display:flex;gap:8px;align-items:center;font-size:12.5px}.pj-ck input{width:20px;height:20px}
   .dband{display:block;width:100%;margin:6px 0 4px;padding:8px 10px;border-radius:14px;background:#fff;border:1px solid var(--line);text-align:left}
   .db-bar{display:flex;height:14px;border-radius:999px;overflow:hidden;background:#eef0f5}
   .db-bar i{display:block;height:100%}
@@ -1677,7 +1687,7 @@ function mergeStates(a,b){
       out.payrep=out.payrep||{};const cur=out.payrep[k];
       if(!cur||((nu.ts||0)>(cur.ts||0)))out.payrep[k]=nu;}
     /* 📚 ルーティン（rtn）とその記録（rlog）。1件ずつ新しい方が勝つ。使うまで項目を作らない */
-    for(const k of ['rtn','rlog','payppl','kinds','tools','places'])for(const id in (src[k]||{})){   /* kinds／tools＝行の種類・道具（c1.1） */const nu=src[k][id];if(!nu)continue;
+    for(const k of ['rtn','rlog','payppl','kinds','tools','places','projects'])for(const id in (src[k]||{})){   /* kinds／tools＝行の種類・道具（c1.1） */const nu=src[k][id];if(!nu)continue;
       out[k]=out[k]||{};const cur=out[k][id];if(!cur||((nu.ts||0)>(cur.ts||0)))out[k][id]=nu;}
     for(const id in (src.pins||{})){const nu=src.pins[id];if(!nu)continue;
       out.pins=out.pins||{};const cur=out.pins[id];
@@ -1697,7 +1707,7 @@ function mergeStates(a,b){
   /* 知らないトップレベル項目も捨てない（新旧バージョン混在でもデータを失わない） */
   /* payrep も必ずここに入れる。入れ忘れると、下の「知らない項目」の写しが、1件ずつ合わせた結果を丸ごと上書きする
      ＝別の端末で止めた・再開した印が消える（2026-09-30レビュー指摘） */
-  const known={updatedAt:1,dream:1,entries:1,plans:1,ai:1,dreams:1,memos:1,life:1,photos:1,pha:1,pays:1,rules:1,aims:1,moves:1,pins:1,steps:1,payrep:1,rtn:1,rlog:1,payppl:1,kinds:1,tools:1,places:1};
+  const known={updatedAt:1,dream:1,entries:1,plans:1,ai:1,dreams:1,memos:1,life:1,photos:1,pha:1,pays:1,rules:1,aims:1,moves:1,pins:1,steps:1,payrep:1,rtn:1,rlog:1,payppl:1,kinds:1,tools:1,places:1,projects:1};
   const newer=((b.updatedAt||0)>=(a.updatedAt||0))?b:a;
   const older=(newer===b)?a:b;
   for(const k in older)if(!known[k]&&older[k]!==undefined)out[k]=older[k];
@@ -2741,6 +2751,48 @@ function dayBandHtml(d){try{if(typeof anaCount!=='function'||d<'2026-08-25')retu
   const top=ord.filter(x=>x[0]!=='M'&&x[0]!=='X').sort((a,b)=>g[b[0]]-g[a[0]]).slice(0,3).map(x=>x[1]+hs(g[x[0]])).join(' ');
   return '<button class="dband" id="dBand"><div class="db-bar">'+ord.map(x=>'<i style="flex:'+g[x[0]]+';background:'+x[3]+'"></i>').join('')+(none?'<i style="flex:'+none+';background:#e3e6ee"></i>':'')+'</div>'+
     '<div class="db-t">'+(top||'')+(g.M?' <b class="db-m">🕳️'+hs(g.M)+'</b>':'')+(none?' <span class="db-n">⬜'+hs(none)+'</span>':'')+'<span class="db-go">›</span></div></button>';}catch(e){return '';}}
+/* ===== 📌 案件 ===== */
+function pjList(){const P=state.projects||{};return Object.keys(P).filter(id=>P[id]&&!P[id].del&&P[id].n).map(id=>({id,n:P[id].n,ts:P[id].ts||0})).sort((a,b)=>b.ts-a.ts);}
+function pjNew(n){n=String(n||'').trim().slice(0,30);if(!n)return '';const ex=pjList().find(p=>p.n===n);if(ex)return ex.id;const id='pj'+Date.now().toString(36)+Math.floor(Math.random()*1e3);mutate(()=>{state.projects=state.projects||{};state.projects[id]={n,ts:Date.now()};});return id;}
+function openPjPicker(cur,onPick){const ls=pjList();
+  openSub('<div class="sh-label">📌 案件（この記録をどの件に使ったか）</div><div class="pj-l">'+ls.map(p=>'<button class="chip'+(p.id===cur?' sel':'')+'" data-pj="'+esc(p.id)+'">'+esc(p.n)+'</button>').join('')+'</div>'+
+    '<div style="display:flex;gap:6px;margin-top:8px"><input type="text" id="pjNewN" maxlength="30" placeholder="新しい案件（例：MINI大宮クレーム）" style="flex:1;min-width:0"><button class="chip" id="pjNewGo" style="background:#eefaf3;color:#0a9a54">＋ 作る</button></div>'+
+    '<div class="pf-btns"><button id="pjNone">なし</button><button id="pjClose">閉じる</button></div>',null);
+  const done=id=>{closeSub();if(onPick)onPick(id);};
+  $('sheet2').querySelectorAll('[data-pj]').forEach(b=>b.onclick=()=>done(b.dataset.pj));
+  $('pjNewGo').onclick=()=>{const id=pjNew($('pjNewN').value);if(id)done(id);else toast('案件の名前を入れてくれ');};
+  $('pjNone').onclick=()=>done('');$('pjClose').onclick=closeSub;}
+/* 案件ごとの時間（記録の種類ごと。移動の中の休憩・食事・仮眠は分けて出す） */
+function pjStats(id){const o={tot:0,cat:{},days:{},rows:[]};for(const d of Object.keys(state.entries).sort()){const eo=state.entries[d];for(const k in eo){const e=eo[k];if(!e||e.del||e.pj!==id||!e.s||!e.e||e.noT)continue;
+    const m=durMin(e.s,e.e,e.ed);o.tot+=m;o.days[d]=(o.days[d]||0)+m;let inner=0;
+    if(e.mv)for(const a of (e.acts||[])){if(a&&a.k&&Number(a.m)>0){const kk=kindOf(a.k);const c=(kk?kk.ic+kk.lb:a.k)+'（移動中）';o.cat[c]=(o.cat[c]||0)+Number(a.m);inner+=Number(a.m);}}
+    const c=e.mv?(anaTr(e.tr||'_none').join(' ')+(inner?'（運転・乗車）':'')):(e.k?(kindOf(e.k)?kindOf(e.k).ic+kindOf(e.k).lb:e.k):'📍滞在');o.cat[c]=(o.cat[c]||0)+Math.max(0,m-inner);
+    o.rows.push({d,k,e,m});}}return o;}
+let pjSel='';
+function openPjPage(){closeSheet();renderPjPage();}
+function renderPjPage(){pageMode='pj';const p=$('page');const hs=m=>m<60?m+'分':(Math.round(m/6)/10)+'時間';
+  const ls=pjList();let body='';
+  if(!pjSel){body=(ls.length?ls.map(x=>{const s=pjStats(x.id);const dk=Object.keys(s.days);return '<button class="pj-card" data-pjo="'+esc(x.id)+'"><b>📌 '+esc(x.n)+'</b><span>'+hs(s.tot)+'</span><small>'+(dk.length?dk.length+'日・'+esc(payMD(dk[0]))+(dk.length>1?'〜'+esc(payMD(dk[dk.length-1])):''):'まだ記録なし')+'</small></button>';}).join(''):'<div class="empty-hint">まだ案件がない。記録の「📌 案件」か、下の＋で作る</div>')+
+      '<div style="display:flex;gap:6px;margin-top:12px"><input type="text" id="pjPgN" maxlength="30" placeholder="新しい案件（例：USS九州①）" style="flex:1;min-width:0"><button class="chip" id="pjPgGo" style="background:#eefaf3;color:#0a9a54">＋ 作る</button></div>';}
+  else{const P=(state.projects||{})[pjSel]||{n:'?'};const s=pjStats(pjSel);const mx=Math.max(1,...Object.values(s.cat));
+    body='<div class="pj-h"><b>📌 '+esc(P.n)+'</b><span>'+hs(s.tot)+'</span><small>'+Object.keys(s.days).length+'日・記録'+s.rows.length+'件</small></div>'+
+      '<div class="an-list">'+Object.keys(s.cat).sort((a,b)=>s.cat[b]-s.cat[a]).map(c=>'<div class="an-row"><span class="an-nm" style="grid-column:1 / span 2">'+esc(c)+'</span><span class="an-mb"><i style="width:'+Math.max(2,Math.round(s.cat[c]/mx*100))+'%;background:#4d7dff"></i></span><span class="an-h">'+hs(s.cat[c])+'</span><span class="an-d"></span></div>').join('')+'</div>'+
+      '<div class="sh-label" style="margin-top:12px">記録</div><div class="pj-rows">'+s.rows.map(r=>'<div class="pj-r"><span>'+esc(payMD(r.d))+' '+esc(r.e.s)+'–'+esc(r.e.e)+'</span><b>'+esc(r.e.mv?(TRICON[r.e.tr]||'🚗')+' '+(r.e.rt||'移動'):(r.e.p||'📍'))+'</b><small>'+hs(r.m)+'</small></div>').join('')+'</div>'+
+      '<div class="sh-label" style="margin-top:14px">＋ まとめて付ける（日付を選んで、記録にチェック）</div><div style="display:flex;gap:6px;align-items:center"><input type="date" id="pjF" lang="ja-JP"><span>〜</span><input type="date" id="pjT" lang="ja-JP"><button class="chip" id="pjLs">記録を出す</button></div><div id="pjPick"></div>'+
+      '<div style="display:flex;gap:8px;margin-top:16px"><button class="chip" id="pjRen">✏️ 名前を変える</button><button class="chip" id="pjDel" style="color:#e0405a">🗑 案件を消す</button></div>';}
+  p.innerHTML='<div class="page-head"><button class="bk" id="pgBk">‹ 戻る</button><span class="tt">📌 案件</span><span style="width:36px"></span></div><div class="page-body">'+body+'</div>';
+  p.classList.add('open');
+  $('pgBk').onclick=()=>{if(pjSel){pjSel='';renderPjPage();}else openAnaPage();};
+  p.querySelectorAll('[data-pjo]').forEach(b=>b.onclick=()=>{pjSel=b.dataset.pjo;renderPjPage();});
+  const ng=$('pjPgGo');if(ng)ng.onclick=()=>{const id=pjNew($('pjPgN').value);if(id){pjSel=id;renderPjPage();}};
+  const ren=$('pjRen');if(ren)ren.onclick=()=>{const v=prompt('新しい名前',((state.projects||{})[pjSel]||{}).n||'');if(v&&v.trim())mutate(()=>{state.projects[pjSel]=Object.assign({},state.projects[pjSel],{n:v.trim().slice(0,30),ts:Date.now()});});renderPjPage();};
+  const dl=$('pjDel');if(dl)dl.onclick=()=>{if(!dl.classList.contains('arm')){dl.classList.add('arm');dl.textContent='もう一度で消す（記録は残る）';return;}mutate(()=>{state.projects[pjSel]={del:1,ts:Date.now()};});pjSel='';renderPjPage();};
+  const lsb=$('pjLs');if(lsb)lsb.onclick=()=>{const f=$('pjF').value,t=$('pjT').value||f;if(!f){toast('日付を選んでくれ');return;}const out=[];
+    for(let d=f;d<=t;d=addDays(d,1)){const eo=state.entries[d]||{};Object.keys(eo).filter(k=>eo[k]&&!eo[k].del&&eo[k].s).sort((a,b)=>(eo[a].s<eo[b].s?-1:1)).forEach(k=>{const e=eo[k];out.push('<label class="pj-ck"><input type="checkbox" data-pd="'+d+'" data-pk="'+esc(k)+'"'+(e.pj===pjSel?' checked disabled':'')+'><span>'+esc(payMD(d))+' '+esc(e.s)+'–'+esc(e.e||'')+' '+esc(e.mv?(TRICON[e.tr]||'🚗')+' '+(e.rt||''):(e.p||'📍'))+'</span></label>');});if(out.length>400)break;}
+    $('pjPick').innerHTML=out.length?('<div class="pj-cks">'+out.join('')+'</div><div style="display:flex;gap:8px;margin-top:8px"><button class="chip" id="pjAll">全部にチェック</button><button class="savebtn" id="pjGo" style="flex:1">この案件にする</button></div>'):'<div class="empty-hint">その日付に記録がない</div>';
+    const al=$('pjAll');if(al)al.onclick=()=>$('pjPick').querySelectorAll('input[type=checkbox]:not(:disabled)').forEach(c=>c.checked=true);
+    const go=$('pjGo');if(go)go.onclick=()=>{const cs=[...$('pjPick').querySelectorAll('input[type=checkbox]:checked:not(:disabled)')];if(!cs.length){toast('チェックが無い');return;}
+      mutate(()=>{for(const c of cs){const e=state.entries[c.dataset.pd][c.dataset.pk];if(e){e.pj=pjSel;e.ts=Date.now();}}});toast('📌 '+cs.length+'件に付けた');renderPjPage();};};}
 function placeKey(s){return String(s||'').replace(/[\s\u3000]+/g,'').replace(/\(株\)|（株）|株式会社/g,'').toLowerCase();}
 function strHash(s){let h1=0xdeadbeef,h2=0x41c6ce57;for(let i=0;i<s.length;i++){const c=s.charCodeAt(i);h1=Math.imul(h1^c,2654435761);h2=Math.imul(h2^c,1597334677);}
   h1=Math.imul(h1^(h1>>>16),2246822507)^Math.imul(h2^(h2>>>13),3266489909);h2=Math.imul(h2^(h2>>>16),2246822507)^Math.imul(h1^(h1>>>13),3266489909);return (h2>>>0).toString(36)+'.'+(h1>>>0).toString(36);}
@@ -2846,9 +2898,10 @@ function renderTimeline(pane){
     if(isToday){
       const os=openSleep(),night=(nowH>=21||nowH<5),op=nowCardOpen();
       const bp=os?'':sleepBedPill();   /* 夜の締切の札＝「寝る」ボタンを兼ねる（幅を増やさない） */
-      right='<span class="wr-r">'+mvBtnHtml()+carBtnHtml()+   /* 🚗出発／🏁到着（いちばん優先） */
-        (os?'<button class="chip mvb wake" id="wrWake">🌞<span class="mvl"> 起きた</span> <b>⏱'+esc(mvElText(slpElapsed(os)))+'</b></button>'
-           :bp?bp:'<button class="chip mvb slp" id="wrSleep">💤<span class="mvl"> 寝る</span></button>')+   /* 寝るは1日中（仮眠にも） */
+      const mvNow=!!openMove();
+      right='<span class="wr-r">'+mvBtnHtml()+(mvNow?'':carBtnHtml())+   /* 🚗出発／🏁到着（いちばん優先）。移動中は ☕🍚💤 */
+        (mvNow?'':(os?'<button class="chip mvb wake" id="wrWake">🌞<span class="mvl"> 起きた</span> <b>⏱'+esc(mvElText(slpElapsed(os)))+'</b></button>'
+           :bp?bp:'<button class="chip mvb slp" id="wrSleep">💤<span class="mvl"> 寝る</span></button>'))+   /* 寝るは1日中（仮眠にも） */
         '</span>';
     }
     html+='<div class="hour gap wr" role="button" tabindex="0" data-h="'+dh+'"><span class="hh" style="color:var(--green);font-weight:800">✚</span>'+
@@ -3002,6 +3055,7 @@ function renderTimeline(pane){
   wB('wrSlp',openSleepPage);
   pane.querySelectorAll('[data-gs]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();openEntrySheet(ui.date,{hour:Number(b.dataset.gs.slice(0,2)),s:b.dataset.gs,e:b.dataset.ge});});
   {const db=pane.querySelector('#dBand');if(db)db.onclick=ev=>{ev.stopPropagation();anaUnit='day';anaBase=ui.date;openAnaPage();};}
+  pane.querySelectorAll('[data-pz]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();mvPauseStart(b.dataset.pz);});wB('wrPzEnd',()=>mvPauseEnd());
   wB('wrGo',quickMoveStart);wB('wrArr',quickMoveArrive);wB('wrCar',quickCarStart);wB('wrCarE',quickCarEnd);
   if(isToday)wrFit();   /* 幅が足りなければ昨夜の睡眠チップを隠す */
   nowCardSet(false);   /* ワンタップの開閉（⋯）はやめた。カードは閉じたまま */
@@ -3299,7 +3353,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+   /* 同期の状態1行と記録（クラウド版 c1.9） */
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c4.4）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c4.5）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -3437,7 +3491,7 @@ function openEntrySheet(date,ref){
   const ex=(e0&&!e0.del)?e0:null;
   const hour=ex?(ex.s?Number(ex.s.slice(0,2)):(/^\d+$/.test(key)?Number(key):12))
               :((ref&&ref.hour!=null)?ref.hour:new Date().getHours());
-  sheetSt={kind:'entry',date,key,hour,existing:!!ex,ph:(ex&&ex.ph?ex.ph.slice():[]),pf:(ex&&ex.pf)||0,pfAuto:false,pf0:(ex&&ex.pf0)||0,pf0Auto:false};
+  sheetSt={kind:'entry',date,key,hour,existing:!!ex,ph:(ex&&ex.ph?ex.ph.slice():[]),pf:(ex&&ex.pf)||0,pfAuto:false,pf0:(ex&&ex.pf0)||0,pf0Auto:false,pj:(ex&&ex.pj)||''};
   /* 開始・終了（10分きざみ）。いまの時間帯を新規で開いたら現在時刻に丸める */
   const nowD=new Date();
   let defS=pad(hour)+':00';
@@ -3467,6 +3521,7 @@ function openEntrySheet(date,ref){
       '<button data-ty="work">💼 仕事</button><button data-ty="stay">📍 滞在</button><button data-ty="move">🚗 移動</button>'+
       '<button data-ty="meal">🍚 食事</button>'+
       '<button data-ty="rest">☕ 休憩</button><button data-ty="sleep">🌙 睡眠</button><button data-ty="incar">🚙 車内</button></div></div>'+
+    '<div class="pjrow"><button class="pjchip" id="pjChip">📌 案件</button></div>'+   /* 案件（MINI大宮クレーム など） */
     '<div id="secTool"><div class="sh-label">🛠 使う物</div><div class="sh-chips" id="tdChips"></div><input type="text" id="tdX" maxlength="20" placeholder="その他（使った物を書く）" style="display:none;margin-top:6px"></div>'+   /* 記録全体の道具（行で選ばなければこれで数える） */
     '<div id="secMove" style="display:none">'+
       '<div class="sh-label">🚗 移動（どこから→どこまで・自由に1行）</div>'+
@@ -3542,6 +3597,8 @@ function openEntrySheet(date,ref){
     one($('pfChip'),sheetSt.pf,sheetSt.pfAuto,mvT?'到着：':'');
     if(mvT&&!prefOf(sheetSt.pf)&&prefOf(sheetSt.pf0))$('pfChip').textContent='🗾 到着：出発と同じ';}   /* 同じ県なら選ばなくていい */
   $('shPlace').addEventListener('change',()=>{if(!sheetSt||(sheetSt.pf&&!sheetSt.pfAuto))return;const v=placePf($('shPlace').value.trim());if(v){sheetSt.pf=v;sheetSt.pfAuto=true;pfPaint();}});
+  const pjPaint=()=>{const b=$('pjChip');if(!b||!sheetSt)return;const p=sheetSt.pj&&(state.projects||{})[sheetSt.pj];b.textContent=p&&!p.del?'📌 '+p.n:'📌 案件';b.classList.toggle('on',!!(p&&!p.del));};pjPaint();
+  $('pjChip').onclick=()=>{if(!sheetSt)return;openPjPicker(sheetSt.pj,id=>{sheetSt.pj=id;pjPaint();});};
   $('pfChip').onclick=()=>{if(!sheetSt)return;openPrefPicker(sheetSt.pf,c=>{sheetSt.pf=c;sheetSt.pfAuto=false;pfPaint();});};
   $('pf0Chip').onclick=()=>{if(!sheetSt)return;openPrefPicker(sheetSt.pf0,c=>{sheetSt.pf0=c;sheetSt.pf0Auto=false;pfPaint();});};
   $('eType').querySelectorAll('button').forEach(b=>b.onclick=()=>{const et=$('eType');if(et.classList.contains('col')&&b.dataset.ty===eType){et.classList.remove('col');return;}eTouched=true;eType=b.dataset.ty;mty();et.classList.add('col');});   /* 選んだ物を押すと全部出る→選ぶと閉じる */
@@ -3795,7 +3852,7 @@ function openEntrySheet(date,ref){
       if(eType==='ai')ne.k='ai';
       if(eType==='work')ne.k='work';
       if(eType==='incar')ne.k='incar';   /* 🚙車内滞在 */
-      if(pfS)ne.pf=pfS;if(pf0S)ne.pf0=pf0S;   /* 出発の県（移動） */
+      if(pfS)ne.pf=pfS;if(pf0S)ne.pf0=pf0S;if(sheetSt.pj)ne.pj=sheetSt.pj;   /* 案件 */   /* 出発の県（移動） */
       if(!isMv&&p&&pfS&&!sheetSt.pfAuto)placeSet(p,pfS);   /* 本人が手で選んだ時だけ覚える */
       if(tdS==='_other'){if(tdXS)ne.dx=tdXS;}else if(tdS)ne.d=tdS;   /* 使う物（その他は手入力の文字） */   /* 都道府県（［なし］にした時は付けない） */
       if(actsS.length)ne.acts=actsSort(actsS,actsBase(ne));   /* 時刻の早い順に並べて保存 */
@@ -5610,8 +5667,17 @@ function lastTr(){const td=todayStr(),ds=Object.keys(state.entries||{}).filter(d
   return '';}
 function mvElapsed(o){const n=new Date();return durMin(o.en.s,pad(n.getHours())+':'+pad(n.getMinutes()),o.d===todayStr()?0:1);}
 function mvElText(m){if(m<60)return m+'分';return Math.floor(m/60)+'時間'+(m%60?(m%60)+'分':'');}
+/* 移動の中の「休憩・食事・仮眠」：開いている行（開始あり・終了なし） */
+function mvOpenRow(o){const a=(o&&Array.isArray(o.en.acts))?o.en.acts:[];for(let i=a.length-1;i>=0;i--){const x=a[i];if(x&&x.s&&!x.e&&x.mvp)return {i,x};}return null;}
+function mvPauseHtml(o){const r=mvOpenRow(o);if(r){const k=kindOf(r.x.k)||{ic:'☕',lb:'休憩'};const n=new Date();const m=durMin(r.x.s,pad(n.getHours())+':'+pad(n.getMinutes()),0);
+    return '<button class="chip mvb pz on" id="wrPzEnd">'+esc(k.ic)+' <b>⏱'+esc(mvElText(m))+'</b><span class="mvl"> ▶出る</span></button>';}
+  return '<button class="chip mvb pz" data-pz="rest" aria-label="休憩">☕</button><button class="chip mvb pz" data-pz="meal" aria-label="食事">🍚</button><button class="chip mvb pz" data-pz="nap" aria-label="仮眠">💤</button>';}
+function mvPauseStart(k){const o=openMove();if(!o)return;if(mvOpenRow(o)){toast('先に ▶出る を押す');return;}const kk=kindOf(k);const nd=new Date(),s=pad(nd.getHours())+':'+pad(nd.getMinutes());   /* 休憩は1分単位 */
+  mutate(()=>{const en=state.entries[o.d][o.k];en.acts=Array.isArray(en.acts)?en.acts:[];en.acts.push({t:kk?kk.lb:k,k,s,e:'',m:0,mvp:1});en.ts=Date.now();});toast((kk?kk.ic+' '+kk.lb:'')+' '+s+'〜（走り出す時に ▶出る）');}
+function mvPauseEnd(at){const o=openMove();if(!o)return;const r=mvOpenRow(o);if(!r)return;const nd=new Date(),e=at||(pad(nd.getHours())+':'+pad(nd.getMinutes()));
+  mutate(()=>{const en=state.entries[o.d][o.k];const x=en.acts[r.i];x.e=e;x.m=durMin(x.s,e,0);en.ts=Date.now();});if(!at)toast('▶ 出発（'+(durText(durMin(r.x.s,e,0))||'10分未満')+'）');}
 function mvBtnHtml(){const o=openMove();
-  return o?'<button class="chip mvb arr" id="wrArr">🏁<span class="mvl"> 到着</span> <b>⏱'+esc(mvElText(mvElapsed(o)))+'</b></button>'
+  return o?'<button class="chip mvb arr" id="wrArr">🏁<span class="mvl"> 到着</span> <b>⏱'+esc(mvElText(mvElapsed(o)))+'</b></button>'+mvPauseHtml(o)
           :'<button class="chip mvb go" id="wrGo">🚗<span class="mvl"> 出発</span></button>';}
 function quickMoveStart(){
   if(openMove()){toast('もう移動中。着いたら🏁到着を押す');return;}
@@ -5625,7 +5691,7 @@ function quickMoveStart(){
 function quickMoveArrive(){
   const o=openMove();
   if(!o){toast('移動中の記録がない');return;}
-  const e=nowHM(),s=o.en.s;
+  const e=nowHM(),s=o.en.s;if(mvOpenRow(o))mvPauseEnd(e);   /* 休憩中に着いたら休憩も閉じる */
   const ed=(o.d!==todayStr()||e<s)?1:0;   /* 昨日に出た／0時をまたいだ＝翌日。同じ10分の中で着いたら0分 */
   mutate(()=>{const en=state.entries[o.d][o.k];en.e=e;if(ed)en.ed=ed;else delete en.ed;en.ts=Date.now();});
   toast('🏁 到着 '+e+'（'+(durText(durMin(s,e,ed))||'10分未満')+'）');
@@ -5642,7 +5708,7 @@ function quickCarEnd(){const o=openInCar();if(!o){toast('車内滞在中の記�
   const e=nowHM(),s=o.en.s,ed=(o.d!==todayStr()||e<s)?1:0;
   mutate(()=>{const en=state.entries[o.d][o.k];en.e=e;if(ed)en.ed=ed;else delete en.ed;en.ts=Date.now();});
   toast('🚙 車内滞在 おわり '+e+'（'+(durText(durMin(s,e,ed))||'10分未満')+'）');}
-function mvBtnTick(){try{const w=$('wrWake'),ow=w&&openSleep();if(ow){const t=w.querySelector('b');if(t)t.textContent='⏱'+mvElText(slpElapsed(ow));}}catch(e){}try{const c=$('wrCarE'),oc=c&&openInCar();if(oc){const t=c.querySelector('b');if(t)t.textContent='⏱'+mvElText(mvElapsed(oc));}}catch(e){}try{const b=$('wrArr'),o=b&&openMove();if(!o)return;const t=b.querySelector('b');if(t)t.textContent='⏱'+mvElText(mvElapsed(o));wrFit();}catch(e){}}
+function mvBtnTick(){try{const pz=$('wrPzEnd'),om=pz&&openMove(),rr=om&&mvOpenRow(om);if(rr){const n=new Date();const t=pz.querySelector('b');if(t)t.textContent='⏱'+mvElText(durMin(rr.x.s,pad(n.getHours())+':'+pad(n.getMinutes()),0));}}catch(e){}try{const w=$('wrWake'),ow=w&&openSleep();if(ow){const t=w.querySelector('b');if(t)t.textContent='⏱'+mvElText(slpElapsed(ow));}}catch(e){}try{const c=$('wrCarE'),oc=c&&openInCar();if(oc){const t=c.querySelector('b');if(t)t.textContent='⏱'+mvElText(mvElapsed(oc));}}catch(e){}try{const b=$('wrArr'),o=b&&openMove();if(!o)return;const t=b.querySelector('b');if(t)t.textContent='⏱'+mvElText(mvElapsed(o));wrFit();}catch(e){}}
 /* 書くの行が横にはみ出す時：昨夜の睡眠チップを隠す→出発・到着の文字を隠して札を詰める（絵と時間は残す）→2段 */
 function wrFit(){try{const row=document.querySelector('.hour.wr'),r=row&&row.querySelector('.wr-r'),bd=row&&row.querySelector('.body');if(!r||!bd)return;
   const over=()=>bd.scrollWidth>bd.clientWidth+1||row.scrollWidth>row.clientWidth+1;
@@ -6089,6 +6155,7 @@ function renderAnaPage(keep){
     '<div class="an-empty">移動は前半を出発、後半を到着の県に数える。％＝記録のある時間に対して。県を押すと、何をしていたかと、いた時間（何時何分〜何時何分）が出る</div>';
   p.innerHTML='<div class="page-head"><button class="bk" id="pgBk">‹ 戻る</button><span class="tt">📊 分析</span><span style="width:36px"></span></div>'+
     '<div class="page-body">'+
+    '<button class="an-pjb" id="anPj">📌 案件で見る（MINI・USS九州 など）</button>'+
     '<div class="an-tabs">'+[['day','日'],['week','週'],['month','月'],['year','年']].map(u=>'<button data-au="'+u[0]+'"'+(anaUnit===u[0]?' class="on"':'')+'>'+u[1]+'</button>').join('')+'</div>'+
     '<div class="an-nav"><button id="anPrev">‹</button><b>'+esc(anaLabel(anaUnit,r))+'</b><button id="anNext"'+(isCur?' disabled':'')+'>›</button></div>'+
     (cur.total?(card+bar+
@@ -6100,6 +6167,7 @@ function renderAnaPage(keep){
   p.classList.add('open');payReopenMark();
   if(st){const nb=p.querySelector('.page-body');if(nb)nb.scrollTop=st;}
   $('pgBk').onclick=closePage;
+  {const pb=$('anPj');if(pb)pb.onclick=()=>{pjSel='';openPjPage();};}
   p.querySelectorAll('[data-au]').forEach(b=>b.onclick=()=>{anaUnit=b.dataset.au;anaMore={};anaPfSel=-1;renderAnaPage();});
   $('anPrev').onclick=()=>{anaBase=addDays(r.s,-1);anaPfSel=-1;renderAnaPage();};
   $('anNext').onclick=()=>{if(isCur)return;anaBase=r.e;anaPfSel=-1;renderAnaPage();};
@@ -7024,7 +7092,7 @@ async function clRpcJson(name,body,sig,ms){const t=await clRpcText(name,typeof b
 async function clRpc(name,body){return clRpcJson(name,body);}   /* 旧版と同じ名前（他から呼ばれても動く） */
 
 /* ---------- state ⇄ 項目（1行） ---------- */
-const CL_ID=['dreams','memos','pays','aims','moves','pins','steps','payrep','rtn','rlog','payppl','pha','kinds','tools','places'];
+const CL_ID=['dreams','memos','pays','aims','moves','pins','steps','payrep','rtn','rlog','payppl','pha','kinds','tools','places','projects'];
 const CL_DAY=['ai','rules'];
 const CL_DAY2=['entries','plans'];
 const CL_SKIP={updatedAt:1,photos:1};
@@ -7588,7 +7656,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c4.4";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c4.5";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 /* ログインの後：同じユーザーなら影はそのまま（全件受信をやり直さない）。違うユーザーならそのユーザーの影を読む */
 async function clAfterLogin(){
