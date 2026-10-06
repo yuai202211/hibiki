@@ -731,7 +731,11 @@
   .db-bar i{display:block;height:100%}
   .db-t{display:flex;gap:8px;align-items:center;margin-top:5px;font-size:12px;font-weight:800;color:#2a2f3c;white-space:nowrap;overflow:hidden}
   .db-m{color:#e0405a}.db-n{color:#9aa3b5}.db-go{margin-left:auto;color:#9aa3b5;font-size:12px;font-weight:800}
-  .db-h{display:flex;align-items:center;margin-bottom:5px;font-size:12px;font-weight:800;color:#5b6475}
+  .db-h{display:flex;align-items:baseline;gap:6px;margin-bottom:6px;flex-wrap:wrap}.db-ti{font-size:13.5px;font-weight:800;color:#1f2430}.db-sub{font-size:11px;font-weight:700;color:#8a93a6}
+  .db-bar.big{height:26px;border-radius:9px;gap:2px;background:transparent}.db-bar.big i{display:flex;align-items:center;justify-content:center;min-width:3px;border-radius:5px;overflow:hidden}.db-bar.big i.nr{background:repeating-linear-gradient(45deg,#eef0f5,#eef0f5 6px,#e3e6ee 6px,#e3e6ee 12px)}
+  .db-bar.big em{font-style:normal;font-size:11px;font-weight:800;color:#fff;white-space:nowrap;text-shadow:0 1px 2px rgba(0,0,0,.25);padding:0 4px}.db-bar.big i.nr em{color:#6b7280;text-shadow:none}
+  .db-sc{display:flex;justify-content:space-between;font-size:9.5px;font-weight:700;color:#aab0bd;margin-top:2px;padding:0 1px}
+  .dband .db-lg{border-top:1px dashed var(--line);padding-top:6px}
   .db-lg{display:flex;flex-wrap:wrap;gap:4px 10px;margin-top:6px}.db-l{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:700;color:#2a2f3c}.db-l i{width:10px;height:10px;border-radius:3px;display:inline-block}.db-l b{font-weight:800}.db-l.m{color:#e0405a}.db-l.n{color:#8a93a6}
   .so-tm{display:block;font-size:11.5px;font-weight:700;color:#8a93a6}
   .gaprow .gp-l{font-size:12.5px;font-weight:800;color:#9aa3b5}
@@ -2800,7 +2804,11 @@ function dayBandHtml(d){try{if(typeof anaCount!=='function'||d<'2026-08-25')retu
   const hs=m=>m<60?m+'分':(Math.round(m/6)/10)+'h';
   /* c5.7：何の表示か分かるように（本人指示）。見出し＋色ごとに 色の点・名前・時間。ムダは赤、記録なしは灰 */
   const lg=ord.slice().sort((a,b)=>(a[0]==='M')-(b[0]==='M')||g[b[0]]-g[a[0]]).map(x=>'<span class="db-l'+(x[0]==='M'?' m':'')+'"><i style="background:'+x[3]+'"></i>'+(x[0]==='M'?'🕳️ ムダ':x[0]==='X'?'📍 滞在・その他':esc(x[1]+' '+x[2]))+' <b>'+hs(g[x[0]])+'</b></span>').join('')+(none?'<span class="db-l n"><i style="background:#e3e6ee"></i>⬜ 記録なし <b>'+hs(none)+'</b></span>':'');
-  return '<button class="dband" id="dBand"><div class="db-h"><span>📊 '+(d===todayStr()?'今日':'この日')+'の24時間（何に使ったか）</span><span class="db-go">分析 ›</span></div><div class="db-bar">'+ord.map(x=>'<i style="flex:'+g[x[0]]+';background:'+x[3]+'"></i>').join('')+(none?'<i style="flex:'+none+';background:#e3e6ee"></i>':'')+'</div>'+
+  /* c5.8：メーターの中にも名前と時間（幅が足りる色だけ）。上に「何のメーターか」、下に 0〜24時間の目盛り（本人指示） */
+  const recM=tot-none,segL=(x,m)=>{const w=m/tot*100;const nm=x?(x[0]==='M'?'ムダ':x[0]==='X'?'滞在':x[2]):'記録なし';return w>=16?nm+' '+hs(m):w>=8?hs(m):'';};
+  const segs=ord.slice().sort((a,b)=>(a[0]==='M')-(b[0]==='M')||g[b[0]]-g[a[0]]).map(x=>'<i style="flex:'+g[x[0]]+';background:'+x[3]+'"><em>'+esc(segL(x,g[x[0]]))+'</em></i>').join('')+(none?'<i class="nr" style="flex:'+none+'"><em>'+esc(segL(null,none))+'</em></i>':'');
+  return '<button class="dband" id="dBand"><div class="db-h"><span class="db-ti">📊 '+(d===todayStr()?'今日':'この日')+'の24時間メーター</span><span class="db-sub">1日24時間を何に使ったか（長い順）・記録 '+esc(hs(recM))+'／24h</span><span class="db-go">分析 ›</span></div>'+
+    '<div class="db-bar big">'+segs+'</div><div class="db-sc"><span>0</span><span>6</span><span>12</span><span>18</span><span>24時間</span></div>'+
     '<div class="db-lg">'+lg+'</div></button>';}catch(e){return '';}}
 /* ===== 📌 案件 ===== */
 function pjList(){const P=state.projects||{};return Object.keys(P).filter(id=>P[id]&&!P[id].del&&P[id].n).map(id=>({id,n:P[id].n,ts:P[id].ts||0})).sort((a,b)=>b.ts-a.ts);}
@@ -3418,7 +3426,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+   /* 同期の状態1行と記録（クラウド版 c1.9） */
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c5.7）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c5.8）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -7959,7 +7967,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c5.7";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c5.8";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 /* ログインの後：同じユーザーなら影はそのまま（全件受信をやり直さない）。違うユーザーならそのユーザーの影を読む */
 async function clAfterLogin(){
