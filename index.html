@@ -740,6 +740,8 @@
   .ac-kall{width:100%;display:flex;flex-direction:column;gap:6px;margin-top:6px}.ac-kgp{background:#fff;border:1px solid var(--line);border-radius:14px;padding:6px 8px}
   .ac-kgh{display:flex;align-items:center;gap:6px;width:100%;font-weight:800;font-size:13px;color:#1f2430;padding:2px 0;background:none}.ac-kgh i{margin-left:auto;color:#9aa3b5;font-style:normal}.ac-kgh.f{color:#8a93a6}
   .ac-kgp .ac-kl{margin-top:4px}
+  .ka-all .ac-kl{display:flex;flex-wrap:wrap;gap:6px}.ka-all .ac-kl button{display:inline-flex;align-items:center;gap:4px;padding:7px 10px;border-radius:12px;background:#fff;border:1px solid var(--line);border-bottom:3px solid var(--kc);font-weight:800;font-size:12.5px}
+  .chip.ac-qall{background:#f1f3f8;color:#3b4252}
   .so-ai .chip{border:1.5px solid var(--ac);color:var(--ac);background:#fff}.so-ai .chip.sel{background:var(--ac);color:#fff}
   .so-tm{display:block;font-size:11.5px;font-weight:700;color:#8a93a6}
   .gaprow .gp-l{font-size:12.5px;font-weight:800;color:#9aa3b5}
@@ -3434,7 +3436,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+   /* 同期の状態1行と記録（クラウド版 c1.9） */
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c6.0）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c6.1）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -3804,7 +3806,7 @@ function openEntrySheet(date,ref){
     const onW=id=>(isCar||isStay)&&acts.some(a=>a&&a.w&&a.k===id);   /* c4.6：押してある物（滞在の間ずっと）に印 */
     const qh=q.map(id=>{const k=kindOf(id);return (k&&!k.off)?'<button class="chip ac-q'+(onW(id)?' sel':'')+'" data-aq="'+id+'" style="--kc:'+k.co+'">'+esc(k.ic)+' '+esc(k.lb)+'</button>':'';}).join('')+((eType==='move'&&drv)?'<button class="chip ac-qm" id="acQm">'+(qMore?'－ たたむ':'＋ ほか')+'</button>':'');
     if(qe){qe.innerHTML=(isCar||isStay)?'':qh;const w=$('acQw');(w||qe).style.display=(qh&&!isCar&&!isStay)?'':'none';}   /* 1タップは行の上（シートを開いてすぐ見える所） */
-    el.innerHTML=((qe&&!isCar&&!isStay)?'':((isCar||isStay)&&qh?'<div class="sh-label" style="width:100%;margin:0 0 2px">'+(isCar?'🚙 車内で何をした（複数OK・もう一度で外す）':'📍 ここで何をした（複数OK。2つ以上は順に時間を分ける）')+'</div>':'')+qh)+'<button class="chip" id="acAdd" style="background:#eefaf3;color:#0a9a54">＋ 行を足す</button><button class="chip" id="frAdd" style="background:#f4f2ff;color:#5b4fd6">＋ 自由に書く</button>';
+    el.innerHTML=((qe&&!isCar&&!isStay)?'':((isCar||isStay)&&qh?'<div class="sh-label" style="width:100%;margin:0 0 2px">'+(isCar?'🚙 車内で何をした（複数OK・もう一度で外す）':'📍 ここで何をした（複数OK。2つ以上は順に時間を分ける）')+'</div>':'')+qh)+((isCar||isStay)?'<button class="chip ac-qall" id="acQall">🏷️ ほかの種類…</button>':'')+'<button class="chip" id="acAdd" style="background:#eefaf3;color:#0a9a54">＋ 行を足す</button><button class="chip" id="frAdd" style="background:#f4f2ff;color:#5b4fd6">＋ 自由に書く</button>';
     ((qe&&!isCar&&!isStay)?qe:el).querySelectorAll('[data-aq]').forEach(b=>b.onclick=()=>{acRead();const k=kindOf(b.dataset.aq);if(!k)return;
       if(onW(k.id)){const i=acts.findIndex(a=>a&&a.w&&a.k===k.id);if(i>=0)acts.splice(i,1);acPaint();return;}   /* c4.6：もう一度で外す */
       const row={t:k.lb,k:k.id,m:0,s:'',e:'',w:1},last=acts[acts.length-1];   /* w＝この記録の間ずっと */
@@ -3812,6 +3814,9 @@ function openEntrySheet(date,ref){
       if(last&&!last.t.trim()&&!last.s&&!last.e&&!last.k&&!last.d&&!(last.c&&last.c.trim()))acts[acts.length-1]=row;else acts.push(row);   /* 空の行があればそこに入れる */
       acPaint();if(askB!==false){const ix=acts.indexOf(row);askBed(askB,v=>{acRead();if(acts[ix])acts[ix].bd=v;bedRemember(askB,v);acPaint();});}});
     $('acAdd').onclick=()=>{acRead();acts.push({t:'',m:0,s:'',e:''});acPaint(true);};
+    {const qa=$('acQall');if(qa)qa.onclick=()=>{acRead();openKindAll((id,d)=>{const k=kindOf(id);if(!k)return;acRead();if(acts.some(a=>a&&a.w&&a.k===id))return;const row={t:k.lb,k:id,m:0,s:'',e:'',w:1};if(d)row.d=d;
+      if((id==='sleep'||id==='nap')){if(isCar)row.bd=0;else{const b=bedOfPlace((($('shPlace')||{}).value||'').trim());if(b!=null)row.bd=b;}}
+      const last=acts[acts.length-1];if(last&&!last.t.trim()&&!last.s&&!last.e&&!last.k&&!last.d&&!(last.c&&last.c.trim()))acts[acts.length-1]=row;else acts.push(row);acPaint();});};}   /* c6.1：同じ場所で1つの事＝全部の種類から1つ選ぶと「ずっと」の行（本人指示） */
     {const fa=$('frAdd');if(fa)fa.onclick=()=>{frs.push('');frPaint(true);cPaint();};}
     {const qm=$('acQm');if(qm)qm.onclick=()=>{qMore=!qMore;acCh();};}};
   acPaint();
@@ -5932,6 +5937,18 @@ function renderSrPage(){pageMode='sr';const p=$('page');const ms=srList().revers
   p.innerHTML='<div class="page-head"><button class="bk" id="pgBk">‹ 戻る</button><span class="tt">🕳️😤 困り事の一覧</span><span style="width:36px"></span></div><div class="page-body">'+
     '<div class="an-empty">自分で押した 🕳️ムダ・😤ストレス・😫調子悪い。困り事＝ビジネスの種（本人 2026-10-06）。押すと直せる</div>'+(ms.length?'<div style="display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 10px">'+top+'</div>'+body:'<div class="an-empty">まだ無い。書くの行の 🕳️ を押すと残る</div>')+'</div>';
   $('pgBk').onclick=()=>openAnaPage();p.querySelectorAll('[data-mk]').forEach(b=>b.onclick=()=>openSelfReport(b.dataset.mk));}
+/* ===== c6.1：全部の種類から1つ選ぶ（分野ごと・見出しで折りたたみ。1行ずつと同じ並び） ===== */
+function openKindAll(cb){const leaves=new Set();KIND_TREE.forEach(t=>(t.ch||[]).forEach(c=>{if(typeof c==='string')leaves.add(c);else c.ch.forEach(x=>leaves.add(x));}));
+  const etc=kindList().filter(x=>!leaves.has(x.id)).map(x=>x.id);
+  const paint=()=>{let FD={};try{FD=JSON.parse(localStorage.getItem('hibiki-kfold')||'{}')||{};}catch(e){}
+    const kb=(id,t)=>{const x=kindOf(id);if(!x||x.off)return '';return '<button data-kaid="'+esc(id)+'" data-kad="'+(t.d||'')+'" style="--kc:'+esc(x.co)+'">'+esc(x.ic)+'<span>'+esc(x.lb)+'</span></button>';};
+    openSub('<div class="sh-time"><span>🏷️ ここで何をした？（ずっと）</span></div><div class="sh-note" style="text-align:left">同じ場所で1つの事なら、選ぶだけで滞在の間ずっとに数える。見出しを押すと折りたたむ</div><div class="ac-kall ka-all">'+
+      KIND_TREE.map(t=>{const fo=!!FD[t.id];const lv=t.ch?t.ch.map(c=>typeof c==='string'?kb(c,t):c.ch.map(x=>kb(x,t)).join('')).join(''):etc.map(id=>kb(id,t)).join('');
+        return '<div class="ac-kgp"><button class="ac-kgh'+(fo?' f':'')+'" data-kaf="'+t.id+'">'+t.ic+'<span>'+esc(t.lb)+'</span><i>'+(fo?'▸':'▾')+'</i></button>'+(fo?'':'<div class="ac-kl">'+lv+'</div>')+'</div>';}).join('')+'</div>'+
+      '<div class="sh-btns"><button class="delbtn" id="kaNo" style="flex:1">閉じる</button></div>',null);
+    const s=$('sheet2');s.querySelectorAll('[data-kaf]').forEach(b=>b.onclick=()=>{let FD={};try{FD=JSON.parse(localStorage.getItem('hibiki-kfold')||'{}')||{};}catch(e){}const id=b.dataset.kaf;if(FD[id])delete FD[id];else FD[id]=1;try{localStorage.setItem('hibiki-kfold',JSON.stringify(FD));}catch(e){}paint();});
+    s.querySelectorAll('[data-kaid]').forEach(b=>b.onclick=()=>{closeSub();cb(b.dataset.kaid,b.dataset.kad||'');});$('kaNo').onclick=closeSub;};
+  paint();}
 /* ===== c5.5：使ったAI（行の ai＝id の配列）。AI系の種類の時だけ出す ===== */
 const AI_TOOLS=[['cc','Claude Code','#c2410c'],['cl','Claude','#d97757'],['cx','Codex','#111827'],['gpt','ChatGPT','#10a37f'],['gm','Gemini','#4285f4']];
 const AI_KINDS={ai:1,aibiz:1,aiwork:1};
@@ -7978,7 +7995,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c6.0";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c6.1";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 /* ログインの後：同じユーザーなら影はそのまま（全件受信をやり直さない）。違うユーザーならそのユーザーの影を読む */
 async function clAfterLogin(){
