@@ -2717,6 +2717,11 @@ function pin5(){if(PIN5_N.length)return PIN5_N.slice();const want=PIN5_H;if(!wan
 function placePrefOf(nm){let best=null;for(const d in state.entries){const eo=state.entries[d];for(const k in eo){const en=eo[k];if(!en||en.del||en.mv||en.p!==nm||!prefOf(en.pf))continue;if(!best||d>best.d||(d===best.d&&(en.s||'')>(best.s||'')))best={d,s:en.s,pf:Number(en.pf)};}}return best?best.pf:placePf(nm);}
 function placeChipsPref(code){const c={},last={};for(const d in state.entries){const eo=state.entries[d];for(const k in eo){const en=eo[k];if(!en||en.del||en.mv||!en.p)continue;c[en.p]=(c[en.p]||0)+1;if(!last[en.p]||d>last[en.p])last[en.p]=d;}}
   return Object.keys(c).filter(nm=>placePrefOf(nm)===code).sort((a,b)=>(last[b]||'').localeCompare(last[a]||'')||c[b]-c[a]);}
+/* c8.7：県ごとの5つ。東京は本人が決めた普段の5つ（無ければよく使う順）。ほかの県は直近60日→全期間の多い順 */
+function placeTop(code){if(code===13){const p=pin5();if(p.length)return p;}
+  const c60={},c={},lo=addDays(todayStr(),-60);for(const d in state.entries){const eo=state.entries[d];for(const k in eo){const en=eo[k];if(!en||en.del||en.mv||!en.p)continue;c[en.p]=(c[en.p]||0)+1;if(d>=lo)c60[en.p]=(c60[en.p]||0)+1;}}
+  return Object.keys(c).filter(nm=>placePrefOf(nm)===code).sort((a,b)=>(c60[b]||0)-(c60[a]||0)||c[b]-c[a]).slice(0,5);}
+function placeOther(){const sh={};placeTop(13).concat(placeTop(11)).forEach(p=>sh[p]=1);return placeChips().filter(p=>!sh[p]);}
 function placeChips(){
   /* 固定チップ＋自分がよく書く場所（育つ）。重複は出さない */
   const seen={},rc={},lim=addDays(todayStr(),-14);
@@ -3502,7 +3507,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+   /* 同期の状態1行と記録（クラウド版 c1.9） */
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c8.6）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c8.7）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -3665,9 +3670,8 @@ function openEntrySheet(date,ref){
     '<div class="et3" id="eType"><button data-ty="stay">📍 場所</button><button data-ty="move">🚗 移動</button><button data-ty="incar">🚙 車内</button></div>'+   /* c6.3：時間のすぐ下で「何の記録か」（本人指示）。新しい記録は📍いた */
     '<div id="secStay"><div class="sh-label">📍 場所（自由に書ける・コピペOK）</div>'+
       '<div id="pfInl" style="display:flex;gap:6px;align-items:center"><input type="text" id="shPlace" maxlength="120" data-need="1" placeholder="例：東京タワー" style="flex:1;min-width:0"></div>'+   /* 左端に県のチップが入る */
-      '<div class="pfflt" id="pFlt"><span>県で選ぶ</span><button data-pfl="13">🗼 東京</button><button data-pfl="11">🌾 埼玉</button></div>'+   /* c7.8 */
-      (chips.length?'<div class="sh-chips" id="pChips" style="margin-top:6px">'+
-      chipListHtml(chips,chipsOpen())+'</div>':'')+'</div>'+
+      '<div class="pfflt" id="pFlt"><button data-pfl="13">🗼 東京</button><button data-pfl="11">🌾 埼玉</button><button data-pfl="-1">📂 ほか</button></div>'+   /* c8.7 */
+      '<div class="sh-chips" id="pChips" style="margin-top:6px"></div></div>'+
     '<div class="cnt2" id="cntSw"><button data-cn="1">☝️ 1つ</button><button data-cn="2">✌️ 2つ以上</button></div>'+   /* c6.8 */
     '<div id="recDo" class="recdo"></div>'+   /* c6.2：🏷️ ここで何をした（1行ずつとリンク） */
     ''+'<div class="ac-ai rec" id="recAi" style="display:none"></div>'+   /* c5.6：記録の種類が🤖AIの時、使ったAI */   /* 案件（MINI大宮クレーム など） */
@@ -3753,7 +3757,8 @@ function openEntrySheet(date,ref){
     const one=(b,code,auto,lab)=>{if(!b)return;const p=prefOf(code);b.textContent='🗾 '+lab+(p?p.short:(lab?'未選択':'都道府県'));b.style.background=p?p.co:'';b.classList.toggle('on',!!p);b.classList.toggle('auto',!!(p&&auto));};
     const b0=$('pf0Chip');if(b0)b0.style.display=mvT?'':'none';if(mvT)one(b0,sheetSt.pf0,sheetSt.pf0Auto,'出発：');
     one($('pfChip'),sheetSt.pf,sheetSt.pfAuto,mvT?'到着：':'');
-    if(mvT&&!prefOf(sheetSt.pf)&&prefOf(sheetSt.pf0))$('pfChip').textContent='🗾 到着：出発と同じ';}   /* 同じ県なら選ばなくていい */
+    if(mvT&&!prefOf(sheetSt.pf)&&prefOf(sheetSt.pf0))$('pfChip').textContent='🗾 到着：出発と同じ';
+    if(sheetSt.pflSync)sheetSt.pflSync();}   /* c8.7：場所のボタンを今の県に合わせる */   /* 同じ県なら選ばなくていい */
   $('shPlace').addEventListener('change',()=>{if(!sheetSt)return;arFill($('shPlace').value.trim());if(sheetSt.pf&&!sheetSt.pfAuto){pfPaint();return;}const v=placePf($('shPlace').value.trim());if(v){sheetSt.pf=v;sheetSt.pfAuto=true;}pfPaint();});
   {const ac=$('arChip');if(ac)ac.onclick=()=>{if(!sheetSt)return;if(sheetSt.ar){openArSheet(pfPaint);return;}armTap(ac,'arChip','🏙️ 区・市町村（任意）',()=>openArSheet(pfPaint));};}
   const pjPaint=()=>{const b=$('pjChip');if(!b||!sheetSt)return;const p=sheetSt.pj&&(state.projects||{})[sheetSt.pj];b.textContent=p&&!p.del?'📌 '+p.n:'📌 案件';b.classList.toggle('on',!!(p&&!p.del));};pjPaint();
@@ -3964,9 +3969,12 @@ function openEntrySheet(date,ref){
     if(less)less.onclick=()=>{chipsSetOpen(false);pc.innerHTML=chipListHtml(chips,false);bindChips();};  /* たたむ */
   };
   bindChips();
-  {const fl=$('pFlt');if(fl&&pc){const paintF=()=>{fl.querySelectorAll('[data-pfl]').forEach(b=>b.classList.toggle('sel',Number(b.dataset.pfl)===pfl));curChips=pfl?placeChipsPref(pfl):chips;
-      pc.innerHTML=curChips.length?chipListHtml(curChips,pfl?false:chipsOpen()):'<span class="sh-note">この県の場所はまだ無い</span>';bindChips();};
-    fl.querySelectorAll('[data-pfl]').forEach(b=>b.onclick=()=>{const v=Number(b.dataset.pfl);pfl=(pfl===v)?0:v;paintF();});}}   /* c7.8：押すとその県の場所だけ・もう一度で元へ */
+  {const fl=$('pFlt');if(fl&&pc){let picked=false;const auto=()=>{const c=Number(sheetSt&&sheetSt.pf)||0;return c===13||c===11?c:-1;};
+    const paintF=()=>{fl.querySelectorAll('[data-pfl]').forEach(b=>b.classList.toggle('sel',Number(b.dataset.pfl)===pfl));curChips=pfl===-1?placeOther():placeTop(pfl);
+      pc.innerHTML=curChips.length?curChips.map(p=>'<button class="chip" data-p="'+esc(p)+'">'+esc(p)+'</button>').join(''):'<span class="sh-note">'+(pfl===-1?'ほかの場所はまだ無い':'この県の場所はまだ無い')+'</span>';bindChips();};
+    fl.querySelectorAll('[data-pfl]').forEach(b=>b.onclick=()=>{picked=true;pfl=Number(b.dataset.pfl);paintF();});
+    pfl=auto();paintF();
+    if(sheetSt)sheetSt.pflSync=()=>{if(picked)return;const v=auto();if(v!==pfl){pfl=v;paintF();}};}}   /* c8.7：最初は今の県（東京・埼玉以外は📂ほか）。県を変えたら付いてくる。押したらそのまま */
   /* 写真 */
   function renderShPhotos(){
     const w=$('shPhotos');
@@ -8265,7 +8273,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c8.6";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c8.7";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 /* ログインの後：同じユーザーなら影はそのまま（全件受信をやり直さない）。違うユーザーならそのユーザーの影を読む */
 async function clAfterLogin(){
