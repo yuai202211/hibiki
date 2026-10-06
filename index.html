@@ -2796,7 +2796,7 @@ function pjStats(id){const o={tot:0,cat:{},days:{},rows:[]};for(const d of Objec
     const m=durMin(e.s,e.e,e.ed);o.tot+=m;o.days[d]=(o.days[d]||0)+m;let inner=0;
     if(e.mv)for(const a of (e.acts||[])){if(a&&a.k&&Number(a.m)>0){const kk=kindOf(a.k);const c=(kk?kk.ic+kk.lb:a.k)+'（移動中）';o.cat[c]=(o.cat[c]||0)+Number(a.m);inner+=Number(a.m);}}
     const c=e.mv?(anaTr(e.tr||'_none').join(' ')+(inner?'（運転・乗車）':'')):(e.k?(kindOf(e.k)?kindOf(e.k).ic+kindOf(e.k).lb:e.k):'📍滞在');o.cat[c]=(o.cat[c]||0)+Math.max(0,m-inner);
-    o.rows.push({d,k,e,m});}}return o;}
+    o.rows.push({d,k,e,m});}}o.rows.sort((a,b)=>a.d<b.d?-1:a.d>b.d?1:((a.e.s||'')<(b.e.s||'')?-1:(a.e.s||'')>(b.e.s||'')?1:0));return o;}   /* c5.1：日付→開始の順 */
 let pjSel='';
 function openPjPage(){closeSheet();renderPjPage();}
 function renderPjPage(){pageMode='pj';const p=$('page');const hs=m=>m<60?m+'分':(Math.round(m/6)/10)+'時間';
@@ -3394,7 +3394,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+   /* 同期の状態1行と記録（クラウド版 c1.9） */
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c5.0）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c5.1）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -3733,7 +3733,7 @@ function openEntrySheet(date,ref){
       /* 時刻を選んだら、その行のかかった時間と合計だけ書き直す（行を作り直さない＝入力中の文字や選択が消えない） */
       const emp=()=>{['.ac-s','.ac-e'].forEach(q=>{const el=r.querySelector(q);el.classList.toggle('emp',!el.value);});};emp();
       const upd=()=>{acRead();const a=acts[i];r.querySelector('.ac-d').textContent=(a&&a.m)?('⏱ '+durText(a.m)):'';emp();acSum();};
-      r.querySelector('.ac-s').onchange=upd;r.querySelector('.ac-e').onchange=upd;
+      r.querySelector('.ac-s').onchange=()=>{upd();const so=actsSort(acts,tS);if(so.some((x,j)=>x!==acts[j])){acts=so;acPaint();}};r.querySelector('.ac-e').onchange=upd;   /* c5.1：開始を選んだら、その場で時刻の早い順に並べ直す（本人指示 2026-10-06） */
       /* Enter＝次の行を足して、そこへ移る（ToDoリストのように続けて書ける）。変換の確定のEnterでは足さない */
       r.querySelector('.ac-t').onkeydown=ev=>{if(ev.key!=='Enter'||ev.isComposing||ev.keyCode===229)return;
         ev.preventDefault();acRead();if(!acts[i]||!acts[i].t.trim())return;acts.splice(i+1,0,{t:'',m:0,s:'',e:''});acPaint(i+1);};
@@ -7843,7 +7843,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c5.0";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c5.1";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 /* ログインの後：同じユーザーなら影はそのまま（全件受信をやり直さない）。違うユーザーならそのユーザーの影を読む */
 async function clAfterLogin(){
