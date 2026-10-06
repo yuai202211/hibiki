@@ -749,6 +749,8 @@
   .pfchip{display:inline-block;max-width:100%;padding:7px 14px;border-radius:999px;background:#eceef3;color:#8a90a0;font-weight:800;font-size:13.5px;border:2px solid transparent;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .pfchip.on{color:#fff;text-shadow:0 1px 1px rgba(0,0,0,.18)}
   .pfchip.auto{border-style:dashed;border-color:rgba(26,28,34,.4)}
+  .so-seg{width:100%;margin-top:6px;display:flex;flex-direction:column;gap:4px}
+  .so-sg{display:flex;align-items:center;gap:8px;font-weight:800;font-size:14px}.so-sg span{flex:1}.so-sg b{font-weight:800}.so-sg i{font-style:normal;color:#8a93a6;font-weight:700}.so-sg input{font:inherit;padding:4px 6px;border-radius:10px;border:1px solid #d9dee8}
   .pf-q{display:flex;gap:8px;margin:4px 0 2px}
   .pf-q button{flex:1;padding:16px 6px;border-radius:16px;background:#f1f3f8;color:var(--ink);font-weight:800;font-size:16px;border:2px solid transparent}
   .pf-q button.cur{background:var(--ac);color:#fff}
@@ -3353,7 +3355,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+   /* 同期の状態1行と記録（クラウド版 c1.9） */
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c4.5）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c4.6）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -3709,10 +3711,12 @@ function openEntrySheet(date,ref){
     const isCar=(eType==='incar');   /* 車内滞在＝中で何をしたか */
     const isStay=(eType==='stay');   /* 滞在＝ここで何をしたか（秘密基地で寝た など） */
     const q=isCar?['rest','pcwork','ai','bizcall','famcall','nap','sleep','spplay','chat']:isStay?['sleep','nap','ai','work','pcwork','spplay','rest']:(eType!=='move')?[]:(drv?(qMore?['audio','bizcall','famcall','think','chat','ai','work','read','doc','vstudy']:['audio','bizcall','famcall','think']):['ai','work','bizcall','read','doc','vstudy','audio','chat']);
-    const qh=q.map(id=>{const k=kindOf(id);return (k&&!k.off)?'<button class="chip ac-q" data-aq="'+id+'" style="--kc:'+k.co+'">'+esc(k.ic)+' '+esc(k.lb)+'</button>':'';}).join('')+((eType==='move'&&drv)?'<button class="chip ac-qm" id="acQm">'+(qMore?'－ たたむ':'＋ ほか')+'</button>':'');
+    const onW=id=>(isCar||isStay)&&acts.some(a=>a&&a.w&&a.k===id);   /* c4.6：押してある物（滞在の間ずっと）に印 */
+    const qh=q.map(id=>{const k=kindOf(id);return (k&&!k.off)?'<button class="chip ac-q'+(onW(id)?' sel':'')+'" data-aq="'+id+'" style="--kc:'+k.co+'">'+esc(k.ic)+' '+esc(k.lb)+'</button>':'';}).join('')+((eType==='move'&&drv)?'<button class="chip ac-qm" id="acQm">'+(qMore?'－ たたむ':'＋ ほか')+'</button>':'');
     if(qe){qe.innerHTML=(isCar||isStay)?'':qh;const w=$('acQw');(w||qe).style.display=(qh&&!isCar&&!isStay)?'':'none';}   /* 1タップは行の上（シートを開いてすぐ見える所） */
-    el.innerHTML=((qe&&!isCar&&!isStay)?'':((isCar||isStay)&&qh?'<div class="sh-label" style="width:100%;margin:0 0 2px">'+(isCar?'🚙 車内で何をした（押すだけで車内滞在の間ずっと）':'📍 ここで何をした（押すだけで滞在の間ずっと）')+'</div>':'')+qh)+'<button class="chip" id="acAdd" style="background:#eefaf3;color:#0a9a54">＋ 行を足す</button><button class="chip" id="frAdd" style="background:#f4f2ff;color:#5b4fd6">＋ 自由に書く</button>';
+    el.innerHTML=((qe&&!isCar&&!isStay)?'':((isCar||isStay)&&qh?'<div class="sh-label" style="width:100%;margin:0 0 2px">'+(isCar?'🚙 車内で何をした（複数OK・もう一度で外す）':'📍 ここで何をした（複数OK。2つ以上は順に時間を分ける）')+'</div>':'')+qh)+'<button class="chip" id="acAdd" style="background:#eefaf3;color:#0a9a54">＋ 行を足す</button><button class="chip" id="frAdd" style="background:#f4f2ff;color:#5b4fd6">＋ 自由に書く</button>';
     ((qe&&!isCar&&!isStay)?qe:el).querySelectorAll('[data-aq]').forEach(b=>b.onclick=()=>{acRead();const k=kindOf(b.dataset.aq);if(!k)return;
+      if(onW(k.id)){const i=acts.findIndex(a=>a&&a.w&&a.k===k.id);if(i>=0)acts.splice(i,1);acPaint();return;}   /* c4.6：もう一度で外す */
       const row={t:k.lb,k:k.id,m:0,s:'',e:'',w:1},last=acts[acts.length-1];   /* w＝この記録の間ずっと */
       if(last&&!last.t.trim()&&!last.s&&!last.e&&!last.k&&!last.d&&!(last.c&&last.c.trim()))acts[acts.length-1]=row;else acts.push(row);   /* 空の行があればそこに入れる */
       acPaint();});
@@ -3789,24 +3793,30 @@ function openEntrySheet(date,ref){
   const openSort=()=>{acRead();const ix=kindIndex();const items=acts.map((a,i)=>({a,i})).filter(x=>x.a.t.trim()&&!x.a.k&&!x.a.nk);
     const sug={},ch={},dsg={},dch={};items.forEach(x=>{sug[x.i]=kindSuggest(x.a.t,ix);ch[x.i]=sug[x.i][0]||'';const ts=toolSuggest(x.a.t,ix);dch[x.i]=x.a.d||ts[0]||'';
       dsg[x.i]=[...new Set([dch[x.i],...ts,'pc','phone','tool'].filter(d=>d&&d!=='_other'&&toolOf(d)))].slice(0,4);});   /* 使った物：前に使った物＋💻📱🔧 */
-    const canE=!eTouched&&eType==='stay';let eSel=null,lq=sheetSt.longQ?(()=>{const s=Number(tS.slice(0,2));return (s>=22||s<5)?'sleep':'';})():null;   /* 長い滞在：夜に始まったなら「寝た」を先に */
+    const canE=!eTouched&&eType==='stay';let eSel=null,lqs=sheetSt.longQ?(()=>{const s=Number(tS.slice(0,2));return (s>=22||s<5)?['sleep']:[];})():null,lqSt={};   /* c4.6：複数OK。lqSt＝本人が直した開始時刻 */
+    const hm2=m=>{m=((Math.round(m)%1440)+1440)%1440;return String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0');};
+    const lqSegs=()=>{if(!lqs||lqs.length<2)return [];const D=durMin(tS,tE,(tE<=tS&&tEd===0)?1:tEd),N=lqs.length,a0=hmMin(tS);
+      const st=lqs.map((id,i)=>i===0?tS:(lqSt[i]||hm2(a0+Math.round(i*D/N/5)*5)));
+      return lqs.map((id,i)=>({id,s:st[i],e:i<N-1?st[i+1]:tE}));};   /* 長い滞在：夜に始まったなら「寝た」を先に */
     const paint=()=>{const all=acts.map((a,i)=>ch[i]!==undefined?ch[i]:a.k).filter(Boolean),es=canE?recTypeOf(all):'';if(eSel===null||!canE)eSel=es||eType;
       const chip=(i,id,on)=>{const k=kindOf(id);return k?'<button class="chip'+(on?' sel':'')+'" data-si="'+i+'" data-sk="'+esc(id)+'">'+esc(k.ic)+' '+esc(k.lb)+'</button>':'';};
       $('sheet2').innerHTML='<div class="grab"></div><div class="sh-time"><span>🏷️ 仕分け</span></div><div class="sh-note" style="text-align:left;margin:-4px 0 4px">当たっていれば［これで保存］。違う物だけ押して直す</div>'+
         items.map(x=>'<div class="so-row"><div class="so-t">'+esc(x.a.t)+'</div><div class="so-c">'+sug[x.i].map(id=>chip(x.i,id,ch[x.i]===id)).join('')+
           '<button class="chip so-more" data-sm="'+x.i+'">ほか…</button><button class="chip'+(!ch[x.i]?' sel':'')+'" data-si="'+x.i+'" data-sk="">なし</button></div>'+
           (x.a.d==='_other'?'':'<div class="so-d"><span>使った物</span>'+dsg[x.i].map(d=>{const t=toolOf(d);return '<button class="chip'+(dch[x.i]===d?' sel':'')+'" data-di="'+x.i+'" data-dk="'+esc(d)+'">'+esc(t.ic)+'</button>';}).join('')+'<button class="chip'+(!dch[x.i]?' sel':'')+'" data-di="'+x.i+'" data-dk="">なし</button></div>')+'</div>').join('')+
-        (lq!==null?'<div class="so-row"><div class="so-t">'+(eType==='incar'?'🚙 車内で':'📍 ここで')+'何をしていた？（'+esc(durText(durMin(tS,tE,(tE<=tS&&tEd===0)?1:tEd)))+'）</div><div class="so-c">'+['sleep','nap','ai','work','pcwork','spplay','rest'].map(id=>{const k=kindOf(id);return k?'<button class="chip'+(lq===id?' sel':'')+'" data-lq="'+id+'">'+esc(k.ic)+' '+esc(k.lb)+'</button>':'';}).join('')+'<button class="chip'+(!lq?' sel':'')+'" data-lq="">なし</button></div></div>':'')+
+        (lqs!==null?'<div class="so-row"><div class="so-t">'+(eType==='incar'?'🚙 車内で':'📍 ここで')+'何をしていた？（'+esc(durText(durMin(tS,tE,(tE<=tS&&tEd===0)?1:tEd)))+'）</div><div class="so-c">'+['sleep','nap','ai','work','pcwork','spplay','rest'].map(id=>{const k=kindOf(id);return k?'<button class="chip'+(lqs.indexOf(id)>=0?' sel':'')+'" data-lq="'+id+'">'+esc(k.ic)+' '+esc(k.lb)+'</button>':'';}).join('')+'<button class="chip'+(!lqs.length?' sel':'')+'" data-lq="">なし</button></div>'+
+          (lqs.length>=2?'<div class="so-seg">'+lqSegs().map((g,i)=>{const k=kindOf(g.id);return '<div class="so-sg"><span>'+esc(k.ic)+' '+esc(k.lb)+'</span>'+(i===0?'<b>'+esc(g.s)+'</b>':'<input type="time" step="300" lang="ja-JP" data-lqs="'+i+'" value="'+esc(g.s)+'">')+'<i>→ '+esc(g.e)+'</i></div>';}).join('')+'<div class="sh-note" style="margin:2px 0 0">順に時間を分けた。開始の時刻は直せる</div></div>':'')+'</div>':'')+
         (canE&&es&&es!==eType?'<div class="so-row"><div class="so-t">記録の種類</div><div class="so-c"><button class="chip'+(eSel===es?' sel':'')+'" data-se="'+es+'">'+ETL[es]+'</button><button class="chip'+(eSel===eType?' sel':'')+'" data-se="'+eType+'">'+ETL[eType]+'</button></div></div>':'')+
         '<div class="sh-btns"><button class="delbtn" id="soAs" style="flex:0 0 auto">そのまま保存</button><button class="savebtn" id="soOk">これで保存</button></div>';
       const s=$('sheet2');
       s.querySelectorAll('[data-si]').forEach(b=>b.onclick=()=>{ch[b.dataset.si]=b.dataset.sk;paint();});
       s.querySelectorAll('[data-se]').forEach(b=>b.onclick=()=>{eSel=b.dataset.se;paint();});
       s.querySelectorAll('[data-di]').forEach(b=>b.onclick=()=>{dch[b.dataset.di]=b.dataset.dk;paint();});
-      s.querySelectorAll('[data-lq]').forEach(b=>b.onclick=()=>{lq=b.dataset.lq;paint();});
+      s.querySelectorAll('[data-lq]').forEach(b=>b.onclick=()=>{const id=b.dataset.lq;if(!id)lqs=[];else{const i=lqs.indexOf(id);if(i>=0)lqs.splice(i,1);else lqs.push(id);}lqSt={};paint();});   /* c4.6：押す＝足す／もう一度＝外す／なし＝全部外す */
+      s.querySelectorAll('[data-lqs]').forEach(x=>x.onchange=()=>{if(x.value)lqSt[+x.dataset.lqs]=x.value;});
       s.querySelectorAll('[data-sm]').forEach(b=>b.onclick=()=>{const i=+b.dataset.sm;closeSub();acPaint();const r=$('acRows').querySelectorAll('.actrow')[i];if(r){const p=r.querySelector('[data-akp=_top]');if(p)p.click();try{r.scrollIntoView({block:'center'});}catch(e){}}});   /* 一覧に無い種類は、その行で選ぶ */
       $('soOk').onclick=()=>{items.forEach(x=>{if(!acts[x.i])return;if(ch[x.i]){acts[x.i].k=ch[x.i];delete acts[x.i].nk;}else acts[x.i].nk=1;if(acts[x.i].d!=='_other'){if(dch[x.i])acts[x.i].d=dch[x.i];else delete acts[x.i].d;}});
-        if(lq){const k=kindOf(lq);if(k){const last=acts[acts.length-1];const row={t:k.lb,k:lq,m:0,s:'',e:'',w:1};if(last&&!last.t.trim()&&!last.k)acts[acts.length-1]=row;else acts.push(row);}}   /* 長い滞在の中身 */   /* なし＝次から聞かない */if(canE&&eSel&&eSel!==eType){eType=eSel;mty();}acPaint();sheetSt.sorted=true;closeSub();$('shSave').click();};
+        if(lqs&&lqs.length){const segs=lqSegs();lqs.forEach((id,i)=>{const k=kindOf(id);if(!k)return;const g=segs[i];const row=g?{t:k.lb,k:id,m:0,s:g.s,e:g.e}:{t:k.lb,k:id,m:0,s:'',e:'',w:1};const last=acts[acts.length-1];if(last&&!last.t.trim()&&!last.k&&!last.w)acts[acts.length-1]=row;else acts.push(row);});}   /* 長い滞在の中身（1つ＝ずっと／2つ以上＝時間で分ける） */   /* なし＝次から聞かない */if(canE&&eSel&&eSel!==eType){eType=eSel;mty();}acPaint();sheetSt.sorted=true;closeSub();$('shSave').click();};
       $('soAs').onclick=()=>{sheetSt.sorted=true;closeSub();$('shSave').click();};};
     if(sheetSt.longQ&&!items.length&&!(canE))void 0;
     openSub('',null);paint();};
@@ -4104,7 +4114,7 @@ function openPrefPicker(cur,onPick){
     $('pfNone').onclick=()=>done(0);
     $('pfOk').onclick=()=>{const i=Math.min(ps.length-1,Math.max(0,Math.round(dr.scrollTop/DH)));done(ps[i][0]);};
   };
-  step0();
+  step1();   /* c4.6：最初から日本地図（本人指示）。step0（3県だけ）は使わない */
 }
 function closeSheet(){
   try{subOnClose=null;closeSub();}catch(e){}   /* 重ねたシート（#ovl2）も閉じる。記録シートへの描き直しはしない */
@@ -7656,7 +7666,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c4.5";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c4.6";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 /* ログインの後：同じユーザーなら影はそのまま（全件受信をやり直さない）。違うユーザーならそのユーザーの影を読む */
 async function clAfterLogin(){
