@@ -740,6 +740,7 @@
   .ac-kall{width:100%;display:flex;flex-direction:column;gap:6px;margin-top:6px}.ac-kgp{background:#fff;border:1px solid var(--line);border-radius:14px;padding:6px 8px}
   .ac-kgh{display:flex;align-items:center;gap:6px;width:100%;font-weight:800;font-size:13px;color:#1f2430;padding:2px 0;background:none}.ac-kgh i{margin-left:auto;color:#9aa3b5;font-style:normal}.ac-kgh.f{color:#8a93a6}
   .ac-kgp .ac-kl{margin-top:4px}
+  .ac-kq{display:flex;flex-wrap:wrap;gap:6px;width:100%;margin-top:6px}.ac-kq>button:not(.ac-kc){display:inline-flex;align-items:center;gap:4px;padding:8px 11px;border-radius:12px;background:#fff;border:1px solid var(--line);border-bottom:3px solid var(--kc);font-weight:800;font-size:13px}.ac-kq .ac-kall2{background:#f1f3f8}
   .ka-cats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:6px 0}.ka-cats button{display:flex;flex-direction:column;align-items:center;gap:4px;padding:14px 4px;border-radius:16px;background:#fff;border:1px solid var(--line);font-weight:800;font-size:13px}.ka-cats b{font-size:26px;line-height:1}
   .ka-all .ac-kgp{border:2px solid #1f2430}.ka-all .ac-kl button{font-size:14px!important;padding:11px 12px!important}
   .ka-all .ac-kl{display:flex;flex-wrap:wrap;gap:6px}.ka-all .ac-kl button{display:inline-flex;align-items:center;gap:4px;padding:7px 10px;border-radius:12px;background:#fff;border:1px solid var(--line);border-bottom:3px solid var(--kc);font-weight:800;font-size:12.5px}
@@ -2779,6 +2780,8 @@ function kCatHtml(k,path,d,dx){const P=String(path||'').split('/').filter(Boolea
   if(k&&P[0]!=='_top'){const cur=kindOf(k)||{ic:'❓',lb:String(k).slice(0,4),co:'#9aa3b5'},dv=(devK&&d)?toolOf(d):null;   /* 選んだ物だけ（▾で選び直し・✕で外す） */
     return '<button class="ac-ksel sel" data-akp="_top" style="--kc:'+esc(cur.co)+'">'+esc(cur.ic)+'<span>'+esc(cur.lb)+(dv?' '+esc(dv.ic):'')+'</span><i>▾</i></button><button class="ac-kx" data-akx="1" aria-label="種類を外す">✕</button>'+tb;}
   if(P[0]!=='_top')return '<button class="ac-kc pick" data-akp="_top">🏷️<span>種類をえらぶ</span><i>▾</i></button>'+tb;   /* 閉じている時は2つだけ */
+  /* c6.6：狭いので、よく使う5つ＋🏷️ほか（全部）（本人決定）。ほかは分野→中身の画面 */
+  {const top=kindTop5();return '<button class="ac-kc on" data-akp="">▴<span>とじる</span></button><div class="ac-kq">'+top.map(id=>kb(id,{d:''})).join('')+'<button class="ac-kc ac-kall2" data-akall="1">🏷️<span>ほか（全部）</span></button></div>';}
   /* c5.9：全部の分野と中身を一度に出す。見出しを押すと折りたたむ（端末に覚える） */
   let FD={};try{FD=JSON.parse(localStorage.getItem('hibiki-kfold')||'{}')||{};}catch(e){}
   return '<button class="ac-kc on" data-akp="">▴<span>とじる</span></button><div class="ac-kall">'+KIND_TREE.map(t=>{const fo=!!FD[t.id];
@@ -3444,7 +3447,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+   /* 同期の状態1行と記録（クラウド版 c1.9） */
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c6.5）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c6.6）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -3788,6 +3791,7 @@ function openEntrySheet(date,ref){
           if(!p)np='';else if(p==='_top'||p==='_tool')np=(c===p)?'':p;else if(c===p)np=(p.indexOf('/')>0?p.split('/')[0]:'_top');else np=p;   /* 開いた分野をもう一度押す＝分野の一覧へ */
           r.dataset.kc=np;paint();});
         st.querySelectorAll('[data-ak]').forEach(b=>b.onclick=()=>{r.dataset.k=b.dataset.ak;if(b.dataset.akd){r.dataset.d=b.dataset.akd;r.dataset.dx='';}r.dataset.kc='';if(AI_KINDS[b.dataset.ak]){acRead();acPaint();}else{paint();acRead();acCh();}});   /* c5.9：AIなら行を作り直して「使ったAI」を出す */
+        st.querySelectorAll('[data-akall]').forEach(b=>b.onclick=()=>{openKindAll((id,d)=>{r.dataset.k=id;if(d){r.dataset.d=d;r.dataset.dx='';}r.dataset.kc='';acRead();acPaint();},'🏷️ この行は何？','分野を押すと中身が出る。1つ選ぶとこの行の種類になる');});   /* c6.6 */
         st.querySelectorAll('[data-akf]').forEach(b=>b.onclick=()=>{let FD={};try{FD=JSON.parse(localStorage.getItem('hibiki-kfold')||'{}')||{};}catch(e){}const id=b.dataset.akf;if(FD[id])delete FD[id];else FD[id]=1;try{localStorage.setItem('hibiki-kfold',JSON.stringify(FD));}catch(e){}paint();});   /* c5.9：分野を折りたたむ */   /* 選ぶと閉じる（PC／スマホからなら道具も付く） */
         st.querySelectorAll('[data-akx]').forEach(b=>b.onclick=()=>{r.dataset.k='';r.dataset.kc='';paint();acRead();acCh();});
         st.querySelectorAll('[data-ad]').forEach(b=>b.onclick=()=>{const d=b.dataset.ad;r.dataset.d=(r.dataset.d===d)?'':d;if(r.dataset.d!=='_other'){r.dataset.dx='';r.dataset.kc='';}paint();
@@ -5959,13 +5963,20 @@ function renderSrPage(){pageMode='sr';const p=$('page');const ms=srList().revers
   p.innerHTML='<div class="page-head"><button class="bk" id="pgBk">‹ 戻る</button><span class="tt">🕳️😤 困り事の一覧</span><span style="width:36px"></span></div><div class="page-body">'+
     '<div class="an-empty">自分で押した 🕳️ムダ・😤ストレス・😫調子悪い。困り事＝ビジネスの種（本人 2026-10-06）。押すと直せる</div>'+(ms.length?'<div style="display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 10px">'+top+'</div>'+body:'<div class="an-empty">まだ無い。書くの行の 🕳️ を押すと残る</div>')+'</div>';
   $('pgBk').onclick=()=>openAnaPage();p.querySelectorAll('[data-mk]').forEach(b=>b.onclick=()=>openSelfReport(b.dataset.mk));}
+/* c6.6：よく使う種類5つ（直近60日。足りなければ AI・仕事・食事・休憩・整備） */
+let kTopCache={u:-1,v:[]};
+function kindTop5(){const u=state.updatedAt||0;if(kTopCache.u===u)return kTopCache.v;const c={},lim=addDays(todayStr(),-60);
+  for(const d in state.entries){if(d<lim)continue;const eo=state.entries[d];for(const k in eo){const en=eo[k];if(!en||en.del)continue;if(en.k&&en.k!=='stay'&&en.k!=='incar')c[en.k]=(c[en.k]||0)+1;for(const a of (en.acts||[]))if(a&&a.k)c[a.k]=(c[a.k]||0)+1;}}
+  const out=Object.keys(c).filter(id=>{const k=kindOf(id);return k&&!k.off;}).sort((a,b)=>c[b]-c[a]).slice(0,5);
+  for(const id of ['ai','work','meal','rest','repair'])if(out.length<5&&out.indexOf(id)<0)out.push(id);
+  kTopCache={u,v:out};return out;}
 /* ===== c6.1：全部の種類から1つ選ぶ（分野ごと・見出しで折りたたみ。1行ずつと同じ並び） ===== */
-function openKindAll(cb){const leaves=new Set();KIND_TREE.forEach(t=>(t.ch||[]).forEach(c=>{if(typeof c==='string')leaves.add(c);else c.ch.forEach(x=>leaves.add(x));}));
+function openKindAll(cb,ttl,note){const leaves=new Set();KIND_TREE.forEach(t=>(t.ch||[]).forEach(c=>{if(typeof c==='string')leaves.add(c);else c.ch.forEach(x=>leaves.add(x));}));
   const etc=kindList().filter(x=>!leaves.has(x.id)).map(x=>x.id);
   let og='';   /* c6.5：最初は分野だけ。押した分野の中身だけ大きく出す（本人指示） */
   const paint=()=>{
     const kb=(id,t)=>{const x=kindOf(id);if(!x||x.off)return '';return '<button data-kaid="'+esc(id)+'" data-kad="'+(t.d||'')+'" style="--kc:'+esc(x.co)+'">'+esc(x.ic)+'<span>'+esc(x.lb)+'</span></button>';};
-    openSub('<div class="sh-time"><span>🏷️ ここで何をした？（ずっと）</span></div><div class="sh-note" style="text-align:left">分野を押すと中身が出る。1つ選ぶと滞在の間ずっとに数える</div>'+
+    openSub('<div class="sh-time"><span>'+esc(ttl||'🏷️ ここで何をした？（ずっと）')+'</span></div><div class="sh-note" style="text-align:left">'+esc(note||'分野を押すと中身が出る。1つ選ぶと滞在の間ずっとに数える')+'</div>'+
       (og?'':'<div class="ka-cats">'+KIND_TREE.map(t=>'<button data-kaf="'+t.id+'"><b>'+t.ic+'</b><span>'+esc(t.lb)+'</span></button>').join('')+'</div>')+
       '<div class="ac-kall ka-all">'+
       KIND_TREE.filter(t=>t.id===og).map(t=>{const fo=false;const lv=t.ch?t.ch.map(c=>typeof c==='string'?kb(c,t):c.ch.map(x=>kb(x,t)).join('')).join(''):etc.map(id=>kb(id,t)).join('');
@@ -8022,7 +8033,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c6.5";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c6.6";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 /* ログインの後：同じユーザーなら影はそのまま（全件受信をやり直さない）。違うユーザーならそのユーザーの影を読む */
 async function clAfterLogin(){
