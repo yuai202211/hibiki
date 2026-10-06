@@ -730,7 +730,10 @@
   .db-bar{display:flex;height:14px;border-radius:999px;overflow:hidden;background:#eef0f5}
   .db-bar i{display:block;height:100%}
   .db-t{display:flex;gap:8px;align-items:center;margin-top:5px;font-size:12px;font-weight:800;color:#2a2f3c;white-space:nowrap;overflow:hidden}
-  .db-m{color:#e0405a}.db-n{color:#9aa3b5}.db-go{margin-left:auto;color:#9aa3b5;font-size:16px}
+  .db-m{color:#e0405a}.db-n{color:#9aa3b5}.db-go{margin-left:auto;color:#9aa3b5;font-size:12px;font-weight:800}
+  .db-h{display:flex;align-items:center;margin-bottom:5px;font-size:12px;font-weight:800;color:#5b6475}
+  .db-lg{display:flex;flex-wrap:wrap;gap:4px 10px;margin-top:6px}.db-l{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:700;color:#2a2f3c}.db-l i{width:10px;height:10px;border-radius:3px;display:inline-block}.db-l b{font-weight:800}.db-l.m{color:#e0405a}.db-l.n{color:#8a93a6}
+  .so-tm{display:block;font-size:11.5px;font-weight:700;color:#8a93a6}
   .gaprow .gp-l{font-size:12.5px;font-weight:800;color:#9aa3b5}
   .gaprow .gp-q{margin-left:8px;font-size:12px;font-weight:800;color:#0a9a54;background:#eefaf3;border-radius:999px;padding:3px 10px}
   .lgo button{width:100%;padding:12px;border-radius:14px;background:#f1f3f8;color:#5b6170;font-weight:800;font-size:13.5px}
@@ -2791,13 +2794,14 @@ async function appLogout(){try{
 }catch(e){toast('ログアウトに失敗：'+String((e&&e.message)||e).slice(0,40));}}
 /* この日の帯：分野ごとの時間を1本の色で（ムダは赤・記録なしは灰）。押すと分析の日 */
 function dayBandHtml(d){try{if(typeof anaCount!=='function'||d<'2026-08-25')return '';const c=anaCount(anaRange('day',d));if(!c.total)return '';
-  const g={};for(const id in c.sum){if(id==='_none'||!c.sum[id])continue;const k=id==='rtn'?{g:'A'}:kindOf(id);const gg=(kindMuda(id)?'M':((k&&k.g)||'X'));g[gg]=(g[gg]||0)+c.sum[id];}
+  const S1=c.sum1||c.sum;const g={};for(const id in S1){if(id==='_none'||!S1[id])continue;const k=id==='rtn'?{g:'A'}:kindOf(id);const gg=(kindMuda(id)?'M':((k&&k.g)||'X'));g[gg]=(g[gg]||0)+S1[id];}
   const mx=(c.muda&&c.muda.total)||0;if(mx){const mk=g.M||0;if(mx>mk){const add=mx-mk;g.M=mx;g.S=Math.max(0,(g.S||0)-add);}}   /* 空白の移動などのムダも赤へ */
-  const ord=KIND_GRP.filter(x=>g[x[0]]>0),none=c.sum._none||0,tot=c.total||1;
+  const ord=KIND_GRP.filter(x=>g[x[0]]>0),none=S1._none||0,tot=c.total||1;
   const hs=m=>m<60?m+'分':(Math.round(m/6)/10)+'h';
-  const top=ord.filter(x=>x[0]!=='M'&&x[0]!=='X').sort((a,b)=>g[b[0]]-g[a[0]]).slice(0,3).map(x=>x[1]+hs(g[x[0]])).join(' ');
-  return '<button class="dband" id="dBand"><div class="db-bar">'+ord.map(x=>'<i style="flex:'+g[x[0]]+';background:'+x[3]+'"></i>').join('')+(none?'<i style="flex:'+none+';background:#e3e6ee"></i>':'')+'</div>'+
-    '<div class="db-t">'+(top||'')+(g.M?' <b class="db-m">🕳️'+hs(g.M)+'</b>':'')+(none?' <span class="db-n">⬜'+hs(none)+'</span>':'')+'<span class="db-go">›</span></div></button>';}catch(e){return '';}}
+  /* c5.7：何の表示か分かるように（本人指示）。見出し＋色ごとに 色の点・名前・時間。ムダは赤、記録なしは灰 */
+  const lg=ord.slice().sort((a,b)=>(a[0]==='M')-(b[0]==='M')||g[b[0]]-g[a[0]]).map(x=>'<span class="db-l'+(x[0]==='M'?' m':'')+'"><i style="background:'+x[3]+'"></i>'+(x[0]==='M'?'🕳️ ムダ':x[0]==='X'?'📍 滞在・その他':esc(x[1]+' '+x[2]))+' <b>'+hs(g[x[0]])+'</b></span>').join('')+(none?'<span class="db-l n"><i style="background:#e3e6ee"></i>⬜ 記録なし <b>'+hs(none)+'</b></span>':'');
+  return '<button class="dband" id="dBand"><div class="db-h"><span>📊 '+(d===todayStr()?'今日':'この日')+'の24時間（何に使ったか）</span><span class="db-go">分析 ›</span></div><div class="db-bar">'+ord.map(x=>'<i style="flex:'+g[x[0]]+';background:'+x[3]+'"></i>').join('')+(none?'<i style="flex:'+none+';background:#e3e6ee"></i>':'')+'</div>'+
+    '<div class="db-lg">'+lg+'</div></button>';}catch(e){return '';}}
 /* ===== 📌 案件 ===== */
 function pjList(){const P=state.projects||{};return Object.keys(P).filter(id=>P[id]&&!P[id].del&&P[id].n).map(id=>({id,n:P[id].n,ts:P[id].ts||0})).sort((a,b)=>b.ts-a.ts);}
 function pjNew(n){n=String(n||'').trim().slice(0,30);if(!n)return '';const ex=pjList().find(p=>p.n===n);if(ex)return ex.id;const id='pj'+Date.now().toString(36)+Math.floor(Math.random()*1e3);mutate(()=>{state.projects=state.projects||{};state.projects[id]={n,ts:Date.now()};});return id;}
@@ -2919,7 +2923,7 @@ function actsHtml(en){
     /* 知らない種類・道具は ❓＋id の先頭4文字（捨てない） */
     const kk=x.k?(kindOf(x.k)||{ic:'❓',lb:String(x.k).slice(0,4),co:'#9aa3b5'}):null,dv=x.d?(toolOf(x.d)||{ic:'❓',lb:String(x.d).slice(0,4)}):null;
     const kst=(kk&&x.k!=='ai'&&x.k!=='work')?' style="background:'+esc(kk.co)+';color:#fff"':'';   /* AI・仕事は既存の色（CSS） */
-    return '<span class="act'+(m?' tm':'')+((x.k&&/^[a-z0-9_]+$/i.test(x.k))?' k-'+x.k:'')+'">'+(kk?'<i class="a-k">'+esc(kk.ic)+'</i>':'<i class="a-d"></i>')+'<span class="a-t">'+(kk?'<em class="a-kl"'+kst+'>'+esc(kk.lb)+'</em>':'')+(dv?'<i class="a-dv" title="'+esc(x.dx||dv.lb)+'">'+esc(dv.ic)+(x.d==='_other'&&x.dx&&String(x.t).trim()!==x.dx?'<b class="a-dx">'+esc(x.dx)+'</b>':'')+'</i>':'')+((kk&&String(x.t).trim()===kk.lb)?'':esc(x.t))+((x.s&&x.e)?'<span class="a-r">'+esc(x.s)+' – '+esc(x.e)+'</span>':'')+'</span>'+
+    return '<span class="act'+(m?' tm':'')+((x.k&&/^[a-z0-9_]+$/i.test(x.k))?' k-'+x.k:'')+'">'+(kk?'<i class="a-k">'+esc(kk.ic)+'</i>':'<i class="a-d"></i>')+'<span class="a-t">'+(kk?'<em class="a-kl"'+kst+'>'+esc(kk.lb)+'</em>':'')+(dv?'<i class="a-dv" title="'+esc(x.dx||dv.lb)+'">'+esc(dv.ic)+(x.d==='_other'&&x.dx&&String(x.t).trim()!==x.dx?'<b class="a-dx">'+esc(x.dx)+'</b>':'')+'</i>':'')+((kk&&String(x.t).trim()===kk.lb)?'':esc(x.t))+((x.s&&x.e)?'<span class="a-r">'+esc(x.s)+' – '+esc(x.e)+'</span>':(x.w&&en&&en.s)?'<span class="a-r">'+esc(en.s)+' – '+esc(en.e||'いま')+'（ずっと）</span>':(x.s?'<span class="a-r">'+esc(x.s)+' –</span>':''))+'</span>'+
       (m?'<span class="a-m">'+esc(durText(m))+'</span>':'')+((x.k&&AI_KINDS[x.k]&&Array.isArray(x.ai)&&x.ai.length)?'<span class="a-ai">'+x.ai.map(id=>{const z=aiTool(id);return z?'<i style="background:'+z.co+'">'+esc(z.lb)+'</i>':'';}).join('')+'</span>':'')+(x.c?'<span class="a-c">'+txtHtml(x.c)+'</span>':'')+((Array.isArray(x.ph)&&x.ph.length)?'<span class="a-ph">'+x.ph.slice(0,4).map(id=>'<img src="'+esc(phUrl(id))+'" alt="" onerror="this.style.visibility=\'hidden\'">').join('')+'</span>':'')+'</span>';}).join('');
   /* 「そのほか」は、全部の行に時間がある時だけ（時間の無い行があると、残りの時間が正しく出せないため） */
   if(stay&&sum&&stay>sum&&a.every(x=>Number(x.m)))h+='<span class="act rest"><i class="a-d"></i><span class="a-t">そのほか</span><span class="a-m">'+esc(durText(stay-sum))+'</span></span>';
@@ -3414,7 +3418,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+   /* 同期の状態1行と記録（クラウド版 c1.9） */
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c5.6）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c5.7）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -3871,7 +3875,7 @@ function openEntrySheet(date,ref){
     const paint=()=>{const all=acts.map((a,i)=>ch[i]!==undefined?ch[i]:a.k).filter(Boolean),es=canE?recTypeOf(all):'';if(eSel===null||!canE)eSel=es||eType;
       const chip=(i,id,on)=>{const k=kindOf(id);return k?'<button class="chip'+(on?' sel':'')+'" data-si="'+i+'" data-sk="'+esc(id)+'">'+esc(k.ic)+' '+esc(k.lb)+'</button>':'';};
       $('sheet2').innerHTML='<div class="grab"></div><div class="sh-time"><span>🏷️ 仕分け</span></div><div class="sh-note" style="text-align:left;margin:-4px 0 4px">当たっていれば［これで保存］。違う物だけ押して直す</div>'+
-        items.map(x=>'<div class="so-row"><div class="so-t">'+esc(x.a.t)+'</div><div class="so-c">'+sug[x.i].map(id=>chip(x.i,id,ch[x.i]===id)).join('')+
+        items.map(x=>'<div class="so-row"><div class="so-t">'+esc(x.a.t)+((x.a.s&&x.a.e)?'<small class="so-tm">'+esc(x.a.s)+' – '+esc(x.a.e)+'</small>':(Number(x.a.m)>0?'<small class="so-tm">'+esc(durText(Number(x.a.m)))+'</small>':''))+'</div><div class="so-c">'+sug[x.i].map(id=>chip(x.i,id,ch[x.i]===id)).join('')+
           '<button class="chip so-more" data-sm="'+x.i+'">ほか…</button><button class="chip'+(!ch[x.i]?' sel':'')+'" data-si="'+x.i+'" data-sk="">なし</button></div>'+
           (x.a.d==='_other'?'':'<div class="so-d"><span>使った物</span>'+dsg[x.i].map(d=>{const t=toolOf(d);return '<button class="chip'+(dch[x.i]===d?' sel':'')+'" data-di="'+x.i+'" data-dk="'+esc(d)+'">'+esc(t.ic)+'</button>';}).join('')+'<button class="chip'+(!dch[x.i]?' sel':'')+'" data-di="'+x.i+'" data-dk="">なし</button></div>')+'</div>').join('')+
         (lqs!==null?'<div class="so-row"><div class="so-t">'+(eType==='incar'?'🚙 車内で':'📍 ここで')+'何をしていた？（'+esc(durText(durMin(tS,tE,(tE<=tS&&tEd===0)?1:tEd)))+'）</div><div class="so-c">'+['sleep','nap','ai','work','pcwork','spplay','rest'].map(id=>{const k=kindOf(id);return k?'<button class="chip'+(lqs.indexOf(id)>=0?' sel':'')+'" data-lq="'+id+'">'+esc(k.ic)+' '+esc(k.lb)+'</button>':'';}).join('')+'<button class="chip'+(!lqs.length?' sel':'')+'" data-lq="">なし</button></div>'+
@@ -6342,11 +6346,12 @@ function anaCount0(r,days,N,limit,nowIdx){
     let c=0;for(let m=0;m<NT;m++){c+=cnt[m];if(m>=W0&&m<W1){if(c>=2)multi+=c-1;if(stayMk[m]&&c===0)fullS[IXS]++;}}
     for(const id in aiRuns){const rs=aiRuns[id].sort((x,y)=>x[0]-y[0]);let cs=-1,ce=-1,t=0;const fl=()=>{if(cs<0)return;const s=Math.max(cs,W0),e=Math.min(ce,W1);if(e>s)t+=e-s;};for(const [s,e] of rs){if(s>ce){fl();cs=s;ce=e;}else if(e>ce)ce=e;}fl();if(t)aiUse[id]=t;}}   /* c5.5：使ったAIごとの時間 */   /* multi＝重ねて数えた分（2つ同時なら1分、3つなら2分） */
   const sumO={_none:sum[0]};for(let i=1;i<=K.length;i++)if(fullS[i])sumO[K[i-1].id]=fullS[i];
+  const sum1O={_none:sum[0]};for(let i=1;i<=K.length;i++)if(sum[i])sum1O[K[i-1].id]=sum[i];   /* c5.7：1分1つの数（帯用） */
   const means={};let mt=0,mu=0,mb=0,mo=0,mm=0;
   for(let v=1;v<=ANA_NOTR;v++){const bs=v*5;if(!mvT[bs])continue;const x={tot:mvT[bs],used:mvT[bs+1],mudaAct:mvT[bs+2],blank:mvT[bs+3],old:mvT[bs+4]};
     means[v<=TRS.length?TRS[v-1][0]:'_none']=x;mt+=x.tot;mu+=x.used;mb+=x.blank;mo+=x.old;mm+=x.mudaAct;}
   const prefKind={};for(let p=0;p<48;p++){if(!pfS[p])continue;const o={};for(let c=1;c<=K.length;c++){const v=pfK[p*256+c];if(v)o[K[c-1].id]=v;}prefKind[p]=o;}
-  return {total:limit,rec,K,sum:sumO,multi,aiUse,tool:obj(toolS,i=>TL[i-1]),pref:obj(pfS,i=>i,0),prefMuda:obj(pfM,i=>i,0),prefBlank:obj(pfB,i=>i,0),prefKind,
+  return {total:limit,rec,K,sum:sumO,sum1:sum1O,multi,aiUse,tool:obj(toolS,i=>TL[i-1]),pref:obj(pfS,i=>i,0),prefMuda:obj(pfM,i=>i,0),prefBlank:obj(pfB,i=>i,0),prefKind,
     mv:{means,acts:obj(mvA,kid),tools:obj(mvD,i=>TL[i-1]),tot:mt,used:mu,blank:mb,old:mo,mudaAct:mm},
     muda:{blank:mdBlank,kinds:obj(mdK,kid),bedx:mdBz,meal:mdMeal,trip:mdTrip,late:mdLate,over:mdOver,nap2:mdNap2,excess:mdExcess,scrSp:mdScrSp,scrTel:mdScrTel,rh:mdRh,marks:mk,total:mdTot,all:mdTot+mdRh},unknown:sum[IX['?']]||0,visits:vis};
 }
@@ -7954,7 +7959,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c5.6";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c5.7";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 /* ログインの後：同じユーザーなら影はそのまま（全件受信をやり直さない）。違うユーザーならそのユーザーの影を読む */
 async function clAfterLogin(){
