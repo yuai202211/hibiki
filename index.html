@@ -764,6 +764,11 @@
   .tpin.on{height:24px;opacity:1;box-shadow:0 2px 6px rgba(0,0,0,.05)}
   .tref{font-size:11px;font-weight:700;color:#9aa3b5;margin-left:4px}
   .pfflt{display:flex;gap:6px;align-items:center;margin-top:14px;padding-top:10px;border-top:1px dashed var(--line)}.pfflt span{font-size:11.5px;font-weight:800;color:#8a93a6;margin-right:2px}.pfflt button{padding:7px 14px;border-radius:12px;background:#f1f3f8;color:#3b4252;font-weight:800;font-size:13px}.pfflt button.sel{background:#7c3aed;color:#fff}
+.pfflt{flex-wrap:wrap}.pfflt .pf-ed{background:#fff;border:1px dashed #c4cad6;color:#5b6475}
+.pe-g{margin-top:12px;padding-top:8px;border-top:1px solid var(--line)}.pe-h{display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap}.pe-h b{font-size:15px}
+.pe-gb{display:flex;gap:4px}.pe-gb .chip{font-size:12px;padding:5px 9px}.chip:disabled{opacity:.35}
+.pe-add{background:#e7f9f0!important;color:#0a9a54!important}.pe-del{background:#ffe9ec!important;color:#e0405a!important}
+.pe-op{margin:6px 0 2px;padding:8px;border-radius:14px;background:#f4f2ff}.pe-nm{display:flex;gap:6px;align-items:center;margin-bottom:6px}.pe-nm input{flex:1;min-width:0;font:inherit;padding:8px;border-radius:10px;border:1px solid var(--line)}
   .cnt2{display:flex;gap:6px;margin:10px 0 0}.cnt2 button{flex:1;padding:9px 4px;border-radius:12px;background:#f1f3f8;color:#5b6475;font-weight:800;font-size:13.5px}.cnt2 button.sel{background:#0a9a54;color:#fff}
   .et3{display:flex;gap:6px;margin:10px 0 6px}.et3 button{flex:1;padding:10px 4px;border-radius:14px;background:#f1f3f8;color:#5b6475;font-weight:800;font-size:14px;white-space:nowrap}.et3 button.sel{background:#1f2430;color:#fff}
   .et2{display:flex;align-items:center;gap:6px;margin:8px 0 2px}.et2 button{flex:0 0 auto;white-space:nowrap;width:auto;min-width:0;padding:7px 12px;border-radius:12px;background:#f1f3f8;color:#5b6475;font-weight:800;font-size:13px}.et2 button.sel{background:#1f2430;color:#fff}.et2 span{font-size:11px;color:#9aa3b5;font-weight:700}
@@ -1790,7 +1795,7 @@ function mergeStates(a,b){
       out.payrep=out.payrep||{};const cur=out.payrep[k];
       if(!cur||((nu.ts||0)>(cur.ts||0)))out.payrep[k]=nu;}
     /* 📚 ルーティン（rtn）とその記録（rlog）。1件ずつ新しい方が勝つ。使うまで項目を作らない */
-    for(const k of ['rtn','rlog','payppl','kinds','tools','places','projects','marks','bedp','arp','todos','plreg'])for(const id in (src[k]||{})){   /* kinds／tools＝行の種類・道具（c1.1） */const nu=src[k][id];if(!nu)continue;
+    for(const k of ['rtn','rlog','payppl','kinds','tools','places','projects','marks','bedp','arp','todos','plreg','plgrp'])for(const id in (src[k]||{})){   /* kinds／tools＝行の種類・道具（c1.1） */const nu=src[k][id];if(!nu)continue;
       out[k]=out[k]||{};const cur=out[k][id];if(!cur||((nu.ts||0)>(cur.ts||0)))out[k][id]=nu;}
     for(const id in (src.pins||{})){const nu=src.pins[id];if(!nu)continue;
       out.pins=out.pins||{};const cur=out.pins[id];
@@ -1810,7 +1815,7 @@ function mergeStates(a,b){
   /* 知らないトップレベル項目も捨てない（新旧バージョン混在でもデータを失わない） */
   /* payrep も必ずここに入れる。入れ忘れると、下の「知らない項目」の写しが、1件ずつ合わせた結果を丸ごと上書きする
      ＝別の端末で止めた・再開した印が消える（2026-09-30レビュー指摘） */
-  const known={updatedAt:1,dream:1,entries:1,plans:1,ai:1,dreams:1,memos:1,life:1,photos:1,pha:1,pays:1,rules:1,aims:1,moves:1,pins:1,steps:1,payrep:1,rtn:1,rlog:1,payppl:1,kinds:1,tools:1,places:1,projects:1,marks:1,bedp:1,scr:1,alarm:1,arp:1,todos:1,plreg:1};
+  const known={updatedAt:1,dream:1,entries:1,plans:1,ai:1,dreams:1,memos:1,life:1,photos:1,pha:1,pays:1,rules:1,aims:1,moves:1,pins:1,steps:1,payrep:1,rtn:1,rlog:1,payppl:1,kinds:1,tools:1,places:1,projects:1,marks:1,bedp:1,scr:1,alarm:1,arp:1,todos:1,plreg:1,plgrp:1};
   const newer=((b.updatedAt||0)>=(a.updatedAt||0))?b:a;
   const older=(newer===b)?a:b;
   for(const k in older)if(!known[k]&&older[k]!==undefined)out[k]=older[k];
@@ -2724,17 +2729,65 @@ function placeTop0(code){if(code===13){const p=pin5();if(p.length)return p;}
 function placeOther0(){const sh={};placeTop0(13).concat(placeTop0(11)).forEach(p=>sh[p]=1);return placeChips().filter(p=>!sh[p]);}
 /* c8.8：登録した場所（g＝tk東京／st埼玉／ot ほか、o＝並び。no＝「しない」で次に聞く日） */
 function plId(nm){return 'r'+strHash(placeKey(nm));}
-function plHas(){const r=state.plreg||{};for(const id in r)if(r[id]&&r[id].g)return true;return false;}
+function plHas(){return Object.keys(state.plreg||{}).length>0;}
 function plSeed(){if(plHas())return;state.plreg=state.plreg||{};const now=Date.now();
   const add=(arr,g)=>arr.forEach((p,i)=>{const id=plId(p);if(!state.plreg[id]||!state.plreg[id].g)state.plreg[id]={p,g,o:i,ts:now};});
   add(placeTop0(13),'tk');add(placeTop0(11),'st');add(placeOther0(),'ot');}
 function placeReg(g){const r=state.plreg||{},out=[];for(const id in r){const x=r[id];if(x&&x.g===g&&x.p)out.push(x);}return out.sort((a,b)=>(a.o||0)-(b.o||0)).map(x=>x.p);}
+/* c8.9：県のボタン。state.plgrp[g]={c:県コード,o:並び}（消した＝del）。まだ触っていない時は 東京・埼玉。📂ほか（ot）はいつも最後 */
+const PLG_DEF=[['tk',13,'🗼'],['st',11,'🌾']];
+function plgOf(c){c=Number(c);return c===13?'tk':c===11?'st':'p'+c;}
+function plGroups(){const r=state.plgrp||{},out=[];let any=false;for(const g in r){any=true;const x=r[g];if(x&&!x.del&&prefOf(x.c))out.push({g,c:Number(x.c),o:x.o||0});}
+  if(!any)return PLG_DEF.map((d,i)=>({g:d[0],c:d[1],o:i}));return out.sort((a,b)=>a.o-b.o);}
+function plgName(g){if(g==='ot')return '📂 ほか';const x=plGroups().find(y=>y.g===g);const p=x&&prefOf(x.c);if(!p)return '📂 ほか';const d=PLG_DEF.find(y=>y[0]===g);return (d?d[2]:'📍')+' '+p.short;}
+function plgFor(pf){const x=plGroups().find(y=>y.c===Number(pf));return x?x.g:'ot';}
+function plgWrite(list){state.plgrp=state.plgrp||{};const now=Date.now();list.forEach((x,i)=>{state.plgrp[x.g]={c:x.c,o:i,ts:now};});}
+function pflBtns(cur){return plGroups().concat([{g:'ot'}]).map(x=>'<button data-pfl="'+x.g+'"'+(x.g===cur?' class="sel"':'')+'>'+esc(plgName(x.g))+'</button>').join('')+'<button data-pfl="_ed" class="pf-ed">✎ 編集</button>';}
+function plEdit(onDone){let sel=null,mode='',gxArm='';
+  const R=()=>state.plreg||{};
+  const ids=g=>{const r=R();return Object.keys(r).filter(id=>r[id]&&r[id].g===g&&r[id].p).sort((a,b)=>(r[a].o||0)-(r[b].o||0));};
+  const paint=()=>{const r=R(),G=plGroups(),all=G.map(x=>x.g).concat(['ot']);
+    let s='<div class="sh-time"><span>✎ 場所のボタンを編集</span></div><div class="sh-note" style="text-align:left">場所を押すと、名前を直す・移す・並べ替え・外すができる。日記の記録は変わらない</div>';
+    all.forEach((g,gi)=>{const L=ids(g);
+      s+='<div class="pe-g"><div class="pe-h"><b>'+esc(plgName(g))+'</b>'+(g!=='ot'?'<span class="pe-gb"><button class="chip" data-gu="'+g+'"'+(gi===0?' disabled':'')+'>⬅ 前へ</button><button class="chip" data-gd="'+g+'"'+(gi>=G.length-1?' disabled':'')+'>➡ 後ろへ</button><button class="chip pe-del" data-gx="'+g+'">'+(gxArm===g?'🗑 本当に消す？':'🗑')+'</button></span>':'')+'</div>'+
+        '<div class="sr-r">'+L.map(id=>'<button class="chip'+(id===sel?' sel':'')+'" data-pe="'+id+'">'+esc(r[id].p)+'</button>').join('')+'<button class="chip pe-add" data-pa="'+g+'">＋ 場所を足す</button></div>';
+      if(sel&&r[sel]&&r[sel].g===g){const i=L.indexOf(sel);
+        s+='<div class="pe-op"><div class="pe-nm"><input type="text" id="peNm" maxlength="120" value="'+esc(r[sel].p)+'"><button class="chip" id="peRn">名前を直す</button></div>'+
+          '<div class="sr-r">'+all.filter(x=>x!==g).map(x=>'<button class="chip" data-pm="'+x+'">'+esc(plgName(x))+' へ移す</button>').join('')+'</div>'+
+          '<div class="sr-r"><button class="chip" id="peUp"'+(i<=0?' disabled':'')+'>⬆ 前へ</button><button class="chip" id="peDn"'+(i>=L.length-1?' disabled':'')+'>⬇ 後ろへ</button><button class="chip pe-del" id="peX">🗑 ボタンから外す</button></div></div>';}
+      if(mode==='add:'+g)s+='<div class="pe-op"><div class="pe-nm"><input type="text" id="peNew" maxlength="120" placeholder="場所の名前（コピペOK）"><button class="chip" id="peNewOk">登録</button></div></div>';
+      s+='</div>';});
+    s+='<div class="sr-r" style="margin-top:10px"><button class="chip pe-add" id="peGAdd">＋ 県のボタンを足す</button></div>';
+    if(mode==='gadd'){const have={};G.forEach(x=>have[x.c]=1);s+='<div class="pe-op"><div class="sr-r">'+PREFS.filter(p=>!have[p[0]]).map(p=>'<button class="chip" data-gn="'+p[0]+'">'+esc(p[3])+'</button>').join('')+'</div></div>';}
+    s+='<div class="sh-btns"><button class="savebtn" id="peOk">閉じる</button></div>';
+    const keep=$('sheet2')?$('sheet2').scrollTop:0;openSub(s,onDone||null);try{$('sheet2').scrollTop=keep;}catch(e){}
+    const S=$('sheet2'),Q=(q,f)=>S.querySelectorAll(q).forEach(b=>b.onclick=()=>f(b));
+    const renum=(g,L)=>{L.forEach((id,i)=>{state.plreg[id]=Object.assign({},state.plreg[id],{o:i,ts:Date.now()});});};
+    Q('[data-pe]',b=>{sel=(sel===b.dataset.pe)?null:b.dataset.pe;mode='';gxArm='';paint();});
+    Q('[data-pa]',b=>{const g=b.dataset.pa;mode=(mode==='add:'+g)?'':'add:'+g;sel=null;gxArm='';paint();const i=$('peNew');if(i)i.focus();});
+    Q('[data-pm]',b=>{const g=b.dataset.pm;mutate(()=>{state.plreg[sel]=Object.assign({},state.plreg[sel],{g,o:ids(g).length,ts:Date.now()});});toast('📍 '+plgName(g)+' へ移した');paint();});
+    Q('[data-gu]',b=>{const L=plGroups(),i=L.findIndex(x=>x.g===b.dataset.gu);if(i>0){[L[i-1],L[i]]=[L[i],L[i-1]];mutate(()=>plgWrite(L));}gxArm='';paint();});
+    Q('[data-gd]',b=>{const L=plGroups(),i=L.findIndex(x=>x.g===b.dataset.gd);if(i>=0&&i<L.length-1){[L[i+1],L[i]]=[L[i],L[i+1]];mutate(()=>plgWrite(L));}gxArm='';paint();});
+    Q('[data-gx]',b=>{const g=b.dataset.gx;if(gxArm!==g){gxArm=g;paint();return;}
+      const nm=plgName(g),L=plGroups(),mv=ids(g),base=ids('ot').length;
+      mutate(()=>{plgWrite(L);state.plgrp[g]={del:1,ts:Date.now()};mv.forEach((id,i)=>{state.plreg[id]=Object.assign({},state.plreg[id],{g:'ot',o:base+i,ts:Date.now()});});});
+      gxArm='';sel=null;toast(nm+' のボタンを消した（中の場所は📂ほかへ）');paint();});
+    Q('[data-gn]',b=>{const c=Number(b.dataset.gn),g=plgOf(c);mutate(()=>plgWrite(plGroups().concat([{g,c}])));mode='';toast(plgName(g)+' のボタンを足した');paint();});
+    {const x=$('peGAdd');if(x)x.onclick=()=>{mode=(mode==='gadd')?'':'gadd';sel=null;gxArm='';paint();};}
+    {const x=$('peRn');if(x)x.onclick=()=>{const v=($('peNm').value||'').trim();if(!v||v===state.plreg[sel].p)return;mutate(()=>{state.plreg[sel]=Object.assign({},state.plreg[sel],{p:v,ts:Date.now()});});toast('名前を直した');paint();};}
+    {const x=$('peUp');if(x)x.onclick=()=>{const g=state.plreg[sel].g,L=ids(g),i=L.indexOf(sel);if(i>0){[L[i-1],L[i]]=[L[i],L[i-1]];mutate(()=>renum(g,L));}paint();};}
+    {const x=$('peDn');if(x)x.onclick=()=>{const g=state.plreg[sel].g,L=ids(g),i=L.indexOf(sel);if(i>=0&&i<L.length-1){[L[i+1],L[i]]=[L[i],L[i+1]];mutate(()=>renum(g,L));}paint();};}
+    {const x=$('peX');if(x)x.onclick=()=>{const o=state.plreg[sel];mutate(()=>{state.plreg[sel]={p:o.p,no:addDays(todayStr(),30),ts:Date.now()};});toast(o.p+' をボタンから外した');sel=null;paint();};}
+    {const x=$('peNewOk');if(x)x.onclick=()=>{const v=($('peNew').value||'').trim(),g=mode.slice(4);if(!v)return;const id=plId(v),o=state.plreg&&state.plreg[id];
+      if(o&&o.g){toast('もう '+plgName(o.g)+' にある');return;}mutate(()=>{state.plreg=state.plreg||{};state.plreg[id]={p:v,g,o:ids(g).length,ts:Date.now()};});mode='';toast('📍 '+v+' を登録した');paint();};}
+    {const x=$('peOk');if(x)x.onclick=closeSub;}};
+  paint();}
 function plAsk(p,pf,isMv){try{if(isMv||!p||!plHas())return false;const id=plId(p),r=(state.plreg||{})[id],t=todayStr();
   if(r&&r.g)return false;if(r&&r.no&&r.no>t)return false;
   const lo=addDays(t,-6);let c=0;for(const d in state.entries){if(d<lo||d>t)continue;const eo=state.entries[d];for(const k in eo){const en=eo[k];if(en&&!en.del&&!en.mv&&en.p===p)c++;}}
-  if(c<2)return false;const sug=Number(pf)===13?'tk':Number(pf)===11?'st':'ot';
+  if(c<2)return false;const sug=plgFor(pf);
   openSub('<div class="sh-time"><span>📍 場所のボタンに登録する？</span></div><div class="sh-note" style="text-align:left"><b>'+esc(p)+'</b>（直近7日で'+c+'回書いた）</div>'+
-    '<div class="sr-r big">'+[['tk','🗼 東京'],['st','🌾 埼玉'],['ot','📂 ほか']].map(x=>'<button class="chip'+(x[0]===sug?' sel':'')+'" data-plg="'+x[0]+'">'+x[1]+' に登録</button>').join('')+'</div>'+
+    '<div class="sr-r big">'+plGroups().map(x=>x.g).concat(['ot']).map(g=>'<button class="chip'+(g===sug?' sel':'')+'" data-plg="'+g+'">'+esc(plgName(g))+' に登録</button>').join('')+'</div>'+
     '<div class="sh-btns"><button class="delbtn" id="plNo">しない（30日後にまた聞く）</button></div>',null);
   $('sheet2').querySelectorAll('[data-plg]').forEach(b=>b.onclick=()=>{const g=b.dataset.plg;const o=placeReg(g).length;mutate(()=>{state.plreg=state.plreg||{};state.plreg[id]={p,g,o,ts:Date.now()};});closeSub();toast('📍 '+p+' を登録した');});
   $('plNo').onclick=()=>{mutate(()=>{state.plreg=state.plreg||{};state.plreg[id]={p,no:addDays(t,30),ts:Date.now()};});closeSub();};
@@ -3524,7 +3577,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+   /* 同期の状態1行と記録（クラウド版 c1.9） */
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c8.8）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c8.9）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -3687,7 +3740,7 @@ function openEntrySheet(date,ref){
     '<div class="et3" id="eType"><button data-ty="stay">📍 場所</button><button data-ty="move">🚗 移動</button><button data-ty="incar">🚙 車内</button></div>'+   /* c6.3：時間のすぐ下で「何の記録か」（本人指示）。新しい記録は📍いた */
     '<div id="secStay"><div class="sh-label">📍 場所（自由に書ける・コピペOK）</div>'+
       '<div id="pfInl" style="display:flex;gap:6px;align-items:center"><input type="text" id="shPlace" maxlength="120" data-need="1" placeholder="例：東京タワー" style="flex:1;min-width:0"></div>'+   /* 左端に県のチップが入る */
-      '<div class="pfflt" id="pFlt"><button data-pfl="13">🗼 東京</button><button data-pfl="11">🌾 埼玉</button><button data-pfl="-1">📂 ほか</button></div>'+   /* c8.7 */
+      '<div class="pfflt" id="pFlt"></div>'+   /* c8.9：県のボタン＋📂ほか＋✎編集（中身は下で描く） */
       '<div class="sh-chips" id="pChips" style="margin-top:6px"></div></div>'+
     '<div class="cnt2" id="cntSw"><button data-cn="1">☝️ 1つ</button><button data-cn="2">✌️ 2つ以上</button></div>'+   /* c6.8 */
     '<div id="recDo" class="recdo"></div>'+   /* c6.2：🏷️ ここで何をした（1行ずつとリンク） */
@@ -3986,11 +4039,11 @@ function openEntrySheet(date,ref){
     if(less)less.onclick=()=>{chipsSetOpen(false);pc.innerHTML=chipListHtml(chips,false);bindChips();};  /* たたむ */
   };
   bindChips();
-  {const fl=$('pFlt');if(fl&&pc){let picked=false;const auto=()=>{const c=Number(sheetSt&&sheetSt.pf)||0;return c===13||c===11?c:-1;};
+  {const fl=$('pFlt');if(fl&&pc){let picked=false;const auto=()=>plgFor(Number(sheetSt&&sheetSt.pf)||0);
     if(!plHas())mutate(plSeed);   /* c8.8：初めての時だけ、今の東京5・埼玉5・ほかを登録済みにする */
-    const paintF=()=>{fl.querySelectorAll('[data-pfl]').forEach(b=>b.classList.toggle('sel',Number(b.dataset.pfl)===pfl));curChips=placeReg(pfl===-1?'ot':pfl===13?'tk':'st');
-      pc.innerHTML=curChips.length?curChips.map(p=>'<button class="chip" data-p="'+esc(p)+'">'+esc(p)+'</button>').join(''):'<span class="sh-note">'+(pfl===-1?'ほかの場所はまだ無い':'この県の場所はまだ無い')+'</span>';bindChips();};
-    fl.querySelectorAll('[data-pfl]').forEach(b=>b.onclick=()=>{picked=true;pfl=Number(b.dataset.pfl);paintF();});
+    const paintF=()=>{if(pfl!=='ot'&&!plGroups().some(x=>x.g===pfl))pfl='ot';fl.innerHTML=pflBtns(pfl);curChips=placeReg(pfl);
+      pc.innerHTML=curChips.length?curChips.map(p=>'<button class="chip" data-p="'+esc(p)+'">'+esc(p)+'</button>').join(''):'<span class="sh-note">'+(pfl==='ot'?'ほかの場所はまだ無い':'この県の場所はまだ無い')+'（✎ 編集で足せる）</span>';bindChips();
+      fl.querySelectorAll('[data-pfl]').forEach(b=>b.onclick=()=>{if(b.dataset.pfl==='_ed'){plEdit(paintF);return;}picked=true;pfl=b.dataset.pfl;paintF();});};
     pfl=auto();paintF();
     if(sheetSt)sheetSt.pflSync=()=>{if(picked)return;const v=auto();if(v!==pfl){pfl=v;paintF();}};}}   /* c8.7：最初は今の県（東京・埼玉以外は📂ほか）。県を変えたら付いてくる。押したらそのまま */
   /* 写真 */
@@ -7727,7 +7780,7 @@ async function clRpcJson(name,body,sig,ms){const t=await clRpcText(name,typeof b
 async function clRpc(name,body){return clRpcJson(name,body);}   /* 旧版と同じ名前（他から呼ばれても動く） */
 
 /* ---------- state ⇄ 項目（1行） ---------- */
-const CL_ID=['dreams','memos','pays','aims','moves','pins','steps','payrep','rtn','rlog','payppl','pha','kinds','tools','places','projects','marks','bedp','arp','todos','plreg'];   /* c7.9：todos＝📋やる事 */   /* c4.8：arp＝場所ごとの区・市町村 */   /* c4.7：marks＝🕳️😤😫の申告、bedp＝場所ごとの🛏️/🪑 */
+const CL_ID=['dreams','memos','pays','aims','moves','pins','steps','payrep','rtn','rlog','payppl','pha','kinds','tools','places','projects','marks','bedp','arp','todos','plreg','plgrp'];   /* c7.9：todos＝📋やる事 */   /* c4.8：arp＝場所ごとの区・市町村 */   /* c4.7：marks＝🕳️😤😫の申告、bedp＝場所ごとの🛏️/🪑 */
 const CL_DAY=['ai','rules','scr'];   /* c4.7：scr＝夜に入れる📲📞の数字（日ごと） */
 const CL_DAY2=['entries','plans'];
 const CL_SKIP={updatedAt:1,photos:1};
@@ -8291,7 +8344,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c8.8";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c8.9";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 /* ログインの後：同じユーザーなら影はそのまま（全件受信をやり直さない）。違うユーザーならそのユーザーの影を読む */
 async function clAfterLogin(){
