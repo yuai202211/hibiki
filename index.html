@@ -765,6 +765,8 @@
   .bed-q{display:flex;gap:10px;margin:8px 0}.bed-q button{flex:1;padding:16px 6px;border-radius:16px;background:#f1f3f8;color:var(--ink);font-size:32px;display:flex;flex-direction:column;align-items:center;gap:4px;font-weight:800}.bed-q button span{font-size:13px}
   .al-row{display:flex;align-items:center;gap:8px;margin:8px 0;font-weight:800;font-size:14px}.al-row span{flex:1}.al-row input{font:inherit;padding:6px 8px;border-radius:10px;border:1px solid var(--line)}
   .an-pjb.sr{background:#fff3f4;color:#b91c1c}
+  .arm-tip{position:fixed;z-index:400;max-width:80vw;background:#1f2430;color:#fff;border-radius:12px;padding:7px 12px;font-weight:800;font-size:14px;box-shadow:0 8px 24px rgba(0,0,0,.25);pointer-events:none;text-align:center}.arm-tip small{display:block;font-size:11px;font-weight:600;color:#c9cdd6}
+  .armed{outline:3px solid #1f2430;outline-offset:1px}
   .nav{display:block!important;padding:4px 0 calc(4px + env(safe-area-inset-bottom))!important}
   .nvw{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch}.nvw::-webkit-scrollbar{display:none}
   .nvp{flex:0 0 100%;display:flex;justify-content:space-around;align-items:stretch;scroll-snap-align:start;padding:2px 10px 0;box-sizing:border-box}
@@ -3100,14 +3102,14 @@ function renderTimeline(pane){
     b.onkeydown=ev=>{if(ev.target!==b)return;if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();openEntrySheet(ui.date,{hour:Number(b.dataset.h)});}};
   });
   /* 「✚書く」の行の右側のボタン（行そのもののタップ＝記録シートとは分ける） */
-  const wB=(id,fn)=>{const b=pane.querySelector('#'+id);if(b)b.onclick=ev=>{ev.stopPropagation();fn();};};
+  const wB=(id,fn)=>{const b=pane.querySelector('#'+id);if(b)b.onclick=ev=>{ev.stopPropagation();armTap(b,id,ARM_LB[id]||'',fn);};};   /* c5.4：1回目は名前、2回目で動く */
   wB('wrWake',quickWake);
   wB('bedPill',quickSleepStart);
   wB('wrSleep',quickSleepStart);
   wB('wrSlp',openSleepPage);
   pane.querySelectorAll('[data-gs]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();openEntrySheet(ui.date,{hour:Number(b.dataset.gs.slice(0,2)),s:b.dataset.gs,e:b.dataset.ge});});
   {const db=pane.querySelector('#dBand');if(db)db.onclick=ev=>{ev.stopPropagation();anaUnit='day';anaBase=ui.date;openAnaPage();};}
-  pane.querySelectorAll('[data-pz]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();mvPauseStart(b.dataset.pz);});wB('wrPzEnd',()=>mvPauseEnd());
+  pane.querySelectorAll('[data-pz]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();const k=kindOf(b.dataset.pz);armTap(b,'pz:'+b.dataset.pz,(k?k.ic+' '+k.lb:'休憩')+'（移動中に止まる）',()=>mvPauseStart(b.dataset.pz));});wB('wrPzEnd',()=>mvPauseEnd());
   wB('wrGo',quickMoveStart);wB('wrArr',quickMoveArrive);wB('wrCar',quickCarStart);wB('wrCarE',quickCarEnd);
   wB('wrSr',()=>openSelfReport());wB('wrSp',quickSpStart);wB('wrSpE',quickSpEnd);wB('wrTel',quickTelStart);wB('wrTelE',quickTelEnd);   /* c4.7 */
   pane.querySelectorAll('[data-mk]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();openSelfReport(b.dataset.mk);});
@@ -3409,7 +3411,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+   /* 同期の状態1行と記録（クラウド版 c1.9） */
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c5.3）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c5.4）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -3654,7 +3656,7 @@ function openEntrySheet(date,ref){
     one($('pfChip'),sheetSt.pf,sheetSt.pfAuto,mvT?'到着：':'');
     if(mvT&&!prefOf(sheetSt.pf)&&prefOf(sheetSt.pf0))$('pfChip').textContent='🗾 到着：出発と同じ';}   /* 同じ県なら選ばなくていい */
   $('shPlace').addEventListener('change',()=>{if(!sheetSt)return;arFill($('shPlace').value.trim());if(sheetSt.pf&&!sheetSt.pfAuto){pfPaint();return;}const v=placePf($('shPlace').value.trim());if(v){sheetSt.pf=v;sheetSt.pfAuto=true;}pfPaint();});
-  {const ac=$('arChip');if(ac)ac.onclick=()=>{if(sheetSt)openArSheet(pfPaint);};}
+  {const ac=$('arChip');if(ac)ac.onclick=()=>{if(!sheetSt)return;if(sheetSt.ar){openArSheet(pfPaint);return;}armTap(ac,'arChip','🏙️ 区・市町村（任意）',()=>openArSheet(pfPaint));};}
   const pjPaint=()=>{const b=$('pjChip');if(!b||!sheetSt)return;const p=sheetSt.pj&&(state.projects||{})[sheetSt.pj];b.textContent=p&&!p.del?'📌 '+p.n:'📌 案件';b.classList.toggle('on',!!(p&&!p.del));};pjPaint();
   $('pjChip').onclick=()=>{if(!sheetSt)return;openPjPicker(sheetSt.pj,id=>{sheetSt.pj=id;pjPaint();});};
   $('pfChip').onclick=()=>{if(!sheetSt)return;openPrefPicker(sheetSt.pf,c=>{sheetSt.pf=c;sheetSt.pfAuto=false;pfPaint();});};
@@ -5900,6 +5902,14 @@ function renderSrPage(){pageMode='sr';const p=$('page');const ms=srList().revers
   p.innerHTML='<div class="page-head"><button class="bk" id="pgBk">‹ 戻る</button><span class="tt">🕳️😤 困り事の一覧</span><span style="width:36px"></span></div><div class="page-body">'+
     '<div class="an-empty">自分で押した 🕳️ムダ・😤ストレス・😫調子悪い。困り事＝ビジネスの種（本人 2026-10-06）。押すと直せる</div>'+(ms.length?'<div style="display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 10px">'+top+'</div>'+body:'<div class="an-empty">まだ無い。書くの行の 🕳️ を押すと残る</div>')+'</div>';
   $('pgBk').onclick=()=>openAnaPage();p.querySelectorAll('[data-mk]').forEach(b=>b.onclick=()=>openSelfReport(b.dataset.mk));}
+/* ===== c5.4：マークだけのボタン＝1回目は名前を出す（3秒）。同じボタンをもう一度で動く（本人決定 2026-10-06） ===== */
+const ARM_LB={wrGo:'🚗 出発（移動を始める）',wrArr:'🏁 到着（移動を終わる）',wrCar:'🚙 車内滞在を始める',wrCarE:'🚙 車内滞在を終わる',wrSleep:'💤 寝る',bedPill:'💤 寝る',wrWake:'🌞 起きた',wrSlp:'🌙 睡眠のページ',wrSr:'🕳️ ムダ・ストレス・調子を残す',wrSp:'📲 スマホを計る',wrSpE:'📲 スマホを止める',wrTel:'📞 電話を計る',wrTelE:'📞 電話を止める',wrPzEnd:'▶ 休憩から出る（移動に戻る）'};
+let armId='',armAt=0,armEl=null;
+function armTap(b,id,lb,fn){const now=Date.now();if(!lb||(armId===id&&now-armAt<3000)){armClear();fn();return;}armClear();armId=id;armAt=now;
+  try{const r=b.getBoundingClientRect(),d=document.createElement('div');d.className='arm-tip';d.innerHTML=esc(lb)+'<small>もう一度押すと動く</small>';document.body.appendChild(d);
+    const w=d.offsetWidth;let x=r.left+r.width/2-w/2;x=Math.max(8,Math.min(window.innerWidth-w-8,x));let y=r.top-d.offsetHeight-8;if(y<8)y=r.bottom+8;d.style.left=x+'px';d.style.top=y+'px';armEl=d;b.classList.add('armed');}catch(e){}
+  setTimeout(()=>{if(armId===id&&Date.now()-armAt>=2900)armClear();},3000);}
+function armClear(){armId='';if(armEl){try{armEl.remove();}catch(e){}armEl=null;}document.querySelectorAll('.armed').forEach(x=>x.classList.remove('armed'));}
 function openInCar(){for(const d of [todayStr(),addDays(todayStr(),-1)]){const eo=state.entries[d]||{};let b=null;
   for(const k in eo){const en=eo[k];if(en&&en.k==='incar'&&recOpenOk(d,en)&&(!b||en.s>b.en.s))b={d,k,en};}if(b)return b;}return null;}
 function carBtnHtml(){const o=openInCar();return o?'<button class="chip mvb arr" id="wrCarE">🚙 <b>⏱'+esc(mvElText(mvElapsed(o)))+'</b><span class="mvl"> ⏹</span></button>':'<button class="chip mvb car" id="wrCar">🚙<span class="mvl"> 車内</span></button>';}
@@ -7931,7 +7941,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c5.3";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c5.4";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 /* ログインの後：同じユーザーなら影はそのまま（全件受信をやり直さない）。違うユーザーならそのユーザーの影を読む */
 async function clAfterLogin(){
