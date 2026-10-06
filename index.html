@@ -765,6 +765,7 @@
   .bed-q{display:flex;gap:10px;margin:8px 0}.bed-q button{flex:1;padding:16px 6px;border-radius:16px;background:#f1f3f8;color:var(--ink);font-size:32px;display:flex;flex-direction:column;align-items:center;gap:4px;font-weight:800}.bed-q button span{font-size:13px}
   .al-row{display:flex;align-items:center;gap:8px;margin:8px 0;font-weight:800;font-size:14px}.al-row span{flex:1}.al-row input{font:inherit;padding:6px 8px;border-radius:10px;border:1px solid var(--line)}
   .an-pjb.sr{background:#fff3f4;color:#b91c1c}
+  .an-multi{margin:6px 0 10px;padding:8px 12px;border-radius:12px;background:#fff8e1;color:#a16207;font-weight:800;font-size:13px}.an-multi b{font-size:16px;margin-left:4px}.an-multi small{display:block;font-weight:600;color:#a8790a;font-size:11px}
   .sm-h{font-size:12px;font-weight:800;color:#5b6475;margin-top:8px}
   .sm-g{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin:6px 0 12px}.sm-g i{position:relative;height:44px;border-radius:8px;background:#f1f3f8;display:block;overflow:hidden;font-style:normal}
   .sm-g i.sm-w{height:16px;background:none;text-align:center;font-size:11px;color:#8a93a6;font-weight:800;line-height:16px}.sm-g i.sm-e{background:none}
@@ -3394,7 +3395,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+   /* 同期の状態1行と記録（クラウド版 c1.9） */
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c5.1）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c5.2）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -6236,12 +6237,33 @@ function anaCount0(r,days,N,limit,nowIdx){
     for(let m=P;m<P+limit;m++){const o=own[m],p=o>=0?pfL[m]:0;if(p!==cp){flush(m);if(p){cp=p;st=m;}}if(p){const l=items[o]&&items[o].lb;if(l&&lbs.indexOf(l)<0&&lbs.length<3)lbs.push(l);}}
     flush(P+limit);}   /* 県ごとの「何時何分〜何時何分」（s,e は期間の頭からの分） */
   const kid=i=>i===255?'_untyped':(K[i-1]?K[i-1].id:'?'),obj=(arr,f,from)=>{const o={};for(let i=(from==null?1:from);i<arr.length;i++)if(arr[i])o[f(i)]=arr[i];return o;};
-  const sumO={_none:sum[0]};for(let i=1;i<=K.length;i++)if(sum[i])sumO[K[i-1].id]=sum[i];
+  /* c5.2：同時にやった事は丸ごと数える。記録ごとに、その記録の中だけで行を割り当て（他の記録とは取り合わない）、種類ごとに時間を重ねて数える */
+  const fullS=new Float64Array(K.length+2);let multi=0;{
+    const runs={},W0=P,W1=P+limit,IXS=IX.stay,stayMk=new Uint8Array(NT);
+    const add=(ki,s,e)=>{if(!ki||e<=s)return;(runs[ki]=runs[ki]||[]).push([s,e]);};
+    const addMask=(ki,A,mask,want)=>{let s=-1;for(let j=0;j<=mask.length;j++){const on=j<mask.length&&mask[j]===want;if(on&&s<0)s=j;else if(!on&&s>=0){add(ki,A+s,A+j);s=-1;}}};
+    items.forEach(it=>{const A=Math.max(0,it.a),B=Math.min(NT,it.b);if(B<=A)return;
+      if(it.mv){add(it.c,A,B);return;}   /* 移動は丸ごと移動（中でした事は今まで通り「移動中にも」） */
+      const L=B-A,cl=new Uint8Array(L),timed=[],mins=[],whole=[];
+      for(const ac of it.acts){if(!ac)continue;const ki=kIx(ac.k);if(!ki)continue;
+        if(ac.s&&ac.e)timed.push([ac,ki]);else if(Number(ac.m)>0)mins.push([ac,ki]);else if(it.car||ac.w)whole.push([ac,ki]);}
+      for(const [ac,ki] of timed){let a=it.off+hmMin(ac.s),b=it.off+hmMin(ac.e);if(a<it.a)a+=1440;if(b<=a)b+=1440;a=Math.max(a,A);b=Math.min(b,B);if(b<=a)continue;add(ki,a,b);for(let m=a;m<b;m++)cl[m-A]=1;}
+      for(const [ac,ki] of mins){let left=Number(ac.m);const mk=new Uint8Array(L);for(let j=0;j<L&&left>0;j++)if(!cl[j]){cl[j]=1;mk[j]=1;left--;}addMask(ki,A,mk,1);}
+      if(whole.length){let Rr=0;for(let j=0;j<L;j++)if(!cl[j])Rr++;const n=whole.length,q=Math.floor(Rr/n);let jj=0,u=0;const mks=whole.map(()=>new Uint8Array(L));
+        const sz=whole.map((_,i)=>q+(i===0?Rr-q*n:0));for(let j=0;j<L;j++){if(cl[j])continue;while(jj<n&&u>=sz[jj]){jj++;u=0;}if(jj>=n)break;mks[jj][j]=1;cl[j]=1;u++;}
+        whole.forEach((w,i)=>addMask(w[1],A,mks[i],1));}
+      if(it.c===IXS){for(let j=0;j<L;j++)if(!cl[j])stayMk[A+j]=1;}else addMask(it.c,A,cl,0);});
+    const cnt=new Int32Array(NT+1);
+    for(const ki in runs){const rs=runs[ki].sort((x,y)=>x[0]-y[0]);let cs=-1,ce=-1;
+      const flush=()=>{if(cs<0)return;const s=Math.max(cs,W0),e=Math.min(ce,W1);if(e>s){fullS[ki]+=e-s;cnt[s]++;cnt[e]--;}};
+      for(const [s,e] of rs){if(s>ce){flush();cs=s;ce=e;}else if(e>ce)ce=e;}flush();}
+    let c=0;for(let m=0;m<NT;m++){c+=cnt[m];if(m>=W0&&m<W1){if(c>=2)multi+=c-1;if(stayMk[m]&&c===0)fullS[IXS]++;}}}   /* multi＝重ねて数えた分（2つ同時なら1分、3つなら2分） */
+  const sumO={_none:sum[0]};for(let i=1;i<=K.length;i++)if(fullS[i])sumO[K[i-1].id]=fullS[i];
   const means={};let mt=0,mu=0,mb=0,mo=0,mm=0;
   for(let v=1;v<=ANA_NOTR;v++){const bs=v*5;if(!mvT[bs])continue;const x={tot:mvT[bs],used:mvT[bs+1],mudaAct:mvT[bs+2],blank:mvT[bs+3],old:mvT[bs+4]};
     means[v<=TRS.length?TRS[v-1][0]:'_none']=x;mt+=x.tot;mu+=x.used;mb+=x.blank;mo+=x.old;mm+=x.mudaAct;}
   const prefKind={};for(let p=0;p<48;p++){if(!pfS[p])continue;const o={};for(let c=1;c<=K.length;c++){const v=pfK[p*256+c];if(v)o[K[c-1].id]=v;}prefKind[p]=o;}
-  return {total:limit,rec,K,sum:sumO,tool:obj(toolS,i=>TL[i-1]),pref:obj(pfS,i=>i,0),prefMuda:obj(pfM,i=>i,0),prefBlank:obj(pfB,i=>i,0),prefKind,
+  return {total:limit,rec,K,sum:sumO,multi,tool:obj(toolS,i=>TL[i-1]),pref:obj(pfS,i=>i,0),prefMuda:obj(pfM,i=>i,0),prefBlank:obj(pfB,i=>i,0),prefKind,
     mv:{means,acts:obj(mvA,kid),tools:obj(mvD,i=>TL[i-1]),tot:mt,used:mu,blank:mb,old:mo,mudaAct:mm},
     muda:{blank:mdBlank,kinds:obj(mdK,kid),bedx:mdBz,meal:mdMeal,trip:mdTrip,late:mdLate,over:mdOver,nap2:mdNap2,excess:mdExcess,scrSp:mdScrSp,scrTel:mdScrTel,rh:mdRh,marks:mk,total:mdTot,all:mdTot+mdRh},unknown:sum[IX['?']]||0,visits:vis};
 }
@@ -6345,7 +6367,7 @@ function renderAnaPage(keep){
     '<button class="an-pjb sr" id="anSr">🕳️😤 困り事の一覧（自分で押した申告）</button>'+
     '<div class="an-tabs">'+[['day','日'],['week','週'],['month','月'],['year','年']].map(u=>'<button data-au="'+u[0]+'"'+(anaUnit===u[0]?' class="on"':'')+'>'+u[1]+'</button>').join('')+'</div>'+
     '<div class="an-nav"><button id="anPrev">‹</button><b>'+esc(anaLabel(anaUnit,r))+'</b><button id="anNext"'+(isCur?' disabled':'')+'>›</button></div>'+
-    (cur.total?(card+anaStreakHtml()+bar+
+    (cur.total?(card+anaStreakHtml()+bar+(cur.multi?'<div class="an-multi">⚡ 同時にやった時間 <b>'+hh(cur.multi)+'</b><small>重なった分は、どの事にも丸ごと数える（合計は24時間を超えてよい）</small></div>':'')+
       sec('grp','📦 分野（AI・中古車・自分…）',grpBody)+sec('kind','何をした',kindBody)+sec('mv','🚗 移動の中身',mvBody)+sec('tool','🛠 何を使って',toolBody)+sec('pf','🗾 どこで',pfBody)+
       '<div class="sh-note">右の数字＝前の'+U+'との差。'+(isCur?'（今の'+U+'は今の時刻まで。前の'+U+'も同じ長さで比べている）':'')+
       '<br>ムダ＝ムダ印の種類（📲スマホ操作・何もしなかった🚙車内滞在など）の時間＋1回30分を超えた仮眠＋10/4 以降の移動で何もしなかった時間（徒歩を除く）。途中の記録（今日・昨日）は今までの分を数える。</div>')
@@ -7843,7 +7865,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c5.1";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c5.2";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 /* ログインの後：同じユーザーなら影はそのまま（全件受信をやり直さない）。違うユーザーならそのユーザーの影を読む */
 async function clAfterLogin(){
