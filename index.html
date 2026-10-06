@@ -2696,10 +2696,10 @@ const KIND_BASE=[['ai','🤖','AI','#7a6ef3','A',0,'h'],['aibiz','💡','AIビ�
  ['pcwork','💻','PC作業','#475569','D',0,'h'],['spwork','📱','スマホ作業','#64748b','D',0,'h'],
  ['mkt','📈','相場リサーチ','#0f766e','V',0,'h'],['c_list','📸','出品準備','#0d9488','V',0,'h'],['c_aaadj','🔁','AA調整','#0e7490','V',0,'h'],['c_aalive','🔴','AAライブ','#dc2626','V',0,'h'],
  ['c_aapick','🚛','AA落札分引取','#b45309','V',0,'b'],['c_aaafter','📋','AA落札後対応','#a16207','V',0,'h'],['c_aaclaim','⚠️','AAクレーム対応','#b91c1c','V',0,'h'],['repair','🔧','整備','#c2410c','V',0,'b'],
- ['c_buy','🤝','買取商談','#15803d','V',0,'h'],['c_sell','💰','販売商談','#16a34a','V',0,'h'],['c_cust','🙋','客対応','#2563eb','V',0,'h'],['c_dmv','🏛️','陸自対応','#4b5563','V',0,'h'],
+ ['c_buy','🤝','買取商談','#15803d','V',0,'h'],['c_sell','💰','販売商談','#16a34a','V',0,'h'],['c_cust','🙋','客対応','#2563eb','V',0,'h'],['c_dmv','🏛️','陸自対応','#4b5563','V',1,'h'],
  ['gyg','⛩️','GetYourGuide','#be123c','T',0,'h'],
  ['m_tr','🏦','振込み対応','#4338ca','Y',0,'h'],['m_io','💳','入出金対応','#4f46e5','Y',0,'h'],['m_atm','🏧','ATM対応','#6366f1','Y',1,'h'],['m_tax','🧾','確定申告','#3730a3','Y',0,'h'],['gov','🏢','役所・警察・郵便','#4b5563','Y',1,'b'],
- ['sleep','🌙','睡眠','#475569','S',0,''],['meal','🍚','食事','#f08a24','S',0,''],['move','🚗','移動','#12a6a0','S',0,''],['exer','🏃','運動','#16a34a','S',0,'b'],['bath','🛁','身支度','#06b6d4','S',0,''],['rest','☕','休憩','#c98a2f','S',0,''],['nap','😴','仮眠','#64748b','S',0,''],['incar','🚙','車内滞在','#0f766e','S',1,''],['spplay','📲','スマホ操作','#d946ef','S',1,''],['wc','🚻','トイレ','#94a3b8','S',0,''],
+ ['sleep','🌙','睡眠','#475569','S',0,''],['meal','🍚','食事','#f08a24','S',0,''],['move','🚗','移動','#12a6a0','S',0,''],['exer','🏃','運動','#16a34a','S',0,'b'],['bath','🛁','身支度','#06b6d4','S',0,''],['spa','♨️','風呂・サウナ','#0891b2','S',0,''],['shop','🛒','買い物','#f59e0b','S',0,''],['rest','☕','休憩','#c98a2f','S',0,''],['nap','😴','仮眠','#64748b','S',0,''],['incar','🚙','車内滞在','#0f766e','S',1,''],['spplay','📲','スマホ操作','#d946ef','S',1,''],['wc','🚻','トイレ','#94a3b8','S',0,''],
  ['bizcall','📞','仕事の連絡','#2f8fcf','C',0,'h'],['famcall','👪','家族との連絡','#f472b6','F',0,''],['errand','🧾','用事の連絡','#64748b','C',1,'h'],['chat','💬','雑談（私用）','#d946ef','C',1,''],['son','👦','息子','#f472b6','F',0,''],['family','🏡','家族の用事','#ec4899','F',0,''],
  ['work','💼','仕事','#1e3a8a','X',0,'h'],['think','🧠','企画・考える','#6b7280','X',0,'h'],['money','🧮','お金・事務','#4338ca','X',0,'h'],['doc','📄','資料確認','#5b7fa6','X',0,'h'],['call','📞','電話・連絡','#2f8fcf','X',1,'h'],['meet','🤝','商談・人と会う','#d9633b','X',0,'h'],
  ['study','🎓','勉強','#c2410c','X',0,'h'],['read','📖','読書','#8b5e3c','X',0,'h'],['audio','🔊','音声で学ぶ','#9333ea','X',0,'h'],['vstudy','🎬','動画で学ぶ','#0891b2','X',0,'h'],['write','✍️','書く・発信','#be123c','X',0,'h'],['reflect','📝','振り返り','#15803d','X',0,'h'],
@@ -2710,7 +2710,7 @@ const KIND_TREE=[{id:'pc',ic:'💻',lb:'PC',d:'pc',ch:[{id:'ai',ic:'🤖',lb:'AI
  {id:'sp',ic:'📱',lb:'スマホ',d:'phone',ch:[{id:'ai',ic:'🤖',lb:'AI',ch:['ai','aibiz','aiwork']},'spwork','spplay']},
  {id:'car',ic:'🚗',lb:'中古車',ch:['mkt','c_list','c_aaadj','c_aalive','c_aapick','c_aaafter','c_aaclaim','repair','c_buy','c_sell','c_cust','c_dmv']},
  {id:'torii',ic:'⛩️',lb:'Torii Link',ch:['gyg']},{id:'yen',ic:'💴',lb:'お金',ch:['m_tr','m_io','m_atm','m_tax','gov']},{id:'tel',ic:'📞',lb:'連絡',ch:['bizcall','famcall','errand','chat']},
- {id:'self',ic:'👤',lb:'自分',ch:['sleep','meal','move','exer','bath','rest','nap','incar','spplay','wc']},{id:'fam',ic:'👦',lb:'家族',ch:['son','family','famcall']},{id:'etc',ic:'📍',lb:'その他',ch:null}];
+ {id:'self',ic:'👤',lb:'自分',ch:['sleep','meal','move','exer','bath','spa','rest','nap','incar','spplay','shop','wc']},{id:'fam',ic:'👦',lb:'家族',ch:['son','family','famcall']},{id:'etc',ic:'📍',lb:'その他',ch:null}];
 /* 道具（何を使って）。行に1つだけ付く（d） */
 const TOOL_BASE=[['pc','💻','PC'],['phone','📱','スマホ'],['tab','📟','タブレット'],['paper','📕','紙・本'],['ear','🎧','イヤホン'],['tool','🔧','工具']];
 const KIND_NOMUDA={move:1,stay:1,sleep:1};   /* ムダ印を出さない種類 */
@@ -2746,7 +2746,7 @@ const KIND_WORDS=[[/役所|区役所|市役所|警察|郵便局|免許|年金|�
  [/GetYourGuide|GYG|Torii/i,'gyg'],[/確定申告/,'m_tax'],[/振込|振り込/,'m_tr'],[/ATM/i,'m_atm'],[/入金|出金|入出金/,'m_io'],
  [/(家族|親|母|父|妻|子).*(電話|連絡|LINE)|(電話|連絡|LINE).*(家族|親|母|父|息子)/,'famcall'],[/息子/,'son'],[/雑談|友達|友人/,'chat'],[/病院|役所|区役所|手続/,'errand'],[/電話|連絡|メール|LINE|返信|メッセージ/,'bizcall'],
  [/AIビジネス|事業計画|マネタイズ/,'aibiz'],[/AI|Claude|ChatGPT|GPT|Gemini|HIBIKI|アプリ|プロンプト|コード/i,'ai'],
- [/朝食|昼食|夕食|ご飯|ランチ|ディナー|食事|弁当/,'meal'],[/仮眠/,'nap'],[/休憩|コーヒー|一服/,'rest'],[/トイレ/,'wc'],[/風呂|シャワー|身支度|歯磨き/,'bath'],[/運動|筋トレ|散歩|ジム|ランニング/,'exer'],
+ [/朝食|昼食|夕食|ご飯|ランチ|ディナー|食事|弁当/,'meal'],[/仮眠/,'nap'],[/休憩|コーヒー|一服/,'rest'],[/トイレ/,'wc'],[/サウナ|温泉|銭湯|スパ|健康ランド|風呂/i,'spa'],[/シャワー|身支度|歯磨き/,'bath'],[/買い物|購入|コンビニ|スーパー|ドンキ|ヨーカドー|Amazon|ユニクロ/i,'shop'],[/運動|筋トレ|散歩|ジム|ランニング/,'exer'],
  [/YouTube|動画|SNS|インスタ|TikTok|ネットサーフィン/i,'spplay'],[/車内/,'incar']];
 function kindIndex(){const ix={},nm=s=>String(s||'').replace(/\s+/g,'').toLowerCase();   /* 題名 → これまでに付けた種類の回数 */
   for(const d in state.entries){const eo=state.entries[d];for(const k in eo){const en=eo[k];if(!en||en.del||!Array.isArray(en.acts))continue;
@@ -3394,7 +3394,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+   /* 同期の状態1行と記録（クラウド版 c1.9） */
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c4.9）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c5.0）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -3905,6 +3905,8 @@ function openEntrySheet(date,ref){
       if(eType==='ai')ne.k='ai';
       if(eType==='work')ne.k='work';
       if(eType==='incar')ne.k='incar';   /* 🚙車内滞在 */
+      if(eType==='stay'&&!isMv&&ex&&ex.k&&!{rest:1,sleep:1,meal:1,ai:1,work:1,incar:1,stay:1}[ex.k])ne.k=ex.k;   /* c5.0：📲📞などで作った記録の種類は、開いて直しても消さない */
+      if(!isMv&&ex&&(ex.bd===0||ex.bd===1))ne.bd=ex.bd;   /* c5.0：🛏️🪑も残す */
       if(pfS)ne.pf=pfS;if(pf0S)ne.pf0=pf0S;if(sheetSt.pj)ne.pj=sheetSt.pj;if(sheetSt.ar&&!isMv){ne.ar=sheetSt.ar;arRemember(p,sheetSt.ar);}else delete ne.ar;   /* c4.8：区・市町村（任意） */   /* 案件 */   /* 出発の県（移動） */
       if(!isMv&&p&&pfS&&!sheetSt.pfAuto)placeSet(p,pfS);   /* 本人が手で選んだ時だけ覚える */
       if(tdS==='_other'){if(tdXS)ne.dx=tdXS;}else if(tdS)ne.d=tdS;   /* 使う物（その他は手入力の文字） */   /* 都道府県（［なし］にした時は付けない） */
@@ -5798,7 +5800,9 @@ function quickKindStart(k,ic,lb){const d=todayStr(),s=nowMin(),p=placeBefore(d,s
   mutate(()=>{state.entries[d]=state.entries[d]||{};const ne={k,s,p:p||'',t:'',ph:[],ts:Date.now()};if(pf)ne.pf=pf;state.entries[d][key]=ne;});toast(ic+' '+lb+' '+s+'（終わったら⏹）');}
 function quickKindEnd(o){const e=nowMin(),s=o.en.s,ed=(o.d!==todayStr()||e<s)?1:0;mutate(()=>{const en=state.entries[o.d][o.k];en.e=e;if(ed)en.ed=ed;else delete en.ed;en.ts=Date.now();});return durMin(s,e,ed);}
 function quickSpStart(){if(openSp()){toast('もう計っている。終わったら📲⏹');return;}quickKindStart('spplay','📲','スマホ操作');}
-function quickSpEnd(){const o=openSp();if(!o)return;const mn=quickKindEnd(o);toast('📲 スマホ操作 '+(durText(mn)||'1分未満')+'（ムダに数える）');}
+function quickSpEnd(){const o=openSp();if(!o)return;const mn=quickKindEnd(o);
+  openSub('<div class="sh-time"><span>📲 '+esc(durText(mn)||'1分未満')+'　何をした？</span></div><div class="sr-r big"><button class="chip" data-spk="spwork">📱 作業（ムダじゃない）</button><button class="chip" data-spk="spplay">📲 操作（ムダ）</button></div><div class="sh-note">スマホ作業はムダじゃない。操作はムダ（本人決定 2026-10-06）</div>',null);
+  $('sheet2').querySelectorAll('[data-spk]').forEach(b=>b.onclick=()=>{mutate(()=>{const en=state.entries[o.d]&&state.entries[o.d][o.k];if(en){en.k=b.dataset.spk;en.ts=Date.now();}});closeSub();});}
 function quickTelStart(){if(openTel()){toast('もう計っている。終わったら📞⏹');return;}quickKindStart('call','📞','電話');}
 function quickTelEnd(){const o=openTel();if(!o)return;const mn=quickKindEnd(o);
   const L=[['bizcall','💼','仕事'],['famcall','👪','家族'],['errand','🧾','用事'],['chat','💬','雑談']];
@@ -6117,7 +6121,7 @@ function rtnRowHtml(d){
    重なった記録は、後から始まった記録（＝中の細かい記録）が勝つ。1分ずつ塗り分けるので、合計が24時間を超えない。記録の無い時間は「記録なし」 */
 /* 種類の idx 表は毎回作る（基本＋自分で足した物（隠した物も）＋ルーティン＋不明）。idx は 1 から */
 const ANA_RTN={id:'rtn',ic:'📚',lb:'ルーティン',co:'#e0559b',muda:false,g:'A',hb:'h'},ANA_UNK={id:'?',ic:'❓',lb:'不明',co:'#9aa3b5',muda:false};
-const ANA_REC={sleep:1,work:1,ai:1,stay:1,meal:1,rest:1,incar:1};   /* 記録の種類（ボタン）。それ以外は滞在 */
+const ANA_REC={sleep:1,work:1,ai:1,stay:1,meal:1,rest:1,incar:1,spplay:1,spwork:1,call:1,bizcall:1,famcall:1,errand:1,chat:1};   /* 記録の種類（ボタン）＋c4.7の📲📞で作る記録。それ以外は滞在 */
 function anaKinds(){const a=KIND_BASE.map(b=>kindOf(b[0])).concat(kindOwnIds().map(kindOf)).filter(Boolean).slice(0,250);a.push(ANA_RTN,ANA_UNK);return a;}
 const MV_V2_TS=1791039600000;   /* c1.1（2026-10-04）以降に保存した移動だけ、空白をムダに数える */
 const ANA_NOTR=10,ANA_WALK=9;   /* mvm：TRS の順で 1..9（徒歩＝9）、乗り物なし＝10 */
@@ -6221,7 +6225,12 @@ function anaCount0(r,days,N,limit,nowIdx){
       if(sd.lastWake&&sd.lastWake>A0.wake)mdOver+=Math.max(0,hmMin(sd.lastWake)-wakeM);
       const mo=sd.ss.filter(x=>x.e<'14:00'&&!(x.date===wd&&x.s>='11:00'&&x.s<'20:00'));if(mo.length>=2)mdNap2+=mo.slice(1).reduce((a,x)=>a+x.min,0);
       if(sd.total>=570)mdExcess+=sd.total-570;}}
-  const mdRh=mdLate+mdOver+mdNap2+mdExcess;
+  /* c5.0：夜に入れた📲📞の数字から、記録した分（📱作業・📲操作／電話の記録）を引いた残り＝ムダ（本人決定 2026-10-06） */
+  let mdScrSp=0,mdScrTel=0;{const SPK={spplay:1,spwork:1},TELK={call:1,bizcall:1,famcall:1,errand:1,chat:1};
+    for(let i=0;i<days;i++){const wd=addDays(r.s,i);const sc=(state.scr||{})[wd];if(!sc||sc.del)continue;
+      let sp=0,tel=0;const a=P+i*1440,b=a+1440;for(let m=a;m<b&&m<NT;m++){const c=cat[m];if(!c||own[m]<0)continue;const id=K[c-1]&&K[c-1].id;if(SPK[id])sp++;else if(TELK[id])tel++;}
+      mdScrSp+=Math.max(0,(Number(sc.sp)||0)-sp);mdScrTel+=Math.max(0,(Number(sc.tel)||0)-tel);}}
+  const mdRh=mdLate+mdOver+mdNap2+mdExcess+mdScrSp+mdScrTel;
   const mk={};for(const id in (state.marks||{})){const x=state.marks[id];if(!x||x.del||!x.d||x.d<r.s||x.d>=r.e)continue;const key=x.k==='muda'?(x.r||'other'):x.k;mk[key]=(mk[key]||0)+1;}
   const vis={};{let cp=0,st=-1,lbs=[];const flush=e=>{if(cp&&st>=0)(vis[cp]=vis[cp]||[]).push({s:st-P,e:e-P,lb:lbs.join('・')});cp=0;st=-1;lbs=[];};
     for(let m=P;m<P+limit;m++){const o=own[m],p=o>=0?pfL[m]:0;if(p!==cp){flush(m);if(p){cp=p;st=m;}}if(p){const l=items[o]&&items[o].lb;if(l&&lbs.indexOf(l)<0&&lbs.length<3)lbs.push(l);}}
@@ -6234,7 +6243,7 @@ function anaCount0(r,days,N,limit,nowIdx){
   const prefKind={};for(let p=0;p<48;p++){if(!pfS[p])continue;const o={};for(let c=1;c<=K.length;c++){const v=pfK[p*256+c];if(v)o[K[c-1].id]=v;}prefKind[p]=o;}
   return {total:limit,rec,K,sum:sumO,tool:obj(toolS,i=>TL[i-1]),pref:obj(pfS,i=>i,0),prefMuda:obj(pfM,i=>i,0),prefBlank:obj(pfB,i=>i,0),prefKind,
     mv:{means,acts:obj(mvA,kid),tools:obj(mvD,i=>TL[i-1]),tot:mt,used:mu,blank:mb,old:mo,mudaAct:mm},
-    muda:{blank:mdBlank,kinds:obj(mdK,kid),bedx:mdBz,meal:mdMeal,trip:mdTrip,late:mdLate,over:mdOver,nap2:mdNap2,excess:mdExcess,rh:mdRh,marks:mk,total:mdTot,all:mdTot+mdRh},unknown:sum[IX['?']]||0,visits:vis};
+    muda:{blank:mdBlank,kinds:obj(mdK,kid),bedx:mdBz,meal:mdMeal,trip:mdTrip,late:mdLate,over:mdOver,nap2:mdNap2,excess:mdExcess,scrSp:mdScrSp,scrTel:mdScrTel,rh:mdRh,marks:mk,total:mdTot,all:mdTot+mdRh},unknown:sum[IX['?']]||0,visits:vis};
 }
 function anaTr(k){if(k==='_none')return ['❔','乗り物なし'];const t=TRS.find(x=>x[0]===k);if(!t)return ['❔',String(k)];
   const i=t[1].indexOf(' ');return [TRICON[k]||t[1].slice(0,i),t[1].slice(i+1)];}
@@ -6263,7 +6272,7 @@ function renderAnaPage(keep){
   const mdDif=(mdAll||pAll)?'<span class="an-md '+(mdd>0?'up':mdd<0?'dn':'')+'">'+(mdd===0?'±0':(mdd>0?'＋':'－')+hs(Math.abs(mdd)))+'</span>':'';
   /* c4.8：本人が決めたムダ12個を絵で、多い順（文字は最小限） */
   const parts=[];const P2=(ic,lb,m)=>{if(m>0)parts.push({ic,lb,m});};
-  P2('🕳️','空白の移動',md.blank);P2('🪑','座ったまま寝た',md.bedx);P2('🦉','夜更かし',md.late);P2('⏰','寝坊',md.over);P2('🔁','二度寝',md.nap2);P2('😪','寝すぎ',md.excess);P2('🍚','深夜の食事',md.meal);P2('🔧','整備工場の往復',md.trip);
+  P2('🕳️','空白の移動',md.blank);P2('🪑','座ったまま寝た',md.bedx);P2('🦉','夜更かし',md.late);P2('⏰','寝坊',md.over);P2('🔁','二度寝',md.nap2);P2('😪','寝すぎ',md.excess);P2('🍚','深夜の食事',md.meal);P2('🔧','整備工場の往復',md.trip);P2('📲','スマホ（夜の数字）',md.scrSp);P2('📞','電話（夜の数字）',md.scrTel);
   Object.keys(md.kinds).forEach(id=>{const k=kOf(id);P2(k.ic,k.lb,md.kinds[id]);});parts.sort((a,b)=>b.m-a.m);
   const MKI={search:'🔎',back:'↩️',miss:'🚪',wait:'⏳',tel:'📞',phone:'📲',other:'🕳️',stress:'😤',bad:'😫'};
   const mkTxt=Object.keys(MKI).filter(k=>md.marks&&md.marks[k]).map(k=>MKI[k]+'<b>'+md.marks[k]+'</b>').join(' ');
@@ -7834,7 +7843,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c4.9";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c5.0";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 /* ログインの後：同じユーザーなら影はそのまま（全件受信をやり直さない）。違うユーザーならそのユーザーの影を読む */
 async function clAfterLogin(){
