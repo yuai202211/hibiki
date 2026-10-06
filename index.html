@@ -751,6 +751,9 @@
   #sheet>.sh-btns.main{position:sticky;bottom:calc(-16px - env(safe-area-inset-bottom));margin:4px -18px calc(-16px - env(safe-area-inset-bottom));padding:10px 18px calc(12px + env(safe-area-inset-bottom));background:var(--bg);box-shadow:0 -8px 18px rgba(20,24,40,.08);z-index:6}
   #sheet>.sh-btns.main .pjchip{flex:0 0 auto;margin:0}
   .mvpt{display:flex;align-items:center;gap:6px}.mvpt span{flex:0 0 auto;width:54px;font-size:11px;font-weight:800;color:#5b6475}.mvpt input{flex:1;min-width:0}.mvpt .mvpx{flex:0 0 auto;width:32px;height:32px;border-radius:10px;background:#f1f3f8;color:#8a93a6}
+  .tpin{flex-shrink:0;position:sticky;top:-10px;z-index:7;margin:-10px -18px 0;padding:0 18px;height:0;overflow:hidden;opacity:0;transition:opacity .15s;pointer-events:none;font-size:12px;font-weight:800;color:#6b7280;background:rgba(246,247,251,.92);text-align:center;line-height:24px}
+  .tpin.on{height:24px;opacity:1;box-shadow:0 2px 6px rgba(0,0,0,.05)}
+  .tref{font-size:11px;font-weight:700;color:#9aa3b5;margin-left:4px}
   .cnt2{display:flex;gap:6px;margin:10px 0 0}.cnt2 button{flex:1;padding:9px 4px;border-radius:12px;background:#f1f3f8;color:#5b6475;font-weight:800;font-size:13.5px}.cnt2 button.sel{background:#0a9a54;color:#fff}
   .et3{display:flex;gap:6px;margin:10px 0 6px}.et3 button{flex:1;padding:10px 4px;border-radius:14px;background:#f1f3f8;color:#5b6475;font-weight:800;font-size:14px;white-space:nowrap}.et3 button.sel{background:#1f2430;color:#fff}
   .et2{display:flex;align-items:center;gap:6px;margin:8px 0 2px}.et2 button{flex:0 0 auto;white-space:nowrap;width:auto;min-width:0;padding:7px 12px;border-radius:12px;background:#f1f3f8;color:#5b6475;font-weight:800;font-size:13px}.et2 button.sel{background:#1f2430;color:#fff}.et2 span{font-size:11px;color:#9aa3b5;font-weight:700}
@@ -3458,7 +3461,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+   /* 同期の状態1行と記録（クラウド版 c1.9） */
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c7.4）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c7.5）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -3608,7 +3611,7 @@ function openEntrySheet(date,ref){
   let tE=(ex&&ex.e)||(!ex&&ref&&ref.e)||((openSl||!ex)?'':(pad((hour+1)%24)+':'+defS.slice(3,5)));   /* 新しい記録は開始だけ（終わりは入れた時だけ・本人指示 2026-10-06） */
   const chips=placeChips();
   $('sheet').innerHTML=
-    '<div class="grab"></div>'+FLD_LEG+
+    '<div class="grab"></div><div class="tpin" id="tPin"></div>'+FLD_LEG+
     '<div><div class="sh-label" id="tLab">🕐 時間（タップして選ぶ）</div>'+
     '<div style="display:flex;gap:10px;align-items:center">'+
     '<input type="time" id="tSin" step="600" lang="ja-JP">'+
@@ -3641,10 +3644,10 @@ function openEntrySheet(date,ref){
     /* 内容の書き方を切り替える：✎自由に書く（今までの欄）／☰1行ずつ書く（ToDoリストのように）。出すのは片方だけ。
        隠れている側に書いた物も消さずに保存する（中身がある側には緑の点を出す） */
     '<div id="secMode" style="display:none"><div class="sh-label">✎ 内容</div><div class="cmode" id="cMode"><button data-cm="list">☰ 1行ずつ書く<i></i></button><button data-cm="free">✎ 自由に書く<i></i></button></div></div>'+
-    '<div id="secActs"><div class="sh-label">✎ 内容</div><div class="sh-note" id="acNote" style="text-align:left;margin:0 0 2px">Enterで次の行。時間は入れても入れなくてもいい（入れると、かかった時間が出る）</div>'+
+    '<div id="secActs"><div class="sh-label">✎ 内容<span class="tref" data-tref="1"></span></div><div class="sh-note" id="acNote" style="text-align:left;margin:0 0 2px">Enterで次の行。時間は入れても入れなくてもいい（入れると、かかった時間が出る）</div>'+
       '<div id="acRows"></div><div class="sh-chips" id="acChips" style="margin-top:6px"></div>'+
       '<div id="acSum" style="font-size:11.5px;color:#8a90a0;font-weight:700;margin-top:5px;display:none"></div></div>'+
-    '<div id="secFree"><div class="sh-label">✎ 自由に書く</div><div id="frRows"></div><div class="sh-ta-wrap" style="display:none"><textarea id="shTa" placeholder="'+(SR?'話すか、書く':'ここに書く（キーボードのマイクで音声入力もできる）')+'"></textarea>'+
+    '<div id="secFree"><div class="sh-label">✎ 自由に書く<span class="tref" data-tref="1"></span></div><div id="frRows"></div><div class="sh-ta-wrap" style="display:none"><textarea id="shTa" placeholder="'+(SR?'話すか、書く':'ここに書く（キーボードのマイクで音声入力もできる）')+'"></textarea>'+
     '<button class="sh-mic" id="shMic">'+MICSVG+'</button>'+
     '</div></div>'+
     '<div id="secPh"'+((sheetSt.ph&&sheetSt.ph.length)?'':' style="display:none"')+'><div class="sh-label">📷 写真（前に付けた分）</div><div class="phrow" id="shPhotos"></div></div>'+
@@ -3734,9 +3737,12 @@ function openEntrySheet(date,ref){
   $('tEin').onchange=()=>{const v=$('tEin').value;if(v){tE=v;eHand=true;}};
   $('tEd').onchange=()=>{tEd=Number($('tEd').value)||0;};
   /* 何時間かをその場で表示（睡眠なら「😴 睡眠 7時間30分」） */
-  const updDur=()=>{const el=$('tDur');if(!el)return;if(!tE){el.textContent='⏳ 開始だけで記録（終わりは後で日記から）';return;}if(ex&&ex.noT&&!timeTouched&&eType!=='sleep'){el.textContent='';return;}const wrap=(tE<=tS&&tEd===0);const m=durMin(tS,tE,wrap?1:tEd);el.textContent=m?((eType==='sleep'?'😴 睡眠 ':'⏱ ')+durText(m)+(wrap?'（翌日扱い）':'')):'';};
+  const tRefPaint=()=>{const txt=tS?('🕐 '+tS+' – '+(tE||'？')+(tE?'（'+(durText(durMin(tS,tE,(tE<=tS&&tEd===0)?1:tEd))||'0分')+'）':'（終わりは後で）')):'';
+    const pn=$('tPin');if(pn)pn.textContent=txt;document.querySelectorAll('#sheet [data-tref]').forEach(x=>{x.textContent=txt?'　'+txt:'';});};   /* c7.5 */
+  const updDur=()=>{tRefPaint();const el=$('tDur');if(!el)return;if(!tE){el.textContent='⏳ 開始だけで記録（終わりは後で日記から）';return;}if(ex&&ex.noT&&!timeTouched&&eType!=='sleep'){el.textContent='';return;}const wrap=(tE<=tS&&tEd===0);const m=durMin(tS,tE,wrap?1:tEd);el.textContent=m?((eType==='sleep'?'😴 睡眠 ':'⏱ ')+durText(m)+(wrap?'（翌日扱い）':'')):'';};
   updDur();
   ['tSin','tEin','tEd'].forEach(id=>$(id).addEventListener('change',updDur));
+  {const sh=$('sheet'),pn=$('tPin'),tl=$('tLab');if(sh&&pn&&tl){const chk=()=>{const r=tl.parentNode.getBoundingClientRect(),s=sh.getBoundingClientRect();pn.classList.toggle('on',r.bottom<s.top+4);};sh.addEventListener('scroll',chk,{passive:true});chk();}}   /* c7.5：時間の欄が見えなくなったら上に薄い帯 */
   $('tLater').onclick=()=>{tE='';$('tEin').value='';$('tEin').classList.remove('auto');timeTouched=true;eHand=true;updDur();flowNext('place');};
   /* c6.4：上から下へ流れる（押したら次の欄へ自動で進む） */
   const flowTo=el=>{if(!el)return;setTimeout(()=>{try{const sh=$('sheet'),r=el.getBoundingClientRect(),sr=sh.getBoundingClientRect();sh.scrollTo({top:sh.scrollTop+r.top-sr.top-8,behavior:'smooth'});}catch(e){}},90);};
@@ -8092,7 +8098,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c7.4";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c7.5";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 /* ログインの後：同じユーザーなら影はそのまま（全件受信をやり直さない）。違うユーザーならそのユーザーの影を読む */
 async function clAfterLogin(){
