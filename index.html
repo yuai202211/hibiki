@@ -750,6 +750,7 @@
   .chip.ac-qall{background:#f1f3f8;color:#3b4252}
   #sheet>.sh-btns.main{position:sticky;bottom:calc(-16px - env(safe-area-inset-bottom));margin:4px -18px calc(-16px - env(safe-area-inset-bottom));padding:10px 18px calc(12px + env(safe-area-inset-bottom));background:var(--bg);box-shadow:0 -8px 18px rgba(20,24,40,.08);z-index:6}
   #sheet>.sh-btns.main .pjchip{flex:0 0 auto;margin:0}
+  .mvpt{display:flex;align-items:center;gap:6px}.mvpt span{flex:0 0 auto;width:54px;font-size:11px;font-weight:800;color:#5b6475}.mvpt input{flex:1;min-width:0}.mvpt .mvpx{flex:0 0 auto;width:32px;height:32px;border-radius:10px;background:#f1f3f8;color:#8a93a6}
   .cnt2{display:flex;gap:6px;margin:10px 0 0}.cnt2 button{flex:1;padding:9px 4px;border-radius:12px;background:#f1f3f8;color:#5b6475;font-weight:800;font-size:13.5px}.cnt2 button.sel{background:#0a9a54;color:#fff}
   .et3{display:flex;gap:6px;margin:10px 0 6px}.et3 button{flex:1;padding:10px 4px;border-radius:14px;background:#f1f3f8;color:#5b6475;font-weight:800;font-size:14px;white-space:nowrap}.et3 button.sel{background:#1f2430;color:#fff}
   .et2{display:flex;align-items:center;gap:6px;margin:8px 0 2px}.et2 button{flex:0 0 auto;white-space:nowrap;width:auto;min-width:0;padding:7px 12px;border-radius:12px;background:#f1f3f8;color:#5b6475;font-weight:800;font-size:13px}.et2 button.sel{background:#1f2430;color:#fff}.et2 span{font-size:11px;color:#9aa3b5;font-weight:700}
@@ -3455,7 +3456,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+   /* 同期の状態1行と記録（クラウド版 c1.9） */
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c6.9）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c7.1）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -3627,11 +3628,11 @@ function openEntrySheet(date,ref){
     '<div id="secMove" style="display:none">'+
       '<div class="sh-label">🚗 移動（どこから→どこまで・自由に1行）</div>'+
       '<div style="display:flex;gap:6px;align-items:center">'+
-      '<input type="text" id="mvRt" maxlength="200" data-need="1" placeholder="例：自宅 → 東京タワー" style="flex:1;min-width:0">'+
-      '<button class="chip" id="mvArrow" style="flex-shrink:0;font-weight:800;font-size:15px">→</button></div>'+
+      '<input type="text" id="mvRt" maxlength="200" style="display:none"><div id="mvPts" style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px"></div>'+   /* c7.0：1か所＝1行（→を押すたびに1行増える・本人指示）。保存は今まで通り「A → B → C」 */
+      '<button class="chip" id="mvArrow" style="flex-shrink:0;align-self:flex-end;font-weight:800;font-size:15px" aria-label="次の場所の行を足す">→</button></div>'+
       '<div class="sh-label" style="margin-top:8px">移動手段（1タップ）</div><div class="sh-chips" id="trChips">'+
       TRS.map(x=>'<button class="chip" data-tr="'+x[0]+'">'+x[1]+'</button>').join('')+'</div>'+
-      '<div id="acQw" style="display:none"><div class="sh-label" style="margin-top:8px">移動中にしたこと（押すだけで移動中ずっと）</div><div class="sh-chips" id="acQ"></div></div></div>'+   /* 1タップは移動手段のすぐ下 */
+      '<div id="acQw" style="display:none"><div class="sh-label" style="margin-top:8px">移動中にしたこと（押すだけで移動中ずっと）<small style="display:block;font-weight:600;color:#8a93a6">何も押さなければ「🚗 運転だけ（何もしない移動）」＝ムダに数える</small></div><div class="sh-chips" id="acQ"></div></div></div>'+   /* 1タップは移動手段のすぐ下 */
     '<div class="pfrow" id="secPf"><button class="pfchip" id="pf0Chip" style="display:none">🗾 出発</button><button class="pfchip" id="pfChip">🗾 都道府県</button><button class="pfchip ar" id="arChip" aria-label="区・市町村（任意）">🏙️</button></div>'+   /* 都道府県（c1.1・記録の種類に関係なく1か所） */
     /* ここでやったこと：その場所で「何を・どれくらいの時間」やったかを、1行ずつ足せる（本人指示 2026-10-01）。
        使わなければ何も増えない（ボタン1個だけ）。時間は選んだ時だけ入る */
@@ -3661,12 +3662,17 @@ function openEntrySheet(date,ref){
     const bestV=placeBefore(date,defS);
     if(bestV){$('mvRt').value=bestV+' → ';$('mvRt').classList.add('auto');}   /* アプリが先回りで入れた＝青 */
   }
-  $('mvArrow').onclick=()=>{
-    const i=$('mvRt');
-    i.value=(i.value.replace(/\s+$/,'')+(i.value.trim()?' → ':''));
-    i.focus();
-    try{i.setSelectionRange(i.value.length,i.value.length);}catch(e){}
-  };
+  /* c7.0：移動の経路は1か所＝1行。→を押すと次の行が増える（横にスクロールしなくていい） */
+  let mvPts=(()=>{const v=$('mvRt').value;const a=v.split('→').map(x=>x.trim());if(a.length>1&&a[a.length-1]==='')return a.filter((x,i)=>x||i===a.length-1);const b=a.filter(Boolean);return b.length?b:[''];})();
+  const mvSync=()=>{const ps=mvPts.map(x=>x.trim()).filter(Boolean);$('mvRt').value=ps.join(' → ')+((mvPts.length>ps.length&&ps.length)?' → ':'');};
+  const mvPaint=focusIx=>{const w=$('mvPts');if(!w)return;const auto=$('mvRt').classList.contains('auto');
+    w.innerHTML=mvPts.map((p,i)=>'<div class="mvpt"><span>'+(i===0?'🟢 出発':i===mvPts.length-1?'🏁 到着':'⋯ 経由')+'</span><input type="text" class="mvpi'+(auto&&i===0&&p?' auto':'')+'" maxlength="80" value="'+esc(p)+'" placeholder="'+(i===0?'どこから':'どこへ')+'">'+(i>0?'<button class="mvpx" aria-label="この行を消す">✕</button>':'')+'</div>').join('');
+    w.querySelectorAll('.mvpi').forEach((x,i)=>{x.oninput=()=>{mvPts[i]=x.value;$('mvRt').classList.remove('auto');x.classList.remove('auto');mvSync();};
+      x.onkeydown=ev=>{if(ev.key==='Enter'&&!ev.isComposing&&ev.keyCode!==229){ev.preventDefault();if(i===mvPts.length-1){mvPts.push('');mvSync();mvPaint(mvPts.length-1);}else{const nx=w.querySelectorAll('.mvpi')[i+1];if(nx)nx.focus();}}};});
+    w.querySelectorAll('.mvpx').forEach((b,j)=>b.onclick=()=>{mvPts.splice(j+1,1);mvSync();mvPaint();});
+    if(focusIx!=null){const t=w.querySelectorAll('.mvpi')[focusIx];if(t){try{t.focus();}catch(e){}}}};
+  mvPaint();
+  $('mvArrow').onclick=()=>{mvPts.push('');mvSync();mvPaint(mvPts.length-1);};
   let cPaint=()=>{};   /* 内容の書き方の切り替え（下で中身を入れる） */
   let acCh=()=>{};   /* 「＋ 行を足す」と移動の1タップチップ（下で中身を入れる） */
   let qMore=false,phTarget=null;   /* qMore＝運転中の1タップで「＋ほか」を開いた／phTarget＝写真を付ける行の番号（null＝記録全体） */
@@ -3836,7 +3842,7 @@ function openEntrySheet(date,ref){
     const qh=q.map(id=>{const k=kindOf(id);return (k&&!k.off)?'<button class="chip ac-q'+(onW(id)?' sel':((isCar||isStay)&&onR(id)?' on2':''))+'" data-aq="'+id+'" style="--kc:'+k.co+'">'+esc(k.ic)+' '+esc(k.lb)+'</button>':'';}).join('')+((eType==='move'&&drv)?'<button class="chip ac-qm" id="acQm">'+(qMore?'－ たたむ':'＋ ほか')+'</button>':'');
     if(qe){qe.innerHTML=(isCar||isStay)?'':qh;const w=$('acQw');(w||qe).style.display=(qh&&!isCar&&!isStay)?'':'none';}   /* 1タップは行の上（シートを開いてすぐ見える所） */
     {const cs=$('cntSw');if(cs){cs.style.display=(isCar||isStay)?'':'none';cs.querySelectorAll('[data-cn]').forEach(b=>{b.classList.toggle('sel',(b.dataset.cn==='1')===!!sheetSt.one);b.onclick=()=>{
-        if(b.dataset.cn==='1'){if(sheetSt.one)return;acRead();const ne=acts.filter(a=>a&&(String(a.t||'').trim()||a.k));if(ne.length>1||frs.length){toast('2つ以上書いてあるので1つにできない（行を消せば戻せる）');return;}sheetSt.one=true;}
+        if(b.dataset.cn==='1'){if(sheetSt.one)return;acRead();for(let i=frs.length-1;i>=0;i--)if(!String(frs[i]||'').trim())frs.splice(i,1);try{frSync&&frSync();}catch(e){}sheetSt.one=true;}   /* c7.1：止めない（空の自由に書くは捨てる。書いた物は消さずに残す） */
         else{if(!sheetSt.one)return;acRead();sheetSt.one=false;}
         acPaint();cPaint();};});}}
     if((isCar||isStay)&&sheetSt.one){const rd=$('recDo');if(rd){acRead();const a0=acts.find(a=>a&&(String(a.t||'').trim()||a.k))||null;const k0=a0&&a0.k;const k0o=k0&&kindOf(k0);
@@ -3844,7 +3850,8 @@ function openEntrySheet(date,ref){
       const ch=q.concat(extra).map(id=>{const k=kindOf(id);return (k&&!k.off)?'<button class="chip ac-q'+(k0===id?' sel':'')+'" data-o1="'+esc(id)+'" style="--kc:'+k.co+'">'+esc(k.ic)+' '+esc(k.lb)+'</button>':'';}).join('');
       const tv=(a0&&a0.t&&!(k0o&&a0.t===k0o.lb))?a0.t:'';
       const aiH=(k0&&AI_KINDS[k0])?'<div class="ac-ai"><span>🤖 使ったAI</span>'+AI_TOOLS.map(z=>{const on=(Array.isArray(a0.ai)?a0.ai:aiGuess(a0.t)).indexOf(z[0])>=0;return '<button class="chip'+(on?' sel':'')+'" data-o1ai="'+z[0]+'" style="--ac:'+z[2]+'">'+esc(z[1])+'</button>';}).join('')+'</div>':'';
-      rd.style.display='';rd.innerHTML='<div class="sh-label">🏷️ '+(isCar?'車内で':'ここで')+'何をした（1つ）<small>押すだけで終わり。2つ以上になったら上の ✌️</small></div><div class="sh-chips">'+ch+'<button class="chip ac-qall" id="o1all">🏷️ ほか（全部）</button></div>'+
+      const more=acts.filter(a=>a&&(String(a.t||'').trim()||a.k)).length-1+frs.filter(x=>String(x||'').trim()).length;
+      rd.style.display='';rd.innerHTML='<div class="sh-label">🏷️ '+(isCar?'車内で':'ここで')+'何をした（1つ）<small>押すだけで終わり。2つ以上になったら上の ✌️'+(more>0?'<br>ほかに '+more+'件 書いてある（消えていない・✌️で見られる）':'')+'</small></div><div class="sh-chips">'+ch+'<button class="chip ac-qall" id="o1all">🏷️ ほか（全部）</button></div>'+
         '<input type="text" id="o1t" maxlength="40" placeholder="一言（書かなくてもいい）例：HIBIKI修正" value="'+esc(tv)+'" style="width:100%;margin-top:8px">'+aiH;
       const setOne=(id,d)=>{acRead();const k=kindOf(id);if(!k)return;const old=acts.find(a=>a&&(String(a.t||'').trim()||a.k));const t1=($('o1t').value||'').trim();
         const row={t:t1||k.lb,k:id,m:0,s:'',e:'',w:1};if(d)row.d=d;else if(old&&old.d&&old.k===id)row.d=old.d;if(old&&old.k===id&&Array.isArray(old.ai))row.ai=old.ai;
@@ -3872,7 +3879,7 @@ function openEntrySheet(date,ref){
       const last=acts[acts.length-1];if(last&&!last.t.trim()&&!last.s&&!last.e&&!last.k&&!last.d&&!(last.c&&last.c.trim()))acts[acts.length-1]=row;else acts.push(row);acPaint();});};}   /* c6.1：同じ場所で1つの事＝全部の種類から1つ選ぶと「ずっと」の行（本人指示） */
     {const fa=$('frAdd');if(fa)fa.onclick=()=>{frs.push('');frPaint(true);cPaint();};}
     {const qm=$('acQm');if(qm)qm.onclick=()=>{qMore=!qMore;acCh();};}};
-  {const ne=acts.filter(a=>a&&(String(a.t||'').trim()||a.k));sheetSt.one=!(ne.length>1||frs.length||ne.some(a=>a.s||a.e||(a.c&&a.c.trim())||(a.ph&&a.ph.length)||a.st));}   /* c6.8 */
+  {const ne=acts.filter(a=>a&&(String(a.t||'').trim()||a.k));sheetSt.one=!(ne.length>1||frs.some(x=>String(x||'').trim())||ne.some(a=>a.s||a.e||(a.c&&a.c.trim())||(a.ph&&a.ph.length)||a.st));}   /* c6.8 */
   acPaint();
   /* 最初に出す側：中身がある方。両方ある・両方無い時は、前に使っていた方（端末に覚える） */
   let cMode=(()=>{const hasT=!!(ex&&ex.t),hasA=!!(ex&&Array.isArray(ex.acts)&&ex.acts.some(a=>a&&a.t));
@@ -6357,7 +6364,7 @@ function anaCount0(r,days,N,limit,nowIdx){
       if(en.e){b=off+hmMin(en.e)+(Number(en.ed)||0)*1440;if(b<=a)b+=1440;}
       else if(d>=addDays(todayStr(),-1))b=P+nowIdx;else continue;   /* 終了時刻の無い記録は数えない（寝ている途中・移動中だけ今まで） */
       const mv=!!en.mv,kk=mv?'move':(ANA_REC[en.k]?en.k:'stay'),tr=mv?TRS.findIndex(t=>t[0]===en.tr):-1;
-      items.push({a,b,c:IX[kk],acts:Array.isArray(en.acts)?en.acts:[],off,mv,car:en.k==='incar',aiT:(en.k==='ai'&&Array.isArray(en.ai))?en.ai:null,bd:(en.bd===0?0:(en.bd===1?1:-1)),trip:mv&&mvTrip(en),tv:mv?(tr>=0?tr+1:ANA_NOTR):0,v2:mv&&d>='2026-10-04',pf:prefOf(en.pf)?Number(en.pf):0,pf0:(mv&&prefOf(en.pf0))?Number(en.pf0):0,lb:mv?String(en.rt||'移動'):String(en.p||((kindOf(en.k||'stay')||{}).lb)||''),et:(mv||en.k==='sleep')?0:((typeof en.d==='string'&&en.d)?tIx(en.d):(en.dx?tIx('_other'):0))});}}
+      items.push({a,b,c:IX[kk],acts:Array.isArray(en.acts)?en.acts:[],off,mv,car:en.k==='incar',aiT:(en.k==='ai'&&Array.isArray(en.ai))?en.ai:null,bd:(en.bd===0?0:(en.bd===1?1:-1)),trip:mv&&mvTrip(en),tv:mv?(tr>=0?tr+1:ANA_NOTR):0,v2:mv&&(d>='2026-10-04'||(Number(en.ts)||0)>=MV_V2_TS),pf:prefOf(en.pf)?Number(en.pf):0,pf0:(mv&&prefOf(en.pf0))?Number(en.pf0):0,lb:mv?String(en.rt||'移動'):String(en.p||((kindOf(en.k||'stay')||{}).lb)||''),et:(mv||en.k==='sleep')?0:((typeof en.d==='string'&&en.d)?tIx(en.d):(en.dx?tIx('_other'):0))});}}
   for(const x of rlogList()){if(!x.s||!x.e||x.d<dayList[0]||x.d>dayList[dayList.length-1])continue;const off=P+Math.round((parseD(x.d)-parseD(r.s))/86400000)*1440;
     let a=off+hmMin(x.s),b=off+hmMin(x.e);if(b<=a)b+=1440;items.push({a,b,c:IX.rtn,acts:[],off,rtn:1,mv:false,tv:0,v2:false,pf:0});}
   items.sort((p,q)=>p.a-q.a||q.b-p.b);
@@ -6485,7 +6492,7 @@ function renderAnaPage(keep){
   const mdDif=(mdAll||pAll)?'<span class="an-md '+(mdd>0?'up':mdd<0?'dn':'')+'">'+(mdd===0?'±0':(mdd>0?'＋':'－')+hs(Math.abs(mdd)))+'</span>':'';
   /* c4.8：本人が決めたムダ12個を絵で、多い順（文字は最小限） */
   const parts=[];const P2=(ic,lb,m)=>{if(m>0)parts.push({ic,lb,m});};
-  P2('🕳️','空白の移動',md.blank);P2('🪑','座ったまま寝た',md.bedx);P2('🦉','夜更かし',md.late);P2('⏰','寝坊',md.over);P2('🔁','二度寝',md.nap2);P2('😪','寝すぎ',md.excess);P2('🍚','深夜の食事',md.meal);P2('🔧','整備工場の往復',md.trip);P2('📲','スマホ（夜の数字）',md.scrSp);P2('📞','電話（夜の数字）',md.scrTel);
+  P2('🚗','運転だけ（何もしない移動）',md.blank);P2('🪑','座ったまま寝た',md.bedx);P2('🦉','夜更かし',md.late);P2('⏰','寝坊',md.over);P2('🔁','二度寝',md.nap2);P2('😪','寝すぎ',md.excess);P2('🍚','深夜の食事',md.meal);P2('🔧','整備工場の往復',md.trip);P2('📲','スマホ（夜の数字）',md.scrSp);P2('📞','電話（夜の数字）',md.scrTel);
   Object.keys(md.kinds).forEach(id=>{const k=kOf(id);P2(k.ic,k.lb,md.kinds[id]);});parts.sort((a,b)=>b.m-a.m);
   const MKI={search:'🔎',back:'↩️',miss:'🚪',wait:'⏳',tel:'📞',phone:'📲',other:'🕳️',stress:'😤',bad:'😫'};
   const mkTxt=Object.keys(MKI).filter(k=>md.marks&&md.marks[k]).map(k=>MKI[k]+'<b>'+md.marks[k]+'</b>').join(' ');
@@ -8062,7 +8069,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c6.9";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c7.1";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 /* ログインの後：同じユーザーなら影はそのまま（全件受信をやり直さない）。違うユーザーならそのユーザーの影を読む */
 async function clAfterLogin(){
