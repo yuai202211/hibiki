@@ -3578,7 +3578,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+   /* 同期の状態1行と記録（クラウド版 c1.9） */
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c9.0）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c9.1）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -6008,7 +6008,7 @@ function quickMoveArrive(){
 /* 1分ごとに到着ボタンの経過時間だけ描き直す */
 /* ===== c4.7：🕳️😤😫 自己申告・📲スマホ・📞電話・🛏️🪑・夜の📲📞の数字 ===== */
 const SR_K={muda:['🕳️','ムダ'],stress:['😤','ストレス'],bad:['😫','調子悪い']};
-const SR_R=[['search','🔎','探し物'],['back','↩️','取りに戻る'],['miss','🚪','空振り'],['tel','📞','電話'],['phone','📲','スマホ'],['wait','⏳','待ち']];
+const SR_R=[['search','🔎','探し物'],['back','↩️','取りに戻る'],['miss','🚪','空振り'],['tel','📞','電話'],['phone','📲','スマホ'],['wait','⏳','待ち'],['dandori','🧩','段取りが悪い']];   /* c9.1：本人「全てにおいて段取りが悪い時は全てムダ」（2026-10-07・運用しながら協議） */
 const nowMin=()=>{const d=new Date();return pad(d.getHours())+':'+pad(d.getMinutes());};
 function srList(d){const M=state.marks||{};return Object.keys(M).filter(i=>M[i]&&!M[i].del&&M[i].d&&(!d||M[i].d===d)).map(i=>Object.assign({id:i},M[i])).sort((a,b)=>(a.d+a.t)<(b.d+b.t)?-1:1);}
 function srReason(r){return SR_R.find(z=>z[0]===r)||null;}
@@ -6750,7 +6750,7 @@ function renderAnaPage(keep){
   const parts=[];const P2=(ic,lb,m)=>{if(m>0)parts.push({ic,lb,m});};
   P2('🚗','運転だけ（何もしない移動）',md.blank);P2('🪑','座ったまま寝た',md.bedx);P2('🦉','夜更かし',md.late);P2('⏰','寝坊',md.over);P2('🔁','二度寝',md.nap2);P2('😪','寝すぎ',md.excess);P2('🍚','深夜の食事',md.meal);P2('🔧','整備工場の往復',md.trip);P2('📲','スマホ（夜の数字）',md.scrSp);P2('📞','電話（夜の数字）',md.scrTel);
   Object.keys(md.kinds).forEach(id=>{const k=kOf(id);P2(k.ic,k.lb,md.kinds[id]);});parts.sort((a,b)=>b.m-a.m);
-  const MKI={search:'🔎',back:'↩️',miss:'🚪',wait:'⏳',tel:'📞',phone:'📲',other:'🕳️',stress:'😤',bad:'😫'};
+  const MKI={search:'🔎',back:'↩️',miss:'🚪',wait:'⏳',tel:'📞',phone:'📲',dandori:'🧩',other:'🕳️',stress:'😤',bad:'😫'};
   const mkTxt=Object.keys(MKI).filter(k=>md.marks&&md.marks[k]).map(k=>MKI[k]+'<b>'+md.marks[k]+'</b>').join(' ');
   let worst=parts.length?{m:parts[0].m,t:esc(parts[0].ic)+' '+esc(parts[0].lb)}:null;
   let wp=0;for(const c in cur.prefMuda)if(+c&&(!wp||cur.prefMuda[c]>cur.prefMuda[wp]))wp=+c;
@@ -8347,7 +8347,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c9.0";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c9.1";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 /* ログインの後：同じユーザーなら影はそのまま（全件受信をやり直さない）。違うユーザーならそのユーザーの影を読む */
 async function clAfterLogin(){
