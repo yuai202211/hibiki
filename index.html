@@ -3583,7 +3583,7 @@ function renderDecade(){
       return sa<sb?-1:sa>sb?1:0;
     });
     if(hs.length){
-      const txt=hs.map(h=>{const x=e[h];return (x.t||(x.mv?(x.rt||''):(x.k==='rest'?'休憩':x.k==='sleep'?'睡眠':x.k==='meal'?('食事'+(x.p?' '+x.p:'')):x.k==='ai'?('AI'+(x.p?' '+x.p:'')):x.k==='work'?('仕事'+(x.p?' '+x.p:'')):x.p))||'')+actsLine(x,' ');}).filter(Boolean).join('。');
+      const txt=hs.map(h=>{const x=e[h];return (x.t||(x.mv?(x.rt||''):((hk=>hk==='rest'?'休憩':hk==='sleep'?'睡眠':hk==='meal'?('食事'+(x.p?' '+x.p:'')):hk==='ai'?('AI'+(x.p?' '+x.p:'')):hk==='work'?('仕事'+(x.p?' '+x.p:'')):x.p)(kHead(x))))   /* c12.1 */||'')+actsLine(x,' ');}).filter(Boolean).join('。');
       cards+='<button class="ycard" data-yd="'+key+'"><div class="y">'+i+'年前 '+y+'</div><p>'+esc(txt||'記録あり')+'</p></button>';
     }
   }
@@ -3608,11 +3608,11 @@ function openDayPeek(dk){
     return '<div class="gev"><span class="gt" style="color:#8a90a0">'+esc(tm)+'</span>'+
       '<span class="gs" style="white-space:pre-wrap">'+
       (x.mv?'<b style="color:#4d7dff">'+(TRICON[x.tr]||'🚗')+' '+esc(x.rt||'')+'</b>'
-       :x.k==='rest'?'<b style="color:#c98a2f">☕ 休憩'+(x.p?'　📍'+esc(x.p):'')+'</b>'
-       :x.k==='work'?'<b style="color:#1e3a8a">💼 仕事'+(x.p?'　📍'+esc(x.p):'')+'</b>'
-       :x.k==='ai'?'<b style="color:#7a6ef3">🤖 AI'+(x.p?'　📍'+esc(x.p):'')+'</b>'
-       :x.k==='meal'?'<b style="color:#e0603c">🍚 食事'+(x.p?'　📍'+esc(x.p):'')+'</b>'
-       :x.k==='sleep'?'<b style="color:#7a6ef3">🌙 睡眠'+(x.p?'　📍'+esc(x.p):'')+'</b>'
+       :kHead(x)==='rest'?'<b style="color:#c98a2f">☕ 休憩'+(x.p?'　📍'+esc(x.p):'')+'</b>'
+       :kHead(x)==='work'?'<b style="color:#1e3a8a">💼 仕事'+(x.p?'　📍'+esc(x.p):'')+'</b>'
+       :kHead(x)==='ai'?'<b style="color:#7a6ef3">🤖 AI'+(x.p?'　📍'+esc(x.p):'')+'</b>'
+       :kHead(x)==='meal'?'<b style="color:#e0603c">🍚 食事'+(x.p?'　📍'+esc(x.p):'')+'</b>'
+       :kHead(x)==='sleep'?'<b style="color:#7a6ef3">🌙 睡眠'+(x.p?'　📍'+esc(x.p):'')+'</b>'
        :(x.p?'<b style="color:#0a9a54">📍'+esc(x.p)+'</b>':''))+
       (x.t?(((x.p&&!x.mv)||x.mv)?'\n':'')+esc(x.t):'')+esc(actsLine(x,'\n'))+
       '</span></div>';
@@ -3655,7 +3655,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+   /* 同期の状態1行と記録（クラウド版 c1.9） */
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c12.1）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c12.2）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -8670,7 +8670,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c12.1";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c12.2";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 /* ログインの後：同じユーザーなら影はそのまま（全件受信をやり直さない）。違うユーザーならそのユーザーの影を読む */
 async function clAfterLogin(){
