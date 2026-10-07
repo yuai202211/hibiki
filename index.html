@@ -2924,6 +2924,7 @@ function kindOf(id){if(!id||typeof id!=='string')return null;const o=(state.kind
   if(b)return {id,ic:(o&&o.ic)||b[1],lb:(o&&o.lb)||b[2],co:b[3],g:(o&&o.g&&grpOk(o.g))?o.g:(grpOk(b[4])?b[4]:'X'),hb:b[6]||'',muda:(o&&o.muda!=null)?!!o.muda:!!b[5],off:!!(o&&o.off),own:false};
   if(!o||!o.lb)return null;let hs=0;for(const ch of id)hs=(hs*31+ch.charCodeAt(0))%997;
   return {id,ic:o.ic||'📌',lb:String(o.lb),co:KIND_OWNCO[hs%KIND_OWNCO.length],g:(o.g&&grpOk(o.g))?o.g:'X',hb:'',muda:!!o.muda,off:!!o.off,own:true};}
+function mudaAuto(){return !!(state&&state._cfg&&state._cfg.mudaAuto);}   /* c11.3：既定＝自分で押した🕳️だけ */
 function grpOk(g){for(const k in GRP_ON)return !!GRP_ON[g];return true;}   /* c10.9：まだ読んでいない時は全部あり */
 function kDevK(k){if(!k)return false;for(const t of KIND_TREE){if(!t.d||!t.ch)continue;for(const c of t.ch){if(c===k||(typeof c!=='string'&&c.ch.indexOf(k)>=0))return true;}}return false;}   /* PC／スマホの木の種類＝道具は自動 */
 function kCatHtml(k,path,d,dx,kx,dd){const P=String(path||'').split('/').filter(Boolean),leaves=new Set();const KX=Array.isArray(kx)?kx:String(kx||'').split(',').filter(Boolean),DD=Array.isArray(dd)?dd:String(dd||'').split(',').filter(Boolean);   /* c11.2：複数 */
@@ -3637,7 +3638,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+   /* 同期の状態1行と記録（クラウド版 c1.9） */
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c11.2）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c11.3）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -3813,7 +3814,7 @@ function openEntrySheet(date,ref){
       '<div style="display:flex;flex-direction:column;justify-content:space-between;gap:6px;flex-shrink:0;align-self:stretch"><button class="chip" id="mvSwap" style="font-weight:800;font-size:15px" aria-label="出発と到着を入れ替える">⇅</button><button class="chip" id="mvArrow" style="font-weight:800;font-size:15px" aria-label="次の場所の行を足す">→</button></div></div>'+   /* c10.3：⇅ 入れ替え */
       '<div class="sh-label" style="margin-top:8px">移動手段（1タップ）</div><div class="sh-chips" id="trChips">'+
       TRS.map(x=>'<button class="chip" data-tr="'+x[0]+'">'+x[1]+'</button>').join('')+'</div>'+
-      '<div id="acQw" style="display:none"><div class="sh-label" style="margin-top:8px">移動中にしたこと（押すだけで移動中ずっと）<small style="display:block;font-weight:600;color:#8a93a6">何も押さなければ「🚗 運転だけ（何もしない移動）」＝ムダに数える</small></div><div class="sh-chips" id="acQ"></div></div></div>'+   /* 1タップは移動手段のすぐ下 */
+      '<div id="acQw" style="display:none"><div class="sh-label" style="margin-top:8px">移動中にしたこと（押すだけで移動中ずっと）'+(mudaAuto()?'<small style="display:block;font-weight:600;color:#8a93a6">何も押さなければ「🚗 運転だけ（何もしない移動）」＝ムダに数える</small>':'')+'</div><div class="sh-chips" id="acQ"></div></div></div>'+   /* 1タップは移動手段のすぐ下 */
     '<div class="pfrow" id="secPf"><button class="pfchip" id="pf0Chip" style="display:none">🗾 出発</button><button class="pfchip" id="pfChip">🗾 都道府県</button><button class="pfchip ar" id="arChip" aria-label="区・市町村（任意）">🏙️</button></div>'+   /* 都道府県（c1.1・記録の種類に関係なく1か所） */
     /* ここでやったこと：その場所で「何を・どれくらいの時間」やったかを、1行ずつ足せる（本人指示 2026-10-01）。
        使わなければ何も増えない（ボタン1個だけ）。時間は選んだ時だけ入る */
@@ -4324,6 +4325,7 @@ function openSettings(){
     '<div class="grab"></div>'+
     '<div class="sh-time"><span>⭐ 夢と設定</span></div>'+
     '<div class="set-row"><div class="sh-label">✎ ボタンの編集（足す・直す・消す・カテゴリー移動）</div><div class="sr-r be-entry"><button class="chip" data-be="kinds">🏷️ 何をした</button><button class="chip" data-be="places">📍 場所</button><button class="chip" data-be="trs">🚗 移動手段</button><button class="chip" data-be="srr">🕳️ ムダの理由</button><button class="chip" data-be="tdq">🗑 やめる理由</button><button class="chip" data-be="tools">🧰 道具</button></div><div class="sh-note" style="text-align:left">パソコンでもスマホでも同じ。同期は1つずつ新しく直した方が残る</div></div>'+   /* c10.9 */
+    '<div class="set-row"><div class="sh-label">🕳️ ムダの数え方</div><div class="sr-r"><button class="chip'+(mudaAuto()?'':' sel')+'" data-mda="0">✋ 自分で押した🕳️だけ</button><button class="chip'+(mudaAuto()?' sel':'')+'" data-mda="1">🤖 自動も数える</button></div><div class="sh-note" style="text-align:left">自動＝種類の🕳️印・深夜の食事・運転だけの移動・二度寝・寝坊など。パターンが決まったら自動に戻せる</div></div>'+   /* c11.3 */
     '<div class="set-row"><div class="sh-label">📅 Google連携（カレンダー）</div>'+
     '<button class="bkbtn" id="gAcctBox" style="text-align:left;font-weight:700;font-size:12.5px">確認中…</button>'+
     '<div class="sh-note" style="text-align:left">↑タップでアカウント切替ページへ飛ぶ（Google公式画面で選んでログイン→このアプリを開き直す）</div>'+
@@ -4343,6 +4345,7 @@ function openSettings(){
     '<div class="sh-note" id="setNote"></div>';
   $('setDream').value=state.dream.name||'';
   $('setDue').value=state.dream.due||'';
+  $('sheet').querySelectorAll('[data-mda]').forEach(b=>b.onclick=()=>{const v=b.dataset.mda==='1';mutate(()=>{state._cfg=Object.assign({},state._cfg||{},{mudaAuto:v,ts:Date.now()});});$('sheet').querySelectorAll('[data-mda]').forEach(x=>x.classList.toggle('sel',x.dataset.mda===(v?'1':'0')));toast(v?'🤖 自動のムダも数える':'✋ ムダは自分で押した🕳️だけ');});   /* c11.3 */
   $('sheet').querySelectorAll('[data-be]').forEach(b=>b.onclick=()=>{const k=b.dataset.be;if(k==='kinds')beOpenKinds();else if(k==='places')plEdit(null);else beOpenList(k);});   /* c10.9：ボタンの編集 */
   /* 接続中アカウントの箱をタップ→切替ページ（claude.aiのコネクタ設定）へ直行 */
   $('gAcctBox').onclick=()=>{
@@ -6813,6 +6816,8 @@ function anaCount0(r,days,N,limit,nowIdx){
   const v2=new Uint8Array(items.length);
   /* 第1パス：記録。重なりは後から始まった記録が勝つ */
   items.forEach((it,ix)=>{if(it.v2)v2[ix]=1;const a=Math.max(0,it.a),b=Math.min(NT,it.b);for(let m=a;m<b;m++){own[m]=ix;cat[m]=it.c;}});
+  const mdMask=new Uint8Array(NT);   /* c11.3：🕳️を押した行の時間（まるごと） */
+  items.forEach((it,ix)=>{for(const ac of it.acts){if(!ac||!ac.md)continue;let a,b;if(ac.s&&ac.e){a=it.off+hmMin(ac.s);b=it.off+hmMin(ac.e);if(a<it.a)a+=1440;if(b<=a)b+=1440;}else if(ac.w||it.car||it.mv){a=it.a;b=it.b;}else continue;for(let m=Math.max(0,a);m<b&&m<NT;m++)if(own[m]===ix)mdMask[m]=1;}});
   const toolX={};   /* c11.2：1行に2つ目からの道具（それぞれ丸ごと数える） */
   /* 第2パス：1行ずつの行。時刻あり→分数だけ（前寄せ）→移動の「押すだけの行」は残りを等分 */
   items.forEach((it,ix)=>{if(!it.acts.length)return;
@@ -6847,16 +6852,18 @@ function anaCount0(r,days,N,limit,nowIdx){
     pfS=new Int32Array(48),pfM=new Int32Array(48),pfB=new Int32Array(48),pfK=new Int32Array(48*256),mdK=new Int32Array(256);
   const plM={},arM={};let slLy=0,slSe=0,slUn=0;   /* c7.4：場所・区市町村（1分1つ）／寝方 */
   let rec=0,mdBlank=0,mdTot=0,mdBz=0,mdMeal=0,mdTrip=0;const A0=alarmCfg(),mealMin=hmMin(A0.meal),lateMeal=tod=>mealMin>=720?(tod>=mealMin||tod<300):(tod>=mealMin&&tod<300);   /* c4.8：深夜の食事（⏰の時刻〜5時） */
+  const MA=mudaAuto(),IXD=IX.mdrec;   /* c11.3：MA＝自動のムダも数える（設定）。IXD＝自分で押した🕳️ */
   for(let m=P;m<P+limit;m++){const c=cat[m],o=own[m];sum[c]++;if(o<0)continue;rec++;
     const p=pfL[m],a=mva[m],t=tool[m];let md=0;
     if(c===IXM){const v=mvm[m]||ANA_NOTR,bs=v*5,ok=v2[o]&&v!==ANA_WALK;mvT[bs]++;
-      if(items[o].trip){mvT[bs+(a?1:(ok?3:4))]++;md=1;mdTrip++;}   /* c4.8：整備工場の往復＝全部ムダ（本人決定） */
-      else if(a===0){if(ok){mvT[bs+3]++;md=1;mdBlank++;pfB[p]++;}else mvT[bs+4]++;}   /* 空白（ムダ）／未入力・徒歩（灰） */
-      else if((a<255&&kMu[a])||nx[m]||bz[m]){mvT[bs+2]++;md=1;if(bz[m])mdBz++;else mdK[a]++;}                 /* 移動中のムダ印の活動（徒歩・古い移動でもムダ。除くのは空白だけ） */
+      if(MA&&items[o].trip){mvT[bs+(a?1:(ok?3:4))]++;md=1;mdTrip++;}   /* c4.8：整備工場の往復＝全部ムダ（本人決定） */
+      else if(a===0){if(ok&&MA){mvT[bs+3]++;md=1;mdBlank++;pfB[p]++;}else mvT[bs+4]++;}   /* 空白（ムダ）／未入力・徒歩（灰） */
+      else if(a===IXD||(MA&&((a<255&&kMu[a])||nx[m]||bz[m]))){mvT[bs+2]++;md=1;if(bz[m]&&a!==IXD)mdBz++;else mdK[a]++;}                 /* 移動中のムダ印の活動（徒歩・古い移動でもムダ。除くのは空白だけ） */
       else mvT[bs+1]++;                                                            /* 活用 */
       if(a)mvA[a]++;if(t)mvD[t]++;}
-    else if(c===IX.meal&&lateMeal((((m-P)%1440)+1440)%1440)){md=1;mdMeal++;}   /* c4.8：深夜の食事＝ムダ（本人決定） */
-    else if(c!==IXR&&(kMu[c]||nx[m]||bz[m])){md=1;if(bz[m])mdBz++;else mdK[c]++;}   /* ムダ印の種類＋30分を超えた仮眠＋🪑座ったまま寝た */
+    else if(MA&&c===IX.meal&&lateMeal((((m-P)%1440)+1440)%1440)){md=1;mdMeal++;}   /* c4.8：深夜の食事＝ムダ（本人決定） */
+    else if(c!==IXR&&(c===IXD||(MA&&(kMu[c]||nx[m]||bz[m])))){md=1;if(bz[m]&&c!==IXD)mdBz++;else mdK[c]++;}   /* ムダ印の種類＋30分を超えた仮眠＋🪑座ったまま寝た */
+    if(!md&&mdMask[m]){md=1;mdK[IXD]++;}   /* c11.3：🕳️の行の時間はまるごとムダ */
     if(t)toolS[t]++;for(const tk in toolX)if(toolX[tk][m])toolS[Number(tk)]++;
     if(p)pfS[p]++;else if(c!==IXR)pfS[0]++;
     if(md){mdTot++;pfM[p]++;}
@@ -6875,6 +6882,7 @@ function anaCount0(r,days,N,limit,nowIdx){
     for(let i=0;i<days;i++){const wd=addDays(r.s,i);const sc=(state.scr||{})[wd];if(!sc||sc.del)continue;
       let sp=0,tel=0;const a=P+i*1440,b=a+1440;for(let m=a;m<b&&m<NT;m++){const c=cat[m];if(!c||own[m]<0)continue;const id=K[c-1]&&K[c-1].id;if(SPK[id])sp++;else if(TELK[id])tel++;}
       mdScrSp+=Math.max(0,(Number(sc.sp)||0)-sp);mdScrTel+=Math.max(0,(Number(sc.tel)||0)-tel);}}
+  if(!MA){mdLate=0;mdOver=0;mdNap2=0;mdExcess=0;mdScrSp=0;mdScrTel=0;}   /* c11.3：自分で押した🕳️だけの時は数えない */
   const mdRh=mdLate+mdOver+mdNap2+mdExcess+mdScrSp+mdScrTel;
   const mk={};for(const id in (state.marks||{})){const x=state.marks[id];if(!x||x.del||!x.d||x.d<r.s||x.d>=r.e)continue;const key=x.k==='muda'?(x.r||'other'):x.k;mk[key]=(mk[key]||0)+1;}
   const vis={};{let cp=0,st=-1,lbs=[];const flush=e=>{if(cp&&st>=0)(vis[cp]=vis[cp]||[]).push({s:st-P,e:e-P,lb:lbs.join('・')});cp=0;st=-1;lbs=[];};
@@ -6893,9 +6901,7 @@ function anaCount0(r,days,N,limit,nowIdx){
         if(ac.s&&ac.e)timed.push([ac,ki]);else if(Number(ac.m)>0)mins.push([ac,ki]);else if(it.car||ac.w)whole.push([ac,ki]);}
       for(const [ac,ki] of timed){let a=it.off+hmMin(ac.s),b=it.off+hmMin(ac.e);if(a<it.a)a+=1440;if(b<=a)b+=1440;a=Math.max(a,A);b=Math.min(b,B);if(b<=a)continue;add(ki,a,b,ac);for(let m=a;m<b;m++)cl[m-A]=1;}
       for(const [ac,ki] of mins){let left=Number(ac.m);const mk=new Uint8Array(L);for(let j=0;j<L&&left>0;j++)if(!cl[j]){cl[j]=1;mk[j]=1;left--;}addMask(ki,A,mk,1,ac);}
-      if(whole.length){let Rr=0;for(let j=0;j<L;j++)if(!cl[j])Rr++;const n=whole.length,q=Math.floor(Rr/n);let jj=0,u=0;const mks=whole.map(()=>new Uint8Array(L));
-        const sz=whole.map((_,i)=>q+(i===0?Rr-q*n:0));for(let j=0;j<L;j++){if(cl[j])continue;while(jj<n&&u>=sz[jj]){jj++;u=0;}if(jj>=n)break;mks[jj][j]=1;cl[j]=1;u++;}
-        whole.forEach((w,i)=>addMask(w[1],A,mks[i],1,w[0]));}
+      if(whole.length){const all=new Uint8Array(L).fill(1);whole.forEach(w=>addMask(w[1],A,all,1,w[0]));cl.fill(1);}   /* c11.3：ずっとの行はそれぞれ丸ごと */
       if(it.c===IXS){for(let j=0;j<L;j++)if(!cl[j])stayMk[A+j]=1;}else addMask(it.c,A,cl,0,it.aiT?{k:'ai',ai:it.aiT}:null);});   /* c5.6：記録全体が🤖AIの時の使ったAI */
     const cnt=new Int32Array(NT+1);
     for(const ki in runs){const rs=runs[ki].sort((x,y)=>x[0]-y[0]);let cs=-1,ce=-1;
@@ -8540,7 +8546,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c11.2";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c11.3";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 /* ログインの後：同じユーザーなら影はそのまま（全件受信をやり直さない）。違うユーザーならそのユーザーの影を読む */
 async function clAfterLogin(){
