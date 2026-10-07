@@ -3648,7 +3648,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+   /* 同期の状態1行と記録（クラウド版 c1.9） */
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c11.6）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c11.7）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -6302,7 +6302,7 @@ function btnRefresh(){try{
 function beSet(key,id,patch){mutate(()=>{state[key]=state[key]||{};state[key][id]=Object.assign({},state[key][id]||{},patch,{ts:Date.now()});});btnRefresh();}
 function beNewId(p){return p+Date.now().toString(36)+Math.floor(Math.random()*36*36).toString(36);}
 /* 一覧の編集（移動手段・ムダの理由・やめる理由・道具） */
-const DLG0=[['claude','🟠','Claude','https://claude.ai/new'],['cc','💻','Claude Code',''],['codex','⚫','Codex','https://chatgpt.com/codex'],['gpt','🟢','ChatGPT','https://chatgpt.com/'],['gemini','🔵','Gemini','https://gemini.google.com/app']];
+const DLG0=[['cc','💻','Claude Code',''],['codex','⚫','Codex','https://chatgpt.com/codex'],['gpt','🟢','ChatGPT','https://chatgpt.com/'],['claude','🟠','Claude','https://claude.ai/new'],['gemini','🔵','Gemini','https://gemini.google.com/app']];   /* c11.7：本人の順 */
 const DGOAL0=[['research','🔎','調べてまとめる'],['draft','📝','下書きを作る'],['all','✅','全部やり切る'],['ideas','💡','案を3つ出す']];
 function dlgList(){return beList('dlg',DLG0).map(x=>{const o=(state.dlg||{})[x.id],b=DLG0.find(y=>y[0]===x.id);x.url=(o&&o.url!=null)?String(o.url):(b?b[3]:'');return x;});}
 const BE_CFG={dlg:{t:'🤖 任せる先（AI・人）',base:()=>DLG0,pre:'dl',url:1},dgoal:{t:'🎯 任せる時のゴール',base:()=>DGOAL0,pre:'dg'},trs:{t:'🚗 移動手段',base:()=>TRS0.map(x=>{const s=String(x[1]),i=s.indexOf(' ');return [x[0],i>0?s.slice(0,i):s,i>0?s.slice(i+1):s];}),pre:'tr'},
@@ -6522,7 +6522,7 @@ function openKindAll(cb0,ttl,note){const cb=(id,d)=>id==='meal'?mealAsk(v=>cb0(v
     s.querySelectorAll('[data-kaid]').forEach(b=>b.onclick=()=>{closeSub();cb(b.dataset.kaid,b.dataset.kad||'');});{const cn=$('kaCoNm');if(cn)cn.onclick=()=>{setCoName();paint();};}$('kaNo').onclick=closeSub;};
   paint();}
 /* ===== c5.5：使ったAI（行の ai＝id の配列）。AI系の種類の時だけ出す ===== */
-const AI_TOOLS=[['cc','Claude Code','#c2410c'],['cl','Claude','#d97757'],['cx','Codex','#111827'],['gpt','ChatGPT','#10a37f'],['gm','Gemini','#4285f4']];
+const AI_TOOLS=[['cc','Claude Code','#c2410c'],['cx','Codex','#111827'],['gpt','ChatGPT','#10a37f'],['cl','Claude','#d97757'],['gm','Gemini','#4285f4']];   /* c11.7：本人の順 */
 const AI_KINDS={ai:1,aibiz:1,aiwork:1};
 function aiGuess(t){t=String(t||'');const o=[];if(/claude\s*code|クロード\s*コード/i.test(t))o.push('cc');if(/codex|コーデックス/i.test(t))o.push('cx');if(/chat\s*gpt|gpt|チャット\s*gpt/i.test(t))o.push('gpt');if(/gemini|ジェミニ/i.test(t))o.push('gm');if(/claude|クロード/i.test(t.replace(/claude\s*code|クロード\s*コード/ig,'')))o.push('cl');return o;}
 function aiTool(id){const x=AI_TOOLS.find(z=>z[0]===id);return x?{id,lb:x[1],co:x[2]}:null;}
@@ -8640,7 +8640,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c11.6";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c11.7";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 /* ログインの後：同じユーザーなら影はそのまま（全件受信をやり直さない）。違うユーザーならそのユーザーの影を読む */
 async function clAfterLogin(){
