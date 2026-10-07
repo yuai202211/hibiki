@@ -3633,7 +3633,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+   /* 同期の状態1行と記録（クラウド版 c1.9） */
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c11.0）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c11.1）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -4040,22 +4040,28 @@ function openEntrySheet(date,ref){
         else{if(!sheetSt.one)return;acRead();sheetSt.one=false;}
         acPaint();cPaint();};});}}
     if((isCar||isStay)&&sheetSt.one){const rd=$('recDo');if(rd){acRead();const a0=acts.find(a=>a&&(String(a.t||'').trim()||a.k))||null;const k0=a0&&a0.k;const k0o=k0&&kindOf(k0);
-      const extra=(k0&&q.indexOf(k0)<0)?[k0]:[];
-      const ch=q.concat(extra).map(id=>{const k=kindOf(id);return (k&&!k.off)?'<button class="chip ac-q'+(k0===id?' sel':'')+'" data-o1="'+esc(id)+'" style="--kc:'+k.co+'">'+esc(k.ic)+' '+esc(k.lb)+'</button>':'';}).join('');
+      const wk=acts.filter(a=>a&&a.w&&a.k).map(a=>a.k);const extra=wk.filter(x=>q.indexOf(x)<0);if(k0&&wk.indexOf(k0)<0&&q.indexOf(k0)<0)extra.push(k0);   /* c11.1：押した物は全部 */
+      const aA=acts.find(a=>a&&a.k&&AI_KINDS[a.k]&&(a.w||a===a0));
+      const ch=q.concat(extra).map(id=>{const k=kindOf(id);return (k&&!k.off)?'<button class="chip ac-q'+((wk.indexOf(id)>=0||(!wk.length&&k0===id))?' sel':'')+'" data-o1="'+esc(id)+'" style="--kc:'+k.co+'">'+esc(k.ic)+' '+esc(k.lb)+'</button>':'';}).join('');
       const tv=(a0&&a0.t&&!(k0o&&a0.t===k0o.lb))?a0.t:'';
-      const aiH=(k0&&AI_KINDS[k0])?'<div class="ac-ai"><span>🤖 使ったAI</span>'+AI_TOOLS.map(z=>{const on=(Array.isArray(a0.ai)?a0.ai:aiGuess(a0.t)).indexOf(z[0])>=0;return '<button class="chip'+(on?' sel':'')+'" data-o1ai="'+z[0]+'" style="--ac:'+z[2]+'">'+esc(z[1])+'</button>';}).join('')+'</div>':'';
+      const aiH=aA?'<div class="ac-ai"><span>🤖 使ったAI</span>'+AI_TOOLS.map(z=>{const on=(Array.isArray(aA.ai)?aA.ai:aiGuess(aA.t)).indexOf(z[0])>=0;return '<button class="chip'+(on?' sel':'')+'" data-o1ai="'+z[0]+'" style="--ac:'+z[2]+'">'+esc(z[1])+'</button>';}).join('')+'</div>':'';
       const more=acts.filter(a=>a&&(String(a.t||'').trim()||a.k)).length-1+frs.filter(x=>String(x||'').trim()).length;
-      rd.style.display='';rd.innerHTML='<div class="sh-label">🏷️ '+(isCar?'車内で':'ここで')+'何をした（1つ）<small>押すだけで終わり。2つ以上になったら上の ✌️'+(more>0?'<br>ほかに '+more+'件 書いてある（消えていない・✌️で見られる）':'')+'</small></div><div class="sh-chips">'+ch+'<button class="chip ac-qall" id="o1all">🏷️ ほか（全部）</button></div>'+
+      rd.style.display='';rd.innerHTML='<div class="sh-label">🏷️ '+(isCar?'車内で':'ここで')+'何をした<small>押すだけ。いくつでも押せる（もう一度で外す）。時間を分けて書く時は上の ✌️'+(more>0?'<br>ほかに '+more+'件 書いてある（消えていない・✌️で見られる）':'')+'</small></div><div class="sh-chips">'+ch+'<button class="chip ac-qall" id="o1all">🏷️ ほか（全部）</button></div>'+
         '<textarea id="o1t" maxlength="400" rows="1" placeholder="一言（書かなくてもいい）例：HIBIKI修正" style="width:100%;margin-top:8px;resize:none;overflow:hidden;line-height:1.5">'+esc(tv)+'</textarea>'+aiH;   /* c9.2：長く書いたら何行でも広がる（本人指示） */
-      const setOne=(id,d)=>{acRead();const k=kindOf(id);if(!k)return;const old=acts.find(a=>a&&(String(a.t||'').trim()||a.k));const t1=($('o1t').value||'').trim();
-        const row={t:t1||k.lb,k:id,m:0,s:'',e:'',w:1};if(d)row.d=d;else if(old&&old.d&&old.k===id)row.d=old.d;if(old&&old.k===id&&Array.isArray(old.ai))row.ai=old.ai;
-        if(id==='sleep'||id==='nap'){if(isCar)row.bd=0;else{const b=bedOfPlace((($('shPlace')||{}).value||'').trim());if(b!=null)row.bd=b;}}
-        acts=[row];acPaint();};
-      rd.querySelectorAll('[data-o1]').forEach(b=>b.onclick=()=>{if(b.dataset.o1==='meal'&&k0!=='meal'&&k0!=='mealto'){mealAsk(v=>setOne(v,''));return;}if(k0===b.dataset.o1||(b.dataset.o1==='meal'&&k0==='mealto')){acRead();const t1=($('o1t').value||'').trim();acts=[{t:t1,m:0,s:'',e:''}];acPaint();return;}setOne(b.dataset.o1,'');});
-      $('o1all').onclick=()=>openKindAll((id,d)=>setOne(id,d),'🏷️ ここで何をした？（1つ）','分野を押すと中身が出る。1つ選ぶとこれで決まり');
+      const setOne=(id,d)=>{acRead();const k=kindOf(id);if(!k)return;const t1=($('o1t').value||'').trim();   /* c11.1：押すたびに足す／外す */
+        const W=acts.filter(a=>a&&a.w&&a.k),O=acts.filter(a=>a&&!(a.w&&a.k)&&(a.k||a.s||a.e||a.c||(a.ph&&a.ph.length)));
+        const i=W.findIndex(a=>a.k===id);
+        if(i>=0)W.splice(i,1);else{const row={t:k.lb,k:id,m:0,s:'',e:'',w:1};if(d)row.d=d;
+          if(id==='sleep'||id==='nap'){if(isCar)row.bd=0;else{const b=bedOfPlace((($('shPlace')||{}).value||'').trim());if(b!=null)row.bd=b;}}W.push(row);}
+        W.forEach((a,j)=>{const kk=kindOf(a.k);if(j===0)a.t=t1||(kk?kk.lb:a.t);else if(kk&&String(a.t||'').trim()===t1)a.t=kk.lb;});
+        acts=W.length?W.concat(O):[{t:t1,m:0,s:'',e:''}].concat(O);acPaint();};
+      rd.querySelectorAll('[data-o1]').forEach(b=>b.onclick=()=>{const id=b.dataset.o1,w2=acts.filter(a=>a&&a.w&&a.k).map(a=>a.k);
+        if(id==='meal'&&w2.indexOf('mealto')>=0){setOne('mealto','');return;}if(id==='meal'&&w2.indexOf('meal')<0){mealAsk(v=>setOne(v,''));return;}
+        if(!w2.length&&k0===id){acRead();const t1=($('o1t').value||'').trim();acts=[{t:t1,m:0,s:'',e:''}];acPaint();return;}setOne(id,'');});
+      $('o1all').onclick=()=>openKindAll((id,d)=>setOne(id,d),'🏷️ ここで何をした？','分野を押すと中身が出る。押した物を足す（もう一度で外す）');
       {const ta=$('o1t'),fit=()=>{ta.style.height='auto';ta.style.height=ta.scrollHeight+'px';};fit();setTimeout(fit,0);ta.addEventListener('input',fit);}
       $('o1t').oninput=()=>{const v=$('o1t').value;const r=$('acRows').querySelector('.actrow .ac-t');const k=k0o;if(r){r.value=(v.trim()||(k?k.lb:''));r.dataset.full=v.trim()||(k?k.lb:'');}};
-      rd.querySelectorAll('[data-o1ai]').forEach(b=>b.onclick=()=>{acRead();const a=acts.find(x=>x&&x.k===k0);if(!a)return;const cur=Array.isArray(a.ai)?a.ai.slice():aiGuess(a.t);const id=b.dataset.o1ai,j=cur.indexOf(id);if(j>=0)cur.splice(j,1);else cur.push(id);a.ai=cur;acPaint();});}}
+      rd.querySelectorAll('[data-o1ai]').forEach(b=>b.onclick=()=>{acRead();const a=acts.find(x=>x&&x.k&&AI_KINDS[x.k]);if(!a)return;const cur=Array.isArray(a.ai)?a.ai.slice():aiGuess(a.t);const id=b.dataset.o1ai,j=cur.indexOf(id);if(j>=0)cur.splice(j,1);else cur.push(id);a.ai=cur;acPaint();});}}
     else{const rd=$('recDo');if(rd){if(isCar||isStay){const extra=acts.filter(a=>a&&a.k&&q.indexOf(a.k)<0).map(a=>a.k).filter((x,i,arr)=>arr.indexOf(x)===i);
         const xh=extra.map(id=>{const k=kindOf(id);return k?'<button class="chip ac-q'+(onW(id)?' sel':' on2')+'" data-aq="'+esc(id)+'" style="--kc:'+k.co+'">'+esc(k.ic)+' '+esc(k.lb)+'</button>':'';}).join('');
         rd.style.display='';rd.innerHTML='<div class="sh-label">🏷️ '+(isCar?'車内で':'ここで')+'何をした<small>1つなら押すだけ（ずっと）・複数なら下の1行ずつ。どちらで付けても同じ</small></div><div class="sh-chips">'+qh+xh+'<button class="chip ac-qall" id="acQall">🏷️ ほか（全部）</button></div>';}else{rd.style.display='none';rd.innerHTML='';}}}
@@ -4076,7 +4082,7 @@ function openEntrySheet(date,ref){
       const last=acts[acts.length-1];if(last&&!last.t.trim()&&!last.s&&!last.e&&!last.k&&!last.d&&!(last.c&&last.c.trim()))acts[acts.length-1]=row;else acts.push(row);acPaint();});};}   /* c6.1：同じ場所で1つの事＝全部の種類から1つ選ぶと「ずっと」の行（本人指示） */
     {const fa=$('frAdd');if(fa)fa.onclick=()=>{frs.push('');frPaint(true);cPaint();};}
     {const qm=$('acQm');if(qm)qm.onclick=()=>{qMore=!qMore;acCh();};}};
-  {const ne=acts.filter(a=>a&&(String(a.t||'').trim()||a.k));sheetSt.one=!(ne.length>1||frs.some(x=>String(x||'').trim())||ne.some(a=>a.s||a.e||(a.c&&a.c.trim())||(a.ph&&a.ph.length)||a.st));}   /* c6.8 */
+  {const ne=acts.filter(a=>a&&(String(a.t||'').trim()||a.k));sheetSt.one=!((ne.length>1&&!ne.every(a=>a.w&&a.k))||frs.some(x=>String(x||'').trim())||ne.some(a=>a.s||a.e||(a.c&&a.c.trim())||(a.ph&&a.ph.length)||a.st));}   /* c6.8 */
   acPaint();
   /* 最初に出す側：中身がある方。両方ある・両方無い時は、前に使っていた方（端末に覚える） */
   let cMode=(()=>{const hasT=!!(ex&&ex.t),hasA=!!(ex&&Array.isArray(ex.acts)&&ex.acts.some(a=>a&&a.t));
@@ -8527,7 +8533,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c11.0";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c11.1";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 /* ログインの後：同じユーザーなら影はそのまま（全件受信をやり直さない）。違うユーザーならそのユーザーの影を読む */
 async function clAfterLogin(){
