@@ -804,6 +804,8 @@
   .sr-k{display:flex;gap:8px;margin:6px 0}.sr-k button{flex:1;padding:10px 4px;border-radius:14px;background:#f1f3f8;color:var(--ink);font-weight:800;font-size:24px;display:flex;flex-direction:column;align-items:center;gap:2px;border:2px solid transparent}.sr-k button span{font-size:12px}.sr-k button.on{background:#1f2430;color:#fff}
   .sr-r{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0}
 .slpb2{flex-wrap:wrap}.sb-2{flex-basis:100%;display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:4px 0 2px}.sb-ov{font-size:12.5px;font-weight:800;color:#e0405a}.sb-q{font-size:12px;font-weight:800;color:#5b4fd6}.sb-2 .chip{font-size:12px;padding:5px 10px;background:#fff}.sb-rc{color:#e0405a!important}
+.mlchip{font-size:12px;font-weight:800;padding:4px 8px;border-radius:999px;background:#f1f3f8;color:#8a90a0;margin-right:4px;white-space:nowrap}.mlchip.ok{background:#e7f9f0;color:#0a9a54}
+.ml-r{display:flex;gap:8px;align-items:center;padding:8px 4px;border-bottom:1px solid var(--line);color:#8a90a0}.ml-r.ok{color:#0a7a45}.ml-st{text-align:center;margin:12px 0 4px;font-weight:800;color:#5b6475}.ml-st b{font-size:18px;color:#0a9a54}
 .td-dlg{font-style:normal;font-size:11px;font-weight:800;background:#ede9fe;color:#5b21b6;border-radius:999px;padding:1px 7px;margin-left:4px}
 .rc-it{padding:8px 0;border-bottom:1px solid var(--line)}.rc-it b{display:block;margin-bottom:4px}
 .td-bad{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;background:#fff3c9;color:#8a5a00;font-weight:800;font-size:12.5px;border-radius:12px;padding:8px 10px;margin-bottom:8px}
@@ -1454,6 +1456,7 @@
       <button class="todaybtn" id="todayBtn" style="display:none">今日</button>
     </div>
     <div class="right-top">
+      <button class="mlchip" id="mlChip" style="display:none"></button>
       <span class="streak" id="streak" style="display:none"></span>
       <span class="syncdot" id="syncdot" title=""></span>
     </div>
@@ -2705,6 +2708,7 @@ function render(){
   const st=calcStreak();
   $('streak').style.display=st>0?'':'none';
   $('streak').textContent='🔥 連続'+st+'日';   /* c8.3：何の数字か分かるように */
+  {const ml=minLine(ui.date),c=$('mlChip');if(c){const k=ml.filter(x=>x.ok).length;c.style.display='';c.className='mlchip'+(k?' ok':'');c.textContent='🛡 '+k+'/'+ml.length;c.onclick=openMinLine;}}   /* c11.8：最低ライン */
   // 夢
   $('dreamName').textContent=(state.dream.name||'（夢を設定する）').split('\n')[0];
   let cnt='';
@@ -3648,7 +3652,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+   /* 同期の状態1行と記録（クラウド版 c1.9） */
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c11.7）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c11.8）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -6429,6 +6433,20 @@ function tdQuitSheet(id,after){let r='';const paint=()=>{openSub('<div class="sh
     $('tqNo').onclick=closeSub;$('tqOk').onclick=()=>{if(!r){toast('理由を1つ押してくれ');return;}const m=($('tqM').value||'').trim().slice(0,200);closeSub();tdSet(id,{quit:{r,m,at:todayStr()}});mutate(()=>tdUnplace(id));toast(r==='someday'?'⏳ いつかに入れた':'🗑 やめた（記録は残る）');if(after)after();};};paint();}
 const TD_TG={head:['🧠','頭を使う'],hand:['🙌','手を動かす'],ai:['🤖','AIに任せる']};   /* c11.5：3つだけ */
 function tdBadDay(){return condToday()==='bad';}
+/* c11.8：最低ライン（4つのうち1つでも＝ロスなし） */
+function minLine(d){const eo=(state.entries||{})[d]||{};const es=Object.values(eo).filter(e=>e&&!e.del&&(e.s||e.t||(e.acts&&e.acts.length)));
+  const isAI=k=>!!(k&&AI_KINDS[k]);
+  const ai=es.some(e=>isAI(e.k)||(e.acts||[]).some(a=>a&&(isAI(a.k)||(a.kx||[]).some(isAI))))||tdAll().some(x=>x.dlg&&x.dlg.at&&ymdOf(x.dlg.at)===d)||(()=>{const a=(state.ai||{})[d];return !!(a&&!a.del&&(a.touched||a.made));})();
+  const td=tdAll().some(x=>tdDone(x)&&(x.dn||((tdRowOf(x.id)||{}).a||{}).dn)===d);
+  const cd=(state.cond||{})[d];
+  return [{ic:'✏️',lb:'日記を1つ書いた',ok:es.length>0},{ic:'✅',lb:'やる事を1つ終わらせた',ok:td},{ic:'🤖',lb:'AIに任せた・AIを使った',ok:ai},{ic:'🌞',lb:'起きて体調を押した',ok:!!(cd&&!cd.del&&cd.v)}];}
+function ymdOf(ts){const x=new Date(ts);return x.getFullYear()+'-'+pad(x.getMonth()+1)+'-'+pad(x.getDate());}
+function minLineStreak(){let d=todayStr(),n=0;if(!minLine(d).some(x=>x.ok))d=addDays(d,-1);for(let i=0;i<3650;i++){if(!minLine(d).some(x=>x.ok))break;n++;d=addDays(d,-1);}return n;}
+function openMinLine(){const d=ui.date,ml=minLine(d),k=ml.filter(x=>x.ok).length,st=minLineStreak();
+  openSub('<div class="sh-time"><span>🛡 最低ライン（'+esc(d.slice(5).replace('-','/'))+'）</span></div><div class="sh-note" style="text-align:left">4つのうち1つでもできた日＝<b>ロスなしの日</b>。押さなくていい、記録から自動で見る</div>'+
+    ml.map(x=>'<div class="ml-r'+(x.ok?' ok':'')+'"><span>'+(x.ok?'✅':'・')+'</span><b>'+x.ic+' '+esc(x.lb)+'</b></div>').join('')+
+    '<div class="ml-st">'+(k?'🛡 今日はロスなし':'まだ0。どれか1つで今日はロスなし')+'<br><b>ロスなし 連続'+st+'日</b></div><div class="sh-btns"><button class="savebtn" id="mlOk">閉じる</button></div>',null);
+  $('mlOk').onclick=closeSub;}
 /* c11.6：［🤖 任せる］ */
 function dlgText(x,goal){const t=todayStr();const due=x.s?((x.sd&&x.sd!==t?x.sd.slice(5).replace('-','/'):'今日')+' '+x.s+(x.e?'〜'+x.e:'')):'特になし';
   return '次の作業をやってほしい。\nやる事：'+x.t+'\n詳細：'+(x.c?x.c:'なし')+'\n期限：'+due+'\nどこまで：'+goal;}
@@ -8640,7 +8658,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c11.7";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c11.8";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 /* ログインの後：同じユーザーなら影はそのまま（全件受信をやり直さない）。違うユーザーならそのユーザーの影を読む */
 async function clAfterLogin(){
