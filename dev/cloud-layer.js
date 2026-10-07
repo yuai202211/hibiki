@@ -958,7 +958,7 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden)clOnHidden(
 let clUpAt=0;
 async function clCheckUpdate(){try{if(!cloudConfigured()||Date.now()-clUpAt<20000)return;clUpAt=Date.now();
   const r=await fetch('./index.html?up='+Date.now(),{cache:'no-store'});if(!r.ok)return;const t=await r.text();
-  const m=/const CL_APPVER="([^"]+)"/.exec(t);if(!m||m[1]===CL_APPVER)return;clShowUpdate(m[1]);}catch(e){}}
+  const m=/const CL_APPVER="([^"]+)"/.exec(t);if(!m||m[1]===CL_APPVER)return;if(typeof appVerCheck==='function')appVerCheck(true);}catch(e){}}   /* c10.8：［更新する］の帯は出さない。自動で入れ替える（本人指示 2026-10-07「しつこい」） */
 function clShowUpdate(v){if(document.getElementById('clUp'))return;const d=document.createElement('div');d.id='clUp';
   d.style.cssText='position:fixed;left:12px;right:12px;top:calc(10px + env(safe-area-inset-top,0px));z-index:250;max-width:420px;margin:0 auto;background:#1f2430;color:#fff;border-radius:16px;padding:12px 14px;box-shadow:0 10px 30px rgba(0,0,0,.25);display:flex;gap:10px;align-items:center;font:800 13.5px -apple-system,BlinkMacSystemFont,sans-serif';
   d.innerHTML='<span style="flex:1">🆕 新しい版（'+esc(v)+'）があります</span><button id="clUpGo" style="background:#0bc167;color:#fff;border:0;border-radius:12px;padding:9px 14px;font-weight:800">更新する</button>';
