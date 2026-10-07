@@ -3100,23 +3100,24 @@ function mgAsk(d,sk,tk){const E=state.entries[d]||{},S=E[sk],T=E[tk];if(!mgSrcOk
   $('mgNo').onclick=closeSub;$('mgYes').onclick=()=>{closeSub();mgMerge(d,sk,tk);};}
 function mgBind(pane){const d=ui.date,E=state.entries[d]||{};
   pane.querySelectorAll('[data-k]').forEach(b=>{if(!mgSrcOk(E[b.dataset.k]))return;b.classList.add('mg-src');
-    let tm=null,st=null,dr=null;
+    let tm=null,st=null,dr=null,ms=false;
+    const scp=()=>{let p=b.parentElement;while(p&&p!==document.body){const s=getComputedStyle(p);if(/(auto|scroll)/.test(s.overflowY)&&p.scrollHeight>p.clientHeight+2)return p;p=p.parentElement;}return document.scrollingElement||document.documentElement;};
     const clean=()=>{if(dr){dr.g.remove();dr=null;}b.classList.remove('mg-lift');pane.querySelectorAll('.mg-dst').forEach(t=>t.classList.remove('mg-dst','mg-over'));};
     const start=(x,y)=>{const r=b.getBoundingClientRect(),g=b.cloneNode(true);g.classList.add('mg-ghost');g.style.width=r.width+'px';document.body.appendChild(g);
       dr={g,dx:x-r.left,dy:y-r.top};b.classList.add('mg-lift');pane.querySelectorAll('[data-k]').forEach(t=>{if(t!==b&&mgDstOk(E[t.dataset.k]))t.classList.add('mg-dst');});
       try{navigator.vibrate&&navigator.vibrate(15);}catch(e){}move(x,y);};
-    const move=(x,y)=>{if(!dr){if(tm&&st&&Math.hypot(x-st.x,y-st.y)>10){clearTimeout(tm);tm=null;}return;}
+    const move=(x,y)=>{if(!dr){if(st&&ms&&Math.hypot(x-st.x,y-st.y)>6){clearTimeout(tm);tm=null;start(x,y);return;}if(tm&&st&&Math.hypot(x-st.x,y-st.y)>10){clearTimeout(tm);tm=null;}return;}
       dr.g.style.left=(x-dr.dx)+'px';dr.g.style.top=(y-dr.dy)+'px';
       const el=document.elementFromPoint(x,y),t=el&&el.closest('.mg-dst');pane.querySelectorAll('.mg-over').forEach(z=>{if(z!==t)z.classList.remove('mg-over');});if(t)t.classList.add('mg-over');
-      const sc=document.scrollingElement||document.documentElement;if(y<80)sc.scrollTop-=14;else if(y>innerHeight-120)sc.scrollTop+=14;};
-    const up=(x,y)=>{if(tm){clearTimeout(tm);tm=null;}if(!dr)return;const el=document.elementFromPoint(x,y),t=el&&el.closest('.mg-dst');clean();
+      const sc=scp(),rc=sc===document.scrollingElement||sc===document.documentElement?{top:0,bottom:innerHeight}:sc.getBoundingClientRect();if(y<rc.top+70)sc.scrollTop-=16;else if(y>rc.bottom-90)sc.scrollTop+=16;};
+    const up=(x,y)=>{if(tm){clearTimeout(tm);tm=null;}st=null;if(!dr)return;const el=document.elementFromPoint(x,y),t=el&&el.closest('.mg-dst');clean();
       b.dataset.mgj='1';setTimeout(()=>{delete b.dataset.mgj;},500);if(t)mgAsk(d,b.dataset.k,t.dataset.k);};   /* c9.5：放したら「入れる？はい／いいえ」 */
     const down=(x,y)=>{st={x,y};clearTimeout(tm);tm=setTimeout(()=>{tm=null;start(x,y);},450);};
-    b.addEventListener('touchstart',e=>{const p=e.touches[0];down(p.clientX,p.clientY);},{passive:true});
+    b.addEventListener('touchstart',e=>{ms=false;const p=e.touches[0];down(p.clientX,p.clientY);},{passive:true});
     b.addEventListener('touchmove',e=>{const p=e.touches[0];if(dr)e.preventDefault();move(p.clientX,p.clientY);},{passive:false});
     b.addEventListener('touchend',e=>{const p=e.changedTouches[0];if(dr)e.preventDefault();up(p.clientX,p.clientY);},{passive:false});
     b.addEventListener('touchcancel',()=>{if(tm){clearTimeout(tm);tm=null;}clean();});
-    b.addEventListener('mousedown',e=>{if(e.button!==0)return;down(e.clientX,e.clientY);
+    b.addEventListener('mousedown',e=>{if(e.button!==0)return;ms=true;e.preventDefault();down(e.clientX,e.clientY);
       const mm=ev=>{if(dr)ev.preventDefault();move(ev.clientX,ev.clientY);},mu=ev=>{document.removeEventListener('mousemove',mm);document.removeEventListener('mouseup',mu);up(ev.clientX,ev.clientY);};
       document.addEventListener('mousemove',mm);document.addEventListener('mouseup',mu);});
     b.addEventListener('contextmenu',e=>{if(dr||tm)e.preventDefault();});});}
@@ -3634,7 +3635,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+   /* 同期の状態1行と記録（クラウド版 c1.9） */
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c9.6）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c9.7）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -8407,7 +8408,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c9.6";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c9.7";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 /* ログインの後：同じユーザーなら影はそのまま（全件受信をやり直さない）。違うユーザーならそのユーザーの影を読む */
 async function clAfterLogin(){
