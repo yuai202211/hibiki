@@ -3074,7 +3074,10 @@ function toolSet(id,patch){mutate(()=>{state.tools=state.tools||{};state.tools[i
 /* 1行ずつ書いた行を、時刻の早い順に並べる。時刻の無い行は、すぐ上の時刻のある行にくっついたまま動く（書いた順の流れを崩さない）。
    記録の開始より前の時刻（23時に始めた記録の0:30など）は、日をまたいだ分として後ろに回す */
 /* c9.3：メイン日記＝記録の画面で記録した物（mn）、または📍場所・🚗移動・🚙車内 */
-function mgDstOk(en){return !!(en&&!en.del&&(en.mn||en.mv||String(en.p||'').trim()||en.k==='incar'));}
+/* 本人の定義（2026-10-07）：時間と📍場所／🚗移動／🚙車内を選んで記録した物だけがメイン。それ以外で記録した物はサブ日記の候補。
+   mn が無い前からの記録は、📍場所が入っていて📲📞などのボタンで作った物でなければメイン扱い */
+const MG_QK={spplay:1,spwork:1,call:1,bizcall:1,famcall:1,errand:1,chat:1};
+function mgDstOk(en){if(!en||en.del)return false;if(en.mn||en.mv||en.k==='incar')return true;return !('mn' in en)&&!MG_QK[en.k]&&en.k!=='sleep'&&!!String(en.p||'').trim();}
 function mgSrcOk(en){return !!(en&&!en.del&&!mgDstOk(en)&&en.k!=='sleep');}
 function undoBar(msg,fn){let el=$('mgUndo');if(!el){el=document.createElement('div');el.id='mgUndo';document.body.appendChild(el);}
   el.innerHTML='<span>'+esc(msg)+'</span><button>↩️ 元に戻す</button>';el.classList.add('show');clearTimeout(el._t);
@@ -3625,7 +3628,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+   /* 同期の状態1行と記録（クラウド版 c1.9） */
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c9.3）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c9.4）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -8398,7 +8401,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c9.3";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c9.4";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 /* ログインの後：同じユーザーなら影はそのまま（全件受信をやり直さない）。違うユーザーならそのユーザーの影を読む */
 async function clAfterLogin(){
