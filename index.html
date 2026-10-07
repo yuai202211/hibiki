@@ -808,6 +808,10 @@
 .mlchip{font-size:12px;font-weight:800;padding:4px 8px;border-radius:999px;background:#f1f3f8;color:#8a90a0;margin-right:4px;white-space:nowrap}.mlchip.ok{background:#e7f9f0;color:#0a9a54}
 .ml-r{display:flex;gap:8px;align-items:center;padding:8px 4px;border-bottom:1px solid var(--line);color:#8a90a0}.ml-r.ok{color:#0a7a45}.ml-st{text-align:center;margin:12px 0 4px;font-weight:800;color:#5b6475}.ml-st b{font-size:18px;color:#0a9a54}
 .ac-aip{margin-top:4px}.a-ap{display:inline-flex;flex-wrap:wrap;gap:3px;margin-left:4px}.a-ap i{font-style:normal;font-size:11px;font-weight:800;background:#ede9fe;color:#5b21b6;border-radius:999px;padding:1px 7px}
+.nx-line{display:flex;gap:6px;align-items:stretch;margin:2px 12px 6px}.nx-b{flex:1;min-width:0;text-align:left;padding:10px 12px;border-radius:14px;background:#eef3ff;color:#1f2a5c;font-size:13.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.nx-b i{font-style:normal;color:#4338ca}.nx-0{color:#8a90a0}.nx-ir{flex:0 0 auto;padding:0 12px;border-radius:14px;background:#fff3c9;color:#8a5a00;font-weight:800;font-size:12.5px}
+.pl-top{display:flex;gap:6px;margin-bottom:6px}.pl-it{display:flex;align-items:center;gap:6px;padding:8px 4px;border-bottom:1px solid var(--line)}.pl-it.nx{background:#eef3ff;border-radius:12px}.pl-n{flex:0 0 1.6em;text-align:center;font-weight:800;color:#8a90a0}.pl-b{flex:1;min-width:0;text-align:left}.pl-b b{display:block}.pl-b small{color:#8a90a0;font-size:11.5px}.pl-ac{display:flex;gap:4px}.pl-ac button{padding:6px 8px;border-radius:10px;background:#f1f3f8}
+.pl-rules{margin-top:12px;padding:8px 10px;border-radius:14px;background:#f6f7fb}.pl-rules summary{font-weight:800;font-size:13px;color:#5b6475}.pl-r{display:flex;align-items:center;gap:6px;padding:4px 0}.pl-r span{flex:1;font-weight:700;font-size:13px}.pl-r button{padding:4px 10px;border-radius:8px;background:#fff}.pl-r button:disabled{opacity:.3}
+.te-pl{display:flex;align-items:center;gap:6px;margin:6px 0}.te-pl span{font-size:12px;font-weight:800;color:#5b6475;flex:0 0 auto}.te-pl select{flex:1;min-width:0;font:inherit;padding:6px;border-radius:10px;border:1px solid var(--line)}
 .td-dlg{font-style:normal;font-size:11px;font-weight:800;background:#ede9fe;color:#5b21b6;border-radius:999px;padding:1px 7px;margin-left:4px}
 .rc-it{padding:8px 0;border-bottom:1px solid var(--line)}.rc-it b{display:block;margin-bottom:4px}
 .td-bad{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;background:#fff3c9;color:#8a5a00;font-weight:800;font-size:12.5px;border-radius:12px;padding:8px 10px;margin-bottom:8px}
@@ -1503,7 +1507,7 @@
     <button class="nb" id="navMemo"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6zM14 3v5h5M9 12h7M9 16h7"/></svg><span>メモ</span></button>
     </div><div class="nvp">
     <button class="nb" id="navRtn"><svg viewBox="0 0 24 24"><path d="M4 5.5C4 4.7 4.7 4 5.5 4H11v16H5.5c-.8 0-1.5-.7-1.5-1.5zM20 5.5c0-.8-.7-1.5-1.5-1.5H13v16h5.5c.8 0 1.5-.7 1.5-1.5zM7 8h2M15 8h2M7 11h2M15 11h2"/></svg><span>ルーティン</span><i class="nbdg z" id="navRtnB" style="display:none"></i></button>
-    <button class="nb" id="navAim"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2"/></svg><span>一手</span><i class="nbdg z" id="navAimB" style="display:none"></i></button><button class="nb" id="navRule"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 12.5l2.8 2.8L16.5 9"/></svg><span>ルール</span></button><button class="nb" id="navSleep"><svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/></svg><span>睡眠</span></button><span class="nb nbx"></span>
+    <button class="nb" id="navAim"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2"/></svg><span>一手</span><i class="nbdg z" id="navAimB" style="display:none"></i></button><button class="nb" id="navRule"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 12.5l2.8 2.8L16.5 9"/></svg><span>ルール</span></button><button class="nb" id="navSleep"><svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/></svg><span>睡眠</span></button><button class="nb" id="navPlan"><svg viewBox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg><span>段取り</span></button>
     </div></div><div class="nvd" id="nvd"><i class="on" data-nvp="0"></i><i data-nvp="1"></i></div>
   </div>
 
@@ -3238,7 +3242,7 @@ function renderTimeline(pane){
   }
   html+=dayBandHtml(ui.date);   /* この日の帯：何に使ったかを1本の色で */
   html+=srDayHtml(ui.date);   /* c4.7：🕳️😤😫の申告と、夜の📲📞の数字 */
-  if(isToday)html+=tdLineHtml();   /* c7.9：📋今やる（残りN） */   /* c5.3：⏸途中の期限未設定・期限切れ（見せるだけ） */
+  if(isToday)html+=nextLineHtml();   /* c12.6：▶ 次の1つ＋⚡割り込み（今やるの1行の代わり） */   /* c7.9：📋今やる（残りN） */   /* c5.3：⏸途中の期限未設定・期限切れ（見せるだけ） */
   html+=payAlertHtml();   /* 💴 支払いが近い時だけ、書くのすぐ下に出す */
   /* 日付またぎ：前日以前から続いている記録（23:00→翌7:00の睡眠など）をこの日の冒頭にも表示。
      タップすると元の記録（開始日側）が開いて編集できる */
@@ -3357,6 +3361,9 @@ function renderTimeline(pane){
   pane.querySelectorAll('[data-mk]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();openSelfReport(b.dataset.mk);});
   {const sr=pane.querySelector('#scrRow');if(sr)sr.onclick=ev=>{ev.stopPropagation();openScrSheet(ui.date);};}
   {const tl=pane.querySelector('#tdLine');if(tl)tl.onclick=ev=>{ev.stopPropagation();navGo(openTodoPage);};}
+  {const nl=pane.querySelector('#nextLine');if(nl){const w=pane.querySelector('.hour.wr');if(w)w.after(nl);
+    const o=nl.querySelector('#nxOpen');if(o)o.onclick=ev=>{ev.stopPropagation();navGo(openPlanPage);};
+    const ir=nl.querySelector('#nxIr');if(ir)ir.onclick=ev=>{ev.stopPropagation();openInterrupt(()=>render());};}}   /* c12.6 */
   {const sa=pane.querySelector('#stAlert');if(sa)sa.onclick=ev=>{ev.stopPropagation();navGo(openStPage);};}
   if(isToday)wrFit();   /* 幅が足りなければ昨夜の睡眠チップを隠す */
   nowCardSet(false);   /* ワンタップの開閉（⋯）はやめた。カードは閉じたまま */
@@ -3368,7 +3375,7 @@ function renderTimeline(pane){
     const p=b.dataset.ck.split('|');
     openEntrySheet(p[0],{key:p[1]});   /* またぎ記録は開始日側の記録を開く */
   });
-  const ar=pane.querySelector('#aiRow');if(ar){ar.onclick=()=>openAiSheet(ui.date);const w=pane.querySelector('.hour.wr');if(w&&w.parentNode)w.after(ar);ar.classList.add('ai-top');}   /* c9.9：書くの行のすぐ下 */
+  const ar=pane.querySelector('#aiRow');if(ar){ar.onclick=()=>openAiSheet(ui.date);const w=pane.querySelector('.hour.wr');if(w&&w.parentNode){const nl=pane.querySelector('#nextLine');(nl||w).after(ar);}ar.classList.add('ai-top');}   /* c9.9：書くの行のすぐ下 */
   const mr=pane.querySelector('#memoRow');if(mr)mr.onclick=openMemoPage;
   const pyr=pane.querySelector('#payRow');if(pyr)pyr.onclick=openPayPage;
   const slr=pane.querySelector('#sleepRow');if(slr)slr.onclick=openSleepPage;
@@ -3656,7 +3663,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+   /* 同期の状態1行と記録（クラウド版 c1.9） */
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c12.5）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c12.6）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -6434,6 +6441,81 @@ function tdComplete(id){const T=state.todos||{};if(!T[id])return;const t=todaySt
   const ng=tdNagara(id);if(ng)mutate(()=>{T[id].ng=1;T[id].ts=Date.now();});const n=tdDoneToday().length,nn=tdDoneToday().filter(x=>x.ng).length;
   celebrate(ng?'⚡ ながら完了！':'🎉 完了！','今日 ✅'+n+'個目'+(ng?'（同時進行 '+nn+'個目）':''),ng);}
 function tdUndo(id){const T=state.todos||{};if(!T[id])return;mutate(()=>{const x=T[id];delete x.done;delete x.dn;delete x.ng;x.ts=Date.now();const r=tdRowOf(id);if(r){delete r.a.st;delete r.a.dn;r.en.ts=Date.now();}});}
+/* ===== c12.6：⚡ 段取り（本人決定 2026-10-08「段取りで迷う時間を一切なくす。突発が入っても揺るがない」）
+   ①⚡段取りを組む＝決まった順番で今日のやる事を自動で並べる ②トップに「▶ 次の1つ」だけ ③⚡割り込み＝入った物を次の1つにして残りを組み直す ④🤖段取りを相談＝今日の情報をまとめてコピー
+   順番の決まり（上から優先・⚙️で入れ替え）：🕐時間が決まっている→📅今日が期限→💰お金に直結→🙋人を待たせている→⏱15分以内。並べた後：同じ場所はまとめる・体調で🧠と🙌🤖を入れ替え */
+const PLAN_R0=[['fixed','🕐','時間が決まっている'],['due','📅','今日が期限'],['money','💰','お金に直結'],['wait','🙋','人を待たせている'],['quick','⏱','15分以内']];
+const PLAN_FL=[['due','📅','今日が期限'],['money','💰','お金に直結'],['wait','🙋','人を待たせている'],['quick','⏱','15分以内']];
+function planRules(){const a=state._cfg&&Array.isArray(state._cfg.prules)?state._cfg.prules.filter(x=>PLAN_R0.some(r=>r[0]===x)):[];PLAN_R0.forEach(r=>{if(a.indexOf(r[0])<0)a.push(r[0]);});return a;}
+function planFixed(x){const t=todayStr();return !!(x.s&&(x.sd||t)===t);}
+function planHas(x,r){const fl=x.fl||{};if(r==='fixed')return planFixed(x);if(r==='due')return !!fl.due;return !!fl[r];}
+function planOrder(){const t=todayStr(),R=planRules(),c=condToday();const op=tdOpen().filter(x=>!planFixed(x));
+  const sc=x=>{if(x.pin===t)return -10;let i=R.findIndex(r=>r!=='fixed'&&planHas(x,r));if(i<0)i=R.length;
+    if(c==='good'&&x.tg==='head')i-=0.4;if(c==='bad'){if(x.tg==='head')i+=0.6;else if(x.tg==='hand'||x.tg==='ai')i-=0.4;}return i;};
+  const s=op.map(x=>({x,v:sc(x)})).sort((a,b)=>a.v-b.v||(a.x.ts0||0)-(b.x.ts0||0)).map(o=>o.x);
+  const out=[],used={};s.forEach(x=>{if(used[x.id])return;out.push(x);used[x.id]=1;if(x.pl)s.forEach(y=>{if(!used[y.id]&&y.pl===x.pl){out.push(y);used[y.id]=1;}});});   /* 同じ場所はまとめる */
+  return out;}
+function planAnchors(){return tdOpen().filter(planFixed).sort((a,b)=>a.s<b.s?-1:1);}
+function planNext(){const n=new Date(),now=n.getHours()*60+n.getMinutes();
+  const an=planAnchors().find(x=>{const s=hmMin(x.s),e=x.e?hmMin(x.e):s+60;return now>=s-20&&now<e;});if(an)return an;
+  let o=planOrder();if(condToday()==='bad'){const l=o.filter(x=>x.tg!=='head');if(l.length)o=l;}return o[0]||null;}
+function planWhy(x){return PLAN_FL.filter(f=>(x.fl||{})[f[0]]).map(f=>f[1]).join('')+(x.pl?' 📍'+esc(x.pl):'')+(x.tg&&TD_TG[x.tg]?' '+TD_TG[x.tg][0]:'');}
+function nextLineHtml(){const x=planNext();
+  return '<div class="nx-line" id="nextLine"><button class="nx-b" id="nxOpen">▶ 次の1つ：'+(x?'<b>'+esc(x.t)+'</b>'+(planFixed(x)?' <i>🕐'+esc(x.s)+'</i>':''):'<span class="nx-0">まだ無い。押して足す</span>')+'</button><button class="nx-ir" id="nxIr">⚡割り込み</button></div>';}
+function openPlanPage(){closeSheet();renderPlanPage();}
+let planRulesOpen=false;
+function renderPlanPage(){pageMode='plan';const p=$('page'),t=todayStr(),o=planOrder(),an=planAnchors(),nx=planNext(),R=planRules();
+  const item=(x,i)=>'<div class="pl-it'+(nx&&nx.id===x.id?' nx':'')+'"><span class="pl-n">'+(i+1)+'</span><button class="pl-b" data-ple="'+esc(x.id)+'"><b>'+esc(x.t)+'</b><small>'+planWhy(x)+'</small></button><span class="pl-ac"><button data-plc="'+esc(x.id)+'">✅</button><button data-pll="'+esc(x.id)+'">⏭</button></span></div>';
+  p.innerHTML='<div class="page-head"><button class="bk" id="pgBk">‹ 戻る</button><span class="tt">⚡ 段取り</span><span style="width:36px"></span></div><div class="page-body">'+
+    '<div class="pl-top"><button class="chip" id="plIr">⚡ 割り込み</button><button class="chip" id="plAsk">🤖 段取りを相談</button></div>'+
+    '<div class="sh-note" style="text-align:left">決まった順番で自動で並べている。上から1つずつやるだけ。'+(condToday()==='bad'?'😵 しんどい日：🙌🤖を前に':condToday()==='good'?'💪 元気な日：🧠を前に':'')+'</div>'+
+    (an.length?'<div class="sh-label">🕐 時間が決まっている</div>'+an.map(x=>'<div class="pl-it an'+(nx&&nx.id===x.id?' nx':'')+'"><span class="pl-n">🕐</span><button class="pl-b" data-ple="'+esc(x.id)+'"><b>'+esc(x.s)+(x.e?'–'+esc(x.e):'')+'　'+esc(x.t)+'</b><small>'+planWhy(x)+'</small></button><span class="pl-ac"><button data-plc="'+esc(x.id)+'">✅</button></span></div>').join(''):'')+
+    '<div class="sh-label">▶ この順番でやる</div>'+(o.length?o.map(item).join(''):'<div class="an-empty">まだ無い。下で足す</div>')+
+    '<div class="td-add"><input type="text" id="plIn" maxlength="60" placeholder="＋ やる事を1行で（Enterで足す）"><button class="chip" id="plGo">足す</button></div>'+
+    '<div class="sh-note" style="text-align:left">やる事を押すと、📅💰🙋⏱の印・📍場所・🧠🙌🤖を付けられる。印で順番が決まる</div>'+
+    '<details class="pl-rules"'+(planRulesOpen?' open':'')+'><summary>⚙️ 並び順の決まり（上から優先）</summary>'+R.map((r,i)=>{const d=PLAN_R0.find(z=>z[0]===r);return '<div class="pl-r"><span>'+(i+1)+'. '+d[1]+' '+esc(d[2])+'</span><button data-pru="'+r+'"'+(i===0?' disabled':'')+'>⬆</button><button data-prd="'+r+'"'+(i===R.length-1?' disabled':'')+'>⬇</button></div>';}).join('')+
+      '<div class="sh-note" style="text-align:left">並べた後：同じ場所の物はまとめる・体調で🧠と🙌🤖を入れ替える（自動）</div></details></div>';
+  p.classList.add('open');
+  const re=()=>renderPlanPage();
+  $('pgBk').onclick=closePage;
+  p.querySelectorAll('[data-ple]').forEach(b=>b.onclick=()=>tdEditSheet(b.dataset.ple,re));
+  p.querySelectorAll('[data-plc]').forEach(b=>b.onclick=()=>{tdComplete(b.dataset.plc);setTimeout(re,300);});
+  p.querySelectorAll('[data-pll]').forEach(b=>b.onclick=()=>{tdSet(b.dataset.pll,{sd:addDays(t,1),pin:null});toast('⏭ 明日へ回した');re();});
+  $('plIr').onclick=()=>openInterrupt(re);$('plAsk').onclick=()=>planAsk();
+  const add=()=>{const v=($('plIn').value||'').trim();if(!v)return;tdNew(v,{});re();};$('plGo').onclick=add;$('plIn').onkeydown=ev=>{if(ev.key==='Enter'&&!ev.isComposing&&ev.keyCode!==229){ev.preventDefault();add();}};
+  {const d=p.querySelector('.pl-rules');if(d)d.ontoggle=()=>{planRulesOpen=d.open;};}
+  const mv=(r,k)=>{const a=planRules(),i=a.indexOf(r),j=i+k;if(j<0||j>=a.length)return;[a[i],a[j]]=[a[j],a[i]];mutate(()=>{state._cfg=Object.assign({},state._cfg||{},{prules:a,ts:Date.now()});});planRulesOpen=true;re();};
+  p.querySelectorAll('[data-pru]').forEach(b=>b.onclick=()=>mv(b.dataset.pru,-1));p.querySelectorAll('[data-prd]').forEach(b=>b.onclick=()=>mv(b.dataset.prd,1));}
+/* ⚡ 割り込み：入った物を次の1つにして、残りを組み直す */
+function openInterrupt(after){let m=30;const paint=()=>{openSub('<div class="sh-time"><span>⚡ 割り込み</span></div><input type="text" id="irT" maxlength="60" placeholder="何が入った？（例：客から電話・急ぎの引取）" style="width:100%">'+
+    '<div class="sh-label">どれくらい？</div><div class="sr-r">'+[5,15,30,60,120].map(v=>'<button class="chip'+(m===v?' sel':'')+'" data-irm="'+v+'">'+esc(durText(v))+'</button>').join('')+'</div>'+
+    '<div class="sh-btns"><button class="delbtn" id="irNo">やめる</button><button class="savebtn" id="irGo">次の1つにする</button></div>',null);
+  const S=$('sheet2');S.querySelectorAll('[data-irm]').forEach(b=>b.onclick=()=>{const v=$('irT').value;m=Number(b.dataset.irm);paint();$('irT').value=v;});
+  $('irNo').onclick=closeSub;$('irGo').onclick=()=>{const v=($('irT').value||'').trim()||'割り込み';tdNew('⚡ '+v,{pin:todayStr(),intr:1,est:m,fl:m<=15?{quick:1}:{}});closeSub();replanSheet(m,after);};};
+  paint();}
+function replanSheet(m,after){const t=todayStr();const paint=()=>{const o=planOrder().filter(x=>!x.intr);
+    openSub('<div class="sh-time"><span>🔁 組み直す</span></div><div class="sh-note" style="text-align:left">⚡ 割り込みを「次の1つ」にした。<b>'+esc(durText(m))+'</b> 取り戻すなら、後ろの物を回す・小さくする</div>'+
+      (o.length?o.slice().reverse().slice(0,6).map(x=>'<div class="rc-it"><b>'+esc(x.t)+'</b><div class="sr-r"><button class="chip" data-rpl="'+esc(x.id)+'">⏭ 明日へ</button><button class="chip" data-rps="'+esc(x.id)+'">🪄 小さく</button><button class="chip" data-rpd="'+esc(x.id)+'">🤖 任せる</button></div></div>').join(''):'<div class="an-empty">ほかのやる事は無い</div>')+
+      '<div class="sh-btns"><button class="savebtn" id="rpOk">このまま進む</button></div>',null);
+    const S=$('sheet2');S.querySelectorAll('[data-rpl]').forEach(b=>b.onclick=()=>{tdSet(b.dataset.rpl,{sd:addDays(t,1),pin:null});toast('⏭ 明日へ回した');paint();});
+    S.querySelectorAll('[data-rps]').forEach(b=>b.onclick=()=>{const x=state.todos[b.dataset.rps];tdNew('最初の5分だけ：'+x.t,{par:b.dataset.rps});tdSet(b.dataset.rps,{sd:addDays(t,1)});toast('🪄 小さくした（残りは明日）');paint();});
+    S.querySelectorAll('[data-rpd]').forEach(b=>b.onclick=()=>dlgSheet(b.dataset.rpd,()=>{}));
+    $('rpOk').onclick=()=>{closeSub();if(after)after();};};
+  paint();}
+/* 🤖 段取りを相談：今日の情報をまとめてコピー */
+function planAsk(){const t=todayStr(),A=alarmCfg(),sd=sleepDay(t),cv=condToday(),an=planAnchors(),o=planOrder();
+  const txt='今日（'+t.slice(5).replace('-','/')+'）の段取りを一緒に決めてほしい。迷わず爆速で動ける順番にしてほしい。\n'+
+    '・体調：'+(cv?COND[cv][0]+COND[cv][1]:'未入力')+(sd&&sd.lastWake?'／起床 '+sd.lastWake+'（予定 '+A.wake+'）／睡眠 '+durText(sd.total):'')+'\n'+
+    (an.length?'・時間が決まっている：\n'+an.map(x=>'  '+x.s+(x.e?'〜'+x.e:'')+' '+x.t+(x.pl?'（'+x.pl+'）':'')).join('\n')+'\n':'')+
+    '・やる事（今の並び）：\n'+(o.length?o.map((x,i)=>'  '+(i+1)+'. '+x.t+(()=>{const f=PLAN_FL.filter(z=>(x.fl||{})[z[0]]).map(z=>z[2]);return f.length?'［'+f.join('・')+'］':'';})()+(x.pl?'（'+x.pl+'）':'')+(x.c?'：'+x.c:'')).join('\n'):'  なし')+'\n'+
+    '・移動を減らしたい（同じ場所はまとめる）。突発が入っても崩れない余白も入れてほしい。\n'+
+    '・出してほしい物：時刻つきの段取り表／明日へ回す物／AIや人に任せる物';
+  const D=dlgList();openSub('<div class="sh-time"><span>🤖 段取りを相談</span></div><div class="sh-note" style="text-align:left">今日の情報をまとめた文章をコピーする。相手を押す（AIはその画面も開く）</div><div class="sr-r big">'+D.map(y=>'<button class="chip" data-pa="'+esc(y.id)+'">'+esc(y.ic)+' '+esc(y.lb)+'</button>').join('')+'</div><div class="sh-btns"><button class="delbtn" id="paNo">やめる</button></div>',null);
+  $('sheet2').querySelectorAll('[data-pa]').forEach(b=>b.onclick=async()=>{const to=dlgList().find(y=>y.id===b.dataset.pa);let ok=false;try{await navigator.clipboard.writeText(txt);ok=true;}catch(e){}
+    if(!ok){try{const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();ok=document.execCommand('copy');ta.remove();}catch(e){}}
+    closeSub();toast((ok?'📋 コピーした':'⚠ コピーできなかった')+'→ '+to.ic+' '+to.lb+(to.url?' を開く':'に貼る'));if(to.url){try{window.open(to.url,'_blank');}catch(e){}}});
+  $('paNo').onclick=closeSub;}
+
 function tdLineHtml(){let op=tdSorted(tdOpen());if(tdBadDay())op=op.filter(x=>x.tg==='hand'||x.tg==='ai');if(!op.length)return '';   /* c11.5 */const x=op[0];return '<button class="td-line" id="tdLine">'+(x.pin===todayStr()?'🎯':'📋')+' 今やる：<b>'+esc(x.t)+'</b>'+(x.s?' <i>'+esc(x.s)+'〜</i>':'')+'<span>残り'+op.length+' ›</span></button>';}
 function tdTimeSheet(id,after){const x=(state.todos||{})[id];if(!x)return;const t=todayStr(),n=new Date();const rd=m=>pad(Math.floor(m/60)%24)+':'+pad(m%60);const now=Math.ceil((n.getHours()*60+n.getMinutes())/5)*5;
   openSub('<div class="sh-time"><span>🕐 いつやる？</span></div><div class="sh-note" style="text-align:left">時間を入れると、その時間の日記の記録に1行で入る（任意）</div>'+
@@ -6490,6 +6572,8 @@ function tdEditSheet(id,after){const x=(state.todos||{})[id];if(!x)return;const 
       '<div class="te-dtb"><input type="date" id="teD" value="'+esc(x.sd||t)+'"><input type="time" id="teS" step="300" value="'+esc(x.s||'')+'"><span>→</span><input type="time" id="teE" step="300" value="'+esc(x.e||'')+'"></div>'+
       '<div class="te-dtq"><button class="chip" data-teq="now">今から30分</button><button class="chip" data-teq="night">今日の夜 21:00</button><button class="chip" data-teq="morn">明日の朝 9:00</button>'+(x.s?'<button class="chip" data-teq="clr">日時を外す</button>':'')+'</div>'+
       '<div class="sh-note" style="text-align:left;margin:4px 0 0">入れると、その時間の日記の記録に1行で入る</div></details>'+
+    '<div class="sr-r te-fl">'+PLAN_FL.map(f=>'<button class="chip'+((x.fl||{})[f[0]]?' sel':'')+'" data-tefl="'+f[0]+'">'+f[1]+' '+f[2]+'</button>').join('')+'</div>'+
+    '<div class="te-pl"><span>📍 場所（段取りでまとめる）</span><select id="tePl"><option value="">なし</option>'+(()=>{const ps=[];plGroups().concat([{g:'ot'}]).forEach(g=>placeReg(g.g).forEach(p=>{if(ps.indexOf(p)<0)ps.push(p);}));if(x.pl&&ps.indexOf(x.pl)<0)ps.unshift(x.pl);return ps.map(p=>'<option'+(x.pl===p?' selected':'')+'>'+esc(p)+'</option>').join('');})()+'</select></div>'+   /* c12.6 */
     '<div class="sr-r te-tg">'+Object.keys(TD_TG).map(k=>'<button class="chip'+(x.tg===k?' sel':'')+'" data-tetg="'+k+'">'+TD_TG[k][0]+' '+TD_TG[k][1]+'</button>').join('')+'</div>'+   /* c11.5 */
     '<div class="sr-r big" style="margin-top:6px"><button class="chip" id="teDone">✅ 完了</button><button class="chip" id="tePin">'+(x.pin===t?'🎯 今やるを外す':'🎯 今やる')+'</button>'+(tdDays(x)>=2?'<button class="chip" id="teSmall">🪄 小さくする</button>':'')+'<button class="chip" id="teDlg">🤖 任せる</button><button class="chip" id="teQuit">🗑 やめる</button></div>'+
     '<div class="sh-btns"><button class="delbtn" id="teDel">消す</button><button class="savebtn" id="teOk">保存</button></div>',null);
@@ -6500,6 +6584,8 @@ function tdEditSheet(id,after){const x=(state.todos||{})[id];if(!x)return;const 
   const save=()=>{const tt=($('teT').value||'').trim()||x.t,cc=($('teC').value||'').trim(),s=$('teS').value||'',e=$('teE').value||'',d=$('teD').value||t;
     const e2=s?(e||rd(hmMin(s)+30)):'';const tChg=(s||'')!==(x.s||'')||(e2||'')!==(x.e||'')||(s?d:'')!==(x.s?(x.sd||t):'');
     if(tt!==x.t||cc!==(x.c||'')||tChg){tdSet(id,{t:tt,c:cc||null,s:s||null,e:e2||null,sd:s?d:null});if(s||x.s)tdPlace(id);}};   /* c8.0：日時はこの画面で（任意） */
+  $('sheet2').querySelectorAll('[data-tefl]').forEach(b=>b.onclick=()=>{const k=b.dataset.tefl,fl=Object.assign({},(state.todos[id]||{}).fl||{});if(fl[k])delete fl[k];else fl[k]=1;tdSet(id,{fl});b.classList.toggle('sel',!!fl[k]);});
+  {const s=$('tePl');if(s)s.onchange=()=>tdSet(id,{pl:s.value||null});}   /* c12.6 */
   $('sheet2').querySelectorAll('[data-tetg]').forEach(b=>b.onclick=()=>{const v=b.dataset.tetg;const cur=(state.todos[id]||{}).tg;tdSet(id,{tg:cur===v?null:v});$('sheet2').querySelectorAll('[data-tetg]').forEach(y=>y.classList.toggle('sel',y.dataset.tetg===v&&cur!==v));});   /* c11.5 */
   $('teOk').onclick=()=>{save();closeSub();if(after)after();};
   $('teDone').onclick=()=>{save();closeSub();tdComplete(id);if(after)after();};
@@ -6605,14 +6691,14 @@ function quickPlace(p){
 let SLEEP_BED='02:00',SLEEP_MIN=420,SLEEP_WAKE='09:00';
 /* c4.7：注意の時刻は本人が変えられる（state.alarm）。寝るは0〜5時・風呂は夜、の前提 */
 function alarmCfg(){const a=(typeof state!=='undefined'&&state&&state.alarm)||{};const ok=v=>/^\d\d:\d\d$/.test(String(v||''));
-  const o={bath:ok(a.bath)?a.bath:'22:00',bed:ok(a.bed)?a.bed:'02:00',wake:ok(a.wake)?a.wake:'09:00',meal:ok(a.meal)?a.meal:'00:00',nap:Math.max(5,Math.min(240,Number(a.nap)||30))};
+  const o={bath:ok(a.bath)?a.bath:'22:00',bed:ok(a.bed)?a.bed:'02:00',wake:ok(a.wake)?a.wake:'09:00',meal:(ok(a.meal)&&!(a.meal==='00:00'&&!a.m21))?a.meal:'21:00',nap:Math.max(5,Math.min(240,Number(a.nap)||30))};
   SLEEP_BED=o.bed;SLEEP_WAKE=o.wake;return o;}
 function alarmSummary(){const A=alarmCfg();return '風呂 '+A.bath+'・寝る '+A.bed+'・起きる '+A.wake+'・夜ごはん '+A.meal+'〜・仮眠 '+A.nap+'分';}
 function openAlarmSheet(){const A=alarmCfg();const row=(id,ic,lb,v,t)=>'<div class="al-row"><span>'+ic+' '+lb+'</span>'+(t==='n'?'<input type="number" id="'+id+'" min="5" max="240" inputmode="numeric" value="'+v+'">分':'<input type="time" id="'+id+'" step="300" lang="ja-JP" value="'+v+'">')+'</div>';
   openSub('<div class="sh-time"><span>⏰ 注意の時刻</span></div><div class="sh-note" style="text-align:left">札・帯・ムダの数え方がこの時刻で変わる。自由に変えていい（本人決定 2026-10-06）</div>'+
     row('alBath','🛁','風呂に入り始める',A.bath)+row('alBed','💤','寝る（過ぎたら夜更かし）',A.bed)+row('alWake','🌞','起きる（過ぎたら寝坊）',A.wake)+row('alMeal','🍚','夜ごはんの締切（これ以降はムダ）',A.meal)+row('alNap','😴','仮眠はここまで',A.nap,'n')+
     '<div class="sh-btns"><button class="delbtn" id="alNo">やめる</button><button class="savebtn" id="alOk">これにする</button></div>',null);
-  $('alNo').onclick=closeSub;$('alOk').onclick=()=>{const g=id=>(($(id)||{}).value||'').trim();const v={bath:g('alBath')||A.bath,bed:g('alBed')||A.bed,wake:g('alWake')||A.wake,meal:g('alMeal')||A.meal,nap:Number(g('alNap'))||A.nap,ts:Date.now()};mutate(()=>{state.alarm=v;});alarmCfg();closeSub();toast('⏰ '+alarmSummary());};}
+  $('alNo').onclick=closeSub;$('alOk').onclick=()=>{const g=id=>(($(id)||{}).value||'').trim();const v={bath:g('alBath')||A.bath,bed:g('alBed')||A.bed,wake:g('alWake')||A.wake,meal:g('alMeal')||A.meal,nap:Number(g('alNap'))||A.nap,m21:1,ts:Date.now()};   /* c12.6：夜ごはんの既定は21:00（本人指示）。自分で選んだ時刻はそのまま */mutate(()=>{state.alarm=v;});alarmCfg();closeSub();toast('⏰ '+alarmSummary());};}
 /* ✅良い朝が何日続いているか（今日に判定があれば今日から、無ければ昨日から数える） */
 function sleepStreak(by,endDay){
   by=by||sleepSessions();let d=endDay||todayStr(),n=0;
@@ -7781,7 +7867,7 @@ $('navTodo').onclick=()=>navGo(openTodoPage);   /* c7.9：📋やる事（🧱�
   d.querySelectorAll('[data-nvp]').forEach(x=>x.onclick=()=>{w.scrollTo({left:Number(x.dataset.nvp)*w.clientWidth,behavior:'smooth'});});
   w.addEventListener('wheel',ev=>{if(Math.abs(ev.deltaY)<Math.abs(ev.deltaX)||!ev.deltaY)return;ev.preventDefault();ev.stopPropagation();w.scrollTo({left:(ev.deltaY>0?1:0)*w.clientWidth,behavior:'smooth'});},{passive:false});}}   /* PCはホイールでページ送り */
 $('navAim').onclick=()=>navGo(openAimPage);
-$('navRule').onclick=()=>navGo(openRulesPage);$('navSleep').onclick=()=>navGo(openSleepPage);   /* c9.9 */   /* 🎯一手（毎日のルールはこのページの下から開ける） */
+$('navRule').onclick=()=>navGo(openRulesPage);$('navPlan').onclick=()=>navGo(openPlanPage);   /* c12.6 */$('navSleep').onclick=()=>navGo(openSleepPage);   /* c9.9 */   /* 🎯一手（毎日のルールはこのページの下から開ける） */
 /* 下の4つの見た目：どれを開いているか（緑）／支払いの数（赤＝未払いの件数）／今日のルール達成（n/6）。
    支払いの赤い数字は、💴支払いを開いた時に出る「未払い N件」と必ず同じ数（今月が期日の未払い＋前の月までの払い残し）。
    前は「7日以内と期限超過」の件数で、画面のどの数字とも合わなかった（本人指示 2026-09-30：未払いの数字とリンクさせる）。
@@ -7790,9 +7876,9 @@ function navPaint(){
   try{
     const pg=$('page'),open=pg.classList.contains('open');
     /* ルールのページは🎯一手から開くので、開いている間は🎯を緑にする */
-    const tab=!open?'home':pageMode==='pay'?'pay':pageMode==='memo'?'memo':pageMode==='rtn'?'rtn':pageMode==='ana'?'ana':(pageMode==='todo'||pageMode==='st')?'todo':pageMode==='rules'?'rule':pageMode==='aim'?'aim':'';
-    pg.classList.toggle('withnav',open&&(pageMode==='pay'||pageMode==='memo'||pageMode==='rules'||pageMode==='aim'||pageMode==='rtn'||pageMode==='ana'||pageMode==='st'||pageMode==='todo'));
-    [['navHome','home'],['navPay','pay'],['navMemo','memo'],['navRtn','rtn'],['navAna','ana'],['navTodo','todo'],['navAim','aim'],['navRule','rule']].forEach(x=>{const b=$(x[0]);if(b)b.classList.toggle('on',tab===x[1]);});
+    const tab=!open?'home':pageMode==='pay'?'pay':pageMode==='memo'?'memo':pageMode==='rtn'?'rtn':pageMode==='ana'?'ana':(pageMode==='todo'||pageMode==='st')?'todo':pageMode==='rules'?'rule':pageMode==='plan'?'plan':pageMode==='aim'?'aim':'';
+    pg.classList.toggle('withnav',open&&(pageMode==='plan'||pageMode==='pay'||pageMode==='memo'||pageMode==='rules'||pageMode==='aim'||pageMode==='rtn'||pageMode==='ana'||pageMode==='st'||pageMode==='todo'));
+    [['navHome','home'],['navPay','pay'],['navMemo','memo'],['navRtn','rtn'],['navAna','ana'],['navTodo','todo'],['navAim','aim'],['navRule','rule'],['navPlan','plan']].forEach(x=>{const b=$(x[0]);if(b)b.classList.toggle('on',tab===x[1]);});
     const nv=$('nav');if(nv&&nv.offsetHeight)document.documentElement.style.setProperty('--navh',nv.offsetHeight+'px');
     sleepBarTick();
   }catch(e){}
@@ -8678,7 +8764,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c12.5";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c12.6";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 /* ログインの後：同じユーザーなら影はそのまま（全件受信をやり直さない）。違うユーザーならそのユーザーの影を読む */
 async function clAfterLogin(){
