@@ -813,6 +813,12 @@
 .pl-top{display:flex;gap:6px;margin-bottom:6px}.pl-it{display:flex;align-items:center;gap:6px;padding:8px 4px;border-bottom:1px solid var(--line)}.pl-it.nx{background:#eef3ff;border-radius:12px}.pl-n{flex:0 0 1.6em;text-align:center;font-weight:800;color:#8a90a0}.pl-b{flex:1;min-width:0;text-align:left}.pl-b b{display:block}.pl-b small{color:#8a90a0;font-size:11.5px}.pl-ac{display:flex;gap:4px}.pl-ac button{padding:6px 8px;border-radius:10px;background:#f1f3f8}
 .pl-rules{margin-top:12px;padding:8px 10px;border-radius:14px;background:#f6f7fb}.pl-rules summary{font-weight:800;font-size:13px;color:#5b6475}.pl-r{display:flex;align-items:center;gap:6px;padding:4px 0}.pl-r span{flex:1;font-weight:700;font-size:13px}.pl-r button{padding:4px 10px;border-radius:8px;background:#fff}.pl-r button:disabled{opacity:.3}
 .te-pl{display:flex;align-items:center;gap:6px;margin:6px 0}.te-pl span{font-size:12px;font-weight:800;color:#5b6475;flex:0 0 auto}.te-pl select{flex:1;min-width:0;font:inherit;padding:6px;border-radius:10px;border:1px solid var(--line)}
+#secActs.one>.sh-label,#secActs.one #acNote,#secActs.one #acChips,#secActs.one #acSum,#secActs.one .actrow~.actrow,#secActs.one .ac-l1,#secActs.one .ac-x,#secActs.one .ac-ksel,#secActs.one .ac-kc.pick,#secActs.one .ac-kx{display:none!important}
+#secActs.one .actrow{display:flex!important;flex-wrap:wrap;align-items:flex-start;gap:8px 6px;margin-top:8px;background:#f7f8fb}#secActs.one .ac-l2{order:1;flex-basis:100%}#secActs.one .ac-side{order:2}#secActs.one .ac-kw{order:3}#secActs.one .ac-ai,#secActs.one .ac-c,#secActs.one .ac-ph,#secActs.one .ac-dx{order:4;flex-basis:100%}
+#secActs.one .ac-l2{display:flex;gap:6px;align-items:center}#secActs.one .ac-l2 input{flex:1;min-width:0}
+#secActs.one .ac-side{display:flex;flex-direction:row;flex-wrap:wrap;gap:6px;margin:0}
+#secActs.one .ac-side>button{width:52px;padding:5px 0}#secActs.one .ac-md,#secActs.one .ac-st{display:flex;flex-direction:column;align-items:center;justify-content:center;width:52px;padding:5px 0;border-radius:12px;background:#fff;border:1px solid var(--line)}
+#secActs.one .ac-kw{display:block;margin:0}#secActs.one .ac-kc.tl{width:52px;height:44px;flex-direction:column;justify-content:center}#secActs.one .ac-k{display:flex;gap:6px}
 .fr-addbar{display:block;width:100%;margin:6px 0 2px;padding:9px 12px;border-radius:12px;background:#f4f2ff;color:#5b4fd6;font-weight:800;font-size:13px;text-align:center}
 .td-dlg{font-style:normal;font-size:11px;font-weight:800;background:#ede9fe;color:#5b21b6;border-radius:999px;padding:1px 7px;margin-left:4px}
 .rc-it{padding:8px 0;border-bottom:1px solid var(--line)}.rc-it b{display:block;margin-bottom:4px}
@@ -3665,7 +3671,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+   /* 同期の状態1行と記録（クラウド版 c1.9） */
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c13.0）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c13.1）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -4089,7 +4095,7 @@ function openEntrySheet(date,ref){
       const aA=acts.find(a=>a&&a.k&&AI_KINDS[a.k]&&(a.w||a===a0))||acts.find(a=>a&&a.w&&(a.kx||[]).some(x=>AI_KINDS[x]));
       const ch=q.concat(extra).map(id=>{const k=kindOf(id);return (k&&!k.off)?'<button class="chip ac-q'+((wk.indexOf(id)>=0||(!wk.length&&k0===id))?' sel':'')+'" data-o1="'+esc(id)+'" style="--kc:'+k.co+'">'+esc(k.ic)+' '+esc(k.lb)+'</button>':'';}).join('');
       const tv=(a0&&a0.t&&!(k0o&&a0.t===k0o.lb))?a0.t:'';
-      const aiH=aA?'<div class="ac-ai"><span>🤖 使ったAI</span>'+AI_TOOLS.map(z=>{const on=(Array.isArray(aA.ai)?aA.ai:aiGuess(aA.t)).indexOf(z[0])>=0;return '<button class="chip'+(on?' sel':'')+'" data-o1ai="'+z[0]+'" style="--ac:'+z[2]+'">'+esc(z[1])+'</button>';}).join('')+'</div>'+aipChips(Array.isArray(aA.ap)?aA.ap:[],'data-o1ap'):'';   /* c12.5 */
+      const aiH=(aA&&aA!==acts[0])?'<div class="ac-ai"><span>🤖 使ったAI</span>'+AI_TOOLS.map(z=>{const on=(Array.isArray(aA.ai)?aA.ai:aiGuess(aA.t)).indexOf(z[0])>=0;return '<button class="chip'+(on?' sel':'')+'" data-o1ai="'+z[0]+'" style="--ac:'+z[2]+'">'+esc(z[1])+'</button>';}).join('')+'</div>'+aipChips(Array.isArray(aA.ap)?aA.ap:[],'data-o1ap'):'';   /* c12.5 */
       const more=acts.filter(a=>a&&(String(a.t||'').trim()||a.k)).length-1+frs.filter(x=>String(x||'').trim()).length;
       rd.style.display='';rd.innerHTML='<div class="sh-label">🏷️ '+(isCar?'車内で':'ここで')+'何をした<small>押すだけ。いくつでも押せる（もう一度で外す）。時間を分けて書く時は上の ✌️'+(more>0?'<br>ほかに '+more+'件 書いてある（消えていない・✌️で見られる）':'')+'</small></div><div class="sh-chips">'+ch+'<button class="chip ac-qall" id="o1all">🏷️ ほか（全部）</button></div>'+
         '<textarea id="o1t" maxlength="400" rows="1" placeholder="一言（書かなくてもいい）例：HIBIKI修正" style="width:100%;margin-top:8px;resize:none;overflow:hidden;line-height:1.5">'+esc(tv)+'</textarea>'+aiH;   /* c9.2：長く書いたら何行でも広がる（本人指示） */
@@ -4128,7 +4134,7 @@ function openEntrySheet(date,ref){
       const last=acts[acts.length-1];if(last&&!last.t.trim()&&!last.s&&!last.e&&!last.k&&!last.d&&!(last.c&&last.c.trim()))acts[acts.length-1]=row;else acts.push(row);acPaint();});};}   /* c6.1：同じ場所で1つの事＝全部の種類から1つ選ぶと「ずっと」の行（本人指示） */
     {const fa=$('frAdd2');if(fa)fa.onclick=()=>{frs.push('');frPaint(true);cPaint();};}
     {const qm=$('acQm');if(qm)qm.onclick=()=>{qMore=!qMore;acCh();};}};
-  {const ne=acts.filter(a=>a&&(String(a.t||'').trim()||a.k));sheetSt.one=!((ne.length>1&&!ne.every(a=>a.w&&a.k))||frs.some(x=>String(x||'').trim())||ne.some(a=>a.s||a.e||(a.c&&a.c.trim())||(a.ph&&a.ph.length)||a.st));}   /* c6.8 */
+  {const ne=acts.filter(a=>a&&(String(a.t||'').trim()||a.k));sheetSt.one=!((ne.length>1&&!ne.every(a=>a.w&&a.k))||frs.some(x=>String(x||'').trim())||(ne.length>1&&ne.some(a=>a.s||a.e||(a.c&&a.c.trim())||(a.ph&&a.ph.length)||a.st)));}   /* c13.1 */   /* c6.8 */
   acPaint();
   /* 最初に出す側：中身がある方。両方ある・両方無い時は、前に使っていた方（端末に覚える） */
   let cMode=(()=>{const hasT=!!(ex&&ex.t),hasA=!!(ex&&Array.isArray(ex.acts)&&ex.acts.some(a=>a&&a.t));
@@ -4136,7 +4142,7 @@ function openEntrySheet(date,ref){
     return 'list';})();   /* 自由に書くはやめた（本人指示 2026-10-04）。昔の本文は下に残して出す */
   cPaint=()=>{const m=cMode;   /* 移動でも切り替えと1行ずつを出す（c1.1） */
     $('secMode').style.display='none';
-    const one1=!!(sheetSt&&sheetSt.one&&(eType==='stay'||eType==='incar'));$('secActs').style.display=one1?'none':'';$('secFree').style.display=(frs.length&&!one1)?'':'none';{const fb=$('frAdd2');if(fb)fb.style.display=one1?'none':'';}   /* c12.9：自由に書くは書く時だけ（ふだんは隠す） */   /* c6.8：1つの時は隠す／c6.9：2つ以上なら1行ずつと自由に書くを両方出す（本人指示） */
+    const one1=!!(sheetSt&&sheetSt.one&&(eType==='stay'||eType==='incar'));$('secActs').style.display='';$('secActs').classList.toggle('one',one1);   /* c13.1：☝️でも1行目の時間・詳細・写真・ムダ・完了・道具 */$('secFree').style.display=(frs.length&&!one1)?'':'none';{const fb=$('frAdd2');if(fb)fb.style.display=one1?'none':'';}   /* c12.9：自由に書くは書く時だけ（ふだんは隠す） */   /* c6.8：1つの時は隠す／c6.9：2つ以上なら1行ずつと自由に書くを両方出す（本人指示） */
     $('cMode').querySelectorAll('button').forEach(b=>{const me=b.dataset.cm;b.classList.toggle('sel',me===m);
       const has=(me==='free')?!!$('shTa').value.trim():[...$('acRows').querySelectorAll('.ac-t')].some(i=>i.value.trim());
       b.classList.toggle('has',has&&me!==m);});};
@@ -8778,7 +8784,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c13.0";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c13.1";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 /* ログインの後：同じユーザーなら影はそのまま（全件受信をやり直さない）。違うユーザーならそのユーザーの影を読む */
 async function clAfterLogin(){
