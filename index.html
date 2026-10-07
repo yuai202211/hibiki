@@ -3635,7 +3635,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+   /* 同期の状態1行と記録（クラウド版 c1.9） */
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c9.7）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c9.8）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -3831,7 +3831,7 @@ function openEntrySheet(date,ref){
   let frs=String((ex&&ex.t)||'').split(/\n\s*\n/).map(x=>x.trim()).filter(Boolean),frPaint=()=>{};   /* 自由に書く欄（1つずつ） */
   $('shPlace').value=(ex&&ex.p)||'';$('tdX').value=(ex&&ex.dx)||'';
   /* 滞在／移動／休憩／睡眠の切り替え */
-  let eType=(ex&&ex.mv)?'move':(ex&&ex.k==='incar')?'incar':'stay';   /* c6.2：食事・休憩・睡眠・AI・仕事は「ずっと」の行で見せる */
+  let eType=(ex&&ex.mv)?'move':(ex&&ex.k==='incar')?'incar':'stay';sheetSt.sub=!!(ex&&!ex.del&&!mgDstOk(ex)&&ex.k!=='sleep');   /* c9.8：サブ日記はOFFで開く */   /* c6.2：食事・休憩・睡眠・AI・仕事は「ずっと」の行で見せる */
   let trSel=(ex&&ex.tr)||null,eTouched=!!ex;   /* eTouched＝記録の種類を本人が選んだ（前からある記録も触らない扱い） */
   let tdSel=(ex&&typeof ex.d==='string'&&ex.d)?ex.d:((ex&&ex.dx)?'_other':'');   /* 記録の「使う物」（_other＝手入力） */
   if(!ex){sheetSt.pf=(eType==='move')?pfAuto(date,tS):13;sheetSt.pfAuto=!!sheetSt.pf;}   /* 新規：移動は直前の記録の県（出発）、それ以外は東京（本人指示 2026-10-06） */
@@ -3857,8 +3857,8 @@ function openEntrySheet(date,ref){
   let acCh=()=>{};   /* 「＋ 行を足す」と移動の1タップチップ（下で中身を入れる） */
   let qMore=false,phTarget=null;   /* qMore＝運転中の1タップで「＋ほか」を開いた／phTarget＝写真を付ける行の番号（null＝記録全体） */
   const mty=()=>{
-    $('eType').querySelectorAll('button').forEach(b=>b.classList.toggle('sel',b.dataset.ty===eType));
-    $('secStay').style.display=(eType==='move')?'none':'';
+    $('eType').querySelectorAll('button').forEach(b=>b.classList.toggle('sel',!sheetSt.sub&&b.dataset.ty===eType));
+    $('secStay').style.display=(eType==='move'||sheetSt.sub)?'none':'';   /* c9.8：サブ日記は場所を隠す */
     {const ra=$('recAi');if(ra){if(eType==='ai'){ra.style.display='';const pt=()=>{ra.innerHTML='<span>🤖 何のAI？（複数OK）</span>'+AI_TOOLS.map(z=>'<button class="chip'+(sheetSt.ai.indexOf(z[0])>=0?' sel':'')+'" data-raitl="'+z[0]+'" style="--ac:'+z[2]+'">'+esc(z[1])+'</button>').join('');
       ra.querySelectorAll('[data-raitl]').forEach(b=>b.onclick=()=>{const id=b.dataset.raitl,j=sheetSt.ai.indexOf(id);if(j>=0)sheetSt.ai.splice(j,1);else sheetSt.ai.push(id);pt();});};pt();}else ra.style.display='none';}}   /* c5.6：🤖AIを押したら何のAIか */
     $('secMove').style.display=(eType==='move')?'':'none';
@@ -3893,7 +3893,7 @@ function openEntrySheet(date,ref){
   $('pjChip').onclick=()=>{if(!sheetSt)return;openPjPicker(sheetSt.pj,id=>{sheetSt.pj=id;pjPaint();});};
   $('pfChip').onclick=()=>{if(!sheetSt)return;openPrefPicker(sheetSt.pf,c=>{sheetSt.pf=c;sheetSt.pfAuto=false;pfPaint();});};
   $('pf0Chip').onclick=()=>{if(!sheetSt)return;openPrefPicker(sheetSt.pf0,c=>{sheetSt.pf0=c;sheetSt.pf0Auto=false;pfPaint();});};
-  $('eType').querySelectorAll('button').forEach(b=>b.onclick=()=>{if(eType===b.dataset.ty)return;eTouched=true;eType=b.dataset.ty;mty();});   /* c6.3：3つから1つ（いた／移動／車内） */   /* 選んだ物を押すと全部出る→選ぶと閉じる */
+  $('eType').querySelectorAll('button').forEach(b=>b.onclick=()=>{eTouched=true;if(!sheetSt.sub&&eType===b.dataset.ty){sheetSt.sub=true;eType='stay';mty();toast('サブ日記にした（📍🚗🚙 全部OFF）');return;}sheetSt.sub=false;eType=b.dataset.ty;mty();});   /* c9.8：もう一度押すとOFF＝サブ日記 */   /* c6.3：3つから1つ（いた／移動／車内） */   /* 選んだ物を押すと全部出る→選ぶと閉じる */
   $('trChips').querySelectorAll('button').forEach(b=>b.onclick=()=>{trSel=(trSel===b.dataset.tr)?null:b.dataset.tr;mtr();});
   /* 時刻：ネイティブの時刻ピッカー（コンパクト・端末純正のUI）＋日またぎ */
   const hm=x=>x.split(':').map(Number);
@@ -4093,7 +4093,8 @@ function openEntrySheet(date,ref){
   let pfl=0,curChips=chips;
   const bindChips=()=>{
     if(!pc)return;const chips=curChips;
-    pc.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{$('shPlace').value=b.dataset.p;const v=placePf(b.dataset.p);if(sheetSt){arFill(b.dataset.p);if(v){sheetSt.pf=v;sheetSt.pfAuto=true;}pfPaint();if(sheetSt.flowNext)sheetSt.flowNext('do');}});   /* 押した場所の県も自動で */
+    pc.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{if($('shPlace').value.trim()===b.dataset.p){$('shPlace').value='';b.classList.remove('sel');return;}   /* c9.8：もう一度で外す */
+      $('shPlace').value=b.dataset.p;const v=placePf(b.dataset.p);if(sheetSt){arFill(b.dataset.p);if(v){sheetSt.pf=v;sheetSt.pfAuto=true;}pfPaint();if(sheetSt.flowNext)sheetSt.flowNext('do');}});   /* 押した場所の県も自動で */
     const more=pc.querySelector('#pMore');
     if(more)more.onclick=()=>{chipsSetOpen(true);pc.innerHTML=chipListHtml(chips,true);bindChips();};    /* 開く */
     const less=pc.querySelector('#pLess');
@@ -4178,7 +4179,7 @@ function openEntrySheet(date,ref){
     if(sheetSt&&!sheetSt.sorted){acRead();const longQ=(eType==='stay'||eType==='incar')&&tE&&durMin(tS,tE,(tE<=tS&&tEd===0)?1:tEd)>=240&&!acts.some(a=>a.k);   /* c5.9：行に種類が1つでもあれば聞かない（行と食い違わない） */   /* 4時間以上の滞在で「ずっと」が無い */
       void longQ;}   /* c9.2：保存で仕分けの画面は出さない＝押したらすぐ記録（本人指示 2026-10-07）。種類は後で開いて付けられる */   /* 種類の無い行がある時だけ仕分けを出す */
     if(eType!=='move'&&tE&&!sheetSt.longOk){const dm=durMin(tS,tE,(tE<=tS&&tEd===0)?1:tEd);if(dm>=1200){openSub('<div class="sh-time"><span>⏱ '+esc(durText(dm))+' の記録</span></div><div class="sh-note" style="text-align:left">20時間を超えている。終わりの時刻が違っていないか？（終わりが始まりより前だと翌日扱いになる）</div><div class="sh-btns"><button class="delbtn" id="lgFix" style="flex:1">直す</button><button class="savebtn" id="lgGo">このまま保存</button></div>',null);$('lgFix').onclick=closeSub;$('lgGo').onclick=()=>{sheetSt.longOk=true;closeSub();$('shSave').click();};return;}}   /* c4.8：20時間超の注意（本人決定） */
-    const t=$('shTa').value.trim(),p=$('shPlace').value.trim();
+    const t=$('shTa').value.trim(),p=sheetSt.sub?'':$('shPlace').value.trim();   /* c9.8：サブ日記は場所なし */
     const rt=$('mvRt').value.replace(/\s*→\s*$/,'').trim();
     const isMv=eType==='move';
     /* やったこと：名前のある行だけ残す。時間だけ選んで名前が空の行は、消さずに知らせる */
@@ -4224,7 +4225,7 @@ function openEntrySheet(date,ref){
       if(!isMv&&p&&pfS&&!sheetSt.pfAuto)placeSet(p,pfS);   /* 本人が手で選んだ時だけ覚える */
       if(tdS==='_other'){if(tdXS)ne.dx=tdXS;}else if(tdS)ne.d=tdS;   /* 使う物（その他は手入力の文字） */   /* 都道府県（［なし］にした時は付けない） */
       if(actsS.length)ne.acts=actsSort(actsS,actsBase(ne));   /* 時刻の早い順に並べて保存 */
-      ne.mn=1;   /* c9.3：記録の画面で時間と📍🚗🚙を選んで記録した＝メイン日記 */
+      ne.mn=sheetSt.sub?0:1;   /* c9.8：📍🚗🚙が全部OFF＝サブ日記（0） */   /* c9.3：記録の画面で時間と📍🚗🚙を選んで記録した＝メイン日記 */
       state.entries[d0][saveKey]=ne;
     });
     closeSheet();toast(d0!==ui.date?('✓ '+payMD(d0)+' に記録した'):'✓ 記録した');   /* 0時をまたいだ時など、見ている日と違う日に保存した時は日付を添える */
@@ -8408,7 +8409,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c9.7";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c9.8";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 /* ログインの後：同じユーザーなら影はそのまま（全件受信をやり直さない）。違うユーザーならそのユーザーの影を読む */
 async function clAfterLogin(){
