@@ -803,6 +803,7 @@
   .hour.wr .chip.mvb.spE b,.hour.wr .chip.mvb.telE b{font-size:12px;margin:0 2px}
   .sr-k{display:flex;gap:8px;margin:6px 0}.sr-k button{flex:1;padding:10px 4px;border-radius:14px;background:#f1f3f8;color:var(--ink);font-weight:800;font-size:24px;display:flex;flex-direction:column;align-items:center;gap:2px;border:2px solid transparent}.sr-k button span{font-size:12px}.sr-k button.on{background:#1f2430;color:#fff}
   .sr-r{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0}
+#tDur{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}#tPin{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}   /* c10.0：時刻を変えても行の高さを変えない（ガタつき防止） */
 .mg-src{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
 .mg-ghost{position:fixed;z-index:9999;pointer-events:none;opacity:.92;box-shadow:0 14px 34px rgba(0,0,0,.28);transform:rotate(-1.5deg);background:#fff;border-radius:14px;margin:0}
 .mg-q{display:flex;flex-direction:column;align-items:center;gap:4px;margin:6px 0 10px}.mg-qs,.mg-qt{width:100%;padding:10px 12px;border-radius:14px;font-weight:800;text-align:center}.mg-qs{background:#f4f2ff;color:#5b4fd6}.mg-qt{background:#e7f9f0;color:#0a7a45}.mg-qt small{display:block;font-size:11.5px;opacity:.8}.mg-qa{font-size:18px;color:#8a90a0}.mg-lift{opacity:.3}.mg-dst{outline:2px dashed #0bc167;outline-offset:-3px}.mg-over{background:#e7f9f0!important;outline:3px solid #0bc167}
@@ -3606,7 +3607,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+   /* 同期の状態1行と記録（クラウド版 c1.9） */
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c9.9）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c10.0）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -3889,13 +3890,12 @@ function openEntrySheet(date,ref){
   updDur();
   ['tSin','tEin','tEd'].forEach(id=>$(id).addEventListener('change',updDur));
   {const sh=$('sheet'),pn=$('tPin'),tl=$('tLab');if(sh&&pn&&tl){const chk=()=>{const r=tl.parentNode.getBoundingClientRect(),s=sh.getBoundingClientRect();pn.classList.toggle('on',r.bottom<s.top+4);};sh.addEventListener('scroll',chk,{passive:true});chk();}}   /* c7.5：時間の欄が見えなくなったら上に薄い帯 */
-  $('tLater').onclick=()=>{tE='';$('tEin').value='';$('tEin').classList.remove('auto');timeTouched=true;eHand=true;updDur();flowNext('place');};
+  $('tLater').onclick=()=>{tE='';$('tEin').value='';$('tEin').classList.remove('auto');timeTouched=true;eHand=true;updDur();};   /* c10.0：動かさない */
   /* c6.4：上から下へ流れる（押したら次の欄へ自動で進む） */
   const flowTo=el=>{if(!el)return;setTimeout(()=>{try{const sh=$('sheet'),r=el.getBoundingClientRect(),sr=sh.getBoundingClientRect();sh.scrollTo({top:sh.scrollTop+r.top-sr.top-8,behavior:'smooth'});}catch(e){}},90);};
   const flowNext=step=>{if(!sheetSt)return;if(step==='place')flowTo(eType==='move'?$('secMove'):$('eType'));else if(step==='do')flowTo($('recDo'));else if(step==='rows')flowTo($('acRows'));};
   sheetSt.flowNext=flowNext;
-  $('tSin').addEventListener('change',()=>{if(!tE){const x=$('tEin');setTimeout(()=>{try{x.showPicker();}catch(e){try{x.focus();}catch(e2){}}},120);}});
-  $('tEin').addEventListener('change',()=>{if($('tEin').value)flowNext('place');});
+  /* c10.0：時間を選んでも画面は動かさない（終わりの時刻を勝手に開かない・下へ送らない。本人指示 2026-10-07「ベースの画面から動かすな」） */
   $('shPlace').addEventListener('change',()=>{if($('shPlace').value.trim()&&eType!=='move')flowNext('do');});
   $('shPlace').addEventListener('keydown',ev=>{if(ev.key==='Enter'&&!ev.isComposing&&ev.keyCode!==229){ev.preventDefault();$('shPlace').blur();}});   /* 終わりは後で */
   $('eType').querySelectorAll('button').forEach(b=>b.addEventListener('click',updDur));
@@ -8382,7 +8382,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c9.9";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c10.0";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 /* ログインの後：同じユーザーなら影はそのまま（全件受信をやり直さない）。違うユーザーならそのユーザーの影を読む */
 async function clAfterLogin(){
