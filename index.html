@@ -804,6 +804,7 @@
   .sr-k{display:flex;gap:8px;margin:6px 0}.sr-k button{flex:1;padding:10px 4px;border-radius:14px;background:#f1f3f8;color:var(--ink);font-weight:800;font-size:24px;display:flex;flex-direction:column;align-items:center;gap:2px;border:2px solid transparent}.sr-k button span{font-size:12px}.sr-k button.on{background:#1f2430;color:#fff}
   .sr-r{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0}
 .slpb2{flex-wrap:wrap}.sb-2{flex-basis:100%;display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:4px 0 2px}.sb-ov{font-size:12.5px;font-weight:800;color:#e0405a}.sb-q{font-size:12px;font-weight:800;color:#5b4fd6}.sb-2 .chip{font-size:12px;padding:5px 10px;background:#fff}.sb-rc{color:#e0405a!important}
+.td-dlg{font-style:normal;font-size:11px;font-weight:800;background:#ede9fe;color:#5b21b6;border-radius:999px;padding:1px 7px;margin-left:4px}
 .rc-it{padding:8px 0;border-bottom:1px solid var(--line)}.rc-it b{display:block;margin-bottom:4px}
 .td-bad{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;background:#fff3c9;color:#8a5a00;font-weight:800;font-size:12.5px;border-radius:12px;padding:8px 10px;margin-bottom:8px}
 .cd-box{margin:10px 0}.cd-r{display:grid;grid-template-columns:3.5em 1fr 2em 1.4fr;gap:6px;font-size:13px;padding:5px 2px;border-bottom:1px solid var(--line)}
@@ -1811,7 +1812,7 @@ function mergeStates(a,b){
       out.payrep=out.payrep||{};const cur=out.payrep[k];
       if(!cur||((nu.ts||0)>(cur.ts||0)))out.payrep[k]=nu;}
     /* 📚 ルーティン（rtn）とその記録（rlog）。1件ずつ新しい方が勝つ。使うまで項目を作らない */
-    for(const k of ['rtn','rlog','payppl','kinds','tools','places','projects','marks','bedp','arp','todos','plreg','plgrp','kgrp','trs','srr','tdq','ksub'])for(const id in (src[k]||{})){   /* kinds／tools＝行の種類・道具（c1.1） */const nu=src[k][id];if(!nu)continue;
+    for(const k of ['rtn','rlog','payppl','kinds','tools','places','projects','marks','bedp','arp','todos','plreg','plgrp','kgrp','trs','srr','tdq','ksub','dlg','dgoal'])for(const id in (src[k]||{})){   /* kinds／tools＝行の種類・道具（c1.1） */const nu=src[k][id];if(!nu)continue;
       out[k]=out[k]||{};const cur=out[k][id];if(!cur||((nu.ts||0)>(cur.ts||0)))out[k][id]=nu;}
     for(const id in (src.pins||{})){const nu=src.pins[id];if(!nu)continue;
       out.pins=out.pins||{};const cur=out.pins[id];
@@ -1831,7 +1832,7 @@ function mergeStates(a,b){
   /* 知らないトップレベル項目も捨てない（新旧バージョン混在でもデータを失わない） */
   /* payrep も必ずここに入れる。入れ忘れると、下の「知らない項目」の写しが、1件ずつ合わせた結果を丸ごと上書きする
      ＝別の端末で止めた・再開した印が消える（2026-09-30レビュー指摘） */
-  const known={updatedAt:1,dream:1,entries:1,plans:1,ai:1,dreams:1,memos:1,life:1,photos:1,pha:1,pays:1,rules:1,aims:1,moves:1,pins:1,steps:1,payrep:1,rtn:1,rlog:1,payppl:1,kinds:1,tools:1,places:1,projects:1,marks:1,bedp:1,scr:1,alarm:1,arp:1,todos:1,plreg:1,plgrp:1,kgrp:1,trs:1,srr:1,tdq:1,ksub:1,cond:1};
+  const known={updatedAt:1,dream:1,entries:1,plans:1,ai:1,dreams:1,memos:1,life:1,photos:1,pha:1,pays:1,rules:1,aims:1,moves:1,pins:1,steps:1,payrep:1,rtn:1,rlog:1,payppl:1,kinds:1,tools:1,places:1,projects:1,marks:1,bedp:1,scr:1,alarm:1,arp:1,todos:1,plreg:1,plgrp:1,kgrp:1,trs:1,srr:1,tdq:1,ksub:1,cond:1,dlg:1,dgoal:1};
   const newer=((b.updatedAt||0)>=(a.updatedAt||0))?b:a;
   const older=(newer===b)?a:b;
   for(const k in older)if(!known[k]&&older[k]!==undefined)out[k]=older[k];
@@ -3647,7 +3648,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+   /* 同期の状態1行と記録（クラウド版 c1.9） */
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c11.5）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c11.6）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -4333,7 +4334,7 @@ function openSettings(){
   $('sheet').innerHTML=
     '<div class="grab"></div>'+
     '<div class="sh-time"><span>⭐ 夢と設定</span></div>'+
-    '<div class="set-row"><div class="sh-label">✎ ボタンの編集（足す・直す・消す・カテゴリー移動）</div><div class="sr-r be-entry"><button class="chip" data-be="kinds">🏷️ 何をした</button><button class="chip" data-be="places">📍 場所</button><button class="chip" data-be="trs">🚗 移動手段</button><button class="chip" data-be="srr">🕳️ ムダの理由</button><button class="chip" data-be="tdq">🗑 やめる理由</button><button class="chip" data-be="tools">🧰 道具</button></div><div class="sh-note" style="text-align:left">パソコンでもスマホでも同じ。同期は1つずつ新しく直した方が残る</div></div>'+   /* c10.9 */
+    '<div class="set-row"><div class="sh-label">✎ ボタンの編集（足す・直す・消す・カテゴリー移動）</div><div class="sr-r be-entry"><button class="chip" data-be="kinds">🏷️ 何をした</button><button class="chip" data-be="places">📍 場所</button><button class="chip" data-be="trs">🚗 移動手段</button><button class="chip" data-be="srr">🕳️ ムダの理由</button><button class="chip" data-be="tdq">🗑 やめる理由</button><button class="chip" data-be="tools">🧰 道具</button><button class="chip" data-be="dlg">🤖 任せる先</button><button class="chip" data-be="dgoal">🎯 任せる時のゴール</button></div><div class="sh-note" style="text-align:left">パソコンでもスマホでも同じ。同期は1つずつ新しく直した方が残る</div></div>'+   /* c10.9 */
     '<div class="set-row"><div class="sh-label">🕳️ ムダの数え方</div><div class="sr-r"><button class="chip'+(mudaAuto()?'':' sel')+'" data-mda="0">✋ 自分で押した🕳️だけ</button><button class="chip'+(mudaAuto()?' sel':'')+'" data-mda="1">🤖 自動も数える</button></div><div class="sh-note" style="text-align:left">自動＝種類の🕳️印・深夜の食事・運転だけの移動・二度寝・寝坊など。パターンが決まったら自動に戻せる</div></div>'+   /* c11.3 */
     '<div class="set-row"><div class="sh-label">📅 Google連携（カレンダー）</div>'+
     '<button class="bkbtn" id="gAcctBox" style="text-align:left;font-weight:700;font-size:12.5px">確認中…</button>'+
@@ -6301,7 +6302,10 @@ function btnRefresh(){try{
 function beSet(key,id,patch){mutate(()=>{state[key]=state[key]||{};state[key][id]=Object.assign({},state[key][id]||{},patch,{ts:Date.now()});});btnRefresh();}
 function beNewId(p){return p+Date.now().toString(36)+Math.floor(Math.random()*36*36).toString(36);}
 /* 一覧の編集（移動手段・ムダの理由・やめる理由・道具） */
-const BE_CFG={trs:{t:'🚗 移動手段',base:()=>TRS0.map(x=>{const s=String(x[1]),i=s.indexOf(' ');return [x[0],i>0?s.slice(0,i):s,i>0?s.slice(i+1):s];}),pre:'tr'},
+const DLG0=[['claude','🟠','Claude','https://claude.ai/new'],['cc','💻','Claude Code',''],['codex','⚫','Codex','https://chatgpt.com/codex'],['gpt','🟢','ChatGPT','https://chatgpt.com/'],['gemini','🔵','Gemini','https://gemini.google.com/app']];
+const DGOAL0=[['research','🔎','調べてまとめる'],['draft','📝','下書きを作る'],['all','✅','全部やり切る'],['ideas','💡','案を3つ出す']];
+function dlgList(){return beList('dlg',DLG0).map(x=>{const o=(state.dlg||{})[x.id],b=DLG0.find(y=>y[0]===x.id);x.url=(o&&o.url!=null)?String(o.url):(b?b[3]:'');return x;});}
+const BE_CFG={dlg:{t:'🤖 任せる先（AI・人）',base:()=>DLG0,pre:'dl',url:1},dgoal:{t:'🎯 任せる時のゴール',base:()=>DGOAL0,pre:'dg'},trs:{t:'🚗 移動手段',base:()=>TRS0.map(x=>{const s=String(x[1]),i=s.indexOf(' ');return [x[0],i>0?s.slice(0,i):s,i>0?s.slice(i+1):s];}),pre:'tr'},
   srr:{t:'🕳️ ムダの理由',base:()=>SR_R0,pre:'sr'},tdq:{t:'🗑 やる事をやめる理由',base:()=>TD_Q0,pre:'tq'},
   tools:{t:'🧰 道具（何を使って）',base:()=>TOOL_BASE,pre:'tl',tools:1}};
 function beOpenList(key,back){const C=BE_CFG[key];let sel=null,adding=false,arm='';
@@ -6310,19 +6314,20 @@ function beOpenList(key,back){const C=BE_CFG[key];let sel=null,adding=false,arm=
   const paint=()=>{const L=items();let s='<div class="sh-time"><span>✎ '+esc(C.t)+'</span></div><div class="sh-note" style="text-align:left">押すと 絵・名前を直す'+(C.tools?'':'・並べ替え')+'・消す。消しても前の記録は残る</div>';
     s+='<div class="sr-r">'+L.map(x=>'<button class="chip'+(x.id===sel?' sel':'')+'" data-bi="'+esc(x.id)+'">'+esc(x.ic)+' '+esc(x.lb)+'</button>').join('')+'<button class="chip pe-add" id="beAdd">＋ 足す</button></div>';
     if(sel){const x=L.find(y=>y.id===sel);if(x){const i=L.indexOf(x);s+='<div class="pe-op"><div class="pe-nm"><input type="text" id="beIc" class="ks-ic" maxlength="4" value="'+esc(x.ic)+'" style="flex:0 0 3.2em;text-align:center"><input type="text" id="beLb" maxlength="20" value="'+esc(x.lb)+'"><button class="chip" id="beSave">直す</button></div>'+
+      (C.url?'<div class="pe-nm"><input type="url" id="beUrl" placeholder="開く画面のURL（無ければコピーだけ）" value="'+esc(((dlgList().find(y=>y.id===x.id))||{}).url||'')+'"></div>':'')+
       '<div class="sr-r">'+(C.tools?'':'<button class="chip" id="beUp"'+(i<=0?' disabled':'')+'>⬆ 前へ</button><button class="chip" id="beDn"'+(i>=L.length-1?' disabled':'')+'>⬇ 後ろへ</button>')+'<button class="chip pe-del" id="beDel">'+(arm===x.id?'🗑 本当に消す？':'🗑 消す')+'</button></div></div>';}}
-    if(adding)s+='<div class="pe-op"><div class="pe-nm"><input type="text" id="beNIc" class="ks-ic" maxlength="4" value="📌" style="flex:0 0 3.2em;text-align:center"><input type="text" id="beNLb" maxlength="20" placeholder="名前"><button class="chip" id="beNGo">足す</button></div></div>';
+    if(adding)s+='<div class="pe-op"><div class="pe-nm"><input type="text" id="beNIc" class="ks-ic" maxlength="4" value="📌" style="flex:0 0 3.2em;text-align:center"><input type="text" id="beNLb" maxlength="20" placeholder="名前"><button class="chip" id="beNGo">足す</button></div>'+(C.url?'<div class="pe-nm"><input type="url" id="beNUrl" placeholder="開く画面のURL（無ければコピーだけ）"></div>':'')+'</div>';
     s+='<div class="sh-btns"><button class="savebtn" id="beOk">閉じる</button></div>';
     openSub(s,back||null);const S=$('sheet2');
     S.querySelectorAll('[data-bi]').forEach(b=>b.onclick=()=>{sel=sel===b.dataset.bi?null:b.dataset.bi;adding=false;arm='';paint();});
     $('beAdd').onclick=()=>{adding=!adding;sel=null;paint();const i=$('beNLb');if(i)i.focus();};
-    {const x=$('beSave');if(x)x.onclick=()=>{const lb=($('beLb').value||'').trim(),ic=($('beIc').value||'').trim();if(!lb)return;put(sel,{lb,ic:ic||'📌'});toast('直した');paint();};}
+    {const x=$('beSave');if(x)x.onclick=()=>{const lb=($('beLb').value||'').trim(),ic=($('beIc').value||'').trim();if(!lb)return;const p={lb,ic:ic||'📌'};if(C.url&&$('beUrl'))p.url=($('beUrl').value||'').trim();put(sel,p);toast('直した');paint();};}
     {const x=$('beDel');if(x)x.onclick=()=>{if(arm!==sel){arm=sel;paint();return;}put(sel,{off:1});toast('消した（前の記録は残る）');sel=null;arm='';paint();};}
     const mv=d=>{const L=items(),i=L.findIndex(y=>y.id===sel),j=i+d;if(i<0||j<0||j>=L.length)return;[L[i],L[j]]=[L[j],L[i]];
       mutate(()=>{state[key]=state[key]||{};L.forEach((y,k)=>{state[key][y.id]=Object.assign({},state[key][y.id]||{},{o:k*10,ts:Date.now()});});});btnRefresh();paint();};
     {const x=$('beUp');if(x)x.onclick=()=>mv(-1);}{const x=$('beDn');if(x)x.onclick=()=>mv(1);}
     {const x=$('beNGo');if(x)x.onclick=()=>{const lb=($('beNLb').value||'').trim(),ic=($('beNIc').value||'').trim()||'📌';if(!lb)return;const id=beNewId(C.pre);
-      if(C.tools)toolSet(id,{lb,ic});else beSet(key,id,{lb,ic,own:1,o:(items().length+1)*10});adding=false;toast('足した：'+ic+' '+lb);paint();};}
+      if(C.tools)toolSet(id,{lb,ic});else{const p={lb,ic,own:1,o:(items().length+1)*10};if(C.url&&$('beNUrl'))p.url=($('beNUrl').value||'').trim();beSet(key,id,p);}adding=false;toast('足した：'+ic+' '+lb);paint();};}
     $('beOk').onclick=closeSub;};
   paint();}
 /* 何をした（種類）とカテゴリーの編集 */
@@ -6424,6 +6429,23 @@ function tdQuitSheet(id,after){let r='';const paint=()=>{openSub('<div class="sh
     $('tqNo').onclick=closeSub;$('tqOk').onclick=()=>{if(!r){toast('理由を1つ押してくれ');return;}const m=($('tqM').value||'').trim().slice(0,200);closeSub();tdSet(id,{quit:{r,m,at:todayStr()}});mutate(()=>tdUnplace(id));toast(r==='someday'?'⏳ いつかに入れた':'🗑 やめた（記録は残る）');if(after)after();};};paint();}
 const TD_TG={head:['🧠','頭を使う'],hand:['🙌','手を動かす'],ai:['🤖','AIに任せる']};   /* c11.5：3つだけ */
 function tdBadDay(){return condToday()==='bad';}
+/* c11.6：［🤖 任せる］ */
+function dlgText(x,goal){const t=todayStr();const due=x.s?((x.sd&&x.sd!==t?x.sd.slice(5).replace('-','/'):'今日')+' '+x.s+(x.e?'〜'+x.e:'')):'特になし';
+  return '次の作業をやってほしい。\nやる事：'+x.t+'\n詳細：'+(x.c?x.c:'なし')+'\n期限：'+due+'\nどこまで：'+goal;}
+function dlgSheet(id,after){const x=(state.todos||{})[id];if(!x)return;let g='';
+  const paint=()=>{const G=beList('dgoal',DGOAL0),D=dlgList();
+    openSub('<div class="sh-time"><span>🤖 任せる</span></div><div class="sh-note" style="text-align:left"><b>'+esc(x.t)+'</b><br>① どこまで（1つ押す）→ ② 任せる先を押す＝文章をコピー（AIはその画面も開く）</div>'+
+      '<div class="sh-label">① どこまで</div><div class="sr-r">'+G.map(y=>'<button class="chip'+(g===y.id?' sel':'')+'" data-dg="'+esc(y.id)+'">'+esc(y.ic)+' '+esc(y.lb)+'</button>').join('')+'</div>'+
+      '<div class="sh-label">② 任せる先</div><div class="sr-r big">'+D.map(y=>'<button class="chip" data-dl="'+esc(y.id)+'">'+esc(y.ic)+' '+esc(y.lb)+'</button>').join('')+'</div>'+
+      '<div class="sh-note" style="text-align:left">任せる先・ゴールは ⚙️設定 → ✎ボタンの編集 で足す・直す・消す</div><div class="sh-btns"><button class="delbtn" id="dlNo">やめる</button></div>',null);
+    const S=$('sheet2');S.querySelectorAll('[data-dg]').forEach(b=>b.onclick=()=>{g=b.dataset.dg;paint();});
+    S.querySelectorAll('[data-dl]').forEach(b=>b.onclick=async()=>{const G2=beList('dgoal',DGOAL0),gl=(G2.find(y=>y.id===g)||G2[0]||{lb:'全部やり切る'}).lb;if(!g){toast('① どこまで を先に押して');return;}
+      const D2=dlgList(),to=D2.find(y=>y.id===b.dataset.dl);const txt=dlgText(x,gl);let ok=false;try{await navigator.clipboard.writeText(txt);ok=true;}catch(e){}
+      if(!ok){try{const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();ok=document.execCommand('copy');ta.remove();}catch(e){}}
+      tdSet(id,{tg:'ai',dlg:{to:to.lb,ic:to.ic,at:Date.now()}});closeSub();toast((ok?'📋 コピーした':'⚠ コピーできなかった')+'→ '+to.ic+' '+to.lb+(to.url?' を開く':'に貼る'));
+      if(to.url){try{window.open(to.url,'_blank');}catch(e){}}if(after)after();});
+    $('dlNo').onclick=closeSub;};
+  paint();}
 function tdEditSheet(id,after){const x=(state.todos||{})[id];if(!x)return;const t=todayStr();
   openSub('<div class="sh-time"><span>📋 やる事</span></div><input type="text" id="teT" maxlength="60" value="'+esc(x.t)+'" style="width:100%">'+
     '<textarea id="teC" rows="3" placeholder="詳細（このタイトルの中身・書かなくてもいい）" style="width:100%;margin-top:6px">'+esc(x.c||'')+'</textarea>'+
@@ -6432,7 +6454,7 @@ function tdEditSheet(id,after){const x=(state.todos||{})[id];if(!x)return;const 
       '<div class="te-dtq"><button class="chip" data-teq="now">今から30分</button><button class="chip" data-teq="night">今日の夜 21:00</button><button class="chip" data-teq="morn">明日の朝 9:00</button>'+(x.s?'<button class="chip" data-teq="clr">日時を外す</button>':'')+'</div>'+
       '<div class="sh-note" style="text-align:left;margin:4px 0 0">入れると、その時間の日記の記録に1行で入る</div></details>'+
     '<div class="sr-r te-tg">'+Object.keys(TD_TG).map(k=>'<button class="chip'+(x.tg===k?' sel':'')+'" data-tetg="'+k+'">'+TD_TG[k][0]+' '+TD_TG[k][1]+'</button>').join('')+'</div>'+   /* c11.5 */
-    '<div class="sr-r big" style="margin-top:6px"><button class="chip" id="teDone">✅ 完了</button><button class="chip" id="tePin">'+(x.pin===t?'🎯 今やるを外す':'🎯 今やる')+'</button>'+(tdDays(x)>=2?'<button class="chip" id="teSmall">🪄 小さくする</button>':'')+'<button class="chip" id="teQuit">🗑 やめる</button></div>'+
+    '<div class="sr-r big" style="margin-top:6px"><button class="chip" id="teDone">✅ 完了</button><button class="chip" id="tePin">'+(x.pin===t?'🎯 今やるを外す':'🎯 今やる')+'</button>'+(tdDays(x)>=2?'<button class="chip" id="teSmall">🪄 小さくする</button>':'')+'<button class="chip" id="teDlg">🤖 任せる</button><button class="chip" id="teQuit">🗑 やめる</button></div>'+
     '<div class="sh-btns"><button class="delbtn" id="teDel">消す</button><button class="savebtn" id="teOk">保存</button></div>',null);
   const rd=m=>pad(Math.floor(m/60)%24)+':'+pad(m%60);
   $('sheet2').querySelectorAll('[data-teq]').forEach(b=>b.onclick=()=>{const v=b.dataset.teq,n=new Date(),now=Math.ceil((n.getHours()*60+n.getMinutes())/5)*5;
@@ -6448,6 +6470,7 @@ function tdEditSheet(id,after){const x=(state.todos||{})[id];if(!x)return;const 
 
   {const b=$('teSmall');if(b)b.onclick=()=>{save();closeSub();tdNew('最初の5分だけ：'+x.t,{pin:t,par:id});toast('🪄 最初の5分だけ、を今やるにした');if(after)after();};}
   $('teQuit').onclick=()=>{save();tdQuitSheet(id,after);};
+  $('teDlg').onclick=()=>{save();dlgSheet(id,after);};   /* c11.6 */
   $('teDel').onclick=()=>{if(!confirm('このやる事を消す？（やめるなら🗑やめるの方が記録が残る）'))return;closeSub();mutate(()=>{tdUnplace(id);state.todos[id]={del:1,ts:Date.now()};});if(after)after();};}
 function openTodoPage(){closeSheet();renderTodoPage();}
 let tdMore=false;
@@ -6455,7 +6478,7 @@ let tdAllShow=false;
 function renderTodoPage(){pageMode='todo';const p=$('page');const t=todayStr();const op0=tdSorted(tdOpen()),bad=tdBadDay()&&!tdAllShow,op=bad?op0.filter(x=>x.tg==='hand'||x.tg==='ai'):op0,hid=op0.length-op.length,later=tdSorted(tdLater()),dn=tdDoneToday(),sd=tdAll().filter(x=>x.quit&&x.quit.r==='someday');
   const rowsWip=stList().filter(x=>x.a.st==='wip'&&!x.a.td),rowsDone=stList().filter(x=>x.a.st==='done'&&!x.a.td&&(x.a.dn||x.d)===t);
   const tagC=x=>{const n=tdDays(x);return n<=0?'':n===1?'c1':n<6?'c2':'c3';};
-  const item=x=>'<div class="td-it'+(x.pin===t?' pin':'')+'"><button class="td-ck" data-tdc="'+esc(x.id)+'" aria-label="完了">◻️</button><button class="td-b" data-tde="'+esc(x.id)+'"><b>'+(x.pin===t?'🎯 ':'')+(x.tg&&TD_TG[x.tg]?TD_TG[x.tg][0]+' ':'')+esc(x.t)+'</b>'+
+  const item=x=>'<div class="td-it'+(x.pin===t?' pin':'')+'"><button class="td-ck" data-tdc="'+esc(x.id)+'" aria-label="完了">◻️</button><button class="td-b" data-tde="'+esc(x.id)+'"><b>'+(x.pin===t?'🎯 ':'')+(x.tg&&TD_TG[x.tg]?TD_TG[x.tg][0]+' ':'')+esc(x.t)+'</b>'+(x.dlg?'<em class="td-dlg">🤖→'+esc(x.dlg.to)+'</em>':'')+
     (tdTag(x)?'<em class="'+tagC(x)+'">'+esc(tdTag(x))+'</em>':'')+(x.s?'<i>🕐 '+esc((x.sd&&x.sd!==t?x.sd.slice(5).replace('-','/')+' ':'')+x.s+'–'+(x.e||''))+'</i>':'')+(x.c?'<small>'+esc(x.c.slice(0,60))+'</small>':'')+'</button>'+
     (tdDays(x)>=2?'<div class="td-ac"><button data-tds="'+esc(x.id)+'">🪄 小さく</button><button data-tdt="'+esc(x.id)+'">🕐 時間</button><button data-tdq="'+esc(x.id)+'">🗑 やめる</button></div>':'')+'</div>';
   const shown=tdMore?op:op.slice(0,3);
@@ -6590,11 +6613,11 @@ function condToday(){const c=(state.cond||{})[todayStr()];return c&&!c.del?c.v:'
 function openRecover(){const A=alarmCfg(),sd=sleepDay(todayStr());const late=(sd&&sd.lastWake&&sd.lastWake>A.wake)?hmMin(sd.lastWake)-hmMin(A.wake):0;
   const paint=()=>{const op=tdSorted(tdOpen()),t=todayStr();
     openSub('<div class="sh-time"><span>🔁 挽回の計画</span></div><div class="sh-note" style="text-align:left">起きる時刻を <b>'+esc(durText(late)||'0分')+'</b> 過ぎた。今日のやる事を、小さくする・AIに任せる・明日へ回すで、取り戻す'+(condToday()==='bad'?'<br>😵 しんどい日：🧠頭を使う物は🤖AIか明日へ':'')+'</div>'+
-      (op.length?op.map(x=>'<div class="rc-it"><b>'+(x.tg?TD_TG[x.tg][0]+' ':'')+esc(x.t)+'</b><div class="sr-r"><button class="chip" data-rcs="'+esc(x.id)+'">🪄 小さく</button><button class="chip'+(x.tg==='ai'?' sel':'')+'" data-rca="'+esc(x.id)+'">🤖 AIに任せる</button><button class="chip" data-rcl="'+esc(x.id)+'">⏭ 明日へ</button></div></div>').join(''):'<div class="an-empty">今日のやる事は無い。📋やる事に足すと、ここで取り戻し方を決められる</div>')+
+      (op.length?op.map(x=>'<div class="rc-it"><b>'+(x.tg?TD_TG[x.tg][0]+' ':'')+esc(x.t)+'</b><div class="sr-r"><button class="chip" data-rcs="'+esc(x.id)+'">🪄 小さく</button><button class="chip'+(x.dlg?' sel':'')+'" data-rca="'+esc(x.id)+'">🤖 任せる'+(x.dlg?'（'+esc(x.dlg.to)+'）':'')+'</button><button class="chip" data-rcl="'+esc(x.id)+'">⏭ 明日へ</button></div></div>').join(''):'<div class="an-empty">今日のやる事は無い。📋やる事に足すと、ここで取り戻し方を決められる</div>')+
       '<div class="sh-btns"><button class="delbtn" id="rcTodo">📋 やる事を開く</button><button class="savebtn" id="rcOk">閉じる</button></div>',null);
     const S=$('sheet2');
     S.querySelectorAll('[data-rcs]').forEach(b=>b.onclick=()=>{const x=state.todos[b.dataset.rcs];tdNew('最初の5分だけ：'+x.t,{pin:t,par:b.dataset.rcs});toast('🪄 最初の5分だけ、を今やるにした');paint();});
-    S.querySelectorAll('[data-rca]').forEach(b=>b.onclick=()=>{const x=state.todos[b.dataset.rca];tdSet(b.dataset.rca,{tg:x.tg==='ai'?null:'ai'});paint();});
+    S.querySelectorAll('[data-rca]').forEach(b=>b.onclick=()=>{dlgSheet(b.dataset.rca,()=>{});});   /* c11.6：任せる画面へ */
     S.querySelectorAll('[data-rcl]').forEach(b=>b.onclick=()=>{tdSet(b.dataset.rcl,{sd:addDays(t,1),pin:null});toast('⏭ 明日へ回した');paint();});
     $('rcTodo').onclick=()=>{closeSub();openTodoPage();};$('rcOk').onclick=closeSub;};
   paint();}
@@ -8053,7 +8076,7 @@ async function clRpcJson(name,body,sig,ms){const t=await clRpcText(name,typeof b
 async function clRpc(name,body){return clRpcJson(name,body);}   /* 旧版と同じ名前（他から呼ばれても動く） */
 
 /* ---------- state ⇄ 項目（1行） ---------- */
-const CL_ID=['dreams','memos','pays','aims','moves','pins','steps','payrep','rtn','rlog','payppl','pha','kinds','tools','places','projects','marks','bedp','arp','todos','plreg','plgrp','kgrp','trs','srr','tdq','ksub'];   /* c7.9：todos＝📋やる事 */   /* c4.8：arp＝場所ごとの区・市町村 */   /* c4.7：marks＝🕳️😤😫の申告、bedp＝場所ごとの🛏️/🪑 */
+const CL_ID=['dreams','memos','pays','aims','moves','pins','steps','payrep','rtn','rlog','payppl','pha','kinds','tools','places','projects','marks','bedp','arp','todos','plreg','plgrp','kgrp','trs','srr','tdq','ksub','dlg','dgoal'];   /* c7.9：todos＝📋やる事 */   /* c4.8：arp＝場所ごとの区・市町村 */   /* c4.7：marks＝🕳️😤😫の申告、bedp＝場所ごとの🛏️/🪑 */
 const CL_DAY=['ai','rules','scr','cond'];   /* c11.5：cond＝体調（日ごと） */   /* c4.7：scr＝夜に入れる📲📞の数字（日ごと） */
 const CL_DAY2=['entries','plans'];
 const CL_SKIP={updatedAt:1,photos:1};
@@ -8617,7 +8640,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c11.5";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c11.6";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 /* ログインの後：同じユーザーなら影はそのまま（全件受信をやり直さない）。違うユーザーならそのユーザーの影を読む */
 async function clAfterLogin(){
