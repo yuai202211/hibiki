@@ -1488,7 +1488,7 @@
     <button class="nb" id="navMemo"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6zM14 3v5h5M9 12h7M9 16h7"/></svg><span>メモ</span></button>
     </div><div class="nvp">
     <button class="nb" id="navRtn"><svg viewBox="0 0 24 24"><path d="M4 5.5C4 4.7 4.7 4 5.5 4H11v16H5.5c-.8 0-1.5-.7-1.5-1.5zM20 5.5c0-.8-.7-1.5-1.5-1.5H13v16h5.5c.8 0 1.5-.7 1.5-1.5zM7 8h2M15 8h2M7 11h2M15 11h2"/></svg><span>ルーティン</span><i class="nbdg z" id="navRtnB" style="display:none"></i></button>
-    <button class="nb" id="navAim"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2"/></svg><span>一手</span><i class="nbdg z" id="navAimB" style="display:none"></i></button><span class="nb nbx"></span><span class="nb nbx"></span><span class="nb nbx"></span>
+    <button class="nb" id="navAim"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2"/></svg><span>一手</span><i class="nbdg z" id="navAimB" style="display:none"></i></button><button class="nb" id="navRule"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 12.5l2.8 2.8L16.5 9"/></svg><span>ルール</span></button><button class="nb" id="navSleep"><svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/></svg><span>睡眠</span></button><span class="nb nbx"></span>
     </div></div><div class="nvd" id="nvd"><i class="on" data-nvp="0"></i><i data-nvp="1"></i></div>
   </div>
 
@@ -2455,6 +2455,7 @@ async function boot(){
   }catch(e){}
   /* 書きかけが残っていたら、消さずにメモとして拾う（クラッシュ対策の端末保存側も見る） */
   try{
+    try{let dn=0;for(const id in (state.memos||{})){const m=state.memos[id];if(m&&!m.del&&/^dr\d/.test(id)&&String(m.t||'').indexOf('【復元した書きかけ')===0){state.memos[id]={del:1,ts:Date.now()};dn++;}}if(dn){state.updatedAt=Date.now();saveLocal(false);pendingCkpt=true;}}catch(e0){}   /* c9.9：本人承認で消す */
     let drRaw=sessionStorage.getItem('nippo10-draft');
     if(!drRaw){try{drRaw=localStorage.getItem('nippo10-draft-ls');}catch(e0){}}
     if(drRaw){
@@ -2476,17 +2477,24 @@ async function boot(){
       const axDr=(dr&&dr.entry&&dr.entry.acts)?String(dr.entry.acts):'';
       const needEntry=dr&&dr.entry&&((dr.entry.text&&!hasText(dr.entry.text))||(axDr&&axDr!==actsSaved()));
       if(needEntry){
-        state.memos=state.memos||{};
+        const de=dr.entry,ax0=(axDr&&axDr!==actsSaved())?axDr:'';   /* c9.9：メモにしないで、記録の画面を書きかけ入りで開く */
+        setTimeout(()=>{try{openEntrySheet(de.date,de.key!=null?{key:de.key,draft:{text:de.text||'',ax:ax0,place:de.place||'',rt:de.rt||''}}:{hour:de.hour,draft:{text:de.text||'',ax:ax0,place:de.place||'',rt:de.rt||''}});const sp=$('shPlace');if(sp&&!sp.value&&de.place)sp.value=de.place;const mr=$('mvRt');if(mr&&de.rt&&(!mr.value||mr.classList.contains('auto'))){mr.value=de.rt;mr.classList.remove('auto');}toast('🛟 書きかけを戻した（保存は［記録］）');}catch(e){}},800);
+      }
+      if(0){
         state.memos['dr'+Date.now()]={t:'【復元した書きかけ '+dr.entry.date+' '+dr.entry.hour+'時】'+(dr.entry.place?'＠'+dr.entry.place+' ':'')+(dr.entry.rt?'🚗'+dr.entry.rt+' ':'')+(dr.entry.text||'')+(axDr?((dr.entry.text?'\n':'')+'【やったこと】'+axDr):''),ts:Date.now()};
         recovered=true;
       }
       if(dr&&dr.memo&&dr.memo.text&&!hasText(dr.memo.text)){
-        state.memos=state.memos||{};
+        const mt=dr.memo.text;setTimeout(()=>{try{renderMemoEditor(null);const m=$('mTa');if(m){m.value=mt;m.dispatchEvent(new Event('input',{bubbles:true}));}toast('🛟 書きかけのメモを戻した');}catch(e){}},800);
+      }
+      if(0){
         state.memos['dr'+(Date.now()+1)]={t:'【復元した書きかけメモ】'+dr.memo.text,ts:Date.now()};
         recovered=true;
       }
-      if(dr&&dr.other&&dr.other.text&&!hasText(dr.other.text)){
-        state.memos=state.memos||{};
+      if(dr&&dr.other&&dr.other.text&&!hasText(dr.other.text)){   /* c9.9：どの画面か分からない断片はメモにしない（端末にだけ10件まで残す） */
+        try{const L=JSON.parse(localStorage.getItem('hibiki-lost-drafts')||'[]');L.unshift({t:Date.now(),x:dr.other.text});localStorage.setItem('hibiki-lost-drafts',JSON.stringify(L.slice(0,10)));}catch(e1){}
+      }
+      if(0){
         state.memos['dr'+(Date.now()+2)]={t:'【復元した書きかけ（予定・夢など）】'+dr.other.text,ts:Date.now()};
         recovered=true;
       }
@@ -2523,7 +2531,7 @@ async function boot(){
     try{localStorage.removeItem('nippo10-paydraft-ls');}catch(e0){}
     const pd=pr?JSON.parse(pr):null;
     if(pd&&(pd.c||pd.n||pd.a||pd.memo||pd.fa||pd.ta||pd.cd||pd.ot)){
-      if(Date.now()-(pd.t||0)<600000){
+      if(true){   /* c9.9：古くてもメモにしないで支払いの画面を戻す */
         if(!($('page').classList.contains('open')&&pageMode==='pay'))renderPayPage();
         openPaySheet(pd.id||null,pd);
         setTimeout(()=>toast('🛟 入力中だった支払いを戻した'),900);
@@ -3272,44 +3280,7 @@ function renderTimeline(pane){
       (ai.next?'<div class="txt" style="color:#8a90a0">→ 明日：'+esc(ai.next)+'</div>':'')
     ):'＋ 今日のAI — 触った？何を生み出した？')+
     '</div></button>';
-  /* ✅ 毎日のルール（押した分だけ採点） */
-  {
-    const rs=rulesDay(ui.date);
-    const ok=rs.filter(x=>x.s==='ok').length,mid=rs.filter(x=>x.s==='mid').length,ng=rs.filter(x=>x.s==='ng').length;
-    const icons=rs.map(x=>x.s==='ok'?'✅':x.s==='mid'?'△':x.s==='ng'?'✗':'・').join('');
-    html+='<button class="hour filled" id="rulesRow"><span class="hh">✅</span><div class="body">'+
-      '<span class="loc" style="color:'+(ng?'#e0405a':(ok>=5?'var(--green)':'#c98a2f'))+'">ルール '+ok+'/6'+(mid?'（△'+mid+'）':'')+'</span>'+
-      '<div class="txt" style="letter-spacing:.15em">'+icons+'</div></div></button>';
-  }
-  /* 📚 ルーティン（毎日の勉強など。今日やった時間と、やった物に✓） */
-  html+=rtnRowHtml(ui.date);
-  /* 😴 睡眠（この日の睡眠時間と生活態度） */
-  {
-    const sd=sleepDay(ui.date);
-    const sst=(sd&&sd.good)?sleepStreak(null,ui.date):0;   /* 見ている日までの ✅ の連続 */
-    html+='<button class="hour '+(sd?'filled':'gap')+'" id="sleepRow"><span class="hh">😴</span><div class="body">'+
-      (sd?('<span class="loc" style="color:'+sleepColor(sd)+'">睡眠 '+esc(durText(sd.total))+'　'+esc(sd.good?'✅ 良い朝':sd.flags.join('・'))+(sst>1?'　🔥'+sst+'日':'')+'</span>'+
-           '<div class="txt" style="color:#8a90a0">'+esc(sd.main.s)+' → '+esc(sd.main.e)+(sd.main.p?'　📍'+esc(sd.main.p):'')+(sd.ss.length>1?'　＋'+(sd.ss.length-1)+'回':'')+'</div>')
-         :'＋ 睡眠 — 夜「😴 寝る」→ 朝「☀ 起きた」で自動記録。タップで見える化')+
-      '</div></button>';
-  }
-  /* 💴 支払い（毎月の支払いを登録して忘れない） */
-  {
-    const up=paysOf().filter(p=>!p.done);
-    const nx=up.length?up[0]:null;
-    html+='<button class="hour '+(nx?'filled':'gap')+'" id="payRow"><span class="hh">💴</span><div class="body">'+
-      (nx?('<span class="loc" style="color:'+payColor(payDays(nx.d))+'">支払い '+esc(payLabel(payDays(nx.d)))+(up.length>1?'・ほか'+(up.length-1)+'件':'')+'</span>'+
-           '<div class="txt">'+esc(payMDp(nx))+' '+esc(payTitle(nx))+'　'+payYenTxt(nx.a)+'</div>')
-         :'＋ 支払い — 支払先・金額・日付を入れておけば忘れない')+
-      '</div></button>';
-  }
-  /* メモ（白紙＋AI整理）——日記の続きに置く */
-  const mms=memosOf();
-  html+='<button class="hour '+(mms.length?'filled':'gap')+'" id="memoRow"><span class="hh">📝</span><div class="body">'+
-    (mms.length?('<span class="loc" style="color:#8a90a0">メモ '+mms.length+'件</span>'+
-      '<div class="txt" style="color:#8a90a0">'+esc((mms[0].t||'').split('\n')[0].slice(0,32))+'</div>')
-    :'＋ メモ — 白紙に書き殴る。整理はAIがやる')+
-    '</div></button>';
+  /* c9.9：ルール・ルーティン・睡眠・支払い・メモの行はトップに出さない（下のボタンから開く・本人指示） */
   html+='<div class="lgo"><button id="alarmBtn">⏰ 注意の時刻を変える</button><small>'+esc(alarmSummary())+'</small></div>';   /* c4.7：本人が自由に変えられる */
   if(typeof clLogout==='function'&&typeof cloudLoggedIn==='function'&&cloudLoggedIn())html+='<div class="lgo"><button id="appLogout">🚪 ログアウト（最新の版に入れ替える）</button><small>今の版 '+esc(String(typeof CL_APPVER!=='undefined'?CL_APPVER:''))+'。押すと、送っていない記録を送ってからログアウト→最新の版を読み込む。入り直せば続きから</small></div>';   /* トップの一番下（本人指示） */
   pane.innerHTML=html;
@@ -3347,7 +3318,7 @@ function renderTimeline(pane){
     const p=b.dataset.ck.split('|');
     openEntrySheet(p[0],{key:p[1]});   /* またぎ記録は開始日側の記録を開く */
   });
-  const ar=pane.querySelector('#aiRow');if(ar)ar.onclick=()=>openAiSheet(ui.date);
+  const ar=pane.querySelector('#aiRow');if(ar){ar.onclick=()=>openAiSheet(ui.date);const w=pane.querySelector('.hour.wr');if(w&&w.parentNode)w.after(ar);ar.classList.add('ai-top');}   /* c9.9：書くの行のすぐ下 */
   const mr=pane.querySelector('#memoRow');if(mr)mr.onclick=openMemoPage;
   const pyr=pane.querySelector('#payRow');if(pyr)pyr.onclick=openPayPage;
   const slr=pane.querySelector('#sleepRow');if(slr)slr.onclick=openSleepPage;
@@ -3635,7 +3606,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+   /* 同期の状態1行と記録（クラウド版 c1.9） */
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c9.8）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c9.9）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -3828,7 +3799,7 @@ function openEntrySheet(date,ref){
     '<div class="sh-btns main">'+(sheetSt.existing?'<button class="delbtn" id="shDel">削除</button>':'')+'<button class="pjchip" id="pjChip">📌 案件</button>'+
     '<button class="savebtn" id="shSave">記　録</button></div>';   /* c6.4：記録は一番下に固定（どこにいても1タップ） */
   $('shTa').value=(ex&&ex.t)||'';
-  let frs=String((ex&&ex.t)||'').split(/\n\s*\n/).map(x=>x.trim()).filter(Boolean),frPaint=()=>{};   /* 自由に書く欄（1つずつ） */
+  const dft=ref&&ref.draft;let frs=String(((dft&&dft.text)?dft.text:(ex&&ex.t))||'').split(/\n\s*\n/).map(x=>x.trim()).filter(Boolean),frPaint=()=>{};if(dft&&dft.ax)frs.push('【やったこと】'+dft.ax);   /* c9.9：書きかけを戻す */   /* 自由に書く欄（1つずつ） */
   $('shPlace').value=(ex&&ex.p)||'';$('tdX').value=(ex&&ex.dx)||'';
   /* 滞在／移動／休憩／睡眠の切り替え */
   let eType=(ex&&ex.mv)?'move':(ex&&ex.k==='incar')?'incar':'stay';sheetSt.sub=!!(ex&&!ex.del&&!mgDstOk(ex)&&ex.k!=='sleep');   /* c9.8：サブ日記はOFFで開く */   /* c6.2：食事・休憩・睡眠・AI・仕事は「ずっと」の行で見せる */
@@ -4129,7 +4100,7 @@ function openEntrySheet(date,ref){
     if(ids.length)toast('✓ '+ids.length+'枚追加（「記録」で確定）');
   };
   /* 自由に書く：欄ごとにマイク（音声入力）・✕。書いた物は1つの本文（en.t）にまとめて保存 */
-  const frSync=()=>{$('shTa').value=frs.map(x=>String(x||'').trim()).filter(Boolean).join('\n\n');};
+  const frSync=()=>{$('shTa').value=frs.map(x=>String(x||'').trim()).filter(Boolean).join('\n\n');};if(dft&&dft.text)setTimeout(()=>{try{frSync();}catch(e){}},0);
   frPaint=focusLast=>{const w=$('frRows');if(!w)return;
     w.innerHTML=frs.map(x=>'<div class="frrow"><textarea class="fr-t" rows="3" placeholder="'+(SR?'話すか、書く':'自由に書く（キーボードのマイクで音声入力もできる）')+'">'+esc(x||'')+'</textarea><div class="fr-side"><button class="ac-x fr-x" aria-label="この欄を消す">✕</button><button class="fr-mic" aria-label="音声で書く">'+MICSVG+'</button></div></div>').join('');
     [...w.querySelectorAll('.frrow')].forEach((r,i)=>{const ta=r.querySelector('.fr-t');ta.oninput=()=>{frs[i]=ta.value;frSync();};
@@ -4176,6 +4147,7 @@ function openEntrySheet(date,ref){
     if(sheetSt.longQ&&!items.length&&!(canE))void 0;
     openSub('',null);paint();};
   $('shSave').onclick=()=>{
+    try{frSync();}catch(e){}   /* c9.9：戻した書きかけも必ず本文へ */
     if(sheetSt&&!sheetSt.sorted){acRead();const longQ=(eType==='stay'||eType==='incar')&&tE&&durMin(tS,tE,(tE<=tS&&tEd===0)?1:tEd)>=240&&!acts.some(a=>a.k);   /* c5.9：行に種類が1つでもあれば聞かない（行と食い違わない） */   /* 4時間以上の滞在で「ずっと」が無い */
       void longQ;}   /* c9.2：保存で仕分けの画面は出さない＝押したらすぐ記録（本人指示 2026-10-07）。種類は後で開いて付けられる */   /* 種類の無い行がある時だけ仕分けを出す */
     if(eType!=='move'&&tE&&!sheetSt.longOk){const dm=durMin(tS,tE,(tE<=tS&&tEd===0)?1:tEd);if(dm>=1200){openSub('<div class="sh-time"><span>⏱ '+esc(durText(dm))+' の記録</span></div><div class="sh-note" style="text-align:left">20時間を超えている。終わりの時刻が違っていないか？（終わりが始まりより前だと翌日扱いになる）</div><div class="sh-btns"><button class="delbtn" id="lgFix" style="flex:1">直す</button><button class="savebtn" id="lgGo">このまま保存</button></div>',null);$('lgFix').onclick=closeSub;$('lgGo').onclick=()=>{sheetSt.longOk=true;closeSub();$('shSave').click();};return;}}   /* c4.8：20時間超の注意（本人決定） */
@@ -7512,7 +7484,8 @@ $('navTodo').onclick=()=>navGo(openTodoPage);   /* c7.9：📋やる事（🧱�
 {const w=$('nvw'),d=$('nvd');if(w&&d){const dots=()=>{const p=Math.round(w.scrollLeft/Math.max(1,w.clientWidth));d.querySelectorAll('i').forEach((x,i)=>x.classList.toggle('on',i===p));};w.addEventListener('scroll',dots,{passive:true});
   d.querySelectorAll('[data-nvp]').forEach(x=>x.onclick=()=>{w.scrollTo({left:Number(x.dataset.nvp)*w.clientWidth,behavior:'smooth'});});
   w.addEventListener('wheel',ev=>{if(Math.abs(ev.deltaY)<Math.abs(ev.deltaX)||!ev.deltaY)return;ev.preventDefault();ev.stopPropagation();w.scrollTo({left:(ev.deltaY>0?1:0)*w.clientWidth,behavior:'smooth'});},{passive:false});}}   /* PCはホイールでページ送り */
-$('navAim').onclick=()=>navGo(openAimPage);   /* 🎯一手（毎日のルールはこのページの下から開ける） */
+$('navAim').onclick=()=>navGo(openAimPage);
+$('navRule').onclick=()=>navGo(openRulesPage);$('navSleep').onclick=()=>navGo(openSleepPage);   /* c9.9 */   /* 🎯一手（毎日のルールはこのページの下から開ける） */
 /* 下の4つの見た目：どれを開いているか（緑）／支払いの数（赤＝未払いの件数）／今日のルール達成（n/6）。
    支払いの赤い数字は、💴支払いを開いた時に出る「未払い N件」と必ず同じ数（今月が期日の未払い＋前の月までの払い残し）。
    前は「7日以内と期限超過」の件数で、画面のどの数字とも合わなかった（本人指示 2026-09-30：未払いの数字とリンクさせる）。
@@ -7521,9 +7494,9 @@ function navPaint(){
   try{
     const pg=$('page'),open=pg.classList.contains('open');
     /* ルールのページは🎯一手から開くので、開いている間は🎯を緑にする */
-    const tab=!open?'home':pageMode==='pay'?'pay':pageMode==='memo'?'memo':pageMode==='rtn'?'rtn':pageMode==='ana'?'ana':(pageMode==='todo'||pageMode==='st')?'todo':(pageMode==='aim'||pageMode==='rules')?'aim':'';
+    const tab=!open?'home':pageMode==='pay'?'pay':pageMode==='memo'?'memo':pageMode==='rtn'?'rtn':pageMode==='ana'?'ana':(pageMode==='todo'||pageMode==='st')?'todo':pageMode==='rules'?'rule':pageMode==='aim'?'aim':'';
     pg.classList.toggle('withnav',open&&(pageMode==='pay'||pageMode==='memo'||pageMode==='rules'||pageMode==='aim'||pageMode==='rtn'||pageMode==='ana'||pageMode==='st'||pageMode==='todo'));
-    [['navHome','home'],['navPay','pay'],['navMemo','memo'],['navRtn','rtn'],['navAna','ana'],['navTodo','todo'],['navAim','aim']].forEach(x=>{const b=$(x[0]);if(b)b.classList.toggle('on',tab===x[1]);});
+    [['navHome','home'],['navPay','pay'],['navMemo','memo'],['navRtn','rtn'],['navAna','ana'],['navTodo','todo'],['navAim','aim'],['navRule','rule']].forEach(x=>{const b=$(x[0]);if(b)b.classList.toggle('on',tab===x[1]);});
     const nv=$('nav');if(nv&&nv.offsetHeight)document.documentElement.style.setProperty('--navh',nv.offsetHeight+'px');
     sleepBarTick();
   }catch(e){}
@@ -8409,7 +8382,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c9.8";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c9.9";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 /* ログインの後：同じユーザーなら影はそのまま（全件受信をやり直さない）。違うユーザーならそのユーザーの影を読む */
 async function clAfterLogin(){
