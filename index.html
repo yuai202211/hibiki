@@ -764,7 +764,8 @@
   .tpin.on{height:24px;opacity:1;box-shadow:0 2px 6px rgba(0,0,0,.05)}
   .tref{font-size:11px;font-weight:700;color:#9aa3b5;margin-left:4px}
   .pfflt{display:flex;gap:6px;align-items:center;margin-top:14px;padding-top:10px;border-top:1px dashed var(--line)}.pfflt span{font-size:11.5px;font-weight:800;color:#8a93a6;margin-right:2px}.pfflt button{padding:7px 14px;border-radius:12px;background:#f1f3f8;color:#3b4252;font-weight:800;font-size:13px}.pfflt button.sel{background:#7c3aed;color:#fff}
-.pfflt{flex-wrap:wrap}.pfflt .pf-ed{background:#fff;border:1px dashed #c4cad6;color:#5b6475;margin-left:auto}
+.pfflt{flex-wrap:wrap}.pfflt .pf-tr{background:#eef2ff;color:#4338ca}.pfflt .pf-tr.has{background:#4338ca;color:#fff}.pfflt .pf-tr.sel{box-shadow:inset 0 0 0 2px #4338ca}
+.pfflt .pf-ed{background:#fff;border:1px dashed #c4cad6;color:#5b6475;margin-left:auto}
 .pe-g{margin-top:12px;padding-top:8px;border-top:1px solid var(--line)}.pe-h{display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap}.pe-h b{font-size:15px}
 .pe-gb{display:flex;gap:4px}.pe-gb .chip{font-size:12px;padding:5px 9px}.chip:disabled{opacity:.35}
 .pe-add{background:#e7f9f0!important;color:#0a9a54!important}.pe-del{background:#ffe9ec!important;color:#e0405a!important}
@@ -3652,7 +3653,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+   /* 同期の状態1行と記録（クラウド版 c1.9） */
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c11.9）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c12.0）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -3826,7 +3827,7 @@ function openEntrySheet(date,ref){
       '<div style="display:flex;gap:6px;align-items:center">'+
       '<input type="text" id="mvRt" maxlength="200" style="display:none"><div id="mvPts" style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px"></div>'+   /* c7.0：1か所＝1行（→を押すたびに1行増える・本人指示）。保存は今まで通り「A → B → C」 */
       '<div style="display:flex;flex-direction:column;justify-content:space-between;gap:6px;flex-shrink:0;align-self:stretch"><button class="chip" id="mvSwap" style="font-weight:800;font-size:15px" aria-label="出発と到着を入れ替える">⇅</button><button class="chip" id="mvArrow" style="font-weight:800;font-size:15px" aria-label="次の場所の行を足す">→</button></div></div>'+   /* c10.3：⇅ 入れ替え */
-      '<div class="sh-label" style="margin-top:8px">移動手段（1タップ）</div><div class="sh-chips" id="trChips">'+
+      '<div class="sh-label" id="trLab" style="margin-top:8px">移動手段（1タップ）</div><div class="sh-chips" id="trChips">'+
       TRS.map(x=>'<button class="chip" data-tr="'+x[0]+'">'+x[1]+'</button>').join('')+'</div>'+
       '<div id="acQw" style="display:none"><div class="sh-label" style="margin-top:8px">移動中にしたこと（押すだけで移動中ずっと）'+(mudaAuto()?'<small style="display:block;font-weight:600;color:#8a93a6">何も押さなければ「🚗 運転だけ（何もしない移動）」＝ムダに数える</small>':'')+'</div><div class="sh-chips" id="acQ"></div></div></div>'+   /* 1タップは移動手段のすぐ下 */
     '<div class="pfrow" id="secPf"><button class="pfchip" id="pf0Chip" style="display:none">🗾 出発</button><button class="pfchip" id="pfChip">🗾 都道府県</button><button class="pfchip ar" id="arChip" aria-label="区・市町村（任意）">🏙️</button></div>'+   /* 都道府県（c1.1・記録の種類に関係なく1か所） */
@@ -3890,6 +3891,7 @@ function openEntrySheet(date,ref){
       ra.querySelectorAll('[data-raitl]').forEach(b=>b.onclick=()=>{const id=b.dataset.raitl,j=sheetSt.ai.indexOf(id);if(j>=0)sheetSt.ai.splice(j,1);else sheetSt.ai.push(id);pt();});};pt();}else ra.style.display='none';}}   /* c5.6：🤖AIを押したら何のAIか */
     $('secMove').style.display=(eType==='move')?'':'none';
     {const fl=$('pFlt'),pc=$('pChips'),sp=$('secPf'),pi=$('pfInl');if(fl&&pc&&sp&&pi){if(eType==='move'&&!sheetSt.plOn){if(fl.previousElementSibling!==sp){sp.after(fl);fl.after(pc);}}else if(fl.previousElementSibling!==pi){pi.after(fl);fl.after(pc);}}}   /* c10.3：移動でも場所のボタン */
+    if(sheetSt.paintF)sheetSt.paintF();   /* c12.0：移動手段のボタンを出す／引っ込める */
     {const st=$('secTool');if(st)st.style.display='none';}   /* 記録の「使う物」は出さない（本人指示 2026-10-04：道具は内容の行だけ）。前に付けた値は消さずに残す */
     cPaint();acCh();pfPaint();   /* 移動でも1行ずつ書ける（c1.1：移動中にしたこと） */
     {const an=$('acNote');if(an)an.textContent=(eType==='move')?'Enterで次の行。時間の無い行は移動中ずっとに数える（時間を入れるとその分だけ）':'Enterで次の行。時間は入れても入れなくてもいい（入れると、かかった時間が出る）';}
@@ -3923,7 +3925,15 @@ function openEntrySheet(date,ref){
   $('pf0Chip').onclick=()=>{if(!sheetSt)return;openPrefPicker(sheetSt.pf0,c=>{sheetSt.pf0=c;sheetSt.pf0Auto=false;pfPaint();});};
   $('eType').querySelectorAll('button').forEach(b=>b.onclick=()=>{eTouched=true;const S=sheetSt.sel,k=b.dataset.ty==='move'?'move':b.dataset.ty==='incar'?'car':'stay';S[k]=!S[k];
     sheetSt.sub=!(S.stay||S.move||S.car);eType=S.move?'move':S.car?'incar':'stay';mty();if(sheetSt.sub)toast('サブ日記にした（📍🚗🚙 全部OFF）');});   /* c11.0：押すたびにON・OFF（複数OK） */   /* c9.8：もう一度押すとOFF＝サブ日記 */   /* c6.3：3つから1つ（いた／移動／車内） */   /* 選んだ物を押すと全部出る→選ぶと閉じる */
-  $('trChips').querySelectorAll('button').forEach(b=>b.onclick=()=>{trSel=(trSel===b.dataset.tr)?null:b.dataset.tr;mtr();});
+  $('trChips').querySelectorAll('button').forEach(b=>b.onclick=()=>{trSel=(trSel===b.dataset.tr)?null:b.dataset.tr;mtr();if(sheetSt.trOpen){sheetSt.trOpen=false;if(sheetSt.paintF)sheetSt.paintF();}});
+  /* c12.0：移動手段は場所のボタンの列の［🚗 移動手段］から */
+  sheetSt.trOpen=false;
+  sheetSt.trBtn=fl=>{const lab=$('trLab'),ch=$('trChips');if(!lab||!ch)return;const mv=eType==='move'&&!sheetSt.plOn;
+    if(!mv){lab.style.display='';ch.style.display='';if(ch.previousElementSibling!==lab)lab.after(ch);return;}
+    const cur=trSel&&TRS.find(x=>x[0]===trSel);const b=document.createElement('button');b.className='pf-tr'+(trSel?' has':'')+(sheetSt.trOpen?' sel':'');b.textContent=cur?cur[1]:'🚗 移動手段';
+    const ed=fl.querySelector('.pf-ed');if(ed)fl.insertBefore(b,ed);else fl.appendChild(b);
+    lab.style.display='none';ch.style.display=sheetSt.trOpen?'':'none';if(sheetSt.trOpen&&ch.previousElementSibling!==fl)fl.after(ch);
+    b.onclick=()=>{sheetSt.trOpen=!sheetSt.trOpen;if(sheetSt.paintF)sheetSt.paintF();};};
   /* 時刻：ネイティブの時刻ピッカー（コンパクト・端末純正のUI）＋日またぎ */
   const hm=x=>x.split(':').map(Number);
   let tEd=(ex&&ex.ed)||0;
@@ -4141,10 +4151,10 @@ function openEntrySheet(date,ref){
   bindChips();
   {const fl=$('pFlt');if(fl&&pc){let picked=false;const auto=()=>plgFor(Number(sheetSt&&sheetSt.pf)||0);
     if(!plHas())mutate(plSeed);   /* c8.8：初めての時だけ、今の東京5・埼玉5・ほかを登録済みにする */
-    const paintF=()=>{if(pfl!=='ot'&&!plGroups().some(x=>x.g===pfl))pfl='ot';fl.innerHTML=pflBtns(pfl);curChips=placeReg(pfl);
+    const paintF=()=>{if(pfl!=='ot'&&!plGroups().some(x=>x.g===pfl))pfl='ot';fl.innerHTML=pflBtns(pfl);if(sheetSt&&sheetSt.trBtn)sheetSt.trBtn(fl);curChips=placeReg(pfl);
       pc.innerHTML=curChips.length?curChips.map(p=>'<button class="chip" data-p="'+esc(p)+'">'+esc(p)+'</button>').join(''):'<span class="sh-note">'+(pfl==='ot'?'ほかの場所はまだ無い':'この県の場所はまだ無い')+'（✎ 編集で足せる）</span>';bindChips();
       fl.querySelectorAll('[data-pfl]').forEach(b=>b.onclick=()=>{if(b.dataset.pfl==='_ed'){plEdit(paintF);return;}picked=true;pfl=b.dataset.pfl;paintF();});};
-    pfl=auto();paintF();
+    pfl=auto();paintF();if(sheetSt)sheetSt.paintF=paintF;   /* c12.0 */
     if(sheetSt)sheetSt.pflSync=()=>{if(picked)return;const v=auto();if(v!==pfl){pfl=v;paintF();}};}}   /* c8.7：最初は今の県（東京・埼玉以外は📂ほか）。県を変えたら付いてくる。押したらそのまま */
   /* 写真 */
   function renderShPhotos(){
@@ -8658,7 +8668,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c11.9";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c12.0";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 /* ログインの後：同じユーザーなら影はそのまま（全件受信をやり直さない）。違うユーザーならそのユーザーの影を読む */
 async function clAfterLogin(){
