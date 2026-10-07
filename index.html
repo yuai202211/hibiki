@@ -3675,7 +3675,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+   /* 同期の状態1行と記録（クラウド版 c1.9） */
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c13.4）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c13.5）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -4085,7 +4085,7 @@ function openEntrySheet(date,ref){
     const drv=(!trSel||trSel==='car'||trSel==='carrier'||trSel==='walk');   /* 運転・徒歩・未選択＝耳と口でできる事を先に。画面を使う物は「＋ほか」の中（後で記録する時用） */
     const isCar=(eType==='incar');   /* 車内滞在＝中で何をしたか */
     const isStay=(eType==='stay');   /* 滞在＝ここで何をしたか（秘密基地で寝た など） */
-    const q=isCar?['rest','pcwork','ai','bizcall','famcall','nap','sleep','spplay','chat']:isStay?['sleep','nap','ai','work','meal','rest','pcwork','spplay']:(eType!=='move')?[]:(drv?(qMore?['audio','bizcall','famcall','think','chat','ai','work','read','doc','vstudy']:['audio','bizcall','famcall','think']):['ai','work','bizcall','read','doc','vstudy','audio','chat']);
+    const q=isCar?['rest','pcwork','ai','bizcall','famcall','nap','sleep','spplay','chat']:isStay?['sleep','nap','ai','b_sell','b_make','b_res','b_idea','work','meal','rest','pcwork','spplay']:(eType!=='move')?[]:(drv?(qMore?['audio','bizcall','famcall','think','chat','ai','b_sell','b_make','b_res','b_idea','work','read','doc','vstudy']:['audio','bizcall','famcall','think']):['ai','b_sell','b_make','b_res','b_idea','work','bizcall','read','doc','vstudy','audio','chat']);
     const onW=id=>(isCar||isStay)&&acts.some(a=>a&&a.w&&a.k===id);   /* c4.6：押してある物（滞在の間ずっと）に印 */
     const onR=id=>acts.some(a=>a&&!a.w&&a.k===id);   /* c6.2：1行ずつで付けた種類にも印（薄い） */
     const qh=q.map(id=>{const k=kindOf(id);return (k&&!k.off)?'<button class="chip ac-q'+(onW(id)?' sel':((isCar||isStay)&&onR(id)?' on2':''))+'" data-aq="'+id+'" style="--kc:'+k.co+'">'+esc(k.ic)+' '+esc(k.lb)+'</button>':'';}).join('')+((eType==='move'&&drv)?'<button class="chip ac-qm" id="acQm">'+(qMore?'－ たたむ':'＋ ほか')+'</button>':'');
@@ -4231,7 +4231,7 @@ function openEntrySheet(date,ref){
           '<button class="chip so-more" data-sm="'+x.i+'">ほか…</button><button class="chip'+(!ch[x.i]?' sel':'')+'" data-si="'+x.i+'" data-sk="">なし</button></div>'+
           ((AI_KINDS[ch[x.i]]&&acts[x.i])?'<div class="so-d so-ai"><span>使ったAI</span>'+AI_TOOLS.map(z=>{const on=(Array.isArray(acts[x.i].ai)?acts[x.i].ai:aiGuess(acts[x.i].t)).indexOf(z[0])>=0;return '<button class="chip'+(on?' sel':'')+'" data-soai="'+x.i+'" data-ait="'+z[0]+'" style="--ac:'+z[2]+'">'+esc(z[1])+'</button>';}).join('')+'</div>':'')+
           (x.a.d==='_other'?'':'<div class="so-d"><span>使った物</span>'+dsg[x.i].map(d=>{const t=toolOf(d);return '<button class="chip'+(dch[x.i]===d?' sel':'')+'" data-di="'+x.i+'" data-dk="'+esc(d)+'">'+esc(t.ic)+'</button>';}).join('')+'<button class="chip'+(!dch[x.i]?' sel':'')+'" data-di="'+x.i+'" data-dk="">なし</button></div>')+'</div>').join('')+
-        (lqs!==null?'<div class="so-row"><div class="so-t">'+(eType==='incar'?'🚙 車内で':'📍 ここで')+'何をしていた？（'+esc(durText(durMin(tS,tE,(tE<=tS&&tEd===0)?1:tEd)))+'）</div><div class="so-c">'+['sleep','nap','ai','work','pcwork','spplay','rest'].map(id=>{const k=kindOf(id);return k?'<button class="chip'+(lqs.indexOf(id)>=0?' sel':'')+'" data-lq="'+id+'">'+esc(k.ic)+' '+esc(k.lb)+'</button>':'';}).join('')+'<button class="chip'+(!lqs.length?' sel':'')+'" data-lq="">なし</button></div>'+
+        (lqs!==null?'<div class="so-row"><div class="so-t">'+(eType==='incar'?'🚙 車内で':'📍 ここで')+'何をしていた？（'+esc(durText(durMin(tS,tE,(tE<=tS&&tEd===0)?1:tEd)))+'）</div><div class="so-c">'+['sleep','nap','ai','b_sell','b_make','b_res','b_idea','work','pcwork','spplay','rest'].map(id=>{const k=kindOf(id);return k?'<button class="chip'+(lqs.indexOf(id)>=0?' sel':'')+'" data-lq="'+id+'">'+esc(k.ic)+' '+esc(k.lb)+'</button>':'';}).join('')+'<button class="chip'+(!lqs.length?' sel':'')+'" data-lq="">なし</button></div>'+
           (lqs.length>=2?'<div class="so-seg">'+lqSegs().map((g,i)=>{const k=kindOf(g.id);return '<div class="so-sg"><span>'+esc(k.ic)+' '+esc(k.lb)+'</span>'+(i===0?'<b>'+esc(g.s)+'</b>':'<input type="time" step="300" lang="ja-JP" data-lqs="'+i+'" value="'+esc(g.s)+'">')+'<i>→ '+esc(g.e)+'</i></div>';}).join('')+'<div class="sh-note" style="margin:2px 0 0">順に時間を分けた。開始の時刻は直せる</div></div>':'')+'</div>':'')+
         (canE&&es&&es!==eType?'<div class="so-row"><div class="so-t">記録の種類</div><div class="so-c"><button class="chip'+(eSel===es?' sel':'')+'" data-se="'+es+'">'+ETL[es]+'</button><button class="chip'+(eSel===eType?' sel':'')+'" data-se="'+eType+'">'+ETL[eType]+'</button></div></div>':'')+
         '<div class="sh-btns"><button class="delbtn" id="soAs" style="flex:0 0 auto">そのまま保存</button><button class="savebtn" id="soOk">これで保存</button></div>';
@@ -8788,7 +8788,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c13.4";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c13.5";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 /* ログインの後：同じユーザーなら影はそのまま（全件受信をやり直さない）。違うユーザーならそのユーザーの影を読む */
 async function clAfterLogin(){
