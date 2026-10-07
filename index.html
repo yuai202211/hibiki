@@ -3633,7 +3633,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+   /* 同期の状態1行と記録（クラウド版 c1.9） */
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c10.9）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c11.0）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -3829,7 +3829,9 @@ function openEntrySheet(date,ref){
   const dft=ref&&ref.draft;let frs=String(((dft&&dft.text)?dft.text:(ex&&ex.t))||'').split(/\n\s*\n/).map(x=>x.trim()).filter(Boolean),frPaint=()=>{};if(dft&&dft.ax)frs.push('【やったこと】'+dft.ax);   /* c9.9：書きかけを戻す */   /* 自由に書く欄（1つずつ） */
   $('shPlace').value=(ex&&ex.p)||'';$('tdX').value=(ex&&ex.dx)||'';
   /* 滞在／移動／休憩／睡眠の切り替え */
-  let eType=(ex&&ex.mv)?'move':(ex&&ex.k==='incar')?'incar':'stay';sheetSt.sub=ex?!!(!ex.del&&!mgDstOk(ex)&&ex.k!=='sleep'):!(ref&&ref.draft&&ref.draft.place);   /* c10.2：新しい記録は📍🚗🚙を全部白で開く（押して記録＝メイン、押さずに時間＋何をした／1行ずつ＝サブ。本人指示 2026-10-07） */   /* c6.2：食事・休憩・睡眠・AI・仕事は「ずっと」の行で見せる */
+  let eType=(ex&&ex.mv)?'move':(ex&&ex.k==='incar')?'incar':'stay';sheetSt.sub=ex?!!(!ex.del&&!mgDstOk(ex)&&ex.k!=='sleep'):!(ref&&ref.draft&&ref.draft.place);
+  sheetSt.sel=(ex&&typeof ex.mt==='string')?{stay:ex.mt.indexOf('s')>=0,move:ex.mt.indexOf('m')>=0,car:ex.mt.indexOf('c')>=0}:{stay:!sheetSt.sub&&eType==='stay',move:!sheetSt.sub&&eType==='move',car:!sheetSt.sub&&eType==='incar'};
+  if(sheetSt.sub)sheetSt.sel={stay:false,move:false,car:false};   /* c11.0：3つとも自由に（複数OK） */   /* c10.2：新しい記録は📍🚗🚙を全部白で開く（押して記録＝メイン、押さずに時間＋何をした／1行ずつ＝サブ。本人指示 2026-10-07） */   /* c6.2：食事・休憩・睡眠・AI・仕事は「ずっと」の行で見せる */
   let trSel=(ex&&ex.tr)||null,eTouched=!!ex;   /* eTouched＝記録の種類を本人が選んだ（前からある記録も触らない扱い） */
   let tdSel=(ex&&typeof ex.d==='string'&&ex.d)?ex.d:((ex&&ex.dx)?'_other':'');   /* 記録の「使う物」（_other＝手入力） */
   if(!ex){sheetSt.pf=(eType==='move')?pfAuto(date,tS):13;sheetSt.pfAuto=!!sheetSt.pf;}   /* 新規：移動は直前の記録の県（出発）、それ以外は東京（本人指示 2026-10-06） */
@@ -3862,12 +3864,13 @@ function openEntrySheet(date,ref){
   let acCh=()=>{};   /* 「＋ 行を足す」と移動の1タップチップ（下で中身を入れる） */
   let qMore=false,phTarget=null;   /* qMore＝運転中の1タップで「＋ほか」を開いた／phTarget＝写真を付ける行の番号（null＝記録全体） */
   const mty=()=>{
-    $('eType').querySelectorAll('button').forEach(b=>b.classList.toggle('sel',!sheetSt.sub&&b.dataset.ty===eType));
-    $('secStay').style.display=(eType==='move'||sheetSt.sub)?'none':'';   /* c9.8：サブ日記は場所を隠す */
+    $('eType').querySelectorAll('button').forEach(b=>{const S=sheetSt.sel||{};b.classList.toggle('sel',!!(b.dataset.ty==='move'?S.move:b.dataset.ty==='incar'?S.car:S.stay));});
+    const plOn=!!(sheetSt.sel&&(sheetSt.sel.stay||sheetSt.sel.car));sheetSt.plOn=plOn;
+    $('secStay').style.display=(sheetSt.sub||!plOn)?'none':'';   /* c11.0：📍か🚙が入っていれば場所の欄 */   /* c9.8：サブ日記は場所を隠す */
     {const ra=$('recAi');if(ra){if(eType==='ai'){ra.style.display='';const pt=()=>{ra.innerHTML='<span>🤖 何のAI？（複数OK）</span>'+AI_TOOLS.map(z=>'<button class="chip'+(sheetSt.ai.indexOf(z[0])>=0?' sel':'')+'" data-raitl="'+z[0]+'" style="--ac:'+z[2]+'">'+esc(z[1])+'</button>').join('');
       ra.querySelectorAll('[data-raitl]').forEach(b=>b.onclick=()=>{const id=b.dataset.raitl,j=sheetSt.ai.indexOf(id);if(j>=0)sheetSt.ai.splice(j,1);else sheetSt.ai.push(id);pt();});};pt();}else ra.style.display='none';}}   /* c5.6：🤖AIを押したら何のAIか */
     $('secMove').style.display=(eType==='move')?'':'none';
-    {const fl=$('pFlt'),pc=$('pChips'),sp=$('secPf'),pi=$('pfInl');if(fl&&pc&&sp&&pi){if(eType==='move'){if(fl.previousElementSibling!==sp){sp.after(fl);fl.after(pc);}}else if(fl.previousElementSibling!==pi){pi.after(fl);fl.after(pc);}}}   /* c10.3：移動でも場所のボタン */
+    {const fl=$('pFlt'),pc=$('pChips'),sp=$('secPf'),pi=$('pfInl');if(fl&&pc&&sp&&pi){if(eType==='move'&&!sheetSt.plOn){if(fl.previousElementSibling!==sp){sp.after(fl);fl.after(pc);}}else if(fl.previousElementSibling!==pi){pi.after(fl);fl.after(pc);}}}   /* c10.3：移動でも場所のボタン */
     {const st=$('secTool');if(st)st.style.display='none';}   /* 記録の「使う物」は出さない（本人指示 2026-10-04：道具は内容の行だけ）。前に付けた値は消さずに残す */
     cPaint();acCh();pfPaint();   /* 移動でも1行ずつ書ける（c1.1：移動中にしたこと） */
     {const an=$('acNote');if(an)an.textContent=(eType==='move')?'Enterで次の行。時間の無い行は移動中ずっとに数える（時間を入れるとその分だけ）':'Enterで次の行。時間は入れても入れなくてもいい（入れると、かかった時間が出る）';}
@@ -3899,7 +3902,8 @@ function openEntrySheet(date,ref){
   $('pjChip').onclick=()=>{if(!sheetSt)return;openPjPicker(sheetSt.pj,id=>{sheetSt.pj=id;pjPaint();});};
   $('pfChip').onclick=()=>{if(!sheetSt)return;openPrefPicker(sheetSt.pf,c=>{sheetSt.pf=c;sheetSt.pfAuto=false;pfPaint();});};
   $('pf0Chip').onclick=()=>{if(!sheetSt)return;openPrefPicker(sheetSt.pf0,c=>{sheetSt.pf0=c;sheetSt.pf0Auto=false;pfPaint();});};
-  $('eType').querySelectorAll('button').forEach(b=>b.onclick=()=>{eTouched=true;if(!sheetSt.sub&&eType===b.dataset.ty){sheetSt.sub=true;eType='stay';mty();toast('サブ日記にした（📍🚗🚙 全部OFF）');return;}sheetSt.sub=false;eType=b.dataset.ty;mty();});   /* c9.8：もう一度押すとOFF＝サブ日記 */   /* c6.3：3つから1つ（いた／移動／車内） */   /* 選んだ物を押すと全部出る→選ぶと閉じる */
+  $('eType').querySelectorAll('button').forEach(b=>b.onclick=()=>{eTouched=true;const S=sheetSt.sel,k=b.dataset.ty==='move'?'move':b.dataset.ty==='incar'?'car':'stay';S[k]=!S[k];
+    sheetSt.sub=!(S.stay||S.move||S.car);eType=S.move?'move':S.car?'incar':'stay';mty();if(sheetSt.sub)toast('サブ日記にした（📍🚗🚙 全部OFF）');});   /* c11.0：押すたびにON・OFF（複数OK） */   /* c9.8：もう一度押すとOFF＝サブ日記 */   /* c6.3：3つから1つ（いた／移動／車内） */   /* 選んだ物を押すと全部出る→選ぶと閉じる */
   $('trChips').querySelectorAll('button').forEach(b=>b.onclick=()=>{trSel=(trSel===b.dataset.tr)?null:b.dataset.tr;mtr();});
   /* 時刻：ネイティブの時刻ピッカー（コンパクト・端末純正のUI）＋日またぎ */
   const hm=x=>x.split(':').map(Number);
@@ -4099,7 +4103,7 @@ function openEntrySheet(date,ref){
   let pfl=0,curChips=chips;
   const bindChips=()=>{
     if(!pc)return;const chips=curChips;
-    pc.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{if(eType==='move'&&sheetSt&&sheetSt.mvPick){sheetSt.mvPick(b.dataset.p);return;}   /* c10.3 */
+    pc.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{if(eType==='move'&&sheetSt&&!sheetSt.plOn&&sheetSt.mvPick){sheetSt.mvPick(b.dataset.p);return;}   /* c10.3 */
       if($('shPlace').value.trim()===b.dataset.p){$('shPlace').value='';b.classList.remove('sel');return;}   /* c9.8：もう一度で外す */
       $('shPlace').value=b.dataset.p;const v=placePf(b.dataset.p);if(sheetSt){arFill(b.dataset.p);if(v){sheetSt.pf=v;sheetSt.pfAuto=true;}pfPaint();if(sheetSt.flowNext)sheetSt.flowNext('do');}});   /* 押した場所の県も自動で */
     const more=pc.querySelector('#pMore');
@@ -4216,7 +4220,7 @@ function openEntrySheet(date,ref){
       state.entries[d0]=state.entries[d0]||{};
       const keepNoT=!!(ex&&ex.noT&&!timeTouched&&eType!=='sleep');   /* 睡眠に変えた時は、見えている時刻で保存する（時刻なしの睡眠を作らない） */
       /* 種類を変えて隠れた欄の中身は捨てない：移動にしても元の場所(p)を残す／移動をやめても元の経路(rt)と乗り物(tr)を残す（表示は種類に合う方だけ使う） */
-      const pKeep=isMv?((ex&&ex.p)||''):p;
+      const pKeep=(isMv&&!sheetSt.plOn)?((ex&&ex.p)||''):p;   /* c11.0：🚗＋📍なら場所も残す */
       const ne=keepNoT?{p:pKeep,t,ph:phList,noT:1,ts:Date.now()}:{p:pKeep,t,ph:phList,s:tS,e:tE,ts:Date.now()};
       if(tEd&&tE&&!keepNoT)ne.ed=tEd;
       if(isMv){ne.mv=1;ne.rt=rt;if(trSel)ne.tr=trSel;}
@@ -4235,7 +4239,7 @@ function openEntrySheet(date,ref){
       if(tdS==='_other'){if(tdXS)ne.dx=tdXS;}else if(tdS)ne.d=tdS;   /* 使う物（その他は手入力の文字） */   /* 都道府県（［なし］にした時は付けない） */
       if(actsS.length)ne.acts=actsSort(actsS,actsBase(ne));   /* 時刻の早い順に並べて保存 */
       if(sheetSt.md)ne.md=1;else delete ne.md;   /* c10.4：記録まるごとムダ */
-      ne.mn=sheetSt.sub?0:1;   /* c9.8：📍🚗🚙が全部OFF＝サブ日記（0） */   /* c9.3：記録の画面で時間と📍🚗🚙を選んで記録した＝メイン日記 */
+      ne.mn=sheetSt.sub?0:1;{const S=sheetSt.sel||{};const mt=(S.stay?'s':'')+(S.move?'m':'')+(S.car?'c':'');if(mt)ne.mt=mt;else delete ne.mt;}   /* c11.0：押した組み合わせ */   /* c9.8：📍🚗🚙が全部OFF＝サブ日記（0） */   /* c9.3：記録の画面で時間と📍🚗🚙を選んで記録した＝メイン日記 */
       state.entries[d0][saveKey]=ne;
     });
     closeSheet();toast(d0!==ui.date?('✓ '+payMD(d0)+' に記録した'):'✓ 記録した');   /* 0時をまたいだ時など、見ている日と違う日に保存した時は日付を添える */
@@ -8523,7 +8527,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c10.9";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c11.0";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 /* ログインの後：同じユーザーなら影はそのまま（全件受信をやり直さない）。違うユーザーならそのユーザーの影を読む */
 async function clAfterLogin(){
