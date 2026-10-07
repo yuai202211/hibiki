@@ -805,7 +805,7 @@
   .sr-r{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0}
 .mg-src{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
 .mg-ghost{position:fixed;z-index:9999;pointer-events:none;opacity:.92;box-shadow:0 14px 34px rgba(0,0,0,.28);transform:rotate(-1.5deg);background:#fff;border-radius:14px;margin:0}
-.mg-lift{opacity:.3}.mg-dst{outline:2px dashed #0bc167;outline-offset:-3px}.mg-over{background:#e7f9f0!important;outline:3px solid #0bc167}
+.mg-q{display:flex;flex-direction:column;align-items:center;gap:4px;margin:6px 0 10px}.mg-qs,.mg-qt{width:100%;padding:10px 12px;border-radius:14px;font-weight:800;text-align:center}.mg-qs{background:#f4f2ff;color:#5b4fd6}.mg-qt{background:#e7f9f0;color:#0a7a45}.mg-qt small{display:block;font-size:11.5px;opacity:.8}.mg-qa{font-size:18px;color:#8a90a0}.mg-lift{opacity:.3}.mg-dst{outline:2px dashed #0bc167;outline-offset:-3px}.mg-over{background:#e7f9f0!important;outline:3px solid #0bc167}
 #mgUndo{position:fixed;left:50%;bottom:92px;transform:translate(-50%,20px);opacity:0;pointer-events:none;transition:.2s;z-index:9998;background:#1f2937;color:#fff;border-radius:999px;padding:8px 8px 8px 16px;display:flex;gap:10px;align-items:center;font-weight:800;font-size:13px;max-width:92vw;box-shadow:0 8px 24px rgba(0,0,0,.25)}
 #mgUndo.show{opacity:1;transform:translate(-50%,0);pointer-events:auto}#mgUndo span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#mgUndo button{flex:0 0 auto;background:#fff;color:#1f2937;border-radius:999px;padding:7px 12px;font-weight:800}
 .sr-dt{display:flex;gap:6px;align-items:center;margin:8px 0 4px}.sr-dt span{font-size:12px;font-weight:800;color:#5b6475;flex:0 0 auto}.sr-dt input{min-width:0;font:inherit;padding:6px;border-radius:10px;border:1px solid var(--line)}.sr-dt input[type=date]{flex:1.3}.sr-dt input[type=time]{flex:1}.sr-r.big .chip{font-size:16px;padding:12px 16px}
@@ -3092,6 +3092,12 @@ function mgMerge(d,sk,tk){const E=state.entries[d]||{},S=E[sk],T=E[tk];if(sk===t
     nt.ts=Date.now();E[tk]=nt;E[sk]={del:1,ts:Date.now()};});
   undoBar('📥 '+(T.mv?'🚗 '+(T.rt||'移動'):T.p?'📍 '+T.p:(T.s||'')+' の日記')+' に入れた',()=>{mutate(()=>{state.entries[d][tk]=Object.assign(bakT,{ts:Date.now()});state.entries[d][sk]=Object.assign(bakS,{ts:Date.now()});});toast('↩️ 元に戻した');});}
 /* 長押しでつかむ（指・マウス）。動かしてから0.45秒以内に10px動いたらスクロール扱い */
+/* c9.5：誤操作防止。放した時に はい／いいえ（本人指示 2026-10-07） */
+function mgAsk(d,sk,tk){const E=state.entries[d]||{},S=E[sk],T=E[tk];if(!mgSrcOk(S)||!mgDstOk(T))return;
+  const sk2=S.k&&kindOf(S.k),sl=(S.s||'')+(S.e?'–'+S.e:'')+' '+(sk2?sk2.ic+' '+sk2.lb:((S.acts||[]).find(a=>a&&a.t)||{}).t||String(S.t||'').slice(0,20)||'記録');
+  const tl=T.mv?'🚗 '+(T.rt||'移動'):T.k==='incar'?'🚙 車内'+(T.p?' '+T.p:''):'📍 '+(T.p||'（場所なし）');
+  openSub('<div class="sh-time"><span>📥 この記録を入れる？</span></div><div class="mg-q"><div class="mg-qs">'+esc(sl)+'</div><div class="mg-qa">⬇</div><div class="mg-qt">'+esc(tl)+'<small>'+esc((T.s||'')+(T.e?'–'+T.e:''))+'</small></div></div><div class="sh-note">入れると、元の記録は消えて「1行ずつ書く」「自由に書く」に入る</div><div class="sh-btns"><button class="delbtn" id="mgNo">いいえ</button><button class="savebtn" id="mgYes">はい（入れる）</button></div>',null);
+  $('mgNo').onclick=closeSub;$('mgYes').onclick=()=>{closeSub();mgMerge(d,sk,tk);};}
 function mgBind(pane){const d=ui.date,E=state.entries[d]||{};
   pane.querySelectorAll('[data-k]').forEach(b=>{if(!mgSrcOk(E[b.dataset.k]))return;b.classList.add('mg-src');
     let tm=null,st=null,dr=null;
@@ -3104,7 +3110,7 @@ function mgBind(pane){const d=ui.date,E=state.entries[d]||{};
       const el=document.elementFromPoint(x,y),t=el&&el.closest('.mg-dst');pane.querySelectorAll('.mg-over').forEach(z=>{if(z!==t)z.classList.remove('mg-over');});if(t)t.classList.add('mg-over');
       const sc=document.scrollingElement||document.documentElement;if(y<80)sc.scrollTop-=14;else if(y>innerHeight-120)sc.scrollTop+=14;};
     const up=(x,y)=>{if(tm){clearTimeout(tm);tm=null;}if(!dr)return;const el=document.elementFromPoint(x,y),t=el&&el.closest('.mg-dst');clean();
-      b.dataset.mgj='1';setTimeout(()=>{delete b.dataset.mgj;},500);if(t)mgMerge(d,b.dataset.k,t.dataset.k);};
+      b.dataset.mgj='1';setTimeout(()=>{delete b.dataset.mgj;},500);if(t)mgAsk(d,b.dataset.k,t.dataset.k);};   /* c9.5：放したら「入れる？はい／いいえ」 */
     const down=(x,y)=>{st={x,y};clearTimeout(tm);tm=setTimeout(()=>{tm=null;start(x,y);},450);};
     b.addEventListener('touchstart',e=>{const p=e.touches[0];down(p.clientX,p.clientY);},{passive:true});
     b.addEventListener('touchmove',e=>{const p=e.touches[0];if(dr)e.preventDefault();move(p.clientX,p.clientY);},{passive:false});
@@ -3628,7 +3634,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+   /* 同期の状態1行と記録（クラウド版 c1.9） */
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c9.4）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c9.5）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -8401,7 +8407,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c9.4";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c9.5";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 /* ログインの後：同じユーザーなら影はそのまま（全件受信をやり直さない）。違うユーザーならそのユーザーの影を読む */
 async function clAfterLogin(){
