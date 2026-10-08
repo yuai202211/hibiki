@@ -829,6 +829,7 @@
 .mvc-t{display:flex;gap:8px;align-items:center;margin-top:8px}.mvc-t input{flex:1;min-width:0;font:inherit;font-size:18px;font-weight:800;padding:10px;border-radius:14px;border:1px solid var(--line)}
 .actrow .ac-sp{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;width:44px;padding:5px 0;border-radius:12px;background:#fff;border:1px solid var(--line);font-size:15px;line-height:1.1}.actrow .ac-sp span{font-size:10px;font-weight:800;color:#6a7080}.actrow .ac-sp.on{background:#fff3c9;border-color:#f5d76e}
 .sp-q{display:flex;gap:8px;margin:10px 0}.sp-q button{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:14px 0;border-radius:16px;background:#f1f3f8;font-size:24px}.sp-q button span{font-size:13px;font-weight:800}.sp-q button.sel{background:#fff3c9;box-shadow:inset 0 0 0 2px #f5d76e}
+#secActs.one .actrow .ac-ai{display:none!important}   /* c14.3：☝️の時は上（何をしたのすぐ下）に出す */
 .fr-addbar{display:block;width:100%;margin:6px 0 2px;padding:9px 12px;border-radius:12px;background:#f4f2ff;color:#5b4fd6;font-weight:800;font-size:13px;text-align:center}
 .td-dlg{font-style:normal;font-size:11px;font-weight:800;background:#ede9fe;color:#5b21b6;border-radius:999px;padding:1px 7px;margin-left:4px}
 .rc-it{padding:8px 0;border-bottom:1px solid var(--line)}.rc-it b{display:block;margin-bottom:4px}
@@ -3683,7 +3684,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+   /* 同期の状態1行と記録（クラウド版 c1.9） */
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c14.2）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c14.3）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -4140,10 +4141,10 @@ function openEntrySheet(date,ref){
       const aA=acts.find(a=>a&&a.k&&AI_KINDS[a.k]&&(a.w||a===a0))||acts.find(a=>a&&a.w&&(a.kx||[]).some(x=>AI_KINDS[x]));
       const ch=(qgOn(q)?q:q.concat(extra)).map(id=>{if(id==='@B')return qgHtml('data-qg',wk.length?wk:(k0?[k0]:[]));const k=kindOf(id);return (k&&!k.off)?'<button class="chip ac-q'+((wk.indexOf(id)>=0||(!wk.length&&k0===id))?' sel':'')+'" data-o1="'+esc(id)+'" style="--kc:'+k.co+'">'+esc(k.ic)+' '+esc(k.lb)+'</button>':'';}).join('');
       const tv=(a0&&a0.t&&!(k0o&&a0.t===k0o.lb))?a0.t:'';
-      const aiH=(aA&&aA!==acts[0])?'<div class="ac-ai"><span>🤖 使ったAI</span>'+AI_TOOLS.map(z=>{const on=(Array.isArray(aA.ai)?aA.ai:aiGuess(aA.t)).indexOf(z[0])>=0;return '<button class="chip'+(on?' sel':'')+'" data-o1ai="'+z[0]+'" style="--ac:'+z[2]+'">'+esc(z[1])+'</button>';}).join('')+'</div>'+aipChips(Array.isArray(aA.ap)?aA.ap:[],'data-o1ap'):'';   /* c12.5 */
+      const aiH=aA?'<div class="ac-ai"><span>🤖 使ったAI</span>'+AI_TOOLS.map(z=>{const on=(Array.isArray(aA.ai)?aA.ai:aiGuess(aA.t)).indexOf(z[0])>=0;return '<button class="chip'+(on?' sel':'')+'" data-o1ai="'+z[0]+'" style="--ac:'+z[2]+'">'+esc(z[1])+'</button>';}).join('')+'</div>'+aipChips(Array.isArray(aA.ap)?aA.ap:[],'data-o1ap'):'';   /* c12.5 */
       const more=acts.filter(a=>a&&(String(a.t||'').trim()||a.k)).length-1+frs.filter(x=>String(x||'').trim()).length;
-      rd.style.display='';rd.innerHTML='<div class="sh-label">🏷️ '+(isCar?'車内で':eType==='move'?'移動中に':'ここで')+'何をした<small>押すだけ。いくつでも押せる（もう一度で外す）。時間を分けて書く時は上の ✌️'+(more>0?'<br>ほかに '+more+'件 書いてある（消えていない・✌️で見られる）':'')+'</small></div><div class="sh-chips">'+ch+(qgOn(q)?'':'<button class="chip ac-qall" id="o1all">🏷️ ほか（全部）</button>')+'</div>'+
-        '<textarea id="o1t" maxlength="400" rows="1" placeholder="一言（書かなくてもいい）例：HIBIKI修正" style="width:100%;margin-top:8px;resize:none;overflow:hidden;line-height:1.5">'+esc(tv)+'</textarea>'+aiH+(()=>{const sr=acts.filter(a=>a&&a.w&&[a.k].concat(a.kx||[]).some(x=>x==='sleep'||x==='nap'));if(!sr.length)return '';return '<div style="margin-top:6px">'+bdBtn(sr[0]).replace('class="ac-bd','id="o1bd" class="ac-bd o1')+'</div>';})();   /* c13.8：☝️でも 🛏️／🪑 */   /* c9.2：長く書いたら何行でも広がる（本人指示） */
+      rd.style.display='';rd.innerHTML='<div class="sh-label">🏷️ '+(isCar?'車内で':eType==='move'?'移動中に':'ここで')+'何をした<small>押すだけ。いくつでも押せる（もう一度で外す）。時間を分けて書く時は上の ✌️'+(more>0?'<br>ほかに '+more+'件 書いてある（消えていない・✌️で見られる）':'')+'</small></div><div class="sh-chips">'+ch+(qgOn(q)?'':'<button class="chip ac-qall" id="o1all">🏷️ ほか（全部）</button>')+'</div>'+aiH+   /* c14.3：AI→何のAI→何をした をつなげる（本人指示） */
+        '<textarea id="o1t" maxlength="400" rows="1" placeholder="一言（書かなくてもいい）例：HIBIKI修正" style="width:100%;margin-top:8px;resize:none;overflow:hidden;line-height:1.5">'+esc(tv)+'</textarea>'+(()=>{const sr=acts.filter(a=>a&&a.w&&[a.k].concat(a.kx||[]).some(x=>x==='sleep'||x==='nap'));if(!sr.length)return '';return '<div style="margin-top:6px">'+bdBtn(sr[0]).replace('class="ac-bd','id="o1bd" class="ac-bd o1')+'</div>';})();   /* c13.8：☝️でも 🛏️／🪑 */   /* c9.2：長く書いたら何行でも広がる（本人指示） */
       const setOne=(id,d)=>{acRead();const k=kindOf(id);if(!k)return;const t1=($('o1t').value||'').trim();   /* c11.1：押すたびに足す／外す */
         const W=acts.filter(a=>a&&a.w&&a.k),O=acts.filter(a=>a&&!(a.w&&a.k)&&(a.k||a.s||a.e||a.c||(a.ph&&a.ph.length)));
         const i=W.findIndex(a=>a.k===id);
@@ -8892,7 +8893,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c14.2";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c14.3";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 /* ログインの後：同じユーザーなら影はそのまま（全件受信をやり直さない）。違うユーザーならそのユーザーの影を読む */
 async function clAfterLogin(){
