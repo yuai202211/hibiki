@@ -830,6 +830,7 @@
 .actrow .ac-sp{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;width:44px;padding:5px 0;border-radius:12px;background:#fff;border:1px solid var(--line);font-size:15px;line-height:1.1}.actrow .ac-sp span{font-size:10px;font-weight:800;color:#6a7080}.actrow .ac-sp.on{background:#fff3c9;border-color:#f5d76e}
 .sp-q{display:flex;gap:8px;margin:10px 0}.sp-q button{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:14px 0;border-radius:16px;background:#f1f3f8;font-size:24px}.sp-q button span{font-size:13px;font-weight:800}.sp-q button.sel{background:#fff3c9;box-shadow:inset 0 0 0 2px #f5d76e}
 #secActs.one .actrow .ac-ai{display:none!important}   /* c14.3：☝️の時は上（何をしたのすぐ下）に出す */
+.act .a-tg{grid-column:2 / -1;display:flex;flex-wrap:wrap;align-items:center;gap:4px;margin-top:3px}.act .a-tg .a-ai,.act .a-tg .a-ap{margin-left:0;flex-wrap:wrap;gap:4px}.act .a-tg .a-ai i{padding:1px 7px;border-radius:999px;font-size:11px;line-height:1.5}.act .a-tg .a-ap i{line-height:1.5}
 .fr-addbar{display:block;width:100%;margin:6px 0 2px;padding:9px 12px;border-radius:12px;background:#f4f2ff;color:#5b4fd6;font-weight:800;font-size:13px;text-align:center}
 .td-dlg{font-style:normal;font-size:11px;font-weight:800;background:#ede9fe;color:#5b21b6;border-radius:999px;padding:1px 7px;margin-left:4px}
 .rc-it{padding:8px 0;border-bottom:1px solid var(--line)}.rc-it b{display:block;margin-bottom:4px}
@@ -3222,7 +3223,7 @@ function actsHtml(en){
     const kk=x.k?(kindOf(x.k)||{ic:'❓',lb:String(x.k).slice(0,4),co:'#9aa3b5'}):null,dv=x.d?(toolOf(x.d)||{ic:'❓',lb:String(x.d).slice(0,4)}):null;
     const kst=(kk&&x.k!=='ai'&&x.k!=='work')?' style="background:'+esc(kk.co)+';color:#fff"':'';   /* AI・仕事は既存の色（CSS） */
     return '<span class="act'+(m?' tm':'')+(x.md?' mdx':'')+((x.k&&/^[a-z0-9_]+$/i.test(x.k))?' k-'+x.k:'')+'">'+(kk?'<i class="a-k">'+esc(kk.ic)+'</i>':'<i class="a-d"></i>')+'<span class="a-t">'+(kk?'<em class="a-kl"'+kst+'>'+esc(kk.lb)+'</em>':'')+(x.kx||[]).map(id=>{const q=kindOf(id);return q?'<em class="a-kl" style="background:'+esc(q.co)+';color:#fff">'+esc(q.ic)+esc(q.lb)+'</em>':'';}).join('')+(dv?'<i class="a-dv" title="'+esc(x.dx||dv.lb)+'">'+esc(dv.ic)+(x.d==='_other'&&x.dx&&String(x.t).trim()!==x.dx?'<b class="a-dx">'+esc(x.dx)+'</b>':'')+'</i>':'')+((kk&&String(x.t).trim()===kk.lb)?'':esc(x.t))+((x.s&&x.e&&!(en&&x.s===en.s&&x.e===en.e))?'<span class="a-r">'+esc(x.s)+' – '+esc(x.e)+'</span>':(x.w||(en&&x.s&&x.s===en.s&&x.e===en.e))?'<span class="a-r">ずっと</span>':(x.s?'<span class="a-r">'+esc(x.s)+' –</span>':''))+'</span>'+
-      (m?'<span class="a-m">'+esc(durText(m))+'</span>':'')+((Array.isArray(x.ap)&&x.ap.length)?'<span class="a-ap">'+x.ap.map(id=>{const q=aipOf(id);return q?'<i>'+esc(q.ic)+esc(q.lb)+'</i>':'';}).join('')+'</span>':'')+((x.k&&AI_KINDS[x.k]&&Array.isArray(x.ai)&&x.ai.length)?'<span class="a-ai">'+x.ai.map(id=>{const z=aiTool(id);return z?'<i style="background:'+z.co+'">'+esc(z.lb)+'</i>':'';}).join('')+'</span>':'')+(x.c?'<span class="a-c">'+txtHtml(x.c)+'</span>':'')+((Array.isArray(x.ph)&&x.ph.length)?'<span class="a-ph">'+x.ph.slice(0,4).map(id=>'<img src="'+esc(phUrl(id))+'" alt="" onerror="this.style.visibility=\'hidden\'">').join('')+'</span>':'')+'</span>';}).join('');
+      (m?'<span class="a-m">'+esc(durText(m))+'</span>':'')+(()=>{const isA=AI_KINDS[x.k]||(x.kx||[]).some(k=>AI_KINDS[k]),ai=(isA&&Array.isArray(x.ai)&&x.ai.length)?'<span class="a-ai">'+x.ai.map(id=>{const z=aiTool(id);return z?'<i style="background:'+z.co+'">'+esc(z.lb)+'</i>':'';}).join('')+'</span>':'',ap=(Array.isArray(x.ap)&&x.ap.length)?'<span class="a-ap">'+x.ap.map(id=>{const q=aipOf(id);return q?'<i>'+esc(q.ic)+esc(q.lb)+'</i>':'';}).join('')+'</span>':'';return (ai||ap)?'<span class="a-tg">'+ai+ap+'</span>':'';})()+   /* c14.5：使ったAI→何をした を文字の下に1段 */(x.c?'<span class="a-c">'+txtHtml(x.c)+'</span>':'')+((Array.isArray(x.ph)&&x.ph.length)?'<span class="a-ph">'+x.ph.slice(0,4).map(id=>'<img src="'+esc(phUrl(id))+'" alt="" onerror="this.style.visibility=\'hidden\'">').join('')+'</span>':'')+'</span>';}).join('');
   /* 「そのほか」は、全部の行に時間がある時だけ（時間の無い行があると、残りの時間が正しく出せないため） */
   if(stay&&sum&&stay>sum&&a.every(x=>Number(x.m)))h+='<span class="act rest"><i class="a-d"></i><span class="a-t">そのほか</span><span class="a-m">'+esc(durText(stay-sum))+'</span></span>';
   return h+'</span>';
@@ -3684,7 +3685,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+   /* 同期の状態1行と記録（クラウド版 c1.9） */
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c14.4）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c14.5）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -8893,7 +8894,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c14.4";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c14.5";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 /* ログインの後：同じユーザーなら影はそのまま（全件受信をやり直さない）。違うユーザーならそのユーザーの影を読む */
 async function clAfterLogin(){
