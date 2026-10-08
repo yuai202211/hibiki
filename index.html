@@ -831,6 +831,8 @@
 .sp-q{display:flex;gap:8px;margin:10px 0}.sp-q button{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:14px 0;border-radius:16px;background:#f1f3f8;font-size:24px}.sp-q button span{font-size:13px;font-weight:800}.sp-q button.sel{background:#fff3c9;box-shadow:inset 0 0 0 2px #f5d76e}
 #secActs.one .actrow .ac-ai{display:none!important}   /* c14.3：☝️の時は上（何をしたのすぐ下）に出す */
 .act .a-tg{grid-column:2 / -1;display:flex;flex-wrap:wrap;align-items:center;gap:4px;margin-top:3px}.act .a-tg .a-ai,.act .a-tg .a-ap{margin-left:0;flex-wrap:wrap;gap:4px}.act .a-tg .a-ai i{padding:1px 7px;border-radius:999px;font-size:11px;line-height:1.5}.act .a-tg .a-ap i{line-height:1.5}
+.act .a-bd{font-style:normal;font-size:11px;font-weight:800;border-radius:999px;padding:1px 8px;line-height:1.5}.act .a-bd.s{background:#fde8ec;color:#b4234a}.act .a-bd.l{background:#e0f2fe;color:#075985}
+.dpill.ktag{margin-right:4px;font-weight:800}
 .fr-addbar{display:block;width:100%;margin:6px 0 2px;padding:9px 12px;border-radius:12px;background:#f4f2ff;color:#5b4fd6;font-weight:800;font-size:13px;text-align:center}
 .td-dlg{font-style:normal;font-size:11px;font-weight:800;background:#ede9fe;color:#5b21b6;border-radius:999px;padding:1px 7px;margin-left:4px}
 .rc-it{padding:8px 0;border-bottom:1px solid var(--line)}.rc-it b{display:block;margin-bottom:4px}
@@ -2933,11 +2935,11 @@ const KIND_BASE=[['ai','🤖','AI','#7a6ef3','A',0,'h'],['aibiz','💡','AIビ�
  ['pcwork','💻','PC作業','#475569','D',0,'h'],['spwork','📱','スマホ作業','#64748b','D',0,'h'],
  ['mkt','📈','相場リサーチ','#0f766e','V',0,'h'],['c_list','📸','出品準備','#0d9488','V',0,'h'],['c_aaadj','🔁','AA調整','#0e7490','V',0,'h'],['c_aalive','🔴','AAライブ','#dc2626','V',0,'h'],
  ['c_aapick','🚛','AA落札分引取','#b45309','V',0,'b'],['c_in','📥','車両搬入','#0e7490','V',0,'b'],['c_out','📤','車両搬出','#b45309','V',0,'b'],['c_aaafter','📋','AA落札後対応','#a16207','V',0,'h'],['c_aaclaim','⚠️','AAクレーム対応','#b91c1c','V',0,'h'],['repair','🔧','整備','#c2410c','V',0,'b'],
- ['c_buy','🤝','買取商談','#15803d','V',0,'h'],['c_sell','💰','販売商談','#16a34a','V',0,'h'],['c_cust','🙋','客対応','#2563eb','V',0,'h'],['c_dmv','🏛️','陸自対応','#4b5563','V',1,'h'],['c_garage','🅿️','車庫証明 申請・受取','#334155','V',1,'b'],['c_fuel','⛽','給油（商品車）','#b45309','V',0,'b'],['c_int','🧽','内装クリーニング','#0d9488','V',0,'b'],['c_wash','🚿','洗車','#0284c7','V',0,'b'],['c_polish','✨','外装磨き','#ca8a04','V',0,'b'],['c_mnt','🛠️','点検・整備外注対応','#9a3412','V',0,'h'],['c_body','🎨','鈑金塗装外注対応','#7c2d12','V',0,'h'],['c_kaiso','🚘','車両回送','#a16207','V',0,'b'],['c_oil','🛢️','オイル交換','#92400e','V',0,'b'],['c_photo','📷','写真撮影','#0d9488','V',0,'b'],['c_imgedit','🖼️','画像編集','#7c3aed','V',0,'h'],['c_goo_list','🌐','掲載サイト出品対応','#ea580c','V',0,'h'],['c_price','💹','価格変更','#15803d','V',0,'h'],['c_goo_inq','📨','掲載サイト問合せ対応','#2563eb','V',0,'h'],['c_deliv','🔑','納車対応','#16a34a','V',0,'b'],
+ ['c_buy','🤝','買取商談','#15803d','V',0,'h'],['c_sell','💰','販売商談','#16a34a','V',0,'h'],['c_cust','🙋','客対応','#2563eb','V',0,'h'],['c_dmv','🏛️','陸自対応','#4b5563','V',1,'h'],['c_garage','🅿️','車庫証明 申請・受取','#334155','V',1,'b'],['c_fuel','⛽','給油（商品車）','#b45309','V',0,'b'],['c_int','🧽','内装クリーニング','#0d9488','V',0,'b'],['c_wash','🚿','洗車','#0284c7','V',0,'b'],['c_polish','✨','外装磨き','#ca8a04','V',0,'b'],['c_mnt','🛠️','点検・整備外注対応','#9a3412','V',0,'h'],['c_body','🎨','鈑金塗装外注対応','#7c2d12','V',0,'h'],['c_kaiso','🚘','車両回送','#a16207','V',0,'b'],['c_oil','🛢️','オイル交換','#92400e','V',0,'b'],['c_photo','📷','写真撮影','#0d9488','V',0,'b'],['c_imgedit','🖼️','画像編集','#7c3aed','V',0,'h'],['c_goo_list','🌐','掲載サイト出品対応','#ea580c','V',0,'h'],['c_yahoo','🔖','ヤフオク出品作業','#d97706','V',0,'h'],['c_price','💹','価格変更','#15803d','V',0,'h'],['c_goo_inq','📨','掲載サイト問合せ対応','#2563eb','V',0,'h'],['c_deliv','🔑','納車対応','#16a34a','V',0,'b'],
  ['gyg','⛩️','GetYourGuide','#be123c','T',0,'h'],
  ['b_sell','📣','売る','#ea580c','B',0,'h'],['b_make','🛠','作る','#c2410c','B',0,'h'],['b_res','🔎','調べる','#9a3412','B',0,'h'],['b_idea','💡','考える','#b45309','B',0,'h'],   /* c13.4：新規事業開発 */
  ['m_tr','🏦','振込み対応','#4338ca','Y',0,'h'],['m_io','💳','入出金対応','#4f46e5','Y',0,'h'],['m_atm','🏧','ATM対応','#6366f1','Y',1,'h'],['m_tax','🧾','確定申告','#3730a3','Y',0,'h'],['gov','🏢','役所・警察・郵便','#4b5563','Y',1,'b'],['post','📮','郵便物受取','#0f766e','L',0,'b'],['receipt','🧾','領収書対応','#0f766e','L',0,'h'],
- ['sleep','🌙','睡眠','#475569','S',0,''],['meal','🍚','食事','#f08a24','S',0,''],['mdrec','🕳️','ムダ（自分で付けた）','#e0405a','M',1,''],['mealto','🥡','食事（持ち帰り）','#f08a24','S',0,''],['move','🚗','移動','#12a6a0','S',0,''],['exer','🏃','運動','#16a34a','S',0,'b'],['bath','🛁','身支度','#06b6d4','S',0,''],['spa','♨️','風呂・サウナ','#0891b2','S',0,''],['shower','🚿','シャワー','#0ea5e9','S',0,''],   /* c14.2：シャワー（本人指示 2026-10-08・風呂・サウナの隣） */['laundry','🧺','洗濯','#0ea5e9','S',0,'b'],['dryer','🌬️','乾燥','#38bdf8','S',0,'b'],['fold','👕','洗濯たたみ','#0284c7','S',0,'b'],['massage','💆','マッサージ','#0d9488','S',0,''],['akasuri','🧖','あかすり','#0891b2','S',0,''],['shop','🛒','買い物','#f59e0b','S',0,''],['fuel','⛽','給油','#d97706','S',0,''],['rest','☕','休憩','#c98a2f','S',0,''],['nap','😴','仮眠','#64748b','S',0,''],['incar','🚙','車内滞在','#0f766e','S',1,''],['spplay','📲','スマホ操作','#d946ef','S',1,''],['wc','🚻','トイレ','#94a3b8','S',0,''],
+ ['sleep','🌙','睡眠','#475569','S',0,''],['meal','🍚','食事','#f08a24','S',0,''],['mdrec','🕳️','ムダ（自分で付けた）','#e0405a','M',1,''],['mealto','🥡','食事（持ち帰り）','#f08a24','S',0,''],['move','🚗','移動','#12a6a0','S',0,''],['exer','🏃','運動','#16a34a','S',0,'b'],['bath','🛁','身支度','#06b6d4','S',0,''],['spa','♨️','風呂・サウナ','#0891b2','S',0,''],['shower','🚿','シャワー','#0ea5e9','S',0,''],['haircut','✂️','髪切り','#a855f7','S',0,''],   /* c14.6 */   /* c14.2：シャワー（本人指示 2026-10-08・風呂・サウナの隣） */['laundry','🧺','洗濯','#0ea5e9','S',0,'b'],['dryer','🌬️','乾燥','#38bdf8','S',0,'b'],['fold','👕','洗濯たたみ','#0284c7','S',0,'b'],['massage','💆','マッサージ','#0d9488','S',0,''],['akasuri','🧖','あかすり','#0891b2','S',0,''],['shop','🛒','買い物','#f59e0b','S',0,''],['fuel','⛽','給油','#d97706','S',0,''],['rest','☕','休憩','#c98a2f','S',0,''],['nap','😴','仮眠','#64748b','S',0,''],['incar','🚙','車内滞在','#0f766e','S',1,''],['spplay','📲','スマホ操作','#d946ef','S',1,''],['wc','🚻','トイレ','#94a3b8','S',0,''],
  ['bizcall','📞','仕事の連絡','#2f8fcf','C',0,'h'],['famcall','👪','家族との連絡','#f472b6','F',0,''],['errand','🧾','用事の連絡','#64748b','C',1,'h'],['chat','💬','雑談（私用）','#d946ef','C',1,''],['son','👦','息子','#f472b6','F',0,''],['family','🏡','家族の用事','#ec4899','F',0,''],
  ['work','💼','仕事','#1e3a8a','X',0,'h'],['think','🧠','企画・考える','#6b7280','X',0,'h'],['money','🧮','お金・事務','#4338ca','X',0,'h'],['doc','📄','資料確認','#5b7fa6','X',0,'h'],['call','📞','電話・連絡','#2f8fcf','X',1,'h'],['meet','🤝','商談・人と会う','#d9633b','X',0,'h'],
  ['study','🎓','勉強','#c2410c','X',0,'h'],['read','📖','読書','#8b5e3c','X',0,'h'],['audio','🔊','音声で学ぶ','#9333ea','X',0,'h'],['vstudy','🎬','動画で学ぶ','#0891b2','X',0,'h'],['write','✍️','書く・発信','#be123c','X',0,'h'],['reflect','📝','振り返り','#15803d','S',0,'h'],['diary','✏️','日記を書く','#15803d','S',0,'h'],
@@ -2997,7 +2999,7 @@ function kCatHtml(k,path,d,dx,kx,dd){const P=String(path||'').split('/').filter(
   return '<button class="ac-kc on" data-akp="">▴<span>とじる</span></button><div class="ac-kall">'+KIND_TREE.map(t=>{const fo=!!FD[t.id];
     const lv=t.ch?t.ch.map(c=>typeof c==='string'?kb(c,t):('<div class="ka-subw"><div class="ka-sub">'+c.ic+' '+esc(c.lb)+'</div>'+c.ch.map(x=>kb(x,t)).join('')+'</div>')).join(''):(etc.map(id=>kb(id,t)).join('')+'<button class="ac-plus" data-ak-add="1" aria-label="種類を足す">＋</button>');
     return '<div class="ac-kgp"><button class="ac-kgh'+(fo?' f':'')+'" data-akf="'+t.id+'">'+t.ic+'<span>'+esc(t.lb)+'</span><i>'+(fo?'▸':'▾')+'</i></button>'+(fo?'':'<div class="ac-kl">'+lv+'</div>')+'</div>';}).join('')+'</div>';}
-const KIND_WORDS=[[/郵便物|郵送物|郵便受|ポスト/,'post'],[/車庫証明|車庫/,'c_garage'],[/役所|区役所|市役所|警察|郵便局|免許|年金|税務署/,'gov'],[/オイル|整備|修理|交換|洗車|磨き|板金|タイヤ|バッテリー/,'repair'],[/相場|リサーチ|価格調査/,'mkt'],[/出品|撮影|写真撮り|掲載/,'c_list'],[/落札後|名変|書類/,'c_aaafter'],[/引取|陸送|回送/,'c_aapick'],[/クレーム/,'c_aaclaim'],
+const KIND_WORDS=[[/郵便物|郵送物|郵便受|ポスト/,'post'],[/車庫証明|車庫/,'c_garage'],[/役所|区役所|市役所|警察|郵便局|免許|年金|税務署/,'gov'],[/オイル|整備|修理|交換|洗車|磨き|板金|タイヤ|バッテリー/,'repair'],[/相場|リサーチ|価格調査/,'mkt'],[/ヤフオク/,'c_yahoo'],[/髪切|散髪|床屋|美容院/,'haircut'],[/出品|撮影|写真撮り|掲載/,'c_list'],[/落札後|名変|書類/,'c_aaafter'],[/引取|陸送|回送/,'c_aapick'],[/クレーム/,'c_aaclaim'],
  [/AAライブ|ライブ入札|入札/,'c_aalive'],[/AA|オークション/,'c_aaadj'],[/陸自|陸運|車検|登録|ナンバー/,'c_dmv'],[/買取/,'c_buy'],[/販売|成約|納車/,'c_sell'],[/客|問い合わせ|問合せ|見積/,'c_cust'],
  [/GetYourGuide|GYG|Torii/i,'gyg'],[/確定申告/,'m_tax'],[/振込|振り込/,'m_tr'],[/ATM/i,'m_atm'],[/入金|出金|入出金/,'m_io'],
  [/(家族|親|母|父|妻|子).*(電話|連絡|LINE)|(電話|連絡|LINE).*(家族|親|母|父|息子)/,'famcall'],[/息子/,'son'],[/雑談|友達|友人/,'chat'],[/病院|役所|区役所|手続/,'errand'],[/電話|連絡|メール|LINE|返信|メッセージ/,'bizcall'],
@@ -3212,6 +3214,12 @@ function actsSort(a,base){
   return a.map((x,i)=>{if(x&&x.s){key=(b&&x.s<b?'1':'0')+x.s;}return {x,i,key};})
     .sort((p,q)=>p.key<q.key?-1:p.key>q.key?1:p.i-q.i).map(o=>o.x);
 }
+/* c14.6：見出し。場所があれば「📍場所」、種類（車内滞在・食事など）は下の札。場所が無ければ種類を見出しに */
+const REC_KH={rest:['☕','休憩','#c98a2f'],work:['💼','仕事','#1e3a8a'],ai:['🤖','AI','#7a6ef3'],meal:['🍚','食事','#e0603c'],incar:['🚙','車内滞在','#0f766e'],sleep:['🌙','睡眠','#7a6ef3']};
+function recHead(en,ek){const z=REC_KH[ek];if(!z)return {t:en.p?'<span class="loc big">📍'+esc(en.p)+'</span>':'',g:''};
+  const sl=(ek==='sleep'&&!en.e)?'　（寝てる…☀起きたを押す）':'',bd=ek==='sleep'?(en.bd===1?' 🛏️横になれた':en.bd===0?' 🪑座ったまま':''):'';
+  if(en.p)return {t:'<span class="loc big">📍'+esc(en.p)+'</span>',g:'<span class="dpill ktag" style="background:'+z[2]+'1a;color:'+z[2]+'">'+z[0]+' '+z[1]+bd+sl+'</span>'};
+  return {t:'<span class="loc big" style="color:'+z[2]+'">'+z[0]+' '+z[1]+bd+sl+'</span>',g:''};}
 function actsHtml(en){
   /* 移動の記録でも出す（c1.1：移動中にしたこと） */
   const a=actsSort(Array.isArray(en&&en.acts)?en.acts.filter(x=>x&&x.t):[],actsBase(en));
@@ -3223,7 +3231,8 @@ function actsHtml(en){
     const kk=x.k?(kindOf(x.k)||{ic:'❓',lb:String(x.k).slice(0,4),co:'#9aa3b5'}):null,dv=x.d?(toolOf(x.d)||{ic:'❓',lb:String(x.d).slice(0,4)}):null;
     const kst=(kk&&x.k!=='ai'&&x.k!=='work')?' style="background:'+esc(kk.co)+';color:#fff"':'';   /* AI・仕事は既存の色（CSS） */
     return '<span class="act'+(m?' tm':'')+(x.md?' mdx':'')+((x.k&&/^[a-z0-9_]+$/i.test(x.k))?' k-'+x.k:'')+'">'+(kk?'<i class="a-k">'+esc(kk.ic)+'</i>':'<i class="a-d"></i>')+'<span class="a-t">'+(kk?'<em class="a-kl"'+kst+'>'+esc(kk.lb)+'</em>':'')+(x.kx||[]).map(id=>{const q=kindOf(id);return q?'<em class="a-kl" style="background:'+esc(q.co)+';color:#fff">'+esc(q.ic)+esc(q.lb)+'</em>':'';}).join('')+(dv?'<i class="a-dv" title="'+esc(x.dx||dv.lb)+'">'+esc(dv.ic)+(x.d==='_other'&&x.dx&&String(x.t).trim()!==x.dx?'<b class="a-dx">'+esc(x.dx)+'</b>':'')+'</i>':'')+((kk&&String(x.t).trim()===kk.lb)?'':esc(x.t))+((x.s&&x.e&&!(en&&x.s===en.s&&x.e===en.e))?'<span class="a-r">'+esc(x.s)+' – '+esc(x.e)+'</span>':(x.w||(en&&x.s&&x.s===en.s&&x.e===en.e))?'<span class="a-r">ずっと</span>':(x.s?'<span class="a-r">'+esc(x.s)+' –</span>':''))+'</span>'+
-      (m?'<span class="a-m">'+esc(durText(m))+'</span>':'')+(()=>{const isA=AI_KINDS[x.k]||(x.kx||[]).some(k=>AI_KINDS[k]),ai=(isA&&Array.isArray(x.ai)&&x.ai.length)?'<span class="a-ai">'+x.ai.map(id=>{const z=aiTool(id);return z?'<i style="background:'+z.co+'">'+esc(z.lb)+'</i>':'';}).join('')+'</span>':'',ap=(Array.isArray(x.ap)&&x.ap.length)?'<span class="a-ap">'+x.ap.map(id=>{const q=aipOf(id);return q?'<i>'+esc(q.ic)+esc(q.lb)+'</i>':'';}).join('')+'</span>':'';return (ai||ap)?'<span class="a-tg">'+ai+ap+'</span>':'';})()+   /* c14.5：使ったAI→何をした を文字の下に1段 */(x.c?'<span class="a-c">'+txtHtml(x.c)+'</span>':'')+((Array.isArray(x.ph)&&x.ph.length)?'<span class="a-ph">'+x.ph.slice(0,4).map(id=>'<img src="'+esc(phUrl(id))+'" alt="" onerror="this.style.visibility=\'hidden\'">').join('')+'</span>':'')+'</span>';}).join('');
+      (m?'<span class="a-m">'+esc(durText(m))+'</span>':'')+(()=>{const isA=AI_KINDS[x.k]||(x.kx||[]).some(k=>AI_KINDS[k]),ai=(isA&&Array.isArray(x.ai)&&x.ai.length)?'<span class="a-ai">'+x.ai.map(id=>{const z=aiTool(id);return z?'<i style="background:'+z.co+'">'+esc(z.lb)+'</i>':'';}).join('')+'</span>':'',ap=(Array.isArray(x.ap)&&x.ap.length)?'<span class="a-ap">'+x.ap.map(id=>{const q=aipOf(id);return q?'<i>'+esc(q.ic)+esc(q.lb)+'</i>':'';}).join('')+'</span>':'';const sl=[x.k].concat(x.kx||[]).some(k=>k==='sleep'||k==='nap'),bv=x.bd===1?1:x.bd===0?0:((sl&&en&&en.k==='incar')?0:null),bt=(sl&&bv!=null)?'<span class="a-bd '+(bv?'l':'s')+'">'+(bv?'🛏️横になれた':'🪑座ったまま')+'</span>':'';   /* c14.6 */
+      return (ai||ap||bt)?'<span class="a-tg">'+ai+ap+bt+'</span>':'';})()+   /* c14.5：使ったAI→何をした を文字の下に1段 */(x.c?'<span class="a-c">'+txtHtml(x.c)+'</span>':'')+((Array.isArray(x.ph)&&x.ph.length)?'<span class="a-ph">'+x.ph.slice(0,4).map(id=>'<img src="'+esc(phUrl(id))+'" alt="" onerror="this.style.visibility=\'hidden\'">').join('')+'</span>':'')+'</span>';}).join('');
   /* 「そのほか」は、全部の行に時間がある時だけ（時間の無い行があると、残りの時間が正しく出せないため） */
   if(stay&&sum&&stay>sum&&a.every(x=>Number(x.m)))h+='<span class="act rest"><i class="a-d"></i><span class="a-t">そのほか</span><span class="a-m">'+esc(durText(stay-sum))+'</span></span>';
   return h+'</span>';
@@ -3315,15 +3324,9 @@ function renderTimeline(pane){
         const pill=dm?'<span class="dpill">⏱ '+esc(durText(dm))+'</span>':'';
         html+='<button class="hour filled" data-k="'+esc(it.k)+'"><span class="hh">'+(en.noT?'<b style="color:#c3c8d4">—</b>':('<b>'+esc(en.s||(pad(h)+':00'))+'</b>'+(en.e?'<small>'+(en.ed?(en.ed===1?'翌':'+'+en.ed+'日'):'')+esc(en.e)+'</small>':'')))+'</span><div class="body">'+
           pfTag(en)+((ek=>en.mv?'<span class="loc big" style="color:#4d7dff">'+(TRICON[en.tr]||'🚗')+' '+esc(en.rt||'移動')+(mvOpenOk(ui.date,en)?'　（移動中…🏁到着を押す）':'')+'</span>'
-                :ek==='rest'?'<span class="loc big" style="color:#c98a2f">☕ 休憩'+(en.p?'　📍'+esc(en.p):'')+'</span>'
-                :ek==='work'?'<span class="loc big" style="color:#1e3a8a">💼 仕事'+(en.p?'　📍'+esc(en.p):'')+'</span>'
-                :ek==='ai'?'<span class="loc big" style="color:#7a6ef3">🤖 AI'+(en.p?'　📍'+esc(en.p):'')+'</span>'
-                :ek==='meal'?'<span class="loc big" style="color:#e0603c">🍚 食事'+(en.p?'　📍'+esc(en.p):'')+'</span>'
-                :ek==='incar'?'<span class="loc big" style="color:#0f766e">🚙 車内滞在'+(en.p?'　📍'+esc(en.p):'')+'</span>'
-                :ek==='sleep'?'<span class="loc big" style="color:#7a6ef3">🌙 睡眠'+(en.e?'':'　（寝てる…☀起きたを押す）')+(en.p?'　📍'+esc(en.p):'')+'</span>'
-                :(en.p?'<span class="loc big">📍'+esc(en.p)+'</span>':''))(kHead(en)))+   /* c12.1：何をは下の行に出す。見出しは いつ・どこで（重ねて出さない） */
+                :recHead(en,ek).t)(kHead(en)))+   /* c14.6：時間の右隣りは📍場所（種類は下の札） */   /* c12.1：何をは下の行に出す。見出しは いつ・どこで（重ねて出さない） */
           ((!en.mv&&en.k!=='sleep'&&recOpenOk(ui.date,en))?'<span class="loc" style="color:#e0603c;font-weight:800">⏳ 途中（押して終わりを入れる）</span>':'')+
-          pill+(en.md?'<span class="dpill mdp">🕳️ ムダ</span>':'')+actsHtml(en)+   /* c10.4 */
+          recHead(en,kHead(en)).g+pill+(en.md?'<span class="dpill mdp">🕳️ ムダ</span>':'')+actsHtml(en)+   /* c10.4 */
           (en.t?'<div class="txt">'+txtHtml(en.t)+'</div>':'')+
           (en.ph&&en.ph.length?'<span class="phrow">'+en.ph.slice(0,4).map(id=>'<img class="phth" src="'+esc(phUrl(id))+'" alt="" onerror="this.style.visibility=\'hidden\'">').join('')+(en.ph.length>4?'<span class="phmore">+'+(en.ph.length-4)+'</span>':'')+'</span>':'')+
           (isToday&&h===nowH&&idx===0?'<span class="nowmark">いま</span>':'')+
@@ -3685,7 +3688,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+   /* 同期の状態1行と記録（クラウド版 c1.9） */
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c14.5）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c14.6）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -6354,7 +6357,7 @@ const TD_Q=[['none','🗑','もう要らない'],['ask','🤝','人に任せる'
    state.kgrp＝カテゴリー／state.kinds＝何をした（g＝カテゴリー）／state.trs＝移動手段／state.srr＝ムダの理由／state.tdq＝やめる理由／state.tools＝道具 */
 /* c11.4：小分け（カテゴリーの中の小さい分け方）。sid→[sid,カテゴリー,絵,名前] */
 const KIND_SUB0=[['aa','V','🔨','AA'],['deal','V','🤝','商談'],['prep','V','✨','商品化']];
-const KIND_SG0={mkt:'aa',c_list:'aa',c_aaadj:'aa',c_aalive:'aa',c_aapick:'aa',c_in:'aa',c_out:'aa',c_aaafter:'aa',c_aaclaim:'aa',c_buy:'deal',c_sell:'deal',c_cust:'deal',c_int:'prep',c_wash:'prep',c_polish:'prep',c_mnt:'prep',c_body:'prep',c_photo:'prep',c_imgedit:'prep',c_goo_list:'prep',c_price:'prep',c_goo_inq:'deal'};
+const KIND_SG0={mkt:'aa',c_list:'aa',c_aaadj:'aa',c_aalive:'aa',c_aapick:'aa',c_in:'aa',c_out:'aa',c_aaafter:'aa',c_aaclaim:'aa',c_buy:'deal',c_sell:'deal',c_cust:'deal',c_int:'prep',c_wash:'prep',c_polish:'prep',c_mnt:'prep',c_body:'prep',c_photo:'prep',c_imgedit:'prep',c_goo_list:'prep',c_price:'prep',c_yahoo:'prep',c_goo_inq:'deal'};
 let SUB_ON={};
 function subList(g){const st=state.ksub||{},out=[];KIND_SUB0.forEach((b,i)=>{const o=st[b[0]];if(o&&o.off)return;const gg=(o&&o.g)||b[1];if(gg!==g)return;out.push({id:b[0],g:gg,ic:(o&&o.ic)||b[2],lb:(o&&o.lb)||b[3],o:(o&&o.o!=null)?Number(o.o):i*10});});
   for(const id in st){const o=st[id];if(!o||!o.own||o.off||!o.lb||o.g!==g||KIND_SUB0.some(b=>b[0]===id))continue;out.push({id,g,ic:o.ic||'📂',lb:String(o.lb),o:Number(o.o)||9999});}return out.sort((a,b)=>a.o-b.o);}
@@ -8894,7 +8897,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c14.5";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c14.6";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 /* ログインの後：同じユーザーなら影はそのまま（全件受信をやり直さない）。違うユーザーならそのユーザーの影を読む */
 async function clAfterLogin(){
