@@ -3683,7 +3683,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+   /* 同期の状態1行と記録（クラウド版 c1.9） */
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c14.0）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c14.1）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -4113,7 +4113,7 @@ function openEntrySheet(date,ref){
       $('mvcOk').onclick=()=>{const s=$('mvcS').value,e=$('mvcE').value;if(!s||!e){toast('車内にいた時間（何時から何時まで）を入れてくれ');return;}
         const S=hmMin(tS);let cs=hmMin(s);while(cs<S)cs+=1440;let ce=hmMin(e);while(ce<=cs)ce+=1440;
         if(cs===S){toast('車内の始まりが移動の始まりと同じ。後にしてくれ');return;}
-        if(tE){let te=hmMin(tE)+1440*(tEd||0);if(te<=S)te+=1440;if(ce>=te){toast('車内の終わりが、移動の終わりより後になっている');return;}}
+        if(tE){let te=hmMin(tE)+1440*(tEd||0);if(te<=S)te+=1440;if(ce>te){toast('車内の終わりが、移動の終わりより後になっている');return;}}
         sheetSt.cut={s,e,ks:D.ks.slice()};closeSub();mvCutPaint();};};
     paint();};
   const mvCutPaint=()=>{const w=$('mvCutW');if(!w)return;if(eType!=='move'){w.innerHTML='';return;}const C=sheetSt.cut;
@@ -4317,7 +4317,7 @@ function openEntrySheet(date,ref){
     /* 終わりが空＝途中の記録としてそのまま保存（後で日記から開いて終わりを入れる） */   /* 移動中の移動も空のまま */   /* 寝ている最中の睡眠を、別の種類に変えて保存した時だけ、終了を入れる */
     if(tE&&tE<=tS&&tEd===0){tEd=1;toast('終了を翌日として記録した');}
     let CUT=null;if(isMv&&sheetSt.cut){const C=sheetSt.cut,S=hmMin(tS);let cs=hmMin(C.s);while(cs<S)cs+=1440;let ce=hmMin(C.e);while(ce<=cs)ce+=1440;const te=tE?hmMin(tE)+1440*(tEd||0):null;   /* c13.8：🚙途中で車内 */
-      if(te!=null&&ce>=te){toast('🚙車内の終わりが、移動の終わりより後。直してくれ');return;}if(cs===S){toast('🚙車内の始まりが移動の始まりと同じ');return;}CUT={C,S,cs,ce,te};}
+      if(te!=null&&ce>te){toast('🚙車内の終わりが、移動の終わりより後。直してくれ');return;}   /* c14.1：同じ時刻（車内のまま終わる）はOK */if(cs===S){toast('🚙車内の始まりが移動の始まりと同じ');return;}CUT={C,S,cs,ce,te};}
     {const SPV=actsS.filter(a=>a.sp);if(SPV.length||CUT){const S=hmMin(tS),te=tE?hmMin(tE)+1440*(tEd||0):null;   /* c14.0 */
       const L=SPV.map(a=>[a.s,a.e]).concat(CUT?[[CUT.C.s,CUT.C.e]]:[]).map(([s,e])=>{let a=hmMin(s);while(a<S)a+=1440;let b=hmMin(e);while(b<=a)b+=1440;return [a,b];}).sort((x,y)=>x[0]-y[0]);
       for(let i=0;i<L.length;i++){if(te!=null&&L[i][1]>te){toast('🔀 分ける行の終わりが、記録の終わりより後。直してくれ');return;}if(i&&L[i][0]<L[i-1][1]){toast('🔀 分ける行どうしの時間が重なっている');return;}}}}
@@ -8892,7 +8892,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c14.0";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c14.1";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 /* ログインの後：同じユーザーなら影はそのまま（全件受信をやり直さない）。違うユーザーならそのユーザーの影を読む */
 async function clAfterLogin(){
