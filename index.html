@@ -3681,7 +3681,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+   /* 同期の状態1行と記録（クラウド版 c1.9） */
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c13.8）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c13.9）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -6761,14 +6761,15 @@ function quickPlace(p){
 let SLEEP_BED='02:00',SLEEP_MIN=420,SLEEP_WAKE='09:00';
 /* c4.7：注意の時刻は本人が変えられる（state.alarm）。寝るは0〜5時・風呂は夜、の前提 */
 function alarmCfg(){const a=(typeof state!=='undefined'&&state&&state.alarm)||{};const ok=v=>/^\d\d:\d\d$/.test(String(v||''));
-  const o={bath:ok(a.bath)?a.bath:'22:00',bed:ok(a.bed)?a.bed:'02:00',wake:ok(a.wake)?a.wake:'09:00',meal:(ok(a.meal)&&!(a.meal==='00:00'&&!a.m21))?a.meal:'21:00',nap:Math.max(5,Math.min(240,Number(a.nap)||30))};
+  const o={bath:ok(a.bath)?a.bath:'22:00',bed:ok(a.bed)?a.bed:'02:00',wake:ok(a.wake)?a.wake:'09:00',meal:(ok(a.meal)&&!(a.meal==='00:00'&&!a.m21))?a.meal:'21:00',nap:Math.max(5,Math.min(240,Number(a.nap)||30)),j1s:ok(a.j1s)?a.j1s:'06:30',j1e:ok(a.j1e)?a.j1e:'10:00',j2s:ok(a.j2s)?a.j2s:'16:30',j2e:ok(a.j2e)?a.j2e:'20:00'};   /* c13.9：首都高の渋滞（目安） */
   SLEEP_BED=o.bed;SLEEP_WAKE=o.wake;return o;}
-function alarmSummary(){const A=alarmCfg();return '風呂 '+A.bath+'・寝る '+A.bed+'・起きる '+A.wake+'・夜ごはん '+A.meal+'〜・仮眠 '+A.nap+'分';}
+function alarmSummary(){const A=alarmCfg();return '風呂 '+A.bath+'・寝る '+A.bed+'・起きる '+A.wake+'・夜ごはん '+A.meal+'〜・仮眠 '+A.nap+'分・首都高 '+A.j1s+'〜'+A.j1e+'／'+A.j2s+'〜'+A.j2e;}
 function openAlarmSheet(){const A=alarmCfg();const row=(id,ic,lb,v,t)=>'<div class="al-row"><span>'+ic+' '+lb+'</span>'+(t==='n'?'<input type="number" id="'+id+'" min="5" max="240" inputmode="numeric" value="'+v+'">分':'<input type="time" id="'+id+'" step="300" lang="ja-JP" value="'+v+'">')+'</div>';
   openSub('<div class="sh-time"><span>⏰ 注意の時刻</span></div><div class="sh-note" style="text-align:left">札・帯・ムダの数え方がこの時刻で変わる。自由に変えていい（本人決定 2026-10-06）</div>'+
     row('alBath','🛁','風呂に入り始める',A.bath)+row('alBed','💤','寝る（過ぎたら夜更かし）',A.bed)+row('alWake','🌞','起きる（過ぎたら寝坊）',A.wake)+row('alMeal','🍚','夜ごはんの締切（これ以降はムダ）',A.meal)+row('alNap','😴','仮眠はここまで',A.nap,'n')+
+    '<div class="sh-note" style="text-align:left;margin-top:8px">🛣 首都高の渋滞（平日・目安。土日祝は出さない）</div>'+row('alJ1s','🛣','朝（都心向き）始まり',A.j1s)+row('alJ1e','🛣','朝 終わり',A.j1e)+row('alJ2s','🛣','夕方（郊外向き）始まり',A.j2s)+row('alJ2e','🛣','夕方 終わり',A.j2e)+
     '<div class="sh-btns"><button class="delbtn" id="alNo">やめる</button><button class="savebtn" id="alOk">これにする</button></div>',null);
-  $('alNo').onclick=closeSub;$('alOk').onclick=()=>{const g=id=>(($(id)||{}).value||'').trim();const v={bath:g('alBath')||A.bath,bed:g('alBed')||A.bed,wake:g('alWake')||A.wake,meal:g('alMeal')||A.meal,nap:Number(g('alNap'))||A.nap,m21:1,ts:Date.now()};   /* c12.6：夜ごはんの既定は21:00（本人指示）。自分で選んだ時刻はそのまま */mutate(()=>{state.alarm=v;});alarmCfg();closeSub();toast('⏰ '+alarmSummary());};}
+  $('alNo').onclick=closeSub;$('alOk').onclick=()=>{const g=id=>(($(id)||{}).value||'').trim();const v={bath:g('alBath')||A.bath,bed:g('alBed')||A.bed,wake:g('alWake')||A.wake,meal:g('alMeal')||A.meal,nap:Number(g('alNap'))||A.nap,j1s:g('alJ1s')||A.j1s,j1e:g('alJ1e')||A.j1e,j2s:g('alJ2s')||A.j2s,j2e:g('alJ2e')||A.j2e,m21:1,ts:Date.now()};   /* c12.6：夜ごはんの既定は21:00（本人指示）。自分で選んだ時刻はそのまま */mutate(()=>{state.alarm=v;});alarmCfg();closeSub();toast('⏰ '+alarmSummary());};}
 /* ✅良い朝が何日続いているか（今日に判定があれば今日から、無ければ昨日から数える） */
 function sleepStreak(by,endDay){
   by=by||sleepSessions();let d=endDay||todayStr(),n=0;
@@ -6798,7 +6799,7 @@ function slpBarInner(){try{if(ui.date!==todayStr()||openMove())return '';const o
   else if(sd&&sd.lastWake&&sd.lastWake>A.wake)w2='<span class="sb-ov">⚠ 起きる時刻 '+esc(A.wake)+' を'+esc(durText(hmMin(sd.lastWake)-wk))+'過ぎた</span><button class="chip sb-rc" id="wrRcv">🔁 挽回の計画</button>';
   const cd=(state.cond||{})[t];const cv=cd&&!cd.del?cd.v:'';
   const c2=(!os&&sd)?(cv?'<button class="chip sb-cd" id="wrCond">'+COND[cv][0]+' 今日の体調</button>':'<span class="sb-q">今日の体調は？</span>'+Object.keys(COND).map(k=>'<button class="chip sb-cd" data-cond="'+k+'">'+COND[k][0]+' '+COND[k][1]+'</button>').join('')):'';
-  const mp=os?'':dinnerPill();   /* c12.7 */
+  const mp=os?'':(jamPill()+dinnerPill());   /* c12.7・c13.9：首都高の渋滞 */
   return '<span class="sb-l">'+(os?'😴 寝ている（起きたら右を押す）':lt)+'</span>'+act+((w2||c2||mp)?'<div class="sb-2">'+mp+w2+c2+'</div>':'');}catch(e){return '';}}
 /* c12.7：夜ごはんの注意。その日の夜（16時〜翌5時）に🍚食事・🥡持ち帰りの記録があれば出さない */
 function dinnerAte(d){const isM=k=>k==='meal'||k==='mealto';const late=s=>!!s&&(s>='16:00');
@@ -6810,6 +6811,16 @@ function dinnerPill(nowM){const A=alarmCfg(),n=new Date(),now=nowM!=null?nowM:n.
   if(dinnerAte(base))return '';const left=mm-rel;let bedR=hmMin(A.bed);if(bedR<300)bedR+=1440;if(rel>=bedR&&left<0)return '';   /* 寝る時刻を過ぎたら出さない */
   if(left>180)return '';if(left>0)return '<span class="sb-dn'+(left<=15?' hot':left<=60?' warn':'')+'">🍚 夜ごはん '+esc(A.meal)+' まで あと'+esc(durText(left))+'</span>';
   return '<span class="sb-dn over">⚠ 夜ごはん '+esc(A.meal)+' を'+esc(durText(-left))+'過ぎた</span>';}   /* c11.5 */
+/* c13.9：首都高の渋滞の注意（本人指示 2026-10-08「出る時間を間違えて渋滞→長い仮眠。AI作業に夢中で出発をミスる事もある」）。
+   時刻は民間記事と首都高の公式「午前は上り・午後は下りが混む」からの目安。祝日は 2026〜2027 年だけ持っている */
+const JP_HOL={'2026-01-01':1,'2026-01-12':1,'2026-02-11':1,'2026-02-23':1,'2026-03-20':1,'2026-04-29':1,'2026-05-03':1,'2026-05-04':1,'2026-05-05':1,'2026-05-06':1,'2026-07-20':1,'2026-08-11':1,'2026-09-21':1,'2026-09-22':1,'2026-09-23':1,'2026-10-12':1,'2026-11-03':1,'2026-11-23':1,
+ '2027-01-01':1,'2027-01-11':1,'2027-02-11':1,'2027-02-23':1,'2027-03-21':1,'2027-03-22':1,'2027-04-29':1,'2027-05-03':1,'2027-05-04':1,'2027-05-05':1,'2027-07-19':1,'2027-08-11':1,'2027-09-20':1,'2027-09-23':1,'2027-10-11':1,'2027-11-03':1,'2027-11-23':1};
+function jamPill(nowM,dayStr){const A=alarmCfg(),n=new Date(),now=nowM!=null?nowM:n.getHours()*60+n.getMinutes(),d=dayStr||todayStr(),wd=parseD(d).getDay();
+  if(wd===0||wd===6||JP_HOL[d])return '';const fri=wd===5?'・金曜は特に混む':'';
+  for(const [s,e,lb] of [[A.j1s,A.j1e,'朝・都心向き'],[A.j2s,A.j2e,'夕方・郊外向き']]){const a=hmMin(s),b=hmMin(e),left=a-now;
+    if(left>0&&left<=60)return '<span class="sb-dn'+(left<=15?' hot':' warn')+'">🛣 首都高の渋滞まで あと'+esc(durText(left))+'（'+lb+' '+esc(s)+'〜'+fri+'）</span>';
+    if(now>=a&&now<b)return '<span class="sb-dn over">⚠ 首都高 渋滞の時間（'+lb+' 〜'+esc(e)+fri+'）</span>';}
+  return '';}
 const COND={bad:['😵','しんどい'],ok:['🙂','ふつう'],good:['💪','元気']};   /* c11.5：体調は3つだけ（増やすと迷う） */
 function condSet(v){mutate(()=>{state.cond=state.cond||{};state.cond[todayStr()]={v,ts:Date.now()};});toast(COND[v][0]+' 今日の体調：'+COND[v][1]+(v==='bad'?'　→ やる事は🙌🤖の物だけ出す':''));}
 function condToday(){const c=(state.cond||{})[todayStr()];return c&&!c.del?c.v:'';}
@@ -8846,7 +8857,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c13.8";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c13.9";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 /* ログインの後：同じユーザーなら影はそのまま（全件受信をやり直さない）。違うユーザーならそのユーザーの影を読む */
 async function clAfterLogin(){
