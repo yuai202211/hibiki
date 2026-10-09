@@ -878,7 +878,7 @@
   .an-pjb.sr{background:#fff3f4;color:#b91c1c}
   .a-ai{display:inline-flex;gap:3px;margin-left:4px}.a-ai i{font-style:normal;color:#fff;border-radius:6px;padding:0 5px;font-size:10.5px;font-weight:800}
   .ac-ai.rec{margin:6px 0 4px;padding:8px 10px;border-radius:14px;background:#f4f2ff}
-  .ac-ai{display:flex;flex-wrap:wrap;gap:5px;align-items:center;margin:4px 0 2px}.ac-ai>span{font-size:11.5px;font-weight:800;color:#6b5fd6;margin-right:2px}.ac-ai .chip{font-size:12px;padding:6px 10px;border:1.5px solid var(--ac);color:var(--ac);background:#fff}.ac-ai .chip.sel{background:var(--ac);color:#fff}.ac-ai .chip.sel.auto{opacity:.75}
+  .ac-ai{display:flex;flex-wrap:wrap;gap:5px;align-items:center;margin:4px 0 2px}.ac-ai>span{font-size:11.5px;font-weight:800;color:#6b5fd6;margin-right:2px}.ac-ai .chip{font-size:12px;padding:6px 10px;border:1.5px solid var(--ac);color:var(--ac);background:#fff}.ac-ai .chip.sel{background:var(--ac);color:#fff}.ac-aip .chip.sel,.ac-mp .chip.sel{background:#1f2430!important;color:#fff!important;border-color:#1f2430!important;box-shadow:none!important}   /* c16.0：AIで何をした・目的は選んだら黒（☝️✌️とも） */.ac-ai .chip.sel.auto{opacity:.75}
   .arm-tip{position:fixed;z-index:400;max-width:80vw;background:#1f2430;color:#fff;border-radius:12px;padding:7px 12px;font-weight:800;font-size:14px;box-shadow:0 8px 24px rgba(0,0,0,.25);pointer-events:none;text-align:center}.arm-tip small{display:block;font-size:11px;font-weight:600;color:#c9cdd6}
   .armed{outline:3px solid #1f2430;outline-offset:1px}
   .nav{display:block!important;padding:4px 0 calc(4px + env(safe-area-inset-bottom))!important}
@@ -3742,7 +3742,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+   /* 同期の状態1行と記録（クラウド版 c1.9） */
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c15.9）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c16.0）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -9107,7 +9107,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c15.9";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c16.0";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 /* ログインの後：同じユーザーなら影はそのまま（全件受信をやり直さない）。違うユーザーならそのユーザーの影を読む */
 async function clAfterLogin(){
