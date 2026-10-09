@@ -848,8 +848,8 @@
 .sr-page .chip.srg.on{background:#7c3aed!important;color:#fff!important}.sr-pl{flex:0 0 100%;display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}
 .sr-page .chip.sel{background:#1f2430!important;color:#fff!important;border-color:#1f2430!important;box-shadow:none!important}   /* c15.0：選んだら黒（文字・絵は残す） */
 .sr-list .sr-it{display:flex!important;flex-direction:row!important;align-items:flex-start!important;justify-content:flex-start!important;text-align:left!important}.sr-list .sr-dt{align-items:flex-start;text-align:left}.sr-dt2 summary::after{content:" ▸";color:#8a93a6}.sr-dt2[open] summary::after{content:" ▾"}.sr-dt2 summary::-webkit-details-marker{display:none}
-.scrub{position:fixed;z-index:6;width:22px;display:none;touch-action:none}.scrub i{position:absolute;right:4px;width:7px;border-radius:99px;background:rgba(90,100,120,.28);transition:background .15s}
-.scrub.on i,.scrub:hover i{background:rgba(10,154,84,.7);width:9px;right:3px}.scrub b{position:absolute;right:20px;transform:translateY(-50%);background:#1f2430;color:#fff;font-size:13px;font-weight:800;padding:4px 10px;border-radius:999px;white-space:nowrap;display:none;pointer-events:none}.scrub.on b{display:block}
+.scrub{position:fixed;z-index:6;width:24px;display:none;touch-action:none;cursor:grab}.scrub::before{content:"";position:absolute;right:6px;top:0;bottom:0;width:4px;border-radius:99px;background:rgba(90,100,120,.12)}.scrub i{position:absolute;right:3px;width:10px;border-radius:99px;background:#8a93a6;box-shadow:0 1px 4px rgba(0,0,0,.18);transition:background .15s}   /* c15.4：はっきり見える太さと色 */
+.scrub.on i,.scrub:hover i{background:#0a9a54;width:12px;right:2px}.scrub.on{cursor:grabbing}.scrub b{position:absolute;right:20px;transform:translateY(-50%);background:#1f2430;color:#fff;font-size:13px;font-weight:800;padding:4px 10px;border-radius:999px;white-space:nowrap;display:none;pointer-events:none}.scrub.on b{display:block}
 .mvsug{background:#f3f7ff!important;border-radius:14px;cursor:default}.mvsug .body{display:flex;flex-direction:column;gap:4px}.mvsug .gp-l{color:#3b63d9!important}.ms-rt{font-size:13.5px;font-weight:800;color:#1f2a5c;word-break:break-word}
 .ms-ac{display:flex;flex-wrap:wrap;gap:6px;align-items:center}.ms-tr{font:inherit;font-size:13px;font-weight:700;padding:6px 8px;border-radius:10px;border:1px solid var(--line);background:#fff}.ms-ok{font-size:13px;font-weight:800;color:#fff;background:#4d7dff;border-radius:999px;padding:6px 14px}
 .fr-addbar{display:block;width:100%;margin:6px 0 2px;padding:9px 12px;border-radius:12px;background:#f4f2ff;color:#5b4fd6;font-weight:800;font-size:13px;text-align:center}
@@ -2743,7 +2743,15 @@ function calcStreak(){
   return n;
 }
 
-function render(){
+/* c15.4：移動中（終わりなし）の後に、場所・車内などの記録が始まっていたら、その始まりで到着にする。行き先が無ければその場所を入れる。直したら true */
+function autoArrive(){let ch=false;const t=todayStr();
+  for(const d of [addDays(t,-1),t]){const eo=(state.entries||{})[d]||{};for(const k in eo){const mv=eo[k];if(!mv||mv.del||!mv.mv||mv.e||mv.noT||!mv.s)continue;const ms=hmMin(mv.s);let best=null;
+    for(const d2 of [d,addDays(d,1)]){const off=d2===d?0:1440,e2=(state.entries||{})[d2]||{};for(const k2 in e2){const x=e2[k2];if(!x||x.del||x.mv||x.noT||!x.s||(d2===d&&k2===k))continue;if(TEL_KS.indexOf(x.k)>=0||x.k==='spplay'||(!x.p&&x.k!=='incar'))continue;   /* 📞📲の記録や場所の無い記録では閉じない */const a=hmMin(x.s)+off;if(a<=ms)continue;if(!best||a<best.a)best={a,x};}}
+    if(!best)continue;mv.e=best.x.s;const ed=Math.floor(best.a/1440);if(ed)mv.ed=ed;else delete mv.ed;
+    if(best.x.p){const pts=String(mv.rt||'').split('→').map(z=>z.trim()).filter(Boolean);if(pts.length<2)mv.rt=(pts[0]?pts[0]+' ':'')+'→ '+best.x.p;}
+    mv.ts=Date.now();ch=true;}}
+  return ch;}
+function render(){try{if(typeof state!=='undefined'&&state&&state.entries&&autoArrive()){state.updatedAt=Date.now();saveLocal(false);pendingCkpt=true;if(!localOnly&&!permFail)schedulePublish(3000);}}catch(e){}   /* c15.4 */
   btnRefresh();   /* c10.9：ボタンの編集（同期で届いた分も）を反映 */
   {const bm=document.getElementById('bootmsg');if(bm)bm.remove();}   /* 最初の描画＝起動できた。読み込み中の表示を外す */
   const t=todayStr(),isToday=ui.date===t;
@@ -3716,7 +3724,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+   /* 同期の状態1行と記録（クラウド版 c1.9） */
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c15.3）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c15.4）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -9062,7 +9070,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c15.3";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c15.4";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 /* ログインの後：同じユーザーなら影はそのまま（全件受信をやり直さない）。違うユーザーならそのユーザーの影を読む */
 async function clAfterLogin(){
