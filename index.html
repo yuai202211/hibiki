@@ -855,6 +855,9 @@
 .ms-ok{font-size:13px;font-weight:800;color:#fff;background:#4d7dff;border-radius:999px;padding:6px 14px}
 .ac-bz .bz-in{flex:1 1 160px;min-width:0;font:inherit;font-size:13px;padding:6px 10px;border-radius:10px;border:1px solid var(--line)}.a-bz i{background:#ede9fe!important;color:#5b21b6!important}
 .a-mp i{background:#fce7f3!important;color:#9d174d!important}.an-note{font-size:12.5px;color:#5b6475;margin:2px 0 8px}.an-note b{color:#1f2a44}
+.db-biz{display:flex;gap:12px;flex-wrap:wrap;font-size:12.5px;font-weight:800;color:#5b6475;margin:2px 0 6px}.db-biz b{color:#1f2a44;font-size:13.5px}
+.actrow .ac-tq{grid-column:1 / -1;display:flex;gap:6px;margin-top:2px}.actrow .ac-tq button{font-size:11px;font-weight:800;padding:3px 9px;border-radius:999px;background:#eef3ff;color:#3b63d9}
+#contW .ctsug{margin:0 0 8px}.ctsug2{background:#fff7ed!important}.ctsug2 .gp-l{color:#9a3412!important}
 .fr-addbar{display:block;width:100%;margin:6px 0 2px;padding:9px 12px;border-radius:12px;background:#f4f2ff;color:#5b4fd6;font-weight:800;font-size:13px;text-align:center}
 .td-dlg{font-style:normal;font-size:11px;font-weight:800;background:#ede9fe;color:#5b21b6;border-radius:999px;padding:1px 7px;margin-left:4px}
 .rc-it{padding:8px 0;border-bottom:1px solid var(--line)}.rc-it b{display:block;margin-bottom:4px}
@@ -3076,8 +3079,17 @@ function dayBandHtml(d){try{if(typeof anaCount!=='function'||d<'2026-08-25')retu
   const recM=tot-none,segL=(x,m)=>{const w=m/tot*100;const nm=x?(x[0]==='M'?'ムダ':x[0]==='X'?'滞在':x[2]):'記録なし';return w>=16?nm+' '+hs(m):w>=8?hs(m):'';};
   const segs=ord.slice().sort((a,b)=>(a[0]==='M')-(b[0]==='M')||g[b[0]]-g[a[0]]).map(x=>'<i style="flex:'+g[x[0]]+';background:'+x[3]+'"><em>'+esc(segL(x,g[x[0]]))+'</em></i>').join('')+(none?'<i class="nr" style="flex:'+none+'"><em>'+esc(segL(null,none))+'</em></i>':'');
   return '<button class="dband" id="dBand"><div class="db-h"><span class="db-ti">📊 '+(d===todayStr()?'今日':'この日')+'の24時間メーター</span><span class="db-sub">1日24時間を何に使ったか（長い順）・記録できた時間 '+esc(hs(recM))+'／24h</span><span class="db-go">分析 ›</span></div>'+
-    '<div class="db-bar big">'+segs+'</div><div class="db-sc"><span>0</span><span>6</span><span>12</span><span>18</span><span>24時間</span></div>'+
+    bizLineHtml(d)+'<div class="db-bar big">'+segs+'</div><div class="db-sc"><span>0</span><span>6</span><span>12</span><span>18</span><span>24時間</span></div>'+
     '<div class="db-lg">'+lg+'</div></button>';}catch(e){return '';}}
+/* c16.1：💰商売（中古車・新規事業・Torii Link・集客・HIBIKI以外のAI）／📣集客／🛠HIBIKI（📌案件HIBIKIの付いた記録のAIの行）（05 3-3） */
+function pjHibId(){const p=pjList().find(x=>x.n==='HIBIKI');return p?p.id:'';}
+function bizRowMin(a,en){if(a.s&&a.e)return durMin(a.s,a.e,a.e<a.s?1:0);if(Number(a.m)>0)return Number(a.m);return (en.s&&en.e&&!en.noT)?durMin(en.s,en.e,en.ed):0;}
+function bizSplit(d){const c=anaCount(anaRange('day',d));const S=c.sum||{};let biz=0,ai=0,mk=0;for(const id in S){const k=kindOf(id);if(!k)continue;if(k.g==='A')ai+=S[id];else if(k.g==='P')mk+=S[id];else if(k.g==='V'||k.g==='B'||k.g==='T')biz+=S[id];}
+  const hid=pjHibId();let hib=0;if(hid){const eo=state.entries[d]||{};for(const k in eo){const en=eo[k];if(!en||en.del||en.pj!==hid)continue;for(const a of (en.acts||[])){if(!a)continue;if([a.k].concat(a.kx||[]).some(x=>AI_KINDS[x]))hib+=bizRowMin(a,en);}}}
+  hib=Math.min(hib,ai);return {biz:biz+mk+(ai-hib),mk,hib,hid};}
+function bizLineHtml(d){try{const b=bizSplit(d),hs=m=>m<60?m+'分':(Math.round(m/6)/10)+'h';return '<div class="db-biz"><span>💰 商売 <b>'+hs(b.biz)+'</b></span><span>📣 集客 <b>'+hs(b.mk)+'</b></span><span>🛠 HIBIKI <b>'+(b.hid?hs(b.hib):'—')+'</b></span></div>';}catch(e){return '';}}
+function hibCands(){const o=[];for(const d in state.entries){if(d<'2026-10-03')continue;const eo=state.entries[d];for(const k in eo){const en=eo[k];if(!en||en.del||en.pj)continue;if((en.acts||[]).some(a=>a&&[a.k].concat(a.kx||[]).some(x=>AI_KINDS[x])&&/hibiki/i.test(String(a.t||'')+' '+String(a.c||''))))o.push([d,k]);}}return o;}
+function hibSugHtml(){try{if(pjHibId()||sugNo('pjhib'))return '';const n=hibCands().length;return '<div class="hour gap mvsug ctsug2"><span class="hh">📌</span><div class="body"><span class="gp-l">案件「HIBIKI」を作って、題名にHIBIKIと書いたAIの記録 '+n+'件に付ける？</span><span class="ms-rt">付けると上の「🛠 HIBIKI」に時間が出る。次からは📌案件で1タップ（さっきの続きでも引き継ぐ）</span><span class="ms-ac"><button class="ms-ok" id="hibOk">✓ 入れる</button><button class="ms-no" data-msno="pjhib">✕ 入れない</button></span></div></div>';}catch(e){return '';}}
 /* ===== 📌 案件 ===== */
 function pjList(){const P=state.projects||{};return Object.keys(P).filter(id=>P[id]&&!P[id].del&&P[id].n).map(id=>({id,n:P[id].n,ts:P[id].ts||0})).sort((a,b)=>b.ts-a.ts);}
 function pjNew(n){n=String(n||'').trim().slice(0,30);if(!n)return '';const ex=pjList().find(p=>p.n===n);if(ex)return ex.id;const id='pj'+Date.now().toString(36)+Math.floor(Math.random()*1e3);mutate(()=>{state.projects=state.projects||{};state.projects[id]={n,ts:Date.now()};});return id;}
@@ -3164,6 +3176,8 @@ function pfTag(en){const p=en&&prefOf(en.pf),p0=en&&en.mv?prefOf(en.pf0):null;
   if(!p&&p0)return '<span class="pftag" style="background:'+p0.co+'" title="'+esc(p0.name)+'">'+esc(p0.short)+'</span>';   /* 到着を選んでいない＝出発と同じ県 */
   return p?'<span class="pftag" style="background:'+p.co+'" title="'+esc(p.name)+'">'+esc(p.short)+'</span>':'';}
 /* 新規の記録の初期値＝時系列で直前の記録の pf（同じ日の開始が sm 以前で一番遅い物→無ければ前の日へ最大30日）。lastPref は持たない */
+/* c16.1：直前の記録が「到着県のある移動」なら、その県（場所の初期値に使う） */
+function pfArrive(date,sm){const eo=state.entries[date]||{};let bs='',bv=0;for(const k in eo){const en=eo[k];if(!en||en.del||!en.s||en.noT)continue;if(sm&&en.s>sm)continue;if(en.s>=bs){bs=en.s;bv=(en.mv&&prefOf(en.pf))?Number(en.pf):0;}}return bv;}
 function pfAuto(date,sm){
   const pick=(d,lim)=>{const eo=state.entries[d]||{};let bm='',bv=0;
     for(const k in eo){const en=eo[k];if(!en||en.del)continue;const pv=prefOf(en.pf)?Number(en.pf):((en.mv&&prefOf(en.pf0))?Number(en.pf0):0);if(!pv)continue;   /* 到着が無い移動は出発の県 */
@@ -3309,6 +3323,7 @@ function renderTimeline(pane){
       '<div class="body" style="color:var(--green);font-weight:700">書く'+(isToday?'':'<span style="color:#9aa3b5;font-weight:600">　時間は自由に選べる</span>')+'</div>'+right+'</div>';
   }
   html+=dayBandHtml(ui.date);   /* この日の帯：何に使ったかを1本の色で */
+  if(isToday)html+=hibSugHtml();   /* c16.1：📌案件HIBIKI（✓✕・一度だけ） */
   html+=srDayHtml(ui.date);   /* c4.7：🕳️😤😫の申告と、夜の📲📞の数字 */
   if(isToday)html+=nextLineHtml();   /* c12.6：▶ 次の1つ＋⚡割り込み（今やるの1行の代わり） */   /* c7.9：📋今やる（残りN） */   /* c5.3：⏸途中の期限未設定・期限切れ（見せるだけ） */
   html+=payAlertHtml();   /* 💴 支払いが近い時だけ、書くのすぐ下に出す */
@@ -3345,6 +3360,9 @@ function renderTimeline(pane){
   const mvSugKey=(s,e,P,N)=>'mv|'+ui.date+'|'+s+'|'+e+'|'+P.p+'|'+N.p;
   const arRow=(M,mk,N)=>{const k='ar|'+ui.date+'|'+mk+'|'+N.s;if(sugNo(k))return '';   /* c15.5：到着していた？ */
     return '<div class="hour gap mvsug arsug"><span class="hh">🏁</span><div class="body"><span class="gp-l">到着していた？ '+esc(M.s)+'–'+esc(N.s)+'（'+esc(durText(durMin(M.s,N.s,N.s<M.s?1:0)))+'）</span><span class="ms-rt">'+esc(N.p||'次の記録')+' に着いた</span><span class="ms-ac"><button class="ms-ok ar-ok" data-ark="'+esc(mk)+'" data-ars="'+esc(N.s)+'" data-arp="'+esc(N.p||'')+'">✓ 入れる</button><button class="ms-no" data-msno="'+esc(k)+'">✕ 入れない</button></span></div></div>';};
+  const mvHasDest=rt=>{const p=String(rt||'').split('→').map(x=>x.trim());return p.length>=2&&!!p[p.length-1];};
+  const dsRow=(M,mk,N)=>{const k='ds|'+ui.date+'|'+mk;if(sugNo(k))return '';   /* c16.1：行き先が空の移動（05 3-6） */
+    return '<div class="hour gap mvsug arsug"><span class="hh">🏁</span><div class="body"><span class="gp-l">行き先は ここ？ '+esc(M.s)+'–'+esc(M.e)+'</span><span class="ms-rt">'+esc(M.rt||'移動')+' → <b>'+esc(N.p)+'</b></span><span class="ms-ac"><button class="ms-ok ds-ok" data-dsk="'+esc(mk)+'" data-dsp="'+esc(N.p)+'" data-dspf="'+esc(String(N.pf||''))+'">✓ 入れる</button><button class="ms-no" data-msno="'+esc(k)+'">✕ 入れない</button></span></div></div>';};
   const mvSugRow=(a,b,P,N)=>{const hm=m=>pad(Math.floor(m/60)%24)+':'+pad(m%60),s=hm(a),e=hm(b),tr=mvGuessTr(ui.date,s);   /* c15.3 */
     return '<div class="hour gap mvsug"><span class="hh">🚗</span><div class="body"><span class="gp-l">移動していた？ '+s+'–'+e+'（'+esc(durText(b-a))+'）</span><span class="ms-rt">'+esc(P.p)+' → '+esc(N.p)+'</span><span class="ms-ac"><select class="ms-tr" aria-label="移動手段">'+TRS.map(x=>'<option value="'+esc(x[0])+'"'+(x[0]===tr?' selected':'')+'>'+esc(x[1])+'</option>').join('')+'</select>'+
       '<button class="ms-ok" data-mss="'+s+'" data-mse="'+e+'" data-msf="'+esc(P.p)+'" data-mst="'+esc(N.p)+'" data-mspf0="'+esc(String(P.pf||''))+'" data-mspf="'+esc(String(N.pf||''))+'">✓ 入れる</button><button class="ms-no" data-msno="'+esc(mvSugKey(s,e,P,N))+'">✕ 入れない</button>'+(b-a>=30?'<button class="gp-q" data-gs="'+s+'" data-ge="'+e+'">何してた？ ＋</button>':'')+'</span></div></div>';};
@@ -3352,6 +3370,7 @@ function renderTimeline(pane){
   const gapBefore=en=>{if(!en||en.noT||!en.s)return;const a=hmMin(en.s),arC=!!(gPrev&&gPrev.mv&&!gPrev.e&&gPrev.s&&!gPrev.noT&&(en.p||en.k==='incar')&&!en.mv&&TEL_KS.indexOf(en.k)<0&&en.k!=='spplay'&&a>hmMin(gPrev.s));   /* c15.5：移動中のまま次の場所 */
     if(a>gEnd&&a<=nowM&&!arC){const g=a-gEnd,hm=m=>pad(Math.floor(m/60)%24)+':'+pad(m%60);if(gPl(gPrev)&&gPl(en)&&gPrev.p!==en.p&&g>=3&&g<=120&&gEnd<1440&&!sugNo(mvSugKey(hm(gEnd),hm(a),gPrev,en)))html+=mvSugRow(gEnd,a,gPrev,en);else html+=gapRow(gEnd,a);}
     if(arC){const eo=entriesOf(ui.date),mk=Object.keys(eo).find(k=>eo[k]===gPrev);if(mk)html+=arRow(gPrev,mk,en);}
+    {const dsC=!!(gPrev&&gPrev.mv&&gPrev.e&&!gPrev.noT&&gPrev.s&&!mvHasDest(gPrev.rt)&&en.p&&!en.mv&&TEL_KS.indexOf(en.k)<0&&en.k!=='spplay');if(dsC){const eo=entriesOf(ui.date),mk=Object.keys(eo).find(k=>eo[k]===gPrev);if(mk)html+=dsRow(gPrev,mk,en);}}
     gPrev=en;const e=en.e?(en.ed?1440:hmMin(en.e)):(isToday?nowM:a);gEnd=Math.max(gEnd,e<a?1440:e);};
   const flushRun=()=>{run=[];};
   for(let h=0;h<24;h++){
@@ -3430,6 +3449,9 @@ function renderTimeline(pane){
     toast('🚗 移動を入れた（'+D.mss+'–'+D.mse+'）');render();});
   pane.querySelectorAll('.ms-tr').forEach(x=>x.onclick=ev=>ev.stopPropagation());
   pane.querySelectorAll('[data-msno]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();sugSet(b.dataset.msno);toast('入れなかった（もう出さない）');});   /* c15.5 */
+  pane.querySelectorAll('.ds-ok').forEach(b=>b.onclick=ev=>{ev.stopPropagation();const d=ui.date,k=b.dataset.dsk,p=b.dataset.dsp,pf=Number(b.dataset.dspf)||0;   /* c16.1 */
+    mutate(()=>{const mv=(state.entries[d]||{})[k];if(!mv)return;const pts=String(mv.rt||'').split('→').map(z=>z.trim()).filter(Boolean);mv.rt=(pts[0]?pts[0]+' ':'')+'→ '+p;if(pf&&!prefOf(mv.pf))mv.pf=pf;mv.ts=Date.now();});toast('🏁 行き先を入れた');});
+  {const b=$('hibOk');if(b)b.onclick=ev=>{ev.stopPropagation();const c=hibCands();const id=pjNew('HIBIKI');if(!id)return;mutate(()=>{for(const [d,k] of c){const en=(state.entries[d]||{})[k];if(en&&!en.del){en.pj=id;en.ts=Date.now();}}});toast('📌 HIBIKI を '+c.length+'件に付けた');};}   /* c16.1：📌案件HIBIKIを一度だけ */
   pane.querySelectorAll('.ar-ok').forEach(b=>b.onclick=ev=>{ev.stopPropagation();const d=ui.date,k=b.dataset.ark,s=b.dataset.ars,p=b.dataset.arp;
     mutate(()=>{const mv=(state.entries[d]||{})[k];if(!mv||mv.e)return;mv.e=s;if(s<mv.s)mv.ed=1;else delete mv.ed;if(p){const pts=String(mv.rt||'').split('→').map(z=>z.trim()).filter(Boolean);if(pts.length<2)mv.rt=(pts[0]?pts[0]+' ':'')+'→ '+p;}mv.ts=Date.now();});toast('🏁 到着 '+s);});
   pane.querySelectorAll('[data-gs]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();openEntrySheet(ui.date,{hour:Number(b.dataset.gs.slice(0,2)),s:b.dataset.gs,e:b.dataset.ge});});
@@ -3742,7 +3764,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+   /* 同期の状態1行と記録（クラウド版 c1.9） */
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c16.0）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c16.1）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -3902,13 +3924,13 @@ function openEntrySheet(date,ref){
     '<select id="tEd" lang="ja-JP">'+
     ['当日','翌日','翌々日','3日後','4日後','5日後','6日後','7日後'].map((x,i)=>'<option value="'+i+'">'+x+'</option>').join('')+
     '</select>'+
-    '</div><div style="display:flex;align-items:center;gap:8px;margin-top:4px"><button class="chip" id="tLater" style="padding:5px 10px;font-size:11.5px">⏳ 終わりは後で</button><div id="tDur" style="flex:1;font-size:11px;color:#8a90a0;font-weight:700;text-align:right"></div></div></div>'+
+    '</div><div style="display:flex;align-items:center;gap:8px;margin-top:4px"><button class="chip" id="tLater" style="padding:5px 10px;font-size:11.5px">⏳ 終わりは後で</button><div id="tDur" style="flex:1;font-size:11px;color:#8a90a0;font-weight:700;text-align:right"></div></div><div class="sh-chips" id="tQ" style="margin-top:4px"></div></div>'+
     '<div class="et3" id="eType"><button data-ty="stay">📍 場所</button><button data-ty="move">🚗 移動</button><button data-ty="incar">🚙 車内</button></div>'+   /* c6.3：時間のすぐ下で「何の記録か」（本人指示）。新しい記録は📍いた */
     '<div id="secStay"><div class="sh-label">📍 場所（自由に書ける・コピペOK）</div>'+
       '<div id="pfInl" style="display:flex;gap:6px;align-items:center"><input type="text" id="shPlace" maxlength="120" data-need="1" placeholder="例：東京タワー" style="flex:1;min-width:0"></div>'+   /* 左端に県のチップが入る */
       '<div class="pfflt" id="pFlt"></div>'+   /* c8.9：県のボタン＋📂ほか＋✎編集（中身は下で描く） */
       '<div class="sh-chips" id="pChips" style="margin-top:6px"></div></div>'+
-    '<div class="cnt2" id="cntSw"><button data-cn="1">☝️ 1つ</button><button data-cn="2">✌️ 2つ以上</button></div>'+   /* c6.8 */
+    '<div id="contW"></div><div class="cnt2" id="cntSw"><button data-cn="1">☝️ 1つ</button><button data-cn="2">✌️ 2つ以上</button></div>'+   /* c6.8 */
     '<div id="recDo" class="recdo"></div>'+   /* c6.2：🏷️ ここで何をした（1行ずつとリンク） */
     ''+'<div class="ac-ai rec" id="recAi" style="display:none"></div>'+   /* c5.6：記録の種類が🤖AIの時、使ったAI */   /* 案件（MINI大宮クレーム など） */
     '<div id="secTool"><div class="sh-label">🛠 使う物</div><div class="sh-chips" id="tdChips"></div><input type="text" id="tdX" maxlength="20" placeholder="その他（使った物を書く）" style="display:none;margin-top:6px"></div>'+   /* 記録全体の道具（行で選ばなければこれで数える） */
@@ -3945,7 +3967,7 @@ function openEntrySheet(date,ref){
   if(sheetSt.sub)sheetSt.sel={stay:false,move:false,car:false};   /* c11.0：3つとも自由に（複数OK） */   /* c10.2：新しい記録は📍🚗🚙を全部白で開く（押して記録＝メイン、押さずに時間＋何をした／1行ずつ＝サブ。本人指示 2026-10-07） */   /* c6.2：食事・休憩・睡眠・AI・仕事は「ずっと」の行で見せる */
   let trSel=(ex&&ex.tr)||null,eTouched=!!ex;   /* eTouched＝記録の種類を本人が選んだ（前からある記録も触らない扱い） */
   let tdSel=(ex&&typeof ex.d==='string'&&ex.d)?ex.d:((ex&&ex.dx)?'_other':'');   /* 記録の「使う物」（_other＝手入力） */
-  if(!ex){sheetSt.pf=(eType==='move')?pfAuto(date,tS):13;sheetSt.pfAuto=!!sheetSt.pf;}   /* 新規：移動は直前の記録の県（出発）、それ以外は東京（本人指示 2026-10-06） */
+  if(!ex){sheetSt.pf=(eType==='move')?pfAuto(date,tS):(pfArrive(date,tS)||13);sheetSt.pfAuto=!!sheetSt.pf;}   /* c16.1：場所は「直前の移動の到着県」が初期値（無ければ東京）（05 3-6） */   /* 新規：移動は直前の記録の県（出発）、それ以外は東京（本人指示 2026-10-06） */
   $('mvRt').value=(ex&&(ex.rt||''))||'';
   if(!ex){
     /* 新規なら「どこから→」を直前の記録の場所から先回りで入れておく */
@@ -4001,7 +4023,7 @@ function openEntrySheet(date,ref){
   function pfPaint(){if(!sheetSt)return;const mvT=eType==='move';
     {const pc=$('pfChip'),pi=$('pfInl'),sp=$('secPf');if(pc&&pi&&sp){if(mvT){if(pc.parentNode!==sp)sp.appendChild(pc);sp.style.display='';}else{if(pc.parentNode!==pi)pi.insertBefore(pc,pi.firstChild);sp.style.display='none';}}}   /* 移動以外は場所の欄の左端 */
     {const ac=$('arChip'),pc=$('pfChip');if(ac&&pc){if(mvT){ac.style.display='none';}else{ac.style.display='';if(pc.nextSibling!==ac)pc.parentNode.insertBefore(ac,pc.nextSibling);ac.textContent=sheetSt.ar?('🏙️ '+sheetSt.ar):'🏙️';ac.classList.toggle('on',!!sheetSt.ar);}}}   /* c4.8：区・市町村（任意） */
-    if(mvT&&!sheetSt.pf0&&sheetSt.pfAuto&&sheetSt.pf){sheetSt.pf0=sheetSt.pf;sheetSt.pf0Auto=true;sheetSt.pf=0;sheetSt.pfAuto=false;}   /* 移動にしたら、自動で入った県は「出発」へ */
+    if(mvT&&!sheetSt.pf0&&sheetSt.pfAuto){sheetSt.pf0=pfAuto(date,tS)||sheetSt.pf;sheetSt.pf0Auto=true;sheetSt.pf=0;sheetSt.pfAuto=false;}   /* c16.1：出発は直前の記録の県（本人指示 2026-10-06 の復元） */   /* 移動にしたら、自動で入った県は「出発」へ */
     if(!mvT&&!sheetSt.pf&&sheetSt.pf0Auto){sheetSt.pf=sheetSt.pf0;sheetSt.pfAuto=true;sheetSt.pf0=0;sheetSt.pf0Auto=false;}   /* 移動をやめたら戻す */
     const one=(b,code,auto,lab)=>{if(!b)return;const p=prefOf(code);b.textContent='🗾 '+lab+(p?p.short:(lab?'未選択':'都道府県'));b.style.background=p?p.co:'';b.classList.toggle('on',!!p);b.classList.toggle('auto',!!(p&&auto));};
     const b0=$('pf0Chip');if(b0)b0.style.display=mvT?'':'none';if(mvT)one(b0,sheetSt.pf0,sheetSt.pf0Auto,'出発：');
@@ -4040,6 +4062,9 @@ function openEntrySheet(date,ref){
     if(!eHand&&tE&&tE<=tS&&tEd===0){const a=hm(tS);tE=pad((a[0]+1)%24)+':'+pad(a[1]);$('tEin').value=tE;}
   };
   $('tEin').onchange=()=>{const v=$('tEin').value;if(v){tE=v;eHand=true;}};
+  const tqPaint=()=>{const w=$('tQ');if(!w)return;let pe='';{const nw=new Date(),lim=(!ex&&date===todayStr())?(nw.getHours()*60+nw.getMinutes()+1):hmMin(tS);let bm=-1;   /* c16.1：直前の記録の終わり（05 3-2） */
+      for(const [dd,off] of [[date,0],[addDays(date,-1),-1440]]){const eo2=state.entries[dd]||{};for(const k2 in eo2){if(dd===date&&k2===key)continue;const x=eo2[k2];if(!x||x.del||x.noT||!x.s||!x.e)continue;const s2=hmMin(x.s)+off;let e2=hmMin(x.e)+off+1440*(Number(x.ed)||0);if(e2<s2)e2+=1440;if(e2<0||e2>lim)continue;if(e2>bm){bm=e2;pe=pad(Math.floor(e2/60)%24)+':'+pad(e2%60);}}}}
+    w.innerHTML=(pe&&pe!==tS)?'<button class="chip" id="tqPrev">⏮ 前の続き '+esc(pe)+'</button>':'';const b=$('tqPrev');if(b)b.onclick=()=>{$('tSin').value=pe;$('tSin').onchange();tqPaint();};};tqPaint();
   $('tEd').onchange=()=>{tEd=Number($('tEd').value)||0;};
   /* 何時間かをその場で表示（睡眠なら「😴 睡眠 7時間30分」） */
   const tRefPaint=()=>{const txt=tS?('🕐 '+tS+' – '+(tE||'？')+(tE?'（'+(durText(durMin(tS,tE,(tE<=tS&&tEd===0)?1:tEd))||'0分')+'）':'（終わりは後で）')):'';
@@ -4098,6 +4123,7 @@ function openEntrySheet(date,ref){
         '<div class="ac-l2"><input type="time" class="ac-s" step="300" lang="ja-JP" aria-label="何時から" value="'+esc(a.s||'')+'"><span class="ac-ar">→</span>'+
           '<input type="time" class="ac-e" step="300" lang="ja-JP" aria-label="何時まで" value="'+esc(a.e||'')+'">'+
           '<span class="ac-d">'+(a.m?('⏱ '+esc(durText(a.m))):'')+'</span></div>'+
+        '<div class="ac-tq"><button data-tq="rec">⏱ 記録と同じ</button><button data-tq="prev">⏭ 前の行から</button></div>'+
         '<div class="ac-kw"><div class="ac-k ac-kg">'+kCatHtml(a.k,'',a.d,a.dx,a.kx,a.dd)+'</div>'+bdBtn(a)+'</div>'+
         (((a.k&&AI_KINDS[a.k])||(a.kx||[]).some(x=>AI_KINDS[x]))?(()=>{const on=Array.isArray(a.ai)?a.ai:aiGuess(a.t),auto=!Array.isArray(a.ai);return '<div class="ac-ai"><span>🤖 使ったAI</span>'+AI_TOOLS.map(z=>'<button class="chip'+(on.indexOf(z[0])>=0?(auto?' sel auto':' sel'):'')+'" data-aitl="'+z[0]+'" style="--ac:'+z[2]+'">'+esc(z[1])+'</button>').join('')+'</div>'+aipChips(Array.isArray(a.ap)?a.ap:[],'data-aip');})():'')+(isMkRow(a)?mpChips(Array.isArray(a.mp)?a.mp:[],'data-mp')+bzBox(a.bz,'data-bz'):'')+   /* c15.6 */   /* c12.5 */
         '<textarea class="ac-c" rows="2" maxlength="1000" placeholder="詳細（自由に書く）"'+(a.c?'':' style="display:none"')+'>'+esc(a.c||'')+'</textarea>'+((a.ph&&a.ph.length)?'<div class="ac-ph">'+a.ph.map(id=>'<img class="phth" data-v="'+esc(id)+'" src="'+esc(phUrl(id))+'" alt="" onerror="this.style.visibility=\'hidden\'">').join('')+'</div>':'')+'</div>';}).join('');
@@ -4148,7 +4174,8 @@ function openEntrySheet(date,ref){
       /* 時刻を選んだら、その行のかかった時間と合計だけ書き直す（行を作り直さない＝入力中の文字や選択が消えない） */
       const emp=()=>{['.ac-s','.ac-e'].forEach(q=>{const el=r.querySelector(q);el.classList.toggle('emp',!el.value);});};emp();
       const upd=()=>{acRead();const a=acts[i];r.querySelector('.ac-d').textContent=(a&&a.m)?('⏱ '+durText(a.m)):'';emp();acSum();};
-      r.querySelector('.ac-s').onchange=()=>{upd();const so=actsSort(acts,tS);if(so.some((x,j)=>x!==acts[j])){acts=so;acPaint();}};r.querySelector('.ac-e').onchange=upd;   /* c5.1：開始を選んだら、その場で時刻の早い順に並べ直す（本人指示 2026-10-06） */
+      r.querySelector('.ac-s').onchange=()=>{upd();const so=actsSort(acts,tS);if(so.some((x,j)=>x!==acts[j])){acts=so;acPaint();}};r.querySelector('.ac-e').onchange=upd;
+      r.querySelectorAll('[data-tq]').forEach(b=>b.onclick=()=>{const si=r.querySelector('.ac-s'),ei=r.querySelector('.ac-e');if(b.dataset.tq==='rec'){si.value=tS||'';ei.value=tE||'';}else{let pv='';for(let j=i-1;j>=0;j--){if(acts[j]&&acts[j].e){pv=acts[j].e;break;}}if(!pv){toast('前の行に終わりの時刻が無い');return;}si.value=pv;}upd();const so=actsSort(acts,tS);if(so.some((x,j)=>x!==acts[j])){acts=so;acPaint();}});   /* c16.1：時間を1タップ（05 3-2） */   /* c5.1：開始を選んだら、その場で時刻の早い順に並べ直す（本人指示 2026-10-06） */
       /* Enter＝次の行を足して、そこへ移る（ToDoリストのように続けて書ける）。変換の確定のEnterでは足さない */
       r.querySelector('.ac-t').onkeydown=ev=>{if(ev.key!=='Enter'||ev.isComposing||ev.keyCode===229)return;
         ev.preventDefault();acRead();if(!acts[i]||!acts[i].t.trim())return;acts.splice(i+1,0,{t:'',m:0,s:'',e:''});acPaint(i+1);};
@@ -4257,6 +4284,14 @@ function openEntrySheet(date,ref){
     {const qm=$('acQm');if(qm)qm.onclick=()=>{qMore=!qMore;acCh();};}};
   {const ne=acts.filter(a=>a&&(String(a.t||'').trim()||a.k));sheetSt.one=!((ne.length>1&&!ne.every(a=>a.w&&a.k))||frs.some(x=>String(x||'').trim())||(ne.length>1&&ne.some(a=>a.s||a.e||(a.c&&a.c.trim())||(a.ph&&a.ph.length)||a.st)));}   /* c13.1 */   /* c6.8 */
   acPaint();
+  /* c16.1：さっきの続き（05 3-1・本人OK 2026-10-10）。今日の新しい記録で、2時間以内に終わった直前の記録の最後の行を1タップで足す。✕は覚える */
+  {const w=$('contW');if(w){w.innerHTML='';if(!ex&&date===todayStr()){const nw=new Date(),nowA=nw.getHours()*60+nw.getMinutes();let best=null;
+    for(const [dd,off] of [[date,0],[addDays(date,-1),-1440]]){const eo2=state.entries[dd]||{};for(const k2 in eo2){const x=eo2[k2];if(!x||x.del||x.noT||!x.s||!x.e)continue;const s2=hmMin(x.s)+off;let e2=hmMin(x.e)+off+1440*(Number(x.ed)||0);if(e2<s2)e2+=1440;if(e2>nowA+5)continue;const rows=(x.acts||[]).filter(a=>a&&a.k);if(!rows.length)continue;if(!best||e2>best.e2)best={e2,x,k2,row:rows[rows.length-1]};}}
+    if(best&&nowA-best.e2<=120&&!sugNo('ct|'+date+'|'+best.k2)){const a=best.row,kl=(kindOf(a.k)||{}).lb||'',ks=[a.k].concat(a.kx||[]).map(k=>{const q=kindOf(k);return q?q.ic+q.lb:k;}).join('・'),ai=(a.ai||[]).map(id=>(aiTool(id)||{}).lb||id).join('/'),ap=(a.ap||[]).map(id=>(aipOf(id)||{}).lb||id).join('/'),pjn=(best.x.pj&&(state.projects||{})[best.x.pj]&&!state.projects[best.x.pj].del)?state.projects[best.x.pj].n:'';
+      w.innerHTML='<div class="mvcut-on ctsug"><button class="chip mvcut sel" id="ctOk">⏭ さっきの続き：'+esc((a.t&&a.t!==kl)?a.t+'（'+ks+'）':ks)+(ai?'・'+esc(ai):'')+(ap?'・'+esc(ap):'')+(pjn?'・📌'+esc(pjn):'')+'<small>✓ 入れる（ずっと）</small></button><button class="chip" id="ctNo" aria-label="入れない">✕</button></div>';
+      $('ctOk').onclick=()=>{acRead();const o={t:a.t||'',m:0,s:'',e:'',w:1,k:a.k};if(a.kx&&a.kx.length)o.kx=a.kx.slice();if(a.d)o.d=a.d;if(a.dx)o.dx=a.dx;if(Array.isArray(a.ai))o.ai=a.ai.slice();if(Array.isArray(a.ap))o.ap=a.ap.slice();if(Array.isArray(a.mp))o.mp=a.mp.slice();if(a.bz)o.bz=a.bz;
+        const last=acts[acts.length-1];if(last&&!String(last.t||'').trim()&&!last.k&&!last.s&&!last.e)acts[acts.length-1]=o;else acts.push(o);if(best.x.pj&&!sheetSt.pj&&pjn){sheetSt.pj=best.x.pj;pjPaint();}w.innerHTML='';acPaint();};
+      $('ctNo').onclick=()=>{sugSet('ct|'+date+'|'+best.k2);w.innerHTML='';};}}}}
   /* 最初に出す側：中身がある方。両方ある・両方無い時は、前に使っていた方（端末に覚える） */
   let cMode=(()=>{const hasT=!!(ex&&ex.t),hasA=!!(ex&&Array.isArray(ex.acts)&&ex.acts.some(a=>a&&a.t));
     /* メインは「1行ずつ書く」。自由に書いた本文だけがある記録を開いた時だけ「自由に書く」で開く */
@@ -6606,8 +6641,10 @@ const SR_TY=[['stay','📍','場所'],['move','🚗','移動'],['incar','🚙','
 function srNorm(s){return String(s||'').normalize('NFKC').toLowerCase().replace(/[ぁ-ゖ]/g,c=>String.fromCharCode(c.charCodeAt(0)+0x60));}   /* c15.1：ひらがな＝カタカナ（さうな→サウナ） */
 function srRange(){const t=todayStr();if(SRQ.per==='today')return [t,t];if(SRQ.per==='7')return [addDays(t,-6),t];if(SRQ.per==='30')return [addDays(t,-29),t];if(SRQ.per==='year')return [t.slice(0,4)+'-01-01',t];if(SRQ.per==='pick')return [SRQ.d1||'0000-00-00',SRQ.d2||'9999-99-99'];return ['0000-00-00','9999-99-99'];}
 function srKinds(en){const o=[];if(en.k)o.push(en.k);(en.acts||[]).forEach(a=>{if(!a)return;if(a.k)o.push(a.k);(a.kx||[]).forEach(x=>o.push(x));});return o;}
-function srText(en){const z=[en.p,en.rt,en.t];(en.acts||[]).forEach(a=>{if(!a)return;z.push(a.t,a.c,a.dx,a.bz);[a.k].concat(a.kx||[]).forEach(k=>{const q=k&&kindOf(k);if(q)z.push(q.lb);});(a.ai||[]).forEach(id=>{const q=aiTool(id);if(q)z.push(q.lb);});(a.ap||[]).forEach(id=>{const q=aipOf(id);if(q)z.push(q.lb);});});
-  {const q=en.k&&kindOf(en.k);if(q)z.push(q.lb);}if(en.pf){const p=PREFS[en.pf-1];if(p)z.push(p[1]);}return srNorm(z.filter(Boolean).join(' '));}
+function srRecText(en){const z=[en.p,en.rt,en.t];{const q=en.k&&kindOf(en.k);if(q)z.push(q.lb);}if(en.pf){const p=PREFS[en.pf-1];if(p)z.push(p[1]);}return srNorm(z.filter(Boolean).join(' '));}
+function srRowText(a){const z=[a.t,a.c,a.dx,a.bz];[a.k].concat(a.kx||[]).forEach(k=>{const q=k&&kindOf(k);if(q)z.push(q.lb);});(a.ai||[]).forEach(id=>{const q=aiTool(id);if(q)z.push(q.lb);});(a.ap||[]).forEach(id=>{const q=aipOf(id);if(q)z.push(q.lb);});return srNorm(z.filter(Boolean).join(' '));}
+function srRowMin(a,en){if(a.s&&a.e)return durMin(a.s,a.e,a.e<a.s?1:0);if(Number(a.m)>0)return Number(a.m);return (en.s&&en.e&&!en.noT)?durMin(en.s,en.e,en.ed):0;}
+function srText(en){return srRecText(en)+' '+(en.acts||[]).filter(Boolean).map(srRowText).join(' ');}
 function srRun(){const [d1,d2]=srRange(),toks=srNorm(SRQ.q).split(/\s+/).filter(Boolean),out=[];
   for(const d in state.entries){if(d<d1||d>d2)continue;const eo=state.entries[d];for(const k in eo){const en=eo[k];if(!en||en.del)continue;
     if(SRQ.tb.length){if(en.noT||!en.s)continue;const m=hmMin(en.s),mm=m<300?m+1440:m;if(!SRQ.tb.some(id=>{const b=SR_TB.find(x=>x[0]===id);return mm>=b[3]&&mm<b[4];}))continue;}
@@ -6621,8 +6658,8 @@ function srRun(){const [d1,d2]=srRange(),toks=srNorm(SRQ.q).split(/\s+/).filter(
     if(SRQ.ap.length&&!(en.acts||[]).some(a=>a&&(a.ap||[]).some(x=>SRQ.ap.indexOf(x)>=0)))continue;
     if(SRQ.md&&!(en.md||(en.acts||[]).some(a=>a&&a.md)))continue;
     if(SRQ.ph&&!((en.ph&&en.ph.length)||(en.acts||[]).some(a=>a&&a.ph&&a.ph.length)))continue;
-    if(toks.length){const tx=srText(en);if(!toks.every(t=>tx.indexOf(t)>=0))continue;}
-    const dm=(en.s&&en.e&&!en.noT)?durMin(en.s,en.e,en.ed):0;out.push({d,k,en,dm});}}
+    let hitRows=null;if(toks.length){const rt=srRecText(en);if(!toks.every(t=>rt.indexOf(t)>=0)){const rows=(en.acts||[]).filter(Boolean).filter(a=>{const x=rt+' '+srRowText(a);return toks.every(t=>x.indexOf(t)>=0);});if(!rows.length)continue;hitRows=rows;}}   /* c16.1：記録の見出しに無く、行にだけ当たった時は行の時間（05 3-4b） */
+    const dm=hitRows?hitRows.reduce((s,a)=>s+srRowMin(a,en),0):((en.s&&en.e&&!en.noT)?durMin(en.s,en.e,en.ed):0);out.push({d,k,en,dm});}}
   const key=x=>x.d+' '+(x.en.s||'');out.sort(SRQ.sort==='old'?(a,b)=>key(a)<key(b)?-1:1:SRQ.sort==='long'?(a,b)=>b.dm-a.dm||(key(a)<key(b)?1:-1):(a,b)=>key(a)<key(b)?1:-1);return out;}
 function srCard(x){const en=x.en,dt=parseD(x.d),wd='日月火水木金土'[dt.getDay()],ks=srKinds(en).filter((v,i,a)=>a.indexOf(v)===i&&v!=='incar'&&!(en.p&&!en.mv&&v===en.k&&REC_KH[v])).slice(0,6);   /* 札と同じ種類は出さない */
   const ti=en.mv?(TRICON[en.tr]||'🚗')+' '+esc(en.rt||'移動'):en.p?'📍'+esc(en.p):en.k&&REC_KH[en.k]?REC_KH[en.k][0]+' '+REC_KH[en.k][1]:esc(String(en.t||'').slice(0,30))||'（記録）';
@@ -7306,12 +7343,14 @@ const ANA_NOTR=10,ANA_WALK=9;   /* mvm：TRS の順で 1..9（徒歩＝9）、�
 let anaUnit='week',anaBase=null,anaMore={},anaPfSel=-1,anaOpen=null,anaGrpSel='';
 const anaCache=[];
 const hmMin=s=>{const a=String(s||'').split(':').map(Number);return (a[0]||0)*60+(a[1]||0);};
+const ANA_FROM='2026-10-03';   /* c16.1：本格分析はこの日から（本人決定 2026-10-10）。それ以前は期間を戻せば見られる */
 function anaRange(unit,base){
   const d=parseD(base);let s,e;
   if(unit==='day'){s=base;e=addDays(base,1);}
   else if(unit==='week'){const w=(d.getDay()+6)%7;s=addDays(base,-w);e=addDays(s,7);}
   else if(unit==='month'){s=fmt(new Date(d.getFullYear(),d.getMonth(),1));e=fmt(new Date(d.getFullYear(),d.getMonth()+1,1));}
   else{s=fmt(new Date(d.getFullYear(),0,1));e=fmt(new Date(d.getFullYear()+1,0,1));}
+  if(unit!=='day'&&s<ANA_FROM&&e>ANA_FROM)s=ANA_FROM;   /* c16.1：10/3をまたぐ期間は10/3から */
   return {s,e};
 }
 function anaLabel(unit,r){const a=parseD(r.s),b=parseD(addDays(r.e,-1));
@@ -7353,7 +7392,7 @@ function anaCount0(r,days,N,limit,nowIdx){
   /* 第1パス：記録。重なりは後から始まった記録が勝つ */
   items.forEach((it,ix)=>{if(it.v2)v2[ix]=1;const a=Math.max(0,it.a),b=Math.min(NT,it.b);for(let m=a;m<b;m++){own[m]=ix;cat[m]=it.c;}});
   const mdMask=new Uint8Array(NT);   /* c11.3：🕳️を押した行の時間（まるごと） */
-  items.forEach((it,ix)=>{for(const ac of it.acts){if(!ac||!ac.md)continue;let a,b;if(ac.s&&ac.e){a=it.off+hmMin(ac.s);b=it.off+hmMin(ac.e);if(a<it.a)a+=1440;if(b<=a)b+=1440;}else if(ac.w||it.car||it.mv){a=it.a;b=it.b;}else continue;for(let m=Math.max(0,a);m<b&&m<NT;m++)if(own[m]===ix)mdMask[m]=1;}});
+  items.forEach((it,ix)=>{for(const ac of it.acts){if(!ac||!ac.md)continue;let a,b;if(ac.s&&ac.e){a=it.off+hmMin(ac.s);b=it.off+hmMin(ac.e);if(a<it.a)a+=1440;if(b<=a)b+=1440;}else{a=it.a;b=it.b;}for(let m=Math.max(0,a);m<b&&m<NT;m++)if(own[m]===ix)mdMask[m]=1;}});
   const toolX={};   /* c11.2：1行に2つ目からの道具（それぞれ丸ごと数える） */
   /* 第2パス：1行ずつの行。時刻あり→分数だけ（前寄せ）→移動の「押すだけの行」は残りを等分 */
   items.forEach((it,ix)=>{if(!it.acts.length)return;
@@ -7364,7 +7403,7 @@ function anaCount0(r,days,N,limit,nowIdx){
     const timed=[],mins=[],whole=[];
     for(const ac of it.acts){if(!ac)continue;const ki=(ac.md&&IX.mdrec)?IX.mdrec:kIx(ac.k),ti=tIx(ac.d);   /* c10.4：🕳️の行はムダ */
       if(!ki&&!ti&&!it.mv&&!it.car)continue;
-      if(ac.s&&ac.e)timed.push([ac,ki,ti]);else if(Number(ac.m)>0)mins.push([ac,ki,ti]);else if((it.mv||it.car||ac.w)&&ki)whole.push([ac,ki,ti]);}
+      if(ac.s&&ac.e)timed.push([ac,ki,ti]);else if(Number(ac.m)>0)mins.push([ac,ki,ti]);else if(ki)whole.push([ac,ki,ti]);}   /* c16.1：時間の無い行は「ずっと」として数える（05 3-4a） */
     for(const [ac,ki,ti] of timed){let a=it.off+hmMin(ac.s),b=it.off+hmMin(ac.e);if(a<it.a)a+=1440;if(b<=a)b+=1440;
       let u=0;for(let m=Math.max(a,0);m<b&&m<NT;m++)if(own[m]===ix)put(m,ki,ti,u++,ac);}
     for(const [ac,ki,ti] of mins){let left=Number(ac.m);
@@ -7421,7 +7460,7 @@ function anaCount0(r,days,N,limit,nowIdx){
       mdScrSp+=Math.max(0,(Number(sc.sp)||0)-sp);mdScrTel+=Math.max(0,(Number(sc.tel)||0)-tel);}}
   {const slp=new Uint8Array(NT),mk=(a,b)=>{for(let m=Math.max(0,a);m<b&&m<NT;m++)slp[m]=1;};   /* c11.5：1日の睡眠＋仮眠が8時間を超えた分＝ムダ（自動・設定に関係なく） */
     items.forEach(it=>{if(!it.mv&&(it.c===IX.sleep||it.c===IX.nap))mk(it.a,it.b);for(const ac of it.acts){if(!ac||(ac.k!=='sleep'&&ac.k!=='nap'))continue;
-      if(ac.s&&ac.e){let a=it.off+hmMin(ac.s),b=it.off+hmMin(ac.e);if(a<it.a)a+=1440;if(b<=a)b+=1440;mk(a,b);}else if(ac.w||it.mv||it.car)mk(it.a,it.b);}});
+      if(ac.s&&ac.e){let a=it.off+hmMin(ac.s),b=it.off+hmMin(ac.e);if(a<it.a)a+=1440;if(b<=a)b+=1440;mk(a,b);}else mk(it.a,it.b);}});
     mdExcess=0;for(let i=0;i<days;i++){const a=P+i*1440,b=Math.min(a+1440,P+limit);if(b<=a)break;let s=0,sx=0;for(let m=a;m<b;m++)if(slp[m]){s++;if(nx[m])sx++;}if(s>SLEEP_MAX8)mdExcess+=Math.max(0,s-SLEEP_MAX8-sx);}   /* c13.8：仮眠30分超えで数えた分は二重に数えない */}
   if(!MA){mdLate=0;mdOver=0;mdNap2=0;mdScrSp=0;mdScrTel=0;}   /* 寝すぎ（8時間超え）だけは自動のまま */   /* c11.3：自分で押した🕳️だけの時は数えない */
   const mdRh=mdLate+mdOver+mdNap2+mdExcess+mdScrSp+mdScrTel;
@@ -7439,7 +7478,7 @@ function anaCount0(r,days,N,limit,nowIdx){
       if(it.mv){add(it.c,A,B);return;}   /* 移動は丸ごと移動（中でした事は今まで通り「移動中にも」） */
       const L=B-A,cl=new Uint8Array(L),timed=[],mins=[],whole=[];
       for(const ac of it.acts){if(!ac)continue;const ki=kIx(ac.k);if(!ki)continue;
-        if(ac.s&&ac.e)timed.push([ac,ki]);else if(Number(ac.m)>0)mins.push([ac,ki]);else if(it.car||ac.w)whole.push([ac,ki]);}
+        if(ac.s&&ac.e)timed.push([ac,ki]);else if(Number(ac.m)>0)mins.push([ac,ki]);else whole.push([ac,ki]);}   /* c16.1：時間の無い行＝ずっと */
       for(const [ac,ki] of timed){let a=it.off+hmMin(ac.s),b=it.off+hmMin(ac.e);if(a<it.a)a+=1440;if(b<=a)b+=1440;a=Math.max(a,A);b=Math.min(b,B);if(b<=a)continue;add(ki,a,b,ac);for(let m=a;m<b;m++)cl[m-A]=1;}
       for(const [ac,ki] of mins){let left=Number(ac.m);const mk=new Uint8Array(L);for(let j=0;j<L&&left>0;j++)if(!cl[j]){cl[j]=1;mk[j]=1;left--;}addMask(ki,A,mk,1,ac);}
       if(whole.length){const all=new Uint8Array(L).fill(1);whole.forEach(w=>addMask(w[1],A,all,1,w[0]));cl.fill(1);}   /* c11.3：ずっとの行はそれぞれ丸ごと */
@@ -9107,7 +9146,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c16.0";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c16.1";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 /* ログインの後：同じユーザーなら影はそのまま（全件受信をやり直さない）。違うユーザーならそのユーザーの影を読む */
 async function clAfterLogin(){
