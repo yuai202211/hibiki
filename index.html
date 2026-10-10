@@ -1613,6 +1613,35 @@
   .pcard .pk-t,.pcard .pk-h{padding-right:74px}
   .pcard .pk-ho{margin-top:22px}
   body.cardvis .fab{display:none!important}
+  .gstrip .gs.dep.warn{background:#f5c518;color:#1f2430;box-shadow:0 0 0 2px rgba(245,197,24,.45)}.gstrip .gs.dep.warn b{color:#1f2430}
+  .gstrip .gs.dep.ov{background:#ff8a3c;color:#fff}.gstrip .gs.dep.ov b{color:#fff}
+  .gstrip .gs.dep.late{background:#e0405a;color:#fff}.gstrip .gs.dep.late b{color:#fff}
+  .dpcard{display:flex;align-items:center;flex-wrap:wrap;gap:6px 10px;margin:8px 0 10px;padding:10px 12px;border-radius:16px;background:#fff3bf;border:2px solid #f5c518;color:#1f2430}
+  .dpcard.ov{background:#ffe3cc;border-color:#ff8a3c}
+  .dpcard.late{background:#ffe0e6;border-color:#e0405a}
+  .dpcard .dpc-t{flex:1 1 100%;min-width:0;font-size:15px;font-weight:800;word-break:break-all;cursor:pointer}.dpcard .dpc-t b{font-size:18px}
+  .dpcard .dpc-cd{flex:1 1 auto;min-width:0;font-size:19px;font-weight:800;font-variant-numeric:tabular-nums}
+  .dpcard.ov .dpc-cd{color:#c2410c}.dpcard.late .dpc-cd{color:#d1243f}
+  .dpcard .dpc-b{display:flex;gap:6px;flex:0 0 auto}
+  .dpcard .dpc-go{min-height:46px;padding:0 18px;border-radius:14px;background:var(--green);color:#fff;font-size:16px;font-weight:800}
+  .dpcard .dpc-ed{min-height:46px;min-width:46px;border-radius:14px;background:rgba(0,0,0,.08);color:#1f2430;font-size:18px;font-weight:800}
+  .dp-perm{display:flex;flex-direction:column;align-items:flex-start;gap:4px}.dp-perm:empty{display:none}
+  .dp-cal{min-height:44px;font-weight:800;font-size:14px;margin-top:6px;background:#eef3ff;color:#2b4a9a;white-space:normal;text-align:center}
+  .dp-choice{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .dp-ch{min-height:104px;min-width:0;border-radius:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:#fff;font-family:inherit;padding:6px}
+  .dp-ch i{font-style:normal;font-size:32px;line-height:1.1}.dp-ch b{font-size:16px}.dp-ch small{font-size:11px;font-weight:700;opacity:.92}
+  .dp-ch.dep{background:#e5484d}.dp-ch.prep{background:#ff8a3c}
+  .dp-focus{display:flex;flex-direction:column;gap:6px;padding:12px;border-radius:16px;background:#fff3bf}
+  .dp-focus.ov{background:#ffe0e6}
+  .dp-f1{font-size:18px;font-weight:800}.dp-f1 b{font-size:28px;font-variant-numeric:tabular-nums}.dp-f1 em{font-style:normal;font-size:13px;margin-left:8px;color:#8a6a00}
+  .dp-f2{font-size:15px;font-weight:700;word-break:break-all}.dp-f3{font-size:13px;font-weight:700;color:#5b6475;word-break:break-all}
+  .dp-fcd{font-size:15px;font-weight:800;color:#c2410c}
+  .dp-fb{display:grid;grid-template-columns:1fr 1fr;gap:6px}.dp-fb .chip{min-height:48px;font-size:15px;font-weight:800;min-width:0}
+  .dp-go{background:var(--green);color:#fff}.dp-x{color:#b45309}
+  .dp-list{display:flex;flex-direction:column}
+  .dp-row{display:flex;align-items:center;gap:6px;padding:6px 0;border-bottom:1px solid var(--line)}
+  .dp-rm{flex:1 1 auto;min-width:0;display:flex;align-items:baseline;gap:8px;text-align:left;font-size:14px;font-weight:700;min-height:44px}.dp-rm b{font-size:18px;font-variant-numeric:tabular-nums}.dp-rm span{min-width:0;word-break:break-all}
+  .dp-row .chip{flex:0 0 auto;min-height:40px}
 
   .srbar{cursor:pointer}.srbar input{pointer-events:none}
 </style>
@@ -1963,7 +1992,7 @@ function mergeStates(a,b){
     for(const k in (src.payrep||{})){const nu=src.payrep[k];if(!nu)continue;
       out.payrep=out.payrep||{};const cur=out.payrep[k];
       if(!cur||((nu.ts||0)>(cur.ts||0)))out.payrep[k]=nu;}
-    for(const k of ['rtn','rlog','payppl','kinds','tools','places','projects','marks','bedp','arp','todos','plreg','plgrp','kgrp','trs','srr','tdq','ksub','dlg','dgoal','aip','msx','inc','cash','rtm'])for(const id in (src[k]||{})){   /* kinds／tools＝行の種類・道具（c1.1） */const nu=src[k][id];if(!nu)continue;
+    for(const k of ['rtn','rlog','payppl','kinds','tools','places','projects','marks','bedp','arp','todos','plreg','plgrp','kgrp','trs','srr','tdq','ksub','dlg','dgoal','aip','msx','inc','cash','rtm','dep'])for(const id in (src[k]||{})){   /* kinds／tools＝行の種類・道具（c1.1） */const nu=src[k][id];if(!nu)continue;
       out[k]=out[k]||{};const cur=out[k][id];if(!cur||((nu.ts||0)>(cur.ts||0)))out[k][id]=nu;}
     for(const id in (src.pins||{})){const nu=src.pins[id];if(!nu)continue;
       out.pins=out.pins||{};const cur=out.pins[id];
@@ -1978,7 +2007,7 @@ function mergeStates(a,b){
     for(const id in (src.pha||{})){if(!out.pha[id]&&src.pha[id])out.pha[id]=src.pha[id];}
   }
   out.life=((b.life&&(!(a.life)||((b.life.ts||0)>(a.life.ts||0))))?b.life:a.life)||null;
-  const known={updatedAt:1,dream:1,entries:1,plans:1,ai:1,dreams:1,memos:1,life:1,photos:1,pha:1,pays:1,rules:1,aims:1,moves:1,pins:1,steps:1,payrep:1,rtn:1,rlog:1,payppl:1,kinds:1,tools:1,places:1,projects:1,marks:1,bedp:1,scr:1,alarm:1,goal:1,learn:1,arp:1,todos:1,plreg:1,plgrp:1,kgrp:1,trs:1,srr:1,tdq:1,ksub:1,cond:1,dlg:1,dgoal:1,aip:1,msx:1,inc:1,cash:1,rtm:1,prep:1};
+  const known={updatedAt:1,dream:1,entries:1,plans:1,ai:1,dreams:1,memos:1,life:1,photos:1,pha:1,pays:1,rules:1,aims:1,moves:1,pins:1,steps:1,payrep:1,rtn:1,rlog:1,payppl:1,kinds:1,tools:1,places:1,projects:1,marks:1,bedp:1,scr:1,alarm:1,goal:1,learn:1,arp:1,todos:1,plreg:1,plgrp:1,kgrp:1,trs:1,srr:1,tdq:1,ksub:1,cond:1,dlg:1,dgoal:1,aip:1,msx:1,inc:1,cash:1,rtm:1,dep:1,prep:1};
   const newer=((b.updatedAt||0)>=(a.updatedAt||0))?b:a;
   const older=(newer===b)?a:b;
   for(const k in older)if(!known[k]&&older[k]!==undefined)out[k]=older[k];
@@ -3408,8 +3437,8 @@ function renderTimeline(pane){
       else fB='<button class="hour gap tlfold" id="pdFold"><span class="hh">▴</span><div class="body"><span class="gp-l">最新だけにする</span></div></button>';}
     const srB=srBarHtml();
     const body=newF?(srB+tail+R.slice().reverse().map(x=>x.r+x.g).join('')+fB+cvB):(cvB+srB+fB+R.map(x=>x.g+x.r).join('')+tail);
-    html=html.slice(0,tvA)+prepCardHtml()+html.slice(tvB,tvC)+body;}
-  else html=html.slice(0,tvA)+prepCardHtml()+html.slice(tvA,tvR0)+html.slice(tvR1);
+    html=html.slice(0,tvA)+prepCardHtml()+depCardHtml()+html.slice(tvB,tvC)+body;}
+  else html=html.slice(0,tvA)+prepCardHtml()+depCardHtml()+html.slice(tvA,tvR0)+html.slice(tvR1);
   let foot='';
   foot+='<div class="lgo"><button id="alarmBtn">⏰ 注意の時刻を変える</button><small>'+esc(alarmSummary())+'</small></div>';
   if(typeof clLogout==='function'&&typeof cloudLoggedIn==='function'&&cloudLoggedIn())foot+='<div class="lgo"><button id="appLogout">🚪 ログアウト（最新の版に入れ替える）</button><small>今の版 '+esc(String(typeof CL_APPVER!=='undefined'?CL_APPVER:''))+'。押すと、送っていない記録を送ってからログアウト→最新の版を読み込む。入り直せば続きから</small></div>';
@@ -3418,6 +3447,7 @@ function renderTimeline(pane){
   {const b=pane.querySelector('#tlFold');if(b)b.onclick=ev=>{ev.stopPropagation();const on=sugNo('tl|all');mutate(()=>{state.msx=state.msx||{};state.msx['tl|all']=on?{del:1,ts:Date.now()}:{ts:Date.now()};});};}
   if(topView==='diary')slpBarBind(pane.querySelector('.hour.wr'));
   if(topView==='diary')dsrBind(pane);
+  try{depCardBind(pane);}catch(e){}
   prepBind(pane);
   {const c=pane.querySelector('#cvFold');if(c)c.onclick=ev=>{ev.stopPropagation();msxTog('tl|cvo');};const d=pane.querySelector('#pdFold');if(d)d.onclick=ev=>{ev.stopPropagation();msxTog('tl|pall');};}
   {const o=$('tlOrd');if(o){o.style.display=topView==='diary'?'':'none';const nf=sugNo('tl|new');o.innerHTML='⇅<span class="tlw"> '+(nf?'新しい順':'古い順')+'</span>';o.setAttribute('aria-label',nf?'新しい順':'古い順');o.classList.toggle('on',nf);o.onclick=ev=>{ev.stopPropagation();msxTog('tl|new');};}}
@@ -3747,7 +3777,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c17.8）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c17.9）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -7888,6 +7918,7 @@ function spSections(){
      {ic:'📔',nm:'記録（日記）',n:N(()=>spCount((state.entries||{})[T])),go:()=>{closePage();ui.date=T;ui.tab='di';topView='diary';render();scrollToNow();}},
      {ic:'📅',nm:'予定',n:N(()=>spCount((state.plans||{})[T])),go:()=>{closePage();ui.date=T;render();$('segL').click();}},
      {ic:'🌅',nm:'明日の準備',sm:'着きたい時刻から、起きる・寝る時刻まで決める',go:()=>openPrepSheet()},
+     {ic:'🚩',nm:'出発予定',n:N(()=>depList().length),sm:'思いついた時に「どこへ・何時に出発」を入れる',go:()=>openDepList()},
      {ic:'🤖',nm:'今日のAI',go:()=>openAiSheet(T)},
      {ic:'📋',nm:'やる事',n:N(()=>tdOpen().length),go:()=>openTodoPage()},
      {ic:'📝',nm:'メモ',n:N(()=>memosOf().length),go:()=>openMemoPage()},
@@ -8578,7 +8609,7 @@ function openPrepSheet(date,pre){
     el.innerHTML='<div class="pq-lnh">'+esc(lab)+'の並び</div><div class="pq-ln">'+segs.map(s=>'<span>'+s+'</span>').join('<i>→</i>')+'</div>'+q;
     {const y=$('pqTopY');if(y)y.onclick=()=>{S.top=1;upd();};}
     {const n=$('pqTopN');if(n)n.onclick=()=>{PPD={d:date,v:Object.assign({},S,{dos:S.dos.slice(),fl:Object.assign({},S.fl),vias:S.vias.slice(),mm:Object.assign({},S.mm),mshow:Object.assign({},S.mshow)})};closeSub();openPlanPage();};}};
-  const paintDos=()=>{$('pqDosT').textContent=(S.dosO?'▾':'▸')+' そこで何を（任意・3つまで）';$('pqDosB').style.display=S.dosO?'':'none';$('pqFlg').style.display=S.dosO?'':'none';
+  const paintDos=()=>{$('pqDosT').textContent=(S.dosO?'▾':'▸')+' 何からスタートする？（任意・3つまで）';$('pqDosB').style.display=S.dosO?'':'none';$('pqFlg').style.display=S.dosO?'':'none';
     $('pqFlM').classList.toggle('sel',!!S.fl.money);$('pqFlF').classList.toggle('sel',!!S.fl.fire);};
   let minKeys=[],minSig='';
   const paintMins=(c,show)=>{const el=$('pqMins');
@@ -8640,6 +8671,252 @@ function prepAfterSleep(wait){
   setTimeout(()=>go(0),wait?900:350);}
 
 
+var DEPSIG='',DEPNK='hibiki-dep-notified';
+function depNowMin(){const d=new Date();return d.getHours()*60+d.getMinutes();}
+function depAuto(x){const tk=placeKey(x.to);if(!tk)return false;const eo=(state.entries||{})[x.d]||{},cr=Number(x.cr)||0;
+  for(const k in eo){const en=eo[k];if(!en||en.del||!en.s||(Number(en.ts)||0)<cr)continue;
+    if(en.mv){if(placeKey(String(en.rt||'').split('→').pop())===tk)return true;}
+    else if(placeKey(en.p)===tk)return true;}
+  return false;}
+function depLive(x){return !!(x&&!x.del&&!x.done&&x.d&&/^\d\d:\d\d$/.test(x.at||'')&&String(x.to||'').trim()&&!depAuto(x));}
+function depList(){const D=state.dep||{},td=todayStr(),out=[];
+  for(const id in D){const x=D[id];if(!depLive(x)||x.d<td)continue;out.push(Object.assign({id},x));}
+  return out.sort((a,b)=>(a.d+a.at)<(b.d+b.at)?-1:(a.d+a.at)>(b.d+b.at)?1:0);}
+function depDiff(x){const td=todayStr();return (x.d===td?0:1440)+hmMin(x.at)-depNowMin();}
+function depRouteText(x){return prepPts(x).filter(Boolean).join(' → ');}
+function depNm(x){return x.d===todayStr()?'':(x.d===addDays(todayStr(),1)?'明日 ':x.d.slice(5).replace('-','/')+' ');}
+function depStage(diff){return diff<0?'late':diff<=30?'ov':diff<=120?'warn':'';}
+function depChipSel(){const td=todayStr(),L=depList().filter(x=>x.d===td).map(x=>({x,diff:depDiff(x)})).filter(o=>o.diff>=-120);
+  if(!L.length)return null;return {x:L[0].x,diff:L[0].diff,late:L[0].diff<0,st:depStage(L[0].diff),n:L.length-1};}
+function depSig(s){return s?(s.x.id+'|'+s.st+'|'+s.n+'|'+s.x.at+'|'+s.x.to):'';}
+function depTo(x,k){const nm=String(x.to).trim();return nm.length>k?nm.slice(0,k)+'…':nm;}
+function depChipInner(s){const x=s.x;
+  if(s.st==='warn')return '🚩 あと<b>'+esc(durText(s.diff)||'0分')+'</b> → '+esc(depTo(x,10))+(s.n>0?' ＋'+s.n:'');
+  return '🚩 '+esc(x.at)+' → '+(s.late?'':'📍')+esc(depTo(x,10))+' '+(s.late?esc(durText(-s.diff)||'1分')+'過ぎた':'あと<b>'+esc(durText(s.diff)||'0分')+'</b>')+(s.n>0?' ＋'+s.n:'');}
+function depChipHtml(){const s=depChipSel();DEPSIG=depSig(s);
+  return s?'<button class="gs dep'+(s.st?' '+s.st:'')+'" data-gs="dep" data-dep="'+esc(s.x.id)+'">'+depChipInner(s)+'</button>':'';}
+var DEPCSIG='';
+function depCardSel(){const s=depChipSel();return (s&&s.st)?s:null;}
+function depCardHtml(){const s=depCardSel();DEPCSIG=depSig(s);
+  if(!s||ui.date!==todayStr())return '';
+  const x=s.x,md=openMove();
+  return '<div class="dpcard '+s.st+'" id="depCard" data-dep="'+esc(x.id)+'"><div class="dpc-t" data-dpcf>🚩 <b>'+esc(x.at)+'</b> 出発 → 📍<b>'+esc(depTo(x,14))+'</b></div><div class="dpc-cd" id="dpcCd">'+(s.late?esc(durText(-s.diff)||'1分')+' 過ぎた':'あと'+esc(durText(s.diff)||'0分'))+'</div>'+
+    '<div class="dpc-b"><button type="button" class="dpc-go" id="dpcGo">'+(TRICON[x.tr]||'🚗')+' 出発</button><button type="button" class="dpc-ed" id="dpcEd" aria-label="直す">✎</button></div></div>';}
+function depCardBind(pane){const g=id=>pane.querySelector('#'+id),c=pane.querySelector('#depCard');if(!c)return;const id=c.dataset.dep;
+  {const b=g('dpcGo');if(b)b.onclick=ev=>{ev.stopPropagation();depGo(id);};}
+  {const b=g('dpcEd');if(b)b.onclick=ev=>{ev.stopPropagation();openDepSheet(id);};}
+  {const b=c.querySelector('[data-dpcf]');if(b)b.onclick=ev=>{ev.stopPropagation();openDepList(id);};}}
+function depNotifOk(){return typeof Notification!=='undefined';}
+function depNotified(){try{return JSON.parse(localStorage.getItem(DEPNK)||'{}')||{};}catch(e){return {};}}
+function depNotifMark(k){try{const o=depNotified(),now=Date.now();o[k]=now;for(const q in o)if(now-o[q]>3*864e5)delete o[q];localStorage.setItem(DEPNK,JSON.stringify(o));}catch(e){}}
+function depShowNotif(title,body,tag){
+  if(!depNotifOk()||Notification.permission!=='granted')return false;
+  const opt={body,tag,icon:'icon-192.png',badge:'icon-192.png',data:{url:'./'}};
+  try{if(navigator.serviceWorker&&navigator.serviceWorker.getRegistration){
+    navigator.serviceWorker.getRegistration().then(reg=>{if(reg&&reg.showNotification)reg.showNotification(title,opt);else new Notification(title,opt);}).catch(()=>{try{new Notification(title,opt);}catch(e){}});return true;}}catch(e){}
+  try{new Notification(title,opt);return true;}catch(e){return false;}}
+function depMs(x){const a=String(x.d).split('-').map(Number),h=hmMin(x.at);return new Date(a[0],a[1]-1,a[2],Math.floor(h/60),h%60,0).getTime();}
+function depNotifTick(nm){
+  if(!depNotifOk()||Notification.permission!=='granted')return;
+  if(nm==null)nm=depNowMin();
+  const td=todayStr(),done=depNotified();
+  depList().forEach(x=>{if(x.d!==td)return;const m=hmMin(x.at),k0=x.id+'|'+x.at;let kind='';
+    if(nm>=m&&nm<=m+5)kind='now';else if(nm>=m-15&&nm<m)kind='pre';else if(nm>=m-120&&nm<=m-105&&!(Number(x.cr)>depMs(x)-120*60000))kind='2h';
+    if(!kind)return;const key=k0+'|'+kind;if(done[key])return;
+    const ok=depShowNotif('🚩 '+x.at+' 出発 → '+String(x.to).trim(),kind==='now'?'出発の時間':('あと'+(kind==='2h'?durText(m-nm):(m-nm)+'分')+'で出発'),x.id+'|'+kind);
+    if(ok){depNotifMark(key);if(kind==='now'){depNotifMark(k0+'|pre');depNotifMark(k0+'|2h');}if(kind==='pre')depNotifMark(k0+'|2h');}});}
+function depTick(){
+  try{depNotifTick();}catch(e){}
+  try{const s=depChipSel(),sig=depSig(s);
+    if(sig!==DEPSIG)gstripPaint();
+    else if(s)document.querySelectorAll('.gs.dep').forEach(b=>{b.innerHTML=depChipInner(s);});
+    const cs=depCardSel();
+    if(depSig(cs)!==DEPCSIG){const ov=$('ovl2'),a=document.activeElement;
+      if(!(ov&&ov.classList.contains('open'))&&!(a&&a.matches&&a.matches('input,textarea,select')))render();}
+    else if(cs){const c=document.getElementById('dpcCd');if(c)c.textContent=cs.late?(durText(-cs.diff)||'1分')+' 過ぎた':'あと'+(durText(cs.diff)||'0分');}}catch(e){}}
+try{document.addEventListener('visibilitychange',()=>{if(!document.hidden){try{depTick();}catch(e){}}});setTimeout(()=>{try{depTick();}catch(e){}},4000);}catch(e){}
+function depPermHtml(){if(!depNotifOk())return '';const p=Notification.permission;
+  if(p==='default')return '<button type="button" class="chip dp-perm" data-dpperm>🔔 通知を許可する</button><small class="dp-pn">出発の2時間前・15分前・出発時刻に知らせる（アプリを開いている間）</small>';
+  if(p==='denied')return '<small class="dp-pn">🔕 通知はブラウザ／端末の設定で許可が要る</small>';
+  return '';}
+function depPermBind(root,again){const b=root&&root.querySelector('[data-dpperm]');if(!b)return;
+  b.onclick=()=>{let once=0;const fin=p=>{if(once)return;once=1;toast(p==='granted'?'🔔 通知をオンにした':'通知は許可されなかった');again();};
+    try{const r=Notification.requestPermission(fin);if(r&&r.then)r.then(fin);}catch(e){}};}
+function depCalUrl(x){const a=String(x.d).split('-').map(Number),h=hmMin(x.at),st=new Date(a[0],a[1]-1,a[2],Math.floor(h/60),h%60,0),en=new Date(st.getTime()+15*60000);
+  const f=d=>d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate())+'T'+pad(d.getHours())+pad(d.getMinutes())+'00';
+  return 'https://calendar.google.com/calendar/render?action=TEMPLATE&text='+encodeURIComponent('🚩 出発 → '+String(x.to).trim())+'&dates='+f(st)+'/'+f(en)+'&ctz=Asia/Tokyo&location='+encodeURIComponent(String(x.to).trim())+'&details='+encodeURIComponent(depRouteText(x));}
+function depCal(x){try{window.open(depCalUrl(x),'_blank','noopener');}catch(e){}}
+function depGo(id){const x=(state.dep||{})[id];if(!x||x.del||!x.to)return false;
+  if(openMove()){toast('もう移動中。着いたら🏁到着を押す');return false;}
+  quickMoveStart();const o=openMove();if(!o)return false;
+  mutate(()=>{const en=state.entries[o.d][o.k];const left=String(en.rt||'').split('→')[0].trim()||String(x.from||'').trim()||prepFromPlace(todayStr());const vs=prepVias(x);
+    en.rt=(left?left+' → ':'→ ')+vs.map(v=>v+' → ').join('')+x.to;if(x.tr)en.tr=x.tr;if(prefOf(x.pf))en.pf=Number(x.pf);en.ts=Date.now();
+    state.dep[id]=Object.assign({},x,{done:1,ts:Date.now()});});
+  toast((TRICON[x.tr]||'🚗')+' 出発 → '+x.to);return true;}
+function depMap(id){const x=(state.dep||{})[id];if(!x||!x.to)return;
+  const to=encodeURIComponent(x.to),tr=x.tr||'car';let url;
+  if(tr==='train'||tr==='shinkansen'||tr==='bus'){const fr=String(x.from||'').trim()||prepFromPlace(todayStr());
+    url='https://transit.yahoo.co.jp/search/result?from='+encodeURIComponent(fr)+'&to='+to;}
+  else url='https://www.google.com/maps/dir/?api=1&destination='+to+(prepVias(x).length?'&waypoints='+encodeURIComponent(prepVias(x).join('|')):'')+((tr==='car'||tr==='taxi'||tr==='carrier')?'&travelmode=driving':tr==='walk'?'&travelmode=walking':'');
+  try{window.open(url,'_blank','noopener');}catch(e){}}
+function depDel(id){mutate(()=>{state.dep=state.dep||{};state.dep[id]={del:1,ts:Date.now()};});}
+function openDepChoice(){
+  openSub('<div class="sh-time"><span>どっち？</span></div><div class="dp-choice"><button type="button" class="dp-ch dep" id="dcDep"><i>🚩</i><b>出発予定</b><small>今日 何時にどこへ</small></button><button type="button" class="dp-ch prep" id="dcPrep"><i>🌅</i><b>明日の準備</b><small>明日の朝いちばん</small></button></div>',null);
+  $('dcDep').onclick=()=>openDepSheet();
+  $('dcPrep').onclick=()=>{closeSub();openPrepSheet();};}
+function openDepList(fid){
+  const L=depList(),fx=fid?L.filter(x=>x.id===fid)[0]:null;
+  const row=x=>'<div class="dp-row"><button type="button" class="dp-rm" data-dpf="'+esc(x.id)+'"><b>'+esc(x.at)+'</b><span>'+esc(depNm(x))+'→ '+esc(String(x.to).trim())+'</span></button><button type="button" class="chip" data-dpe="'+esc(x.id)+'">編集</button><button type="button" class="chip dp-x" data-dpx="'+esc(x.id)+'">消す</button></div>';
+  let h='<div class="sh-time"><span>🚩 出発予定</span></div>';
+  if(fx){const d=depDiff(fx),late=d<0,vs=prepVias(fx);
+    h+='<div class="dp-focus'+(late?' ov':'')+'"><div class="dp-f1">🚩 <b>'+esc(fx.at)+'</b>'+(fx.d!==todayStr()?'<em>'+esc(depNm(fx).trim())+'</em>':'')+'</div>'+
+      '<div class="dp-f2">'+(TRICON[fx.tr]||'🚗')+' '+(String(fx.from||'').trim()?esc(String(fx.from).trim())+' → ':'')+vs.map(v=>esc(v)+' → ').join('')+'📍<b>'+esc(String(fx.to).trim())+'</b></div>'+
+      (String(fx.memo||'').trim()?'<div class="dp-f3">'+esc(fx.memo)+'</div>':'')+
+      '<div class="dp-fcd">'+(late?esc(durText(-d)||'1分')+' 過ぎた':'あと'+esc(durText(d)||'0分'))+'</div>'+
+      '<div class="dp-fb"><button type="button" class="chip dp-go" id="dfGo">'+(TRICON[fx.tr]||'🚗')+' 出発</button><button type="button" class="chip" id="dfMap">🗺 経路</button><button type="button" class="chip" id="dfEd">✎ 直す</button><button type="button" class="chip dp-x" id="dfDel">消す</button></div>'+
+      '<button type="button" class="chip dp-cal" id="dfCal">📅 カレンダーに入れる</button></div>';}
+  const rest=L.filter(x=>!fx||x.id!==fx.id);
+  if(rest.length)h+='<div class="sh-label" style="margin-top:6px">'+(fx?'ほかの出発予定':'未出発（時刻順）')+'</div><div class="dp-list">'+rest.map(row).join('')+'</div>';
+  else if(!fx)h+='<div class="sh-note" style="text-align:left">まだ無い。思いついたら ＋ で入れる</div>';
+  h+='<div id="dfPerm" class="dp-perm">'+depPermHtml()+'</div><div class="sh-btns"><button class="savebtn" id="dfNew">＋ 新しい出発予定</button></div>';
+  openSub(h,null);
+  const s=$('sheet2');
+  if(fx){
+    $('dfGo').onclick=()=>{if(depGo(fx.id))closeSub();};
+    $('dfMap').onclick=()=>depMap(fx.id);
+    $('dfEd').onclick=()=>openDepSheet(fx.id);
+    $('dfCal').onclick=()=>depCal(fx);
+    {const b=$('dfDel');b.onclick=()=>armTap(b,'dfDel','この出発予定を消す',()=>{depDel(fx.id);toast('🚩 出発予定を消した');openDepList();});}}
+  s.querySelectorAll('[data-dpf]').forEach(b=>b.onclick=()=>openDepList(b.dataset.dpf));
+  s.querySelectorAll('[data-dpe]').forEach(b=>b.onclick=()=>openDepSheet(b.dataset.dpe));
+  s.querySelectorAll('[data-dpx]').forEach(b=>b.onclick=()=>armTap(b,'dpx'+b.dataset.dpx,'この出発予定を消す',()=>{depDel(b.dataset.dpx);toast('🚩 出発予定を消した');openDepList(fx?fx.id:null);}));
+  $('dfNew').onclick=()=>openDepSheet();
+  depPermBind($('dfPerm'),()=>{const e=$('dfPerm');if(e){e.innerHTML=depPermHtml();depPermBind(e,()=>{});}});}
+function openDepMini(id){openDepList(id);}
+function openDepSheet(id){
+  const td=todayStr(),old=id?(state.dep||{})[id]:null,ok0=!!(old&&!old.del);
+  const first=!ok0&&!Object.keys(state.dep||{}).length;
+  const oldFrom=ok0?String(old.from||'').trim():'';
+  const cur0=(()=>{try{return placeBefore(td,nowMin())||prepFromPlace(td);}catch(e){return '';}})();
+  const S={at:ok0?old.at:prepHM(Math.ceil((depNowMin()+30)/5)*5),atT:ok0?1:0,from:oldFrom||cur0,fromA:(!oldFrom&&cur0)?1:0,vias:ok0?prepVias(old):[],to:ok0?String(old.to||''):'',toOk:ok0?1:0,
+    memo:ok0?String(old.memo||''):'',tr:ok0?(old.tr||''):'',trd:(ok0&&old.tr)?1:0,pf:ok0?(Number(old.pf)||0):0,pfl:'_rc',cur:'t',mm:{},mshow:{}};
+  const P0=prepPts(S);if(!S.tr)S.tr=S.to?prepTrGuess(P0[P0.length-2],S.to,td):mvGuessTr(td);
+  if(!S.pf&&S.to)S.pf=placePf(S.to);
+  if(typeof plHas==='function'&&!plHas()){try{mutate(plSeed);}catch(e){}}
+  const dd=ok0?old.d:td,dobj=parseD(dd);
+  openSub('<div class="sh-time"><span>🚩 出発予定　'+esc((dobj.getMonth()+1)+'/'+dobj.getDate()+'（'+YOBI[dobj.getDay()]+'）')+(ok0?'　<em class="pq-ed">✎ 直す</em>':'')+'</span></div>'+
+    '<div><div class="sh-label">⏰ 何時に出る（タップして選ぶ）</div><div class="pq-trow"><input type="time" id="dpAt" step="300" lang="ja-JP"><span class="pq-tn" id="dpTn"></span></div></div>'+
+    '<div><div class="sh-label">📍 場所（出発→到着。自由に書ける・コピペOK）</div><div id="dpPts" class="pq-pts"></div><div class="pq-tok" id="dpToOk"></div></div>'+
+    '<div><div class="pq-where" id="dpWhere"></div><div class="pfflt" id="dpFlt"></div><div class="sh-chips" id="dpChips" style="margin-top:6px"></div></div>'+
+    '<div class="pq-calc" id="dpCalc"><div class="pq-ref" id="dpRef"></div><div id="dpMins"></div>'+
+      '<div class="pq-tr" id="dpTrRow"><select id="dpTr" aria-label="移動手段">'+TRS.map(x=>'<option value="'+esc(x[0])+'">'+esc(x[1])+'</option>').join('')+'</select><span class="pq-pf" id="dpPf"></span></div></div>'+
+    '<div><div class="sh-label">📝 メモ（任意）</div><input type="text" id="dpMemo" maxlength="60" placeholder="例：書類を渡す" autocomplete="off"></div>'+
+    '<div id="dpPerm" class="dp-perm"></div>'+
+    '<div class="pq-act"><button type="button" class="savebtn pq-reg" id="dpOk">'+(ok0?'登録（上書き）':'登録')+'</button><button type="button" class="chip dp-cal" id="dpCal">📅 カレンダーに入れる</button>'+
+      '<button type="button" class="pq-skip" id="dpClose">閉じる</button>'+(ok0?'<button type="button" class="pq-skip pq-redo" id="dpDel">消す</button>':'')+'</div>',null);
+  const atI=$('dpAt'),trS=$('dpTr'),memoI=$('dpMemo');
+  atI.value=S.at;if(!S.atT)atI.classList.add('auto');
+  trS.value=S.tr;if(trS.value!==S.tr)S.tr=trS.value;
+  memoI.value=S.memo;memoI.oninput=()=>{S.memo=memoI.value;};
+  const cv=()=>String(S.cur==='f'?S.from:S.cur[0]==='v'?(S.vias[Number(S.cur.slice(1))]||''):S.to).trim();
+  const retr=()=>{if(S.trd)return;const P=prepPts(S);S.tr=S.to?prepTrGuess(P[P.length-2],S.to,td):mvGuessTr(td);trS.value=S.tr;};
+  const toChg=()=>{S.pf=S.to?placePf(S.to):0;};
+  const paintTn=()=>{const el=$('dpTn');if(el)el.textContent=S.atT?'':'⏪ 今から30分後';};
+  const paintWhere=()=>{const el=$('dpWhere');if(el)el.textContent='タップした場所は → '+(S.cur==='f'?'🟢 出発':S.cur==='t'?'🏁 到着':'⋯ 経由')+' に入る';};
+  const paintToOk=()=>{const el=$('dpToOk');if(el)el.innerHTML=(S.toOk&&String(S.to||'').trim())?'📍到着：<b>'+esc(String(S.to).trim())+'</b> ✓':'';};
+  const markChips=()=>{const v=cv();$('dpChips').querySelectorAll('[data-p]').forEach(b=>b.classList.toggle('sel',!!v&&b.dataset.p===v));};
+  const setPick=v=>{const c=S.cur;
+    if(c==='f'){S.from=v;S.fromA=0;}else if(c[0]==='v'){S.vias[Number(c.slice(1))]=v;}else{S.to=v;S.toOk=v?1:0;toChg();}
+    retr();paintPts();paintChips();upd();};
+  const doArrive=()=>{
+    if(!String(S.to||'').trim()){
+      while(S.vias.length&&!String(S.vias[S.vias.length-1]||'').trim())S.vias.pop();
+      if(!S.vias.length){toast('到着の場所を入れてくれ');const t=$('dpPts').querySelector('.pqpi[data-f="t"]');if(t){try{t.focus();}catch(e){}}return;}
+      S.to=String(S.vias.pop()).trim();toChg();}
+    S.toOk=1;S.cur='t';retr();paintPts();paintChips();upd();toast('🏁 到着：'+String(S.to).trim());};
+  const paintPts=fi=>{const w=$('dpPts');if(!w)return;
+    if(S.cur[0]==='v'&&!(Number(S.cur.slice(1))<S.vias.length))S.cur='t';
+    const inp=(f,val,ph,auto)=>'<input type="text" class="mvpi pqpi'+(S.cur===f?' pqcur':'')+(auto?' auto':'')+'" data-f="'+f+'" maxlength="80" value="'+esc(val)+'" placeholder="'+ph+'">';
+    let h='<div class="mvpt"><span>🟢 出発</span>'+inp('f',S.from,'どこから',!!(S.fromA&&S.from))+'<button type="button" class="chip pq-sw" id="dpSw" aria-label="出発と到着を入れ替える">⇅</button></div>';
+    S.vias.forEach((v,i)=>{h+='<div class="mvpt"><span>⋯ 経由</span>'+inp('v'+i,v,'どこを通る',false)+'<button type="button" class="mvpx" data-vx="'+i+'" aria-label="この行を消す">✕</button><button type="button" class="chip pq-vn" data-vn="'+i+'" aria-label="経由をもう1行足す">→</button></div>';});
+    h+='<div class="mvpt"><span>🏁 到着</span>'+inp('t',S.to,'どこへ',false)+'<button type="button" class="chip pq-arr" id="dpArrB" aria-label="ここで区切る">🏁到着</button></div>';
+    if(!S.vias.length)h+='<div class="pq-addv"><button type="button" class="chip" id="dpAddV">＋経由</button></div>';
+    w.innerHTML=h;paintToOk();paintWhere();
+    w.querySelectorAll('.pqpi').forEach(x=>{const f=x.dataset.f;
+      x.onfocus=()=>{S.cur=f;w.querySelectorAll('.pqpi').forEach(y=>y.classList.toggle('pqcur',y===x));markChips();paintWhere();};
+      x.oninput=()=>{const v=x.value;x.classList.remove('auto');
+        if(f==='f'){S.from=v;S.fromA=0;}else if(f[0]==='v'){S.vias[Number(f.slice(1))]=v;}else{S.to=v;S.toOk=0;toChg();paintToOk();}
+        retr();markChips();upd();};});
+    w.querySelectorAll('[data-vx]').forEach(b=>b.onclick=()=>{S.vias.splice(Number(b.dataset.vx),1);S.cur='t';retr();paintPts();paintChips();upd();});
+    w.querySelectorAll('[data-vn]').forEach(b=>b.onclick=()=>{const i=Number(b.dataset.vn)+1;S.vias.splice(i,0,'');S.cur='v'+i;paintPts(S.cur);paintChips();upd();});
+    {const b=w.querySelector('#dpAddV');if(b)b.onclick=()=>{S.vias.push('');S.cur='v'+(S.vias.length-1);paintPts(S.cur);paintChips();upd();};}
+    {const b=w.querySelector('#dpArrB');if(b)b.onclick=doArrive;}
+    {const b=w.querySelector('#dpSw');if(b)b.onclick=()=>{const a=[S.from].concat(S.vias,[S.to]).map(x=>String(x||'').trim()).reverse();
+      S.from=a[0];S.to=a[a.length-1];S.vias=a.slice(1,-1);S.fromA=0;S.toOk=S.to?1:0;toChg();retr();paintPts();paintChips();upd();toast('⇅ 出発と到着を入れ替えた');};}
+    if(fi){const t=w.querySelector('.pqpi[data-f="'+fi+'"]');if(t){try{t.focus();}catch(e){}}}};
+  const paintFlt=()=>{const gs=plGroups().map(x=>x.g).concat(['ot']);if(S.pfl!=='_rc'&&gs.indexOf(S.pfl)<0)S.pfl='_rc';
+    const fl=$('dpFlt');fl.innerHTML='<button data-pfl="_rc"'+(S.pfl==='_rc'?' class="sel"':'')+'>🕘 最近</button>'+pflBtns(S.pfl).replace(/<button data-pfl="_ed"[^>]*>[^<]*<\/button>/,'');
+    fl.querySelectorAll('[data-pfl]').forEach(b=>b.onclick=()=>{S.pfl=b.dataset.pfl;paintFlt();paintChips();});};
+  const paintChips=()=>{const pc=$('dpChips'),rc=(S.pfl==='_rc'),L=rc?placeChips():placeReg(S.pfl);
+    pc.innerHTML=(rc?chipListHtml(L,chipsOpen()):(L.length?L.map(p=>'<button class="chip" data-p="'+esc(p)+'">'+esc(p)+'</button>').join(''):'<span class="sh-note">この県の場所はまだ無い</span>'));
+    pc.querySelectorAll('[data-p]').forEach(b=>{b.onclick=()=>{setPick(cv()===b.dataset.p?'':b.dataset.p);};});
+    markChips();
+    {const m=pc.querySelector('#pMore');if(m)m.onclick=()=>{chipsSetOpen(true);paintChips();};}
+    {const l=pc.querySelector('#pLess');if(l)l.onclick=()=>{chipsSetOpen(false);paintChips();};}};
+  const calc=()=>{const o={segs:[],tot:0,need:false,arr:''};
+    if(!String(S.to||'').trim()||!S.tr||!/^\d\d:\d\d$/.test(S.at||''))return o;
+    const P=prepPts(S);PTC=prepTrips();
+    try{let t=hmMin(S.at);
+      for(let i=0;i<P.length-1;i++){const a=P[i],b=P[i+1],key=prepSegKey(a,b,S.tr),est=routeEst(a,b,S.tr,prepHM(t)),man=Number(S.mm[key])>0?Number(S.mm[key]):0,m=man>0?man:(est?est.min:0);
+        o.segs.push({a,b,key,est,man,min:m});o.tot+=m;t+=m;}
+    }finally{PTC=null;}
+    o.need=o.segs.some(g=>!(g.min>0));
+    if(!o.need&&o.tot>0)o.arr=prepHM(hmMin(S.at)+o.tot);
+    return o;};
+  let minKeys=[],minSig='';
+  const paintMins=(c,show)=>{const el=$('dpMins');
+    const rows=show?(c.segs||[]).filter(g=>!g.est||g.man>0||S.mshow[g.key]):[];
+    rows.forEach(g=>{S.mshow[g.key]=1;});
+    const sig=rows.map(g=>g.key).join('#');if(sig===minSig)return;minSig=sig;minKeys=rows.map(g=>g.key);
+    el.innerHTML=rows.map((g,i)=>'<div class="pq-mrow"><span class="pq-ml">'+esc(g.a||'出発')+' → '+esc(g.b)+'</span><input type="number" inputmode="numeric" min="1" max="720" data-mi="'+i+'" placeholder="'+(g.est?g.est.min:'分')+'" value="'+(g.man>0?g.man:'')+'"><span>分</span></div>').join('');
+    el.querySelectorAll('input').forEach(x=>x.oninput=()=>{const k=minKeys[Number(x.dataset.mi)];S.mm[k]=Math.max(0,Math.round(Number(x.value)||0));upd();});};
+  const upd=()=>{
+    const c=calc(),hasTo=!!String(S.to||'').trim();
+    const pf=prefOf(S.pf);$('dpPf').textContent=(hasTo&&pf)?('📍 '+pf.short):'';
+    $('dpTrRow').style.display=hasTo?'':'none';
+    let ref='';
+    if(!hasTo)ref='行き先を選ぶと、所要と着く時刻が出る（出さなくても登録はできる）';
+    else if(c.need)ref='この区間は実績が無い。所要の分を入れると着く時刻が出る（入れなくても登録はできる）';
+    else if(c.segs.length>1)ref=c.segs.map(g=>esc(g.a||'出発')+' → '+esc(g.b)+'　'+(g.man>0?'手入力 ':'最大 ')+g.min+'分').join('<br>')+'<br>合計 <b>'+c.tot+'分</b> → 着く <b>'+esc(c.arr)+'</b>';
+    else{const g=c.segs[0];ref=(g.man>0?'手入力 ':'最大 ')+g.min+'分 → 着く <b>'+esc(c.arr)+'</b>';}
+    $('dpRef').innerHTML=ref;
+    paintMins(c,hasTo);};
+  atI.oninput=atI.onchange=()=>{if(!atI.value)return;S.at=atI.value;S.atT=1;atI.classList.remove('auto');paintTn();upd();};
+  trS.onchange=()=>{S.tr=trS.value;S.trd=1;upd();};
+  const permPaint=()=>{const e=$('dpPerm');if(e){e.innerHTML=depPermHtml();depPermBind(e,permPaint);}};
+  const cur=()=>{const to=String(S.to||'').trim();return {d:dd,at:S.at,from:String(S.from||'').trim(),vias:S.vias.map(x=>String(x||'').trim()).filter(Boolean),to,tr:S.tr};};
+  $('dpCal').onclick=()=>{if(!/^\d\d:\d\d$/.test(S.at||'')){toast('出発の時刻を入れてくれ');return;}if(!cur().to){toast('行き先を入れてくれ');return;}depCal(cur());};
+  $('dpClose').onclick=()=>closeSub();
+  {const b=$('dpDel');if(b)b.onclick=()=>armTap(b,'dpDel','この出発予定を消す',()=>{depDel(id);closeSub();toast('🚩 出発予定を消した');});}
+  $('dpOk').onclick=()=>{
+    if(!/^\d\d:\d\d$/.test(S.at||'')){toast('出発の時刻を入れてくれ');return;}
+    const c0=cur();if(!c0.to){toast('行き先を入れてくれ');return;}
+    const c=calc();let d=dd;
+    if(!ok0&&hmMin(S.at)<depNowMin()&&hmMin(S.at)<360&&depNowMin()>=1080)d=addDays(td,1);
+    const nid=ok0?id:('dp'+Date.now().toString(36)+Math.floor(Math.random()*1e4).toString(36));
+    const rec={d,at:S.at,from:c0.from,vias:c0.vias,to:c0.to,pf:S.pf||0,tr:S.tr,memo:String(S.memo||'').trim().slice(0,60),done:0,cr:ok0?(Number(old.cr)||Date.now()):Date.now(),ts:Date.now()};
+    mutate(()=>{state.dep=state.dep||{};state.dep[nid]=rec;
+      c.segs.forEach(g=>{if(g.man>0&&(!g.est||g.est.min!==g.man)){state.rtm=state.rtm||{};state.rtm[prepRtmId(g.a,g.b,S.tr,timeBand(S.at))]={from:g.a||'',to:g.b,tr:S.tr,band:timeBand(S.at),min:g.man,ts:Date.now()};}});});
+    const msg='🚩 '+S.at+' 出発 → '+c0.to+'（登録）';
+    if(first&&depNotifOk()&&Notification.permission==='default'){
+      openSub('<div class="sh-time"><span>🚩 登録した　'+esc(S.at)+' → '+esc(c0.to)+'</span></div><div class="sh-note" style="text-align:left">出発の2時間前・15分前・出発時刻に、通知でお知らせできる。</div><div id="dpPerm2" class="dp-perm">'+depPermHtml()+'</div>'+
+        '<button type="button" class="chip dp-cal" id="dpCal2">📅 カレンダーに入れる（アプリを閉じていても鳴る）</button><div class="sh-btns"><button class="savebtn" id="dpFin">閉じる</button></div>',null);
+      const p2=()=>{const e=$('dpPerm2');if(e){e.innerHTML=depPermHtml();depPermBind(e,p2);}};depPermBind($('dpPerm2'),p2);
+      $('dpCal2').onclick=()=>depCal(Object.assign({},c0,{d}));$('dpFin').onclick=()=>closeSub();
+      toast(msg);return;}
+    closeSub();toast(msg);};
+  paintPts();paintFlt();paintChips();paintTn();upd();permPaint();}
+
 var FABSIG='';
 var FABIO=null,FABCV=false,FABEL=null;
 function fabCardApply(){const pg=$('page');document.body.classList.toggle('cardvis',FABCV&&!(pg&&pg.classList.contains('open')));}
@@ -8656,9 +8933,9 @@ function fabPaint(){const b=$('fab');if(!b)return;
   if(sig===FABSIG)return;FABSIG=sig;
   b.className='fab '+m;
   b.innerHTML=(m==='wake'?'🌞<small>起きた</small>':m==='prep'?'🌅<small>明日どこへ</small>':'💤<small>明日→寝る</small>')+(ck?'<i class="fab-ck">✓</i>':'');
-  b.setAttribute('aria-label',m==='wake'?'起きた':m==='prep'?'明日の準備（明日どこへ）':'明日の準備をして寝る');}
+  b.setAttribute('aria-label',m==='wake'?'起きた':m==='prep'?'出発予定か明日の準備':'明日の準備をして寝る');}
 function fabTap(){const b=$('fab'),m=fabMode();
-  if(m==='prep'){openPrepSheet();return;}
+  if(m==='prep'){openDepChoice();return;}
   if(m==='wake'){armTap(b,'fabWake',ARM_LB.wrWake,quickWake);return;}
   armTap(b,'fabSlp',ARM_LB.wrSleep,quickSleepStart);}
 try{const b=$('fab');if(b){b.onclick=ev=>{ev.stopPropagation();fabTap();};
@@ -8702,12 +8979,12 @@ const scrub=(()=>{let el=null,th=null,lb=null,drag=null;
 function mvGuessTr(d,before){for(let i=0;i<=14;i++){const dd=addDays(d,-i),eo=(state.entries||{})[dd]||{};let best=null;for(const k in eo){const en=eo[k];if(!en||en.del||!en.mv||!en.tr||!en.s)continue;if(i===0&&before&&en.s>=before)continue;if(!best||en.s>best.s)best=en;}if(best)return best.tr;}return 'car';}
 const ACT_GOAL={sns_xd:5,sns_xp:1};
 function actTodayCnt(t){const r={dm:0,rep:0,post:0},eo=(state.entries||{})[t]||{};for(const id in eo){const en=eo[id];if(!en||en.del)continue;for(const a of actsExpand(en.acts)){if(!a)continue;if(a.k==='sns_xd')r.dm+=(Number(a.n)||1);else if(a.k==='mk_reply')r.rep+=1;else if(a.k==='sns_xp')r.post+=(Number(a.n)||1);}}return r;}
-function gstripHtml(){try{const t=todayStr(),GC=goalCfg(),got=incSum('in',GC.from,t),left=Math.max(0,GC.yen-got-cashLatest());let s='<button class="gs" data-gs="money">💰 あと <b>'+manY(left)+'</b></button>';
+function gstripHtml(){try{const t=todayStr(),GC=goalCfg(),got=incSum('in',GC.from,t),left=Math.max(0,GC.yen-got-cashLatest());let s='<button class="gs" data-gs="money">💰 あと <b>'+manY(left)+'</b></button>';s+=depChipHtml();
   {const c=actTodayCnt(t),gd=GC.dm,gp=GC.post;s+='<button class="gs" data-gs="act"><span'+(c.dm>=gd?' class="hit"':'')+'>📣 DM <b>'+c.dm+'</b>/'+gd+'</span>・✉ <b>'+c.rep+'</b>・<span'+(c.post>=gp?' class="hit"':'')+'>𝕏投稿 <b>'+c.post+'</b>/'+gp+'</span>'+learnChipHtml(t,GC.learn)+'</button>';}   /* c17.4：🎓 学ぶ n/30分 */
   for(const d of pinnedDreams()){const due=dreamDue(d);let lb='',cl='';if(due){const nn=Math.round((parseD(due).getTime()-parseD(t).getTime())/864e5);if(nn<0){lb='⚠ '+(-nn)+'日超過';cl=' ov';}else if(nn===0){lb='今日';cl=' ov';}else{lb='あと <b>'+nn+'</b>日';cl=nn<=14?' ov':'';}}else lb='期限なし';
     s+='<button class="gs'+cl+(dreamHit(d.id)?' ok':'')+'" data-gs="'+esc(d.id)+'">'+pinIcon(d.t)+' '+esc(String(d.t||'').slice(0,8))+' '+lb+'</button>';}
   return s;}catch(e){return '';}}
-function gstripBind(el){if(!el)return;el.querySelectorAll('[data-gs]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();const v=b.dataset.gs;if(v==='act')return;if(v==='money')openIncSheet();else openDreamSheet(v,null);});}
+function gstripBind(el){if(!el)return;el.querySelectorAll('[data-gs]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();const v=b.dataset.gs;if(v==='act')return;if(v==='money')openIncSheet();else if(v==='dep')openDepMini(b.dataset.dep);else openDreamSheet(v,null);});}
 function gstripPaint(){try{const el=$('gstrip');if(!el)return;const html=gstripHtml();el.innerHTML=html;el.style.display=html?'':'none';gstripBind(el);
   const pg=$('page');if(pg&&pg.classList.contains('open')){let s=pg.querySelector('.gstrip');const hd=pg.querySelector('.page-head');if(!s&&hd){hd.insertAdjacentHTML('afterend','<div class="gstrip pg"></div>');s=pg.querySelector('.gstrip');}if(s){s.innerHTML=html;s.style.display=html?'':'none';gstripBind(s);}}}catch(e){}}
 (function(){try{const pg=$('page');if(pg&&typeof MutationObserver!=='undefined')new MutationObserver(ms=>{if(ms.some(m=>[...m.addedNodes].some(x=>x.nodeType===1&&(x.classList.contains('page-head')||x.querySelector&&x.querySelector('.page-head')))))gstripPaint();}).observe(pg,{childList:true,subtree:false});}catch(e){}})();
@@ -8808,7 +9085,7 @@ function openCalSheet(){
 }
 
 let lastDay=todayStr();
-setInterval(()=>{const t=todayStr();if(t!==lastDay){if(ui.date===lastDay)ui.date=t;lastDay=t;render();}else{sleepBedTick();try{prepTick();}catch(e){}try{fabPaint();}catch(e){}try{learnTick();}catch(e){}}},60000);
+setInterval(()=>{const t=todayStr();if(t!==lastDay){if(ui.date===lastDay)ui.date=t;lastDay=t;render();}else{sleepBedTick();try{prepTick();}catch(e){}try{depTick();}catch(e){}try{fabPaint();}catch(e){}try{learnTick();}catch(e){}}},60000);
 
 try{
   ['gesturestart','gesturechange','gestureend'].forEach(t=>document.addEventListener(t,e=>{e.preventDefault();},{passive:false}));
@@ -9010,7 +9287,7 @@ async function clRpcText(name,body,sig,ms){
 async function clRpcJson(name,body,sig,ms){const t=await clRpcText(name,typeof body==='string'?body:JSON.stringify(body||{}),sig,ms);try{return t?JSON.parse(t):null;}catch(e){throw clErr('応答が読めない',0,'parse','server');}}
 async function clRpc(name,body){return clRpcJson(name,body);}
 
-const CL_ID=['dreams','memos','pays','aims','moves','pins','steps','payrep','rtn','rlog','payppl','pha','kinds','tools','places','projects','marks','bedp','arp','todos','plreg','plgrp','kgrp','trs','srr','tdq','ksub','dlg','dgoal','aip','msx','inc','cash','rtm'];   /* c7.9：todos＝📋やる事 */   /* c4.8：arp＝場所ごとの区・市町村 */
+const CL_ID=['dreams','memos','pays','aims','moves','pins','steps','payrep','rtn','rlog','payppl','pha','kinds','tools','places','projects','marks','bedp','arp','todos','plreg','plgrp','kgrp','trs','srr','tdq','ksub','dlg','dgoal','aip','msx','inc','cash','rtm','dep'];   /* c7.9：todos＝📋やる事 */   /* c4.8：arp＝場所ごとの区・市町村 */
 const CL_DAY=['ai','rules','scr','cond','prep'];   /* c11.5：cond＝体調（日ごと） */
 const CL_DAY2=['entries','plans'];
 const CL_SKIP={updatedAt:1,photos:1};
@@ -9527,7 +9804,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c17.8";
+const CL_APPVER="c17.9";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
   if(!cloudLoggedIn())return;

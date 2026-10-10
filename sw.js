@@ -1,7 +1,7 @@
 /* HIBIKI Service Worker：オフラインでも開けるようにする。
    index.html は「まずネット、だめならキャッシュ」（新しい版をすぐ拾う）。アイコン類は「キャッシュ優先」。
    データ（Supabase の API）と写真はここでは触らない（アプリが自分で端末に控える）。 */
-const VER='hibiki-c17.8';
+const VER='hibiki-c17.9';
 const CORE=['./','./index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png','./icon-512-maskable.png','./apple-touch-icon.png'];
 self.addEventListener('install',e=>{
   e.waitUntil(caches.open(VER).then(c=>c.addAll(CORE).catch(()=>{})).then(()=>self.skipWaiting()));
@@ -30,5 +30,10 @@ self.addEventListener('fetch',e=>{
   }
   e.respondWith(caches.match(req).then(hit=>hit||fetch(req).then(r=>{const cp=r.clone();caches.open(VER).then(c=>c.put(req,cp)).catch(()=>{});return r;})));
 });
+/* c17.9：🚩 出発予定の通知を押したら、アプリを前面に出す（開いていなければ開く） */
+self.addEventListener('notificationclick',e=>{e.notification.close();
+  e.waitUntil(self.clients.matchAll({type:'window',includeUncontrolled:true}).then(cs=>{
+    for(const c of cs){if('focus' in c)return c.focus();}
+    if(self.clients.openWindow)return self.clients.openWindow('./');}));});
 /* ページからの「新しい版に入れ替えて」 */
 self.addEventListener('message',e=>{if(e.data==='skipWaiting')self.skipWaiting();});
