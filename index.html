@@ -162,6 +162,7 @@
   .scr::-webkit-scrollbar{display:none}
   .scr>*{flex-shrink:0}
   .scr>.pane{flex:1 0 auto;min-height:0;overflow:visible}
+  .tlfold{width:100%;text-align:left}.tlfold .gp-l b{color:var(--ink)}.tlfold .tlf-g{font-size:11.5px;font-weight:800;color:#8a93a6;background:#eef0f5;border-radius:999px;padding:1px 8px;margin-left:6px}
   .pfoot{padding:0 18px calc(10px + env(safe-area-inset-bottom))}.pfoot:empty{display:none}
   body.grab,body.grab *{cursor:grabbing!important;user-select:none!important}
 
@@ -3125,17 +3126,20 @@ function renderTimeline(pane){
     {const dsC=!!(gPrev&&gPrev.mv&&gPrev.e&&!gPrev.noT&&gPrev.s&&!mvHasDest(gPrev.rt)&&en.p&&!en.mv&&TEL_KS.indexOf(en.k)<0&&en.k!=='spplay');if(dsC){const eo=entriesOf(ui.date),mk=Object.keys(eo).find(k=>eo[k]===gPrev);if(mk)html+=dsRow(gPrev,mk,en);}}
     gPrev=en;const e=en.e?(en.ed?1440:hmMin(en.e)):(isToday?nowM:a);gEnd=Math.max(gEnd,e<a?1440:e);};
   const flushRun=()=>{run=[];};
+  const tlL0=html.length,tlRS=[],tlOpen=[];
   for(let h=0;h<24;h++){
     const its=byHour[h]||[];
     if(its.length){
       flushRun();
       its.forEach((it,idx)=>{
+        tlRS.push(html.length);
         gapBefore(it.rl?{s:it.rl.s,e:it.rl.e}:it.en);
         if(it.rl){const x=it.rl,m=Number(x.m)||0;
           html+='<button class="hour filled rlrow" data-rlk="'+esc(x.id)+'"><span class="hh"><b>'+esc(x.s)+'</b>'+(x.e?'<small>'+esc(x.e)+'</small>':'')+'</span><div class="body">'+
             '<span class="loc big" style="color:#4d7dff">📚 '+esc(it.rn)+'</span>'+(m?'<span class="dpill" style="background:#eef3ff;color:#3b63d9">⏱ '+esc(durText(m))+'</span>':'')+
             (x.t?'<div class="txt">'+txtHtml(x.t)+'</div>':'')+'</div></button>';return;}
         const en=it.en;
+        if((en.mv&&mvOpenOk(ui.date,en))||(!en.mv&&en.k!=='sleep'&&recOpenOk(ui.date,en)))tlOpen.push(tlRS.length-1);
         const dm=(en.e&&!en.noT)?durMin(en.s,en.e,en.ed):0;
         const pill=dm?'<span class="dpill">⏱ '+esc(durText(dm))+'</span>':'';
         html+='<button class="hour filled" data-k="'+esc(it.k)+'"><span class="hh">'+(en.noT?'<b style="color:#c3c8d4">—</b>':('<b>'+esc(en.s||(pad(h)+':00'))+'</b>'+(en.e?'<small>'+(en.ed?(en.ed===1?'翌':'+'+en.ed+'日'):'')+esc(en.e)+'</small>':'')))+'</span><div class="body">'+
@@ -3154,6 +3158,11 @@ function renderTimeline(pane){
   }
   flushRun();
   if(list.length&&ui.date>='2026-08-25'&&nowM>gEnd)html+=gapRow(gEnd,nowM);
+  if(isToday&&tlRS.length>2){const keep=Math.min(tlRS.length-2,tlOpen.length?tlOpen[0]:1e9);
+    if(keep>0){const all=sugNo('tl|all'),cut=tlRS[keep];
+      if(!all){const mid=html.slice(tlL0,cut),nG=(mid.match(/gaprow|mvsug/g)||[]).length,L=list[keep-1];
+        html=html.slice(0,tlL0)+'<button class="hour gap tlfold" id="tlFold"><span class="hh">▸</span><div class="body"><span class="gp-l">前の記録 <b>'+keep+'</b>件　'+esc(list[0].sm)+'〜'+esc((L.en&&L.en.e)||L.sm)+'</span>'+(nG?'<span class="tlf-g">⬜ 空き '+nG+'</span>':'')+'<span class="gp-q">全部 ▾</span></div></button>'+html.slice(cut);}
+      else html=html.slice(0,tlL0)+'<button class="hour gap tlfold" id="tlFold"><span class="hh">▴</span><div class="body"><span class="gp-l">最新だけにする</span></div></button>'+html.slice(tlL0);}}
   const seedN=(ui.date<'2026-08-25'&&PHDATES&&PHDATES[ui.date])||0;
   if(seedN){
     html+='<button class="hour filled" id="albRow"><span class="hh">📕</span><div class="body">'+
@@ -3177,6 +3186,7 @@ function renderTimeline(pane){
   if(typeof clLogout==='function'&&typeof cloudLoggedIn==='function'&&cloudLoggedIn())foot+='<div class="lgo"><button id="appLogout">🚪 ログアウト（最新の版に入れ替える）</button><small>今の版 '+esc(String(typeof CL_APPVER!=='undefined'?CL_APPVER:''))+'。押すと、送っていない記録を送ってからログアウト→最新の版を読み込む。入り直せば続きから</small></div>';
   pane.innerHTML=html;
   const pf=$('pfoot')||pane;if(pf!==pane)pf.innerHTML=foot;else pane.insertAdjacentHTML('beforeend',foot);
+  {const b=pane.querySelector('#tlFold');if(b)b.onclick=ev=>{ev.stopPropagation();const on=sugNo('tl|all');mutate(()=>{state.msx=state.msx||{};state.msx['tl|all']=on?{del:1,ts:Date.now()}:{ts:Date.now()};});};}
   {const ab=pf.querySelector('#alarmBtn');if(ab)ab.onclick=ev=>{ev.stopPropagation();openAlarmSheet();};}
   {const lb=pf.querySelector('#appLogout');if(lb)lb.onclick=ev=>{ev.stopPropagation();
     openSub('<div class="sh-time" style="justify-content:center"><span>🚪 ログアウトしますか？</span></div><div class="sh-note">送っていない記録を送ってからログアウトして、最新の版を読み込む。入り直せば続きから使える</div>'+
@@ -3502,7 +3512,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c16.7）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c16.8）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -8387,7 +8397,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c16.7";
+const CL_APPVER="c16.8";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
   if(!cloudLoggedIn())return;
