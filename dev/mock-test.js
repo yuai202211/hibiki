@@ -752,13 +752,13 @@ async function appTests() {
     ok(ka6b.length === 1 && ka6b[0].body.indexOf('"ksmall"') >= 0 && ka6b[0].body.indexOf('"khuge"') < 0 && ka6b[0].bytes <= 40000, '4.2-6b 1行で 40KB 超の行は飛ばし、ほかの行は keepalive で送る', ka6b.map((x) => ({ b: x.bytes })));
     await kaBack(C);
     ok(await has('memos', 'khuge')(), '  大きい行は戻った時の通常の送信で届く');
-    // 6c 合言葉の期限が20秒以内 → keepalive は撃たない（記録に残す）
+    // 6c 合言葉の期限が20秒以内 → c16.2：更新してから keepalive で送る（隠れている間に切れても溜めない）
     C.doc.hidden = true;
     C.mutate(() => { C.state.memos.kexp = { t: '期限ぎわ', ts: Date.now() }; });
     const expSave = C.CL.sess.expires_at; C.CL.sess.expires_at = Date.now() + 10000;
     const ka6c = await kaFire(C);
     C.CL.sess.expires_at = expSave;
-    ok(ka6c.length === 0 && C.CL.log.slice(-3).some((e) => e.ev === 'keepalive' && /期限が近い/.test(e.msg)), '4.2-6c 合言葉の期限が20秒以内 → keepalive は撃たず、記録に「期限が近い」', { n: ka6c.length, log: C.CL.log.slice(-3).map((e) => e.msg) });
+    ok(ka6c.length === 1 && C.CL.log.slice(-4).some((e) => e.ev === 'keepalive' && /期限が近い→更新/.test(e.msg)) && C.CL.log.slice(-4).some((e) => e.ev === 'refresh'), '4.2-6c 合言葉の期限が20秒以内 → 更新してから keepalive で送る（c16.2）', { n: ka6c.length, log: C.CL.log.slice(-3).map((e) => e.msg) });
     await kaBack(C);
     ok(await has('memos', 'kexp')(), '  戻った時の通常の送信で届く');
 

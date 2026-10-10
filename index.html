@@ -858,6 +858,10 @@
 .db-biz{display:flex;gap:12px;flex-wrap:wrap;font-size:12.5px;font-weight:800;color:#5b6475;margin:2px 0 6px}.db-biz b{color:#1f2a44;font-size:13.5px}
 .actrow .ac-tq{grid-column:1 / -1;display:flex;gap:6px;margin-top:2px}.actrow .ac-tq button{font-size:11px;font-weight:800;padding:3px 9px;border-radius:999px;background:#eef3ff;color:#3b63d9}
 #contW .ctsug{margin:0 0 8px}.ctsug2{background:#fff7ed!important}.ctsug2 .gp-l{color:#9a3412!important}
+.goal-line{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;width:calc(100% - 24px);margin:0 12px 8px;padding:10px 14px;border-radius:16px;background:linear-gradient(135deg,#fff7e6,#fffbf2);border:1px solid #fde4b0;text-align:left}.goal-line.done{background:#e7f9f0;border-color:#9fe3c0}
+.goal-line .gl-main{font-size:14px;font-weight:800;color:#8a5a00}.goal-line .gl-main b{font-size:20px;color:#1f2a44}.goal-line .gl-sub{font-size:12px;font-weight:800;color:#a8790a}.goal-line .gl-gp{flex:0 0 100%;font-size:12px;font-weight:700;color:#5b6475}.goal-line .gl-gp b{color:#1f2a44}
+.inc-row{display:flex;gap:8px;margin-top:8px}.inc-row input{flex:1;min-width:0;font:inherit;font-size:16px;padding:10px;border-radius:12px;border:1px solid var(--line)}.inc-list{display:flex;flex-direction:column;gap:4px;margin-top:8px}.inc-it{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:10px;background:#f6f7fb;font-size:13px}.inc-it .inc-d{color:#8a93a6;font-weight:700}.inc-it .inc-m{flex:1;min-width:0;color:#5b6475;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.inc-x{font-size:12px;font-weight:800;color:#8a93a6;background:#eef0f5;border-radius:999px;padding:3px 9px}.inc-x.arm{background:#ffe9ec;color:#e0405a}
+.pinc{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:0 0 8px;padding:8px 12px;border-radius:14px;background:#fff7e6;font-size:13px;font-weight:700;color:#5b6475}.pinc b{color:#1f2a44;font-size:15px}.pinc .chip{margin-left:auto}
 .fr-addbar{display:block;width:100%;margin:6px 0 2px;padding:9px 12px;border-radius:12px;background:#f4f2ff;color:#5b4fd6;font-weight:800;font-size:13px;text-align:center}
 .td-dlg{font-style:normal;font-size:11px;font-weight:800;background:#ede9fe;color:#5b21b6;border-radius:999px;padding:1px 7px;margin-left:4px}
 .rc-it{padding:8px 0;border-bottom:1px solid var(--line)}.rc-it b{display:block;margin-bottom:4px}
@@ -1869,7 +1873,7 @@ function mergeStates(a,b){
       out.payrep=out.payrep||{};const cur=out.payrep[k];
       if(!cur||((nu.ts||0)>(cur.ts||0)))out.payrep[k]=nu;}
     /* 📚 ルーティン（rtn）とその記録（rlog）。1件ずつ新しい方が勝つ。使うまで項目を作らない */
-    for(const k of ['rtn','rlog','payppl','kinds','tools','places','projects','marks','bedp','arp','todos','plreg','plgrp','kgrp','trs','srr','tdq','ksub','dlg','dgoal','aip','msx'])for(const id in (src[k]||{})){   /* kinds／tools＝行の種類・道具（c1.1） */const nu=src[k][id];if(!nu)continue;
+    for(const k of ['rtn','rlog','payppl','kinds','tools','places','projects','marks','bedp','arp','todos','plreg','plgrp','kgrp','trs','srr','tdq','ksub','dlg','dgoal','aip','msx','inc'])for(const id in (src[k]||{})){   /* kinds／tools＝行の種類・道具（c1.1） */const nu=src[k][id];if(!nu)continue;
       out[k]=out[k]||{};const cur=out[k][id];if(!cur||((nu.ts||0)>(cur.ts||0)))out[k][id]=nu;}
     for(const id in (src.pins||{})){const nu=src.pins[id];if(!nu)continue;
       out.pins=out.pins||{};const cur=out.pins[id];
@@ -1889,7 +1893,7 @@ function mergeStates(a,b){
   /* 知らないトップレベル項目も捨てない（新旧バージョン混在でもデータを失わない） */
   /* payrep も必ずここに入れる。入れ忘れると、下の「知らない項目」の写しが、1件ずつ合わせた結果を丸ごと上書きする
      ＝別の端末で止めた・再開した印が消える（2026-09-30レビュー指摘） */
-  const known={updatedAt:1,dream:1,entries:1,plans:1,ai:1,dreams:1,memos:1,life:1,photos:1,pha:1,pays:1,rules:1,aims:1,moves:1,pins:1,steps:1,payrep:1,rtn:1,rlog:1,payppl:1,kinds:1,tools:1,places:1,projects:1,marks:1,bedp:1,scr:1,alarm:1,arp:1,todos:1,plreg:1,plgrp:1,kgrp:1,trs:1,srr:1,tdq:1,ksub:1,cond:1,dlg:1,dgoal:1,aip:1,msx:1};
+  const known={updatedAt:1,dream:1,entries:1,plans:1,ai:1,dreams:1,memos:1,life:1,photos:1,pha:1,pays:1,rules:1,aims:1,moves:1,pins:1,steps:1,payrep:1,rtn:1,rlog:1,payppl:1,kinds:1,tools:1,places:1,projects:1,marks:1,bedp:1,scr:1,alarm:1,arp:1,todos:1,plreg:1,plgrp:1,kgrp:1,trs:1,srr:1,tdq:1,ksub:1,cond:1,dlg:1,dgoal:1,aip:1,msx:1,inc:1};
   const newer=((b.updatedAt||0)>=(a.updatedAt||0))?b:a;
   const older=(newer===b)?a:b;
   for(const k in older)if(!known[k]&&older[k]!==undefined)out[k]=older[k];
@@ -3090,6 +3094,30 @@ function bizSplit(d){const c=anaCount(anaRange('day',d));const S=c.sum||{};let b
 function bizLineHtml(d){try{const b=bizSplit(d),hs=m=>m<60?m+'分':(Math.round(m/6)/10)+'h';return '<div class="db-biz"><span>💰 商売 <b>'+hs(b.biz)+'</b></span><span>📣 集客 <b>'+hs(b.mk)+'</b></span><span>🛠 HIBIKI <b>'+(b.hid?hs(b.hib):'—')+'</b></span></div>';}catch(e){return '';}}
 function hibCands(){const o=[];for(const d in state.entries){if(d<'2026-10-03')continue;const eo=state.entries[d];for(const k in eo){const en=eo[k];if(!en||en.del||en.pj)continue;if((en.acts||[]).some(a=>a&&[a.k].concat(a.kx||[]).some(x=>AI_KINDS[x])&&/hibiki/i.test(String(a.t||'')+' '+String(a.c||''))))o.push([d,k]);}}return o;}
 function hibSugHtml(){try{if(pjHibId()||sugNo('pjhib'))return '';const n=hibCands().length;return '<div class="hour gap mvsug ctsug2"><span class="hh">📌</span><div class="body"><span class="gp-l">案件「HIBIKI」を作って、題名にHIBIKIと書いたAIの記録 '+n+'件に付ける？</span><span class="ms-rt">付けると上の「🛠 HIBIKI」に時間が出る。次からは📌案件で1タップ（さっきの続きでも引き継ぐ）</span><span class="ms-ac"><button class="ms-ok" id="hibOk">✓ 入れる</button><button class="ms-no" data-msno="pjhib">✕ 入れない</button></span></div></div>';}catch(e){return '';}}
+/* ===== c16.2：💰 517万（本人決定 2026-10-10：入金で「あと」、粗利は横。数え始め 10/10） ===== */
+const GOAL={yen:5170000,until:'2026-12-31',from:'2026-10-10'};
+function incList(){const I=state.inc||{};return Object.keys(I).filter(id=>I[id]&&!I[id].del&&Number(I[id].amt)>0&&I[id].d).map(id=>Object.assign({id},I[id])).sort((a,b)=>a.d<b.d?1:a.d>b.d?-1:(b.ts||0)-(a.ts||0));}
+function incSum(ty,d1,d2){let s=0;for(const x of incList()){if(x.ty!==ty)continue;if(d1&&x.d<d1)continue;if(d2&&x.d>d2)continue;s+=Number(x.amt)||0;}return s;}
+function manY(n){const m=n/10000;return (Math.abs(m)>=100?Math.round(m):Math.round(m*10)/10).toLocaleString('ja-JP')+'万';}
+function goalDays(){const t=todayStr();return Math.max(0,Math.round((parseD(GOAL.until).getTime()-parseD(t).getTime())/864e5));}
+function goalLineHtml(){try{const t=todayStr(),got=incSum('in',GOAL.from,t),left=GOAL.yen-got,days=goalDays(),per=days?left/days:left,ym=t.slice(0,7),gp=incSum('gp',ym+'-01',ym+'-31');
+  return '<button class="goal-line'+(left<=0?' done':'')+'" id="goalLine"><span class="gl-main">💰 あと <b>'+manY(Math.max(0,left))+'円</b></span><span class="gl-sub">'+(left<=0?'🎉 517万 達成':GOAL.until.slice(5).replace('-','/')+'まで '+days+'日・1日 '+manY(Math.max(0,per))+'円')+'</span><span class="gl-gp">📈 粗利 '+Number(ym.slice(5))+'月 <b>'+manY(gp)+'</b>　💵 入金 <b>'+manY(got)+'</b></span></button>';}catch(e){return '';}}
+let incArm='';
+function openIncSheet(ym){ym=ym||todayStr().slice(0,7);let ty='in',d=todayStr();if(d.slice(0,7)!==ym)d=ym+'-01';
+  const paint=()=>{const L=incList().filter(x=>x.d.slice(0,7)===ym);const sIn=incSum('in',ym+'-01',ym+'-31'),sGp=incSum('gp',ym+'-01',ym+'-31');
+    openSub('<div class="sh-time"><span>💰 収入（'+Number(ym.slice(5))+'月）</span></div><div class="sh-note" style="text-align:left">💵入金＝口座やPayPayに入ったお金（517万は入金で数える）。📈粗利＝売上−仕入・経費。足さない（同じ売上が二重になるため）</div>'+
+      '<div class="sh-chips"><button class="chip'+(ty==='in'?' sel':'')+'" data-incty="in">💵 入金</button><button class="chip'+(ty==='gp'?' sel':'')+'" data-incty="gp">📈 粗利</button></div>'+
+      '<div class="inc-row"><input type="number" id="incAmt" inputmode="numeric" placeholder="金額（円）" min="0" step="1000"><input type="date" id="incD" value="'+esc(d)+'"></div>'+
+      '<input type="text" id="incMemo" maxlength="40" placeholder="メモ（例：ミニ 成約・手付）" style="width:100%;margin-top:6px">'+
+      '<div class="sh-btns"><button class="delbtn" id="incNo" style="flex:0 0 auto">閉じる</button><button class="savebtn" id="incOk">入れる</button></div>'+
+      '<div class="psum" style="margin-top:12px"><div class="dn"><div class="ps-l">💵 入金</div><div class="ps-v">'+fmtYen(sIn)+'<small>円</small></div></div><div class="dn"><div class="ps-l">📈 粗利</div><div class="ps-v">'+fmtYen(sGp)+'<small>円</small></div></div></div>'+
+      (L.length?'<div class="inc-list">'+L.map(x=>'<div class="inc-it"><span class="inc-d">'+esc(x.d.slice(5).replace('-','/'))+'</span><span class="inc-ty">'+(x.ty==='gp'?'📈':'💵')+'</span><b>'+fmtYen(x.amt)+'円</b><span class="inc-m">'+esc(x.memo||'')+'</span><button class="inc-x'+(incArm===x.id?' arm':'')+'" data-incx="'+esc(x.id)+'">'+(incArm===x.id?'もう一度で消す':'✕')+'</button></div>').join('')+'</div>':'<div class="an-empty">まだ無い</div>'),null);
+    const s=$('sheet2');s.querySelectorAll('[data-incty]').forEach(b=>b.onclick=()=>{ty=b.dataset.incty;const a=$('incAmt').value,m=$('incMemo').value;d=$('incD').value||d;paint();$('incAmt').value=a;$('incMemo').value=m;});
+    $('incNo').onclick=closeSub;
+    $('incOk').onclick=()=>{const amt=Math.round(Number($('incAmt').value)||0),dd=$('incD').value||d,memo=($('incMemo').value||'').trim();if(!amt){toast('金額を入れてくれ');return;}if(!/^\d{4}-\d{2}-\d{2}$/.test(dd)){toast('日付が変');return;}
+      mutate(()=>{state.inc=state.inc||{};state.inc['i'+Date.now()+Math.floor(Math.random()*1e4)]={d:dd,amt,ty,memo,ts:Date.now()};});toast((ty==='gp'?'📈 粗利 ':'💵 入金 ')+fmtYen(amt)+'円');incArm='';d=dd;paint();};
+    s.querySelectorAll('[data-incx]').forEach(b=>b.onclick=()=>{const id=b.dataset.incx;if(incArm!==id){incArm=id;paint();return;}mutate(()=>{state.inc[id]=Object.assign({},state.inc[id],{del:1,ts:Date.now()});});incArm='';toast('消した');paint();});};
+  paint();}
 /* ===== 📌 案件 ===== */
 function pjList(){const P=state.projects||{};return Object.keys(P).filter(id=>P[id]&&!P[id].del&&P[id].n).map(id=>({id,n:P[id].n,ts:P[id].ts||0})).sort((a,b)=>b.ts-a.ts);}
 function pjNew(n){n=String(n||'').trim().slice(0,30);if(!n)return '';const ex=pjList().find(p=>p.n===n);if(ex)return ex.id;const id='pj'+Date.now().toString(36)+Math.floor(Math.random()*1e3);mutate(()=>{state.projects=state.projects||{};state.projects[id]={n,ts:Date.now()};});return id;}
@@ -3323,6 +3351,7 @@ function renderTimeline(pane){
       '<div class="body" style="color:var(--green);font-weight:700">書く'+(isToday?'':'<span style="color:#9aa3b5;font-weight:600">　時間は自由に選べる</span>')+'</div>'+right+'</div>';
   }
   html+=dayBandHtml(ui.date);   /* この日の帯：何に使ったかを1本の色で */
+  if(isToday)html+=goalLineHtml();   /* c16.2：💰 517万まで */
   if(isToday)html+=hibSugHtml();   /* c16.1：📌案件HIBIKI（✓✕・一度だけ） */
   html+=srDayHtml(ui.date);   /* c4.7：🕳️😤😫の申告と、夜の📲📞の数字 */
   if(isToday)html+=nextLineHtml();   /* c12.6：▶ 次の1つ＋⚡割り込み（今やるの1行の代わり） */   /* c7.9：📋今やる（残りN） */   /* c5.3：⏸途中の期限未設定・期限切れ（見せるだけ） */
@@ -3449,6 +3478,7 @@ function renderTimeline(pane){
     toast('🚗 移動を入れた（'+D.mss+'–'+D.mse+'）');render();});
   pane.querySelectorAll('.ms-tr').forEach(x=>x.onclick=ev=>ev.stopPropagation());
   pane.querySelectorAll('[data-msno]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();sugSet(b.dataset.msno);toast('入れなかった（もう出さない）');});   /* c15.5 */
+  {const g=$('goalLine');if(g)g.onclick=ev=>{ev.stopPropagation();openIncSheet();};}   /* c16.2 */
   pane.querySelectorAll('.ds-ok').forEach(b=>b.onclick=ev=>{ev.stopPropagation();const d=ui.date,k=b.dataset.dsk,p=b.dataset.dsp,pf=Number(b.dataset.dspf)||0;   /* c16.1 */
     mutate(()=>{const mv=(state.entries[d]||{})[k];if(!mv)return;const pts=String(mv.rt||'').split('→').map(z=>z.trim()).filter(Boolean);mv.rt=(pts[0]?pts[0]+' ':'')+'→ '+p;if(pf&&!prefOf(mv.pf))mv.pf=pf;mv.ts=Date.now();});toast('🏁 行き先を入れた');});
   {const b=$('hibOk');if(b)b.onclick=ev=>{ev.stopPropagation();const c=hibCands();const id=pjNew('HIBIKI');if(!id)return;mutate(()=>{for(const [d,k] of c){const en=(state.entries[d]||{})[k];if(en&&!en.del){en.pj=id;en.ts=Date.now();}}});toast('📌 HIBIKI を '+c.length+'件に付けた');};}   /* c16.1：📌案件HIBIKIを一度だけ */
@@ -3764,7 +3794,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+   /* 同期の状態1行と記録（クラウド版 c1.9） */
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c16.1）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c16.2）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -5537,6 +5567,7 @@ function renderPayPage(){
     (tot?'<div class="payprog'+(up.length?'':' all')+'" style="padding:10px 14px;margin:0 0 4px"><div class="pp-bar" style="margin-top:0"><i style="width:'+Math.round(dn.length/tot*100)+'%"></i></div>'+
       '<div class="pp-s">'+dn.length+' / '+tot+'件 払った'+(up.length?'':'　🎉 全部完了！')+'</div></div>':'')+
     /* 区分の絞り込み：全部／個人／屋号／法人（区分なしの支払いがある時は「区分なし」も） */
+    (()=>{const sIn=incSum('in',ym+'-01',ym+'-31'),sGp=incSum('gp',ym+'-01',ym+'-31');return '<div class="pinc"><span>💵 入金 <b>'+fmtYen(sIn)+'</b>円</span><span>📈 粗利 <b>'+fmtYen(sGp)+'</b>円</span><button class="chip" id="incAdd">＋ 収入</button></div>';})()+   /* c16.2 */
     '<div class="pent"><button data-pe=""'+(!payEntF?' class="on"':'')+'>全部</button>'+
       Object.keys(PAY_ENT).map(k=>'<button data-pe="'+k+'"'+(payEntF===k?' class="on"':'')+'>'+PAY_ENT[k][0]+' '+PAY_ENT[k][1]+'</button>').join('')+
       (paysOf().some(x=>!PAY_ENT[x.en])?'<button data-pe="none"'+(payEntF==='none'?' class="on"':'')+'>区分なし</button>':'')+'</div>'+
@@ -5551,7 +5582,7 @@ function renderPayPage(){
   $('pgBk').onclick=closePage;
   $('pgAdd').onclick=()=>openPaySheet(null);
   $('pmPrev').onclick=()=>{payYM=payYMAdd(ym,-1);renderPayPage();};
-  $('pmNext').onclick=()=>{payYM=payYMAdd(ym,1);renderPayPage();};
+  $('pmNext').onclick=()=>{payYM=payYMAdd(ym,1);renderPayPage();};{const b=$('incAdd');if(b)b.onclick=()=>openIncSheet(ym);}   /* c16.2 */
   const nowB=$('pmNow');if(nowB)nowB.onclick=()=>{payYM=cur;renderPayPage();};
   const ah=$('pmAhead');if(ah)ah.onclick=()=>{payYM=monOf(ahead[0]);payTab='up';renderPayPage();};
   p.querySelectorAll('[data-pt]').forEach(b=>b.onclick=()=>{payTab=b.dataset.pt;renderPayPage();});
@@ -8582,7 +8613,7 @@ async function clRpcJson(name,body,sig,ms){const t=await clRpcText(name,typeof b
 async function clRpc(name,body){return clRpcJson(name,body);}   /* 旧版と同じ名前（他から呼ばれても動く） */
 
 /* ---------- state ⇄ 項目（1行） ---------- */
-const CL_ID=['dreams','memos','pays','aims','moves','pins','steps','payrep','rtn','rlog','payppl','pha','kinds','tools','places','projects','marks','bedp','arp','todos','plreg','plgrp','kgrp','trs','srr','tdq','ksub','dlg','dgoal','aip','msx'];   /* c7.9：todos＝📋やる事 */   /* c4.8：arp＝場所ごとの区・市町村 */   /* c4.7：marks＝🕳️😤😫の申告、bedp＝場所ごとの🛏️/🪑 */
+const CL_ID=['dreams','memos','pays','aims','moves','pins','steps','payrep','rtn','rlog','payppl','pha','kinds','tools','places','projects','marks','bedp','arp','todos','plreg','plgrp','kgrp','trs','srr','tdq','ksub','dlg','dgoal','aip','msx','inc'];   /* c7.9：todos＝📋やる事 */   /* c4.8：arp＝場所ごとの区・市町村 */   /* c4.7：marks＝🕳️😤😫の申告、bedp＝場所ごとの🛏️/🪑 */
 const CL_DAY=['ai','rules','scr','cond'];   /* c11.5：cond＝体調（日ごと） */   /* c4.7：scr＝夜に入れる📲📞の数字（日ごと） */
 const CL_DAY2=['entries','plans'];
 const CL_SKIP={updatedAt:1,photos:1};
@@ -9043,7 +9074,7 @@ function clKeepalive(why){
   try{
     if(!cloudConfigured()||!cloudLoggedIn()||!CL.ready||CL.authDead)return false;
     if(Date.now()-CL.kaAt<3000)return false;   /* hidden と pagehide の二重発火を間引く */
-    if(CL.sess.expires_at&&Date.now()>CL.sess.expires_at-20000){clNote('keepalive','合言葉の期限が近いので送らない（次の起動で送る）');return false;}
+    if(CL.sess.expires_at&&Date.now()>CL.sess.expires_at-20000){if(!CL.kaRf){CL.kaRf=true;clNote('keepalive','合言葉の期限が近い→更新してから送る');clRefresh().then(ok=>{CL.kaRf=false;if(ok){CL.kaAt=0;clKeepalive('更新後');}else clNote('keepalive','更新できず。次に表に出た時に送る');}).catch(()=>{CL.kaRf=false;});}return false;}   /* c16.2：隠れている間に合言葉が切れても、更新してから送る（05 3-10） */
     const keys=Object.keys(CL.dirty);if(!keys.length)return false;
     const want=new Set(keys),list=[];
     for(const it of clItems(state)){if(want.has(clKey(it)))list.push(it);}
@@ -9146,7 +9177,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c16.1";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c16.2";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 /* ログインの後：同じユーザーなら影はそのまま（全件受信をやり直さない）。違うユーザーならそのユーザーの影を読む */
 async function clAfterLogin(){

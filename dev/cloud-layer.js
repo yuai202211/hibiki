@@ -208,7 +208,7 @@ async function clRpcJson(name,body,sig,ms){const t=await clRpcText(name,typeof b
 async function clRpc(name,body){return clRpcJson(name,body);}   /* 旧版と同じ名前（他から呼ばれても動く） */
 
 /* ---------- state ⇄ 項目（1行） ---------- */
-const CL_ID=['dreams','memos','pays','aims','moves','pins','steps','payrep','rtn','rlog','payppl','pha','kinds','tools','places','projects','marks','bedp','arp','todos','plreg','plgrp','kgrp','trs','srr','tdq','ksub','dlg','dgoal','aip','msx'];   /* c7.9：todos＝📋やる事 */   /* c4.8：arp＝場所ごとの区・市町村 */   /* c4.7：marks＝🕳️😤😫の申告、bedp＝場所ごとの🛏️/🪑 */
+const CL_ID=['dreams','memos','pays','aims','moves','pins','steps','payrep','rtn','rlog','payppl','pha','kinds','tools','places','projects','marks','bedp','arp','todos','plreg','plgrp','kgrp','trs','srr','tdq','ksub','dlg','dgoal','aip','msx','inc'];   /* c7.9：todos＝📋やる事 */   /* c4.8：arp＝場所ごとの区・市町村 */   /* c4.7：marks＝🕳️😤😫の申告、bedp＝場所ごとの🛏️/🪑 */
 const CL_DAY=['ai','rules','scr','cond'];   /* c11.5：cond＝体調（日ごと） */   /* c4.7：scr＝夜に入れる📲📞の数字（日ごと） */
 const CL_DAY2=['entries','plans'];
 const CL_SKIP={updatedAt:1,photos:1};
@@ -669,7 +669,7 @@ function clKeepalive(why){
   try{
     if(!cloudConfigured()||!cloudLoggedIn()||!CL.ready||CL.authDead)return false;
     if(Date.now()-CL.kaAt<3000)return false;   /* hidden と pagehide の二重発火を間引く */
-    if(CL.sess.expires_at&&Date.now()>CL.sess.expires_at-20000){clNote('keepalive','合言葉の期限が近いので送らない（次の起動で送る）');return false;}
+    if(CL.sess.expires_at&&Date.now()>CL.sess.expires_at-20000){if(!CL.kaRf){CL.kaRf=true;clNote('keepalive','合言葉の期限が近い→更新してから送る');clRefresh().then(ok=>{CL.kaRf=false;if(ok){CL.kaAt=0;clKeepalive('更新後');}else clNote('keepalive','更新できず。次に表に出た時に送る');}).catch(()=>{CL.kaRf=false;});}return false;}   /* c16.2：隠れている間に合言葉が切れても、更新してから送る（05 3-10） */
     const keys=Object.keys(CL.dirty);if(!keys.length)return false;
     const want=new Set(keys),list=[];
     for(const it of clItems(state)){if(want.has(clKey(it)))list.push(it);}
