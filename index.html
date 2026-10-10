@@ -3095,7 +3095,7 @@ function bizLineHtml(d){try{const b=bizSplit(d),hs=m=>m<60?m+'分':(Math.round(m
 function hibCands(){const o=[];for(const d in state.entries){if(d<'2026-10-03')continue;const eo=state.entries[d];for(const k in eo){const en=eo[k];if(!en||en.del||en.pj)continue;if((en.acts||[]).some(a=>a&&[a.k].concat(a.kx||[]).some(x=>AI_KINDS[x])&&/hibiki/i.test(String(a.t||'')+' '+String(a.c||''))))o.push([d,k]);}}return o;}
 function hibSugHtml(){try{if(pjHibId()||sugNo('pjhib'))return '';const n=hibCands().length;return '<div class="hour gap mvsug ctsug2"><span class="hh">📌</span><div class="body"><span class="gp-l">案件「HIBIKI」を作って、題名にHIBIKIと書いたAIの記録 '+n+'件に付ける？</span><span class="ms-rt">付けると上の「🛠 HIBIKI」に時間が出る。次からは📌案件で1タップ（さっきの続きでも引き継ぐ）</span><span class="ms-ac"><button class="ms-ok" id="hibOk">✓ 入れる</button><button class="ms-no" data-msno="pjhib">✕ 入れない</button></span></div></div>';}catch(e){return '';}}
 /* ===== c16.2：💰 517万（本人決定 2026-10-10：入金で「あと」、粗利は横。数え始め 10/10） ===== */
-const GOAL={yen:5170000,until:'2026-12-31',from:'2026-10-10'};
+const GOAL={yen:5170000,until:'2026-12-31',from:''};   /* c16.3：入金は全部数える（本人：8/26・9/29の入金も数に入れる） */
 function incList(){const I=state.inc||{};return Object.keys(I).filter(id=>I[id]&&!I[id].del&&Number(I[id].amt)>0&&I[id].d).map(id=>Object.assign({id},I[id])).sort((a,b)=>a.d<b.d?1:a.d>b.d?-1:(b.ts||0)-(a.ts||0));}
 function incSum(ty,d1,d2){let s=0;for(const x of incList()){if(x.ty!==ty)continue;if(d1&&x.d<d1)continue;if(d2&&x.d>d2)continue;s+=Number(x.amt)||0;}return s;}
 function manY(n){const m=n/10000;return (Math.abs(m)>=100?Math.round(m):Math.round(m*10)/10).toLocaleString('ja-JP')+'万';}
@@ -3794,7 +3794,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+   /* 同期の状態1行と記録（クラウド版 c1.9） */
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c16.2）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c16.3）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -9177,7 +9177,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c16.2";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c16.3";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 /* ログインの後：同じユーザーなら影はそのまま（全件受信をやり直さない）。違うユーザーならそのユーザーの影を読む */
 async function clAfterLogin(){
