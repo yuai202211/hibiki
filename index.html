@@ -862,6 +862,9 @@
 .goal-line .gl-main{font-size:14px;font-weight:800;color:#8a5a00}.goal-line .gl-main b{font-size:20px;color:#1f2a44}.goal-line .gl-sub{font-size:12px;font-weight:800;color:#a8790a}.goal-line .gl-gp{flex:0 0 100%;font-size:12px;font-weight:700;color:#5b6475}.goal-line .gl-gp b{color:#1f2a44}
 .inc-row{display:flex;gap:8px;margin-top:8px}.inc-row input{flex:1;min-width:0;font:inherit;font-size:16px;padding:10px;border-radius:12px;border:1px solid var(--line)}.inc-list{display:flex;flex-direction:column;gap:4px;margin-top:8px}.inc-it{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:10px;background:#f6f7fb;font-size:13px}.inc-it .inc-d{color:#8a93a6;font-weight:700}.inc-it .inc-m{flex:1;min-width:0;color:#5b6475;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.inc-x{font-size:12px;font-weight:800;color:#8a93a6;background:#eef0f5;border-radius:999px;padding:3px 9px}.inc-x.arm{background:#ffe9ec;color:#e0405a}
 .pinc{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:0 0 8px;padding:8px 12px;border-radius:14px;background:#fff7e6;font-size:13px;font-weight:700;color:#5b6475}.pinc b{color:#1f2a44;font-size:15px}.pinc .chip{margin-left:auto}
+.gstrip{display:flex;gap:6px;align-items:center;width:calc(100% - 24px);margin:4px 12px 2px;padding:5px 8px;border-radius:12px;background:#1f2430;overflow-x:auto;scrollbar-width:none}.gstrip::-webkit-scrollbar{display:none}.gstrip .gs{flex:0 0 auto;color:#fff;font-size:12.5px;font-weight:800;white-space:nowrap;padding:3px 8px;border-radius:999px;background:rgba(255,255,255,.08)}.gstrip .gs b{font-size:14px;color:#ffd166}.gstrip .gs.ov{background:rgba(255,120,140,.22)}.gstrip .gs.ov b{color:#ff8fa3}
+.page .gstrip.pg{margin:0 16px 6px;flex-shrink:0}
+.td-hib{padding:0 10px;font-size:16px;opacity:.5}.td-hib.on{opacity:1;background:#fff3c9;color:#8a5a00}
 .fr-addbar{display:block;width:100%;margin:6px 0 2px;padding:9px 12px;border-radius:12px;background:#f4f2ff;color:#5b4fd6;font-weight:800;font-size:13px;text-align:center}
 .td-dlg{font-style:normal;font-size:11px;font-weight:800;background:#ede9fe;color:#5b21b6;border-radius:999px;padding:1px 7px;margin-left:4px}
 .rc-it{padding:8px 0;border-bottom:1px solid var(--line)}.rc-it b{display:block;margin-bottom:4px}
@@ -1521,6 +1524,7 @@
 
   <!-- 保存に問題がある間だけ出る診断帯。スクショ1枚で原因が分かる -->
   <button class="diagstrip" id="diagstrip" style="display:none"></button>
+  <div class="gstrip" id="gstrip" style="display:none"></div>   <!-- c16.4：💰法人化引っ越しの帯（毎分意識する） -->
 
   <div class="dreamrow">
     <button class="dream" id="dreamBar">
@@ -3794,7 +3798,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+   /* 同期の状態1行と記録（クラウド版 c1.9） */
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c16.3）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c16.4）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -6648,11 +6652,12 @@ function tdUndo(id){const T=state.todos||{};if(!T[id])return;mutate(()=>{const x
    ①⚡段取りを組む＝決まった順番で今日のやる事を自動で並べる ②トップに「▶ 次の1つ」だけ ③⚡割り込み＝入った物を次の1つにして残りを組み直す ④🤖段取りを相談＝今日の情報をまとめてコピー
    順番の決まり（上から優先・⚙️で入れ替え）：🕐時間が決まっている→📅今日が期限→💰お金に直結→🙋人を待たせている→⏱15分以内。並べた後：同じ場所はまとめる・体調で🧠と🙌🤖を入れ替え */
 const PLAN_R0=[['fixed','🕐','時間が決まっている'],['due','📅','今日が期限'],['money','💰','お金に直結'],['wait','🙋','人を待たせている'],['quick','⏱','15分以内']];
-const PLAN_FL=[['due','📅','今日が期限'],['money','💰','お金に直結'],['wait','🙋','人を待たせている'],['quick','⏱','15分以内']];
+const PLAN_FL=[['due','📅','今日が期限'],['money','💰','お金に直結'],['wait','🙋','人を待たせている'],['quick','⏱','15分以内'],['hib','🛠','HIBIKI（直す・足す）']];   /* c16.4：🛠＝溜めるだけ。段取り・次の1つには出さない */
+const tdHib=x=>!!(x&&x.fl&&x.fl.hib);let tdHibOn=false;
 function planRules(){const a=state._cfg&&Array.isArray(state._cfg.prules)?state._cfg.prules.filter(x=>PLAN_R0.some(r=>r[0]===x)):[];PLAN_R0.forEach(r=>{if(a.indexOf(r[0])<0)a.push(r[0]);});return a;}
 function planFixed(x){const t=todayStr();return !!(x.s&&(x.sd||t)===t);}
 function planHas(x,r){const fl=x.fl||{};if(r==='fixed')return planFixed(x);if(r==='due')return !!fl.due;return !!fl[r];}
-function planOrder(){const t=todayStr(),R=planRules(),c=condToday();const op=tdOpen().filter(x=>!planFixed(x));
+function planOrder(){const t=todayStr(),R=planRules(),c=condToday();const op=tdOpen().filter(x=>!planFixed(x)&&!tdHib(x));
   const sc=x=>{if(x.pin===t)return -10;let i=R.findIndex(r=>r!=='fixed'&&planHas(x,r));if(i<0)i=R.length;
     if(c==='good'&&x.tg==='head')i-=0.4;if(c==='bad'){if(x.tg==='head')i+=0.6;else if(x.tg==='hand'||x.tg==='ai')i-=0.4;}return i;};
   const s=op.map(x=>({x,v:sc(x)})).sort((a,b)=>a.v-b.v||(a.x.ts0||0)-(b.x.ts0||0)).map(o=>o.x);
@@ -6829,7 +6834,7 @@ function planAsk(){const t=todayStr(),A=alarmCfg(),sd=sleepDay(t),cv=condToday()
     closeSub();toast((ok?'📋 コピーした':'⚠ コピーできなかった')+'→ '+to.ic+' '+to.lb+(to.url?' を開く':'に貼る'));if(to.url){try{window.open(to.url,'_blank');}catch(e){}}});
   $('paNo').onclick=closeSub;}
 
-function tdLineHtml(){let op=tdSorted(tdOpen());if(tdBadDay())op=op.filter(x=>x.tg==='hand'||x.tg==='ai');if(!op.length)return '';   /* c11.5 */const x=op[0];return '<button class="td-line" id="tdLine">'+(x.pin===todayStr()?'🎯':'📋')+' 今やる：<b>'+esc(x.t)+'</b>'+(x.s?' <i>'+esc(x.s)+'〜</i>':'')+'<span>残り'+op.length+' ›</span></button>';}
+function tdLineHtml(){let op=tdSorted(tdOpen()).filter(x=>!tdHib(x));if(tdBadDay())op=op.filter(x=>x.tg==='hand'||x.tg==='ai');if(!op.length)return '';   /* c11.5 */const x=op[0];return '<button class="td-line" id="tdLine">'+(x.pin===todayStr()?'🎯':'📋')+' 今やる：<b>'+esc(x.t)+'</b>'+(x.s?' <i>'+esc(x.s)+'〜</i>':'')+'<span>残り'+op.length+' ›</span></button>';}
 function tdTimeSheet(id,after){const x=(state.todos||{})[id];if(!x)return;const t=todayStr(),n=new Date();const rd=m=>pad(Math.floor(m/60)%24)+':'+pad(m%60);const now=Math.ceil((n.getHours()*60+n.getMinutes())/5)*5;
   openSub('<div class="sh-time"><span>🕐 いつやる？</span></div><div class="sh-note" style="text-align:left">時間を入れると、その時間の日記の記録に1行で入る（任意）</div>'+
     '<div class="sr-r big"><button class="chip" data-tt="now">今から（30分）</button><button class="chip" data-tt="night">今日の夜 21:00</button><button class="chip" data-tt="morn">明日の朝 9:00</button></div>'+
@@ -6911,7 +6916,7 @@ function tdEditSheet(id,after){const x=(state.todos||{})[id];if(!x)return;const 
 function openTodoPage(){closeSheet();renderTodoPage();}
 let tdMore=false;
 let tdAllShow=false;
-function renderTodoPage(){pageMode='todo';const p=$('page');const t=todayStr();const op0=tdSorted(tdOpen()),bad=tdBadDay()&&!tdAllShow,op=bad?op0.filter(x=>x.tg==='hand'||x.tg==='ai'):op0,hid=op0.length-op.length,later=tdSorted(tdLater()),dn=tdDoneToday(),sd=tdAll().filter(x=>x.quit&&x.quit.r==='someday');
+function renderTodoPage(){pageMode='todo';const p=$('page');const t=todayStr();const hib=tdSorted(tdOpen()).filter(tdHib);const op0=tdSorted(tdOpen()).filter(x=>!tdHib(x)),bad=tdBadDay()&&!tdAllShow,op=bad?op0.filter(x=>x.tg==='hand'||x.tg==='ai'):op0,hid=op0.length-op.length,later=tdSorted(tdLater()),dn=tdDoneToday(),sd=tdAll().filter(x=>x.quit&&x.quit.r==='someday');
   const rowsWip=stList().filter(x=>x.a.st==='wip'&&!x.a.td),rowsDone=stList().filter(x=>x.a.st==='done'&&!x.a.td&&(x.a.dn||x.d)===t);
   const tagC=x=>{const n=tdDays(x);return n<=0?'':n===1?'c1':n<6?'c2':'c3';};
   const item=x=>'<div class="td-it'+(x.pin===t?' pin':'')+'"><button class="td-ck" data-tdc="'+esc(x.id)+'" aria-label="完了">◻️</button><button class="td-b" data-tde="'+esc(x.id)+'"><b>'+(x.pin===t?'🎯 ':'')+(x.tg&&TD_TG[x.tg]?TD_TG[x.tg][0]+' ':'')+esc(x.t)+'</b>'+(x.dlg?'<em class="td-dlg">🤖→'+esc(x.dlg.to)+'</em>':'')+
@@ -6921,17 +6926,18 @@ function renderTodoPage(){pageMode='todo';const p=$('page');const t=todayStr();c
   const ng=dn.filter(x=>x.ng).length;
   p.innerHTML='<div class="page-head"><button class="bk" id="pgBk">‹ 戻る</button><span class="tt">📋 今日のやる事</span><span style="width:36px"></span></div><div class="page-body">'+
     ((tdBadDay())?'<div class="td-bad">😵 しんどい日：'+(tdAllShow?'全部出している':'🙌手を動かす・🤖AIに任せる物だけ出している'+(hid?'（🧠など '+hid+'件は隠した）':''))+'<button class="chip" id="tdAllB">'+(tdAllShow?'🙌🤖だけにする':'全部見る')+'</button></div>':'')+   /* c11.5 */
-    '<div class="td-add"><input type="text" id="tdIn" maxlength="60" placeholder="＋ やる事を1行で（Enterで足す）"><button class="fr-mic" id="tdMic" aria-label="音声で書く">'+MICSVG+'</button><button class="chip" id="tdGo">足す</button></div>'+
+    '<div class="td-add"><input type="text" id="tdIn" maxlength="60" placeholder="＋ やる事を1行で（Enterで足す）"><button class="fr-mic" id="tdMic" aria-label="音声で書く">'+MICSVG+'</button><button class="chip td-hib'+(tdHibOn?' on':'')+'" id="tdHibT" aria-label="HIBIKIの直す・足す">🛠</button><button class="chip" id="tdGo">足す</button></div>'+
     (op.length?shown.map(item).join('')+(op.length>3?'<button class="an-more" id="tdMoreB">'+(tdMore?'▲ たたむ':'▼ ほか'+(op.length-3)+'つ')+'</button>':''):'<div class="an-empty">今日のやる事は無い。上に1行で足す</div>')+
     (rowsWip.length?'<div class="sh-label" style="margin-top:12px">⏸ 日記で途中（1行ずつの⏸）</div>'+rowsWip.map((x,j)=>'<div class="td-it"><button class="td-ck" data-rwc="'+j+'">◻️</button><button class="td-b" data-rwo="'+j+'"><b>'+esc(x.a.t)+'</b><i>'+esc(x.d.slice(5).replace('-','/'))+(x.en.p?' 📍'+esc(x.en.p):'')+'</i></button></div>').join(''):'')+
     (later.length?'<div class="sh-label" style="margin-top:12px">📅 明日以降 '+later.length+'</div>'+later.map(x=>'<div class="td-it"><button class="td-b" data-tde="'+esc(x.id)+'"><b>'+esc(x.t)+'</b><i>🕐 '+esc(x.sd.slice(5).replace('-','/')+' '+(x.s||''))+'</i></button></div>').join(''):'')+
+    (hib.length?'<div class="sh-label" style="margin-top:12px">🛠 HIBIKI（直す・足す）'+hib.length+'<small style="display:block;font-weight:600;color:#8a93a6">溜めるだけ。1日の終わりにAIがまとめる</small></div>'+hib.map(item).join(''):'')+   /* c16.4 */
     '<div class="td-done"><div class="sh-label">✅ 今日やった '+(dn.length+rowsDone.length)+(ng?'（⚡ながら完了 '+ng+'）':'')+'</div>'+
       dn.map(x=>'<div class="td-dn'+(x.ng?' ng':'')+'"><span>'+(x.ng?'⚡':'✅')+'</span><b>'+esc(x.t)+'</b><button data-tdu="'+esc(x.id)+'">戻す</button></div>').join('')+rowsDone.map(x=>'<div class="td-dn"><span>✅</span><b>'+esc(x.a.t)+'</b></div>').join('')+'</div>'+
     (sd.length?'<details class="td-sd"><summary>⏳ いつか '+sd.length+'</summary>'+sd.map(x=>'<div class="td-dn"><span>⏳</span><b>'+esc(x.t)+'</b><button data-tdr="'+esc(x.id)+'">今日に戻す</button></div>').join('')+'</details>':'')+
     '</div>';
   p.classList.add('open');$('pgBk').onclick=closePage;const re=()=>renderTodoPage();
-  const add=()=>{const v=$('tdIn').value;if(!v.trim())return;tdNew(v);re();setTimeout(()=>{try{$('tdIn').focus();}catch(e){}},50);};
-  $('tdGo').onclick=add;$('tdIn').onkeydown=ev=>{if(ev.key==='Enter'&&!ev.isComposing&&ev.keyCode!==229){ev.preventDefault();add();}};{const mb=$('tdMic');if(mb)mb.onclick=()=>micToggle(mb,$('tdIn'));}
+  const add=()=>{const v=$('tdIn').value;if(!v.trim())return;tdNew(v,tdHibOn?{fl:{hib:1}}:null);re();setTimeout(()=>{try{$('tdIn').focus();}catch(e){}},50);};
+  $('tdGo').onclick=add;{const hb=$('tdHibT');if(hb)hb.onclick=()=>{tdHibOn=!tdHibOn;hb.classList.toggle('on',tdHibOn);$('tdIn').placeholder=tdHibOn?'🛠 HIBIKIで直したい・足したい事を1行で':'＋ やる事を1行で（Enterで足す）';try{$('tdIn').focus();}catch(e){}};}$('tdIn').onkeydown=ev=>{if(ev.key==='Enter'&&!ev.isComposing&&ev.keyCode!==229){ev.preventDefault();add();}};{const mb=$('tdMic');if(mb)mb.onclick=()=>micToggle(mb,$('tdIn'));}
   {const mb=$('tdMoreB');if(mb)mb.onclick=()=>{tdMore=!tdMore;re();};}{const ab=$('tdAllB');if(ab)ab.onclick=()=>{tdAllShow=!tdAllShow;re();};}   /* c11.5 */
   p.querySelectorAll('[data-tdc]').forEach(b=>b.onclick=()=>{b.textContent='✅';setTimeout(()=>{tdComplete(b.dataset.tdc);re();},120);});
   p.querySelectorAll('[data-tde]').forEach(b=>b.onclick=()=>tdEditSheet(b.dataset.tde,re));
@@ -8285,7 +8291,16 @@ const scrub=(()=>{let el=null,th=null,lb=null,drag=null;
   return {init,sync};})();
 /* c15.3：移動手段の見当＝その日のその時刻より前で最後に使った物（無ければ14日さかのぼる・それも無ければ車） */
 function mvGuessTr(d,before){for(let i=0;i<=14;i++){const dd=addDays(d,-i),eo=(state.entries||{})[dd]||{};let best=null;for(const k in eo){const en=eo[k];if(!en||en.del||!en.mv||!en.tr||!en.s)continue;if(i===0&&before&&en.s>=before)continue;if(!best||en.s>best.s)best=en;}if(best)return best.tr;}return 'car';}
-function navPaint(){try{scrub.init();scrub.sync();}catch(e){}
+/* c16.4：💰・📌の夢（法人化・引っ越し）を1本の帯で、全画面の上に。日数＝今日からの残り（過ぎたら⚠） */
+function gstripHtml(){try{const t=todayStr(),got=incSum('in',GOAL.from,t),left=Math.max(0,GOAL.yen-got);let s='<button class="gs" data-gs="money">💰 あと <b>'+manY(left)+'</b></button>';
+  for(const d of pinnedDreams()){const due=dreamDue(d);let lb='',cl='';if(due){const nn=Math.round((parseD(due).getTime()-parseD(t).getTime())/864e5);if(nn<0){lb='⚠ '+(-nn)+'日超過';cl=' ov';}else if(nn===0){lb='今日';cl=' ov';}else{lb='あと <b>'+nn+'</b>日';cl=nn<=14?' ov':'';}}else lb='期限なし';
+    s+='<button class="gs'+cl+'" data-gs="'+esc(d.id)+'">'+pinIcon(d.t)+' '+esc(String(d.t||'').slice(0,8))+' '+lb+'</button>';}
+  return s;}catch(e){return '';}}
+function gstripBind(el){if(!el)return;el.querySelectorAll('[data-gs]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();const v=b.dataset.gs;if(v==='money')openIncSheet();else openDreamSheet(v,null);});}
+function gstripPaint(){try{const el=$('gstrip');if(!el)return;const html=gstripHtml();el.innerHTML=html;el.style.display=html?'':'none';gstripBind(el);
+  const pg=$('page');if(pg&&pg.classList.contains('open')){let s=pg.querySelector('.gstrip');const hd=pg.querySelector('.page-head');if(!s&&hd){hd.insertAdjacentHTML('afterend','<div class="gstrip pg"></div>');s=pg.querySelector('.gstrip');}if(s){s.innerHTML=html;s.style.display=html?'':'none';gstripBind(s);}}}catch(e){}}
+(function(){try{const pg=$('page');if(pg&&typeof MutationObserver!=='undefined')new MutationObserver(ms=>{if(ms.some(m=>[...m.addedNodes].some(x=>x.nodeType===1&&(x.classList.contains('page-head')||x.querySelector&&x.querySelector('.page-head')))))gstripPaint();}).observe(pg,{childList:true,subtree:false});}catch(e){}})();
+function navPaint(){try{gstripPaint();}catch(e){}try{scrub.init();scrub.sync();}catch(e){}
   try{
     const pg=$('page'),open=pg.classList.contains('open');
     /* ルールのページは🎯一手から開くので、開いている間は🎯を緑にする */
@@ -9177,7 +9192,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c16.3";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
+const CL_APPVER="c16.4";   /* アプリの版（build.js が入れる）。版が変わった最初の起動でもパスワードを聞く（本人の希望 2026-10-03「更新した時は再ログインでもいい」） */
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 /* ログインの後：同じユーザーなら影はそのまま（全件受信をやり直さない）。違うユーザーならそのユーザーの影を読む */
 async function clAfterLogin(){
