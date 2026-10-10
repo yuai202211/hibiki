@@ -1490,6 +1490,45 @@
     .datebar .yobi{padding:2px 6px}
     .hb-brand .hb-logo{font-size:10px}
   }
+
+  .srbar{align-items:center;min-height:46px}
+  .srbar .hh{padding-top:0;text-align:center;font-size:16px;color:#8a90a0}
+  .srbar .body{display:flex;gap:6px;align-items:center}
+  .srbar input{flex:1;min-width:0;font:inherit;font-size:14px;font-weight:600;line-height:1.25;padding:8px 10px;border-radius:10px;border:1px solid var(--line);background:#fff;color:var(--ink)}
+  .srbar input::placeholder{color:#b8bdca;font-weight:600}
+  .srbar .chip{flex-shrink:0;padding:8px 13px;font-size:13px;font-weight:800;color:#4a4f5e}
+  .ln-sum{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:4px 12px;margin:8px 2px 6px;font-size:14px;font-weight:800;color:var(--ink)}
+  .ln-sum b{font-size:26px;line-height:1.1;font-variant-numeric:tabular-nums;margin:0 2px}
+  .ln-st b{font-size:20px}
+  .ln-t.hit,.ln-t.hit b{color:var(--green)}
+  .ln-pgb{height:8px;border-radius:999px;background:#eef0f5;overflow:hidden;margin:0 2px 12px}
+  .ln-pgb i{display:block;height:100%;border-radius:999px;background:#b8c4e0;transition:width .3s}
+  .ln-pgb.hit i{background:var(--green)}
+  .ln-go{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;box-sizing:border-box;min-height:68px;border-radius:20px;background:var(--green);color:#fff;font-size:21px;font-weight:800;box-shadow:0 6px 16px rgba(11,193,103,.3)}
+  .ln-go>span:first-child{font-size:24px}
+  .ln-go small{font-size:14px;font-weight:800;opacity:.95;font-variant-numeric:tabular-nums}
+  .ln-go.end{background:#e0405a;box-shadow:0 6px 16px rgba(224,64,90,.28)}
+  .ln-go:active{transform:scale(.99)}
+  .ln-go.armed{outline:3px solid #ffd54a;outline-offset:2px}
+  .ln-card{background:var(--card);border-radius:16px;box-shadow:inset 0 0 0 1px var(--line);padding:12px;margin-top:14px}
+  .ln-nh{display:flex;align-items:center;justify-content:space-between;font-size:13.5px;font-weight:800;margin-bottom:8px}
+  .ln-nh small{font-size:11px;font-weight:800;color:#8a90a0}.ln-nh small.ok{color:var(--green)}
+  .ln-nr{display:flex;gap:6px;align-items:center}
+  .ln-nr input{flex:1;min-width:0;font:inherit;font-size:16px;padding:10px;border-radius:12px;border:1px solid var(--line);background:#fff;color:var(--ink)}
+  .ln-nr .chip{flex-shrink:0;padding:10px 16px;font-size:14px;font-weight:800;background:var(--green);color:#fff}
+  .ln-h{margin:16px 2px 6px;font-size:13.5px;font-weight:800;display:flex;align-items:center;gap:6px}
+  .ln-wk{background:var(--card);border-radius:16px;box-shadow:inset 0 0 0 1px var(--line);padding:12px 12px 8px}
+  .ln-plot{position:relative;height:104px;display:flex;gap:6px;border-bottom:1px solid #dfe3ea}
+  .ln-c{flex:1;min-width:0;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center}
+  .ln-c em{font-style:normal;font-size:10.5px;font-weight:800;color:#6a7080;line-height:14px;height:14px;font-variant-numeric:tabular-nums}
+  .ln-c i{display:block;width:72%;max-width:34px;border-radius:6px 6px 0 0;background:#b8c4e0}
+  .ln-c i.hit{background:var(--green)}
+  .ln-gl{position:absolute;left:0;right:0;height:0;border-top:1.5px dashed var(--green);pointer-events:none}
+  .ln-gl span{position:absolute;right:0;top:-15px;font-size:10px;font-weight:800;color:var(--green);background:var(--card);padding:0 3px;border-radius:6px}
+  .ln-lb{display:flex;gap:6px;margin-top:6px}
+  .ln-lb span{flex:1;min-width:0;text-align:center;font-size:11.5px;font-weight:800;color:#8a90a0;padding:2px 0}
+  .ln-lb span.td{background:#1a1c22;color:#fff;border-radius:999px}
+  .ln-tm{flex:0 0 42px;font-size:12.5px;font-weight:800;color:#8a90a0;font-variant-numeric:tabular-nums}
 </style>
 
 <div id="bootmsg" style="position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:24px;background:#faf9f5;color:#6a7080;font:800 15px -apple-system,BlinkMacSystemFont,sans-serif;text-align:center"><div style="font-size:34px">📔</div><div class="hb-logo" style="font-size:24px;color:#0a9a54"><b>HIBIKI</b><i>日々記</i></div><div id="bootmsgT">読み込み中…</div><div id="bootmsgS" style="font-size:12px;color:#9aa3b5;font-weight:700"></div></div>
@@ -1554,7 +1593,7 @@
     <button class="nb" id="navPay"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8.5 7.5l3.5 5 3.5-5M12 12.5V17M9 13h6M9 15.5h6"/></svg><span>支払い</span><i class="nbdg" id="navPayB" style="display:none"></i></button>
     <button class="nb" id="navTodo"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8l1.5 1.5L12 7M8 13l1.5 1.5L12 12M14 8.5h3M14 13.5h3M8 18h9"/></svg><span>やる事</span><i class="nbdg" id="navTodoB" style="display:none"></i></button>
     <button class="nb" id="navAna"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>分析</span></button>
-    <button class="nb" id="navSrch"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg><span>検索</span></button>
+    <button class="nb" id="navLearn"><svg viewBox="0 0 24 24"><path d="M2 9l10-5 10 5-10 5zM6 11.5V16c0 1.5 2.7 3 6 3s6-1.5 6-3v-4.5M22 9v6"/></svg><span>学ぶ</span></button>
     </div><div class="nvp">
     <button class="nb" id="navMemo"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6zM14 3v5h5M9 12h7M9 16h7"/></svg><span>メモ</span></button>
     <button class="nb" id="navRtn"><svg viewBox="0 0 24 24"><path d="M4 5.5C4 4.7 4.7 4 5.5 4H11v16H5.5c-.8 0-1.5-.7-1.5-1.5zM20 5.5c0-.8-.7-1.5-1.5-1.5H13v16h5.5c.8 0 1.5-.7 1.5-1.5zM7 8h2M15 8h2M7 11h2M15 11h2"/></svg><span>ルーティン</span><i class="nbdg z" id="navRtnB" style="display:none"></i></button>
@@ -1813,6 +1852,7 @@ function mergeStates(a,b){
     for(const d in (src.cond||{})){const nu=src.cond[d];if(!nu)continue;out.cond=out.cond||{};const cur=out.cond[d];if(!cur||((nu.ts||0)>(cur.ts||0)))out.cond[d]=nu;}   /* c11.5：体調 */
     if(src.alarm&&typeof src.alarm==='object'&&(!out.alarm||((src.alarm.ts||0)>(out.alarm.ts||0))))out.alarm=src.alarm;
     if(src.goal&&typeof src.goal==='object'&&(!out.goal||((src.goal.ts||0)>(out.goal.ts||0))))out.goal=src.goal;
+    if(src.learn&&typeof src.learn==='object'&&(!out.learn||((src.learn.ts||0)>(out.learn.ts||0))))out.learn=src.learn;
     for(const id in (src.dreams||{})){const cur=out.dreams[id],nu=src.dreams[id];
       if(!cur||((nu.ts||0)>(cur.ts||0)))out.dreams[id]=nu;}
     for(const id in (src.memos||{})){const cur=out.memos[id],nu=src.memos[id];
@@ -1850,7 +1890,7 @@ function mergeStates(a,b){
     for(const id in (src.pha||{})){if(!out.pha[id]&&src.pha[id])out.pha[id]=src.pha[id];}
   }
   out.life=((b.life&&(!(a.life)||((b.life.ts||0)>(a.life.ts||0))))?b.life:a.life)||null;
-  const known={updatedAt:1,dream:1,entries:1,plans:1,ai:1,dreams:1,memos:1,life:1,photos:1,pha:1,pays:1,rules:1,aims:1,moves:1,pins:1,steps:1,payrep:1,rtn:1,rlog:1,payppl:1,kinds:1,tools:1,places:1,projects:1,marks:1,bedp:1,scr:1,alarm:1,goal:1,arp:1,todos:1,plreg:1,plgrp:1,kgrp:1,trs:1,srr:1,tdq:1,ksub:1,cond:1,dlg:1,dgoal:1,aip:1,msx:1,inc:1,cash:1};
+  const known={updatedAt:1,dream:1,entries:1,plans:1,ai:1,dreams:1,memos:1,life:1,photos:1,pha:1,pays:1,rules:1,aims:1,moves:1,pins:1,steps:1,payrep:1,rtn:1,rlog:1,payppl:1,kinds:1,tools:1,places:1,projects:1,marks:1,bedp:1,scr:1,alarm:1,goal:1,learn:1,arp:1,todos:1,plreg:1,plgrp:1,kgrp:1,trs:1,srr:1,tdq:1,ksub:1,cond:1,dlg:1,dgoal:1,aip:1,msx:1,inc:1,cash:1};
   const newer=((b.updatedAt||0)>=(a.updatedAt||0))?b:a;
   const older=(newer===b)?a:b;
   for(const k in older)if(!known[k]&&older[k]!==undefined)out[k]=older[k];
@@ -3265,7 +3305,7 @@ function renderTimeline(pane){
       (ai.next?'<div class="txt" style="color:#8a90a0">→ 明日：'+esc(ai.next)+'</div>':'')
     ):'＋ 今日のAI — 触った？何を生み出した？')+
     '</div></button>';
-  if(topView==='diary'){const recS=tlRS.length?tlRS[0]:tvL;
+  if(topView==='diary'){dsrStash(pane);const recS=tlRS.length?tlRS[0]:tvL;
     const cv=tlCP.map((p,i)=>html.slice(p,i+1<tlCP.length?tlCP[i+1]:recS));
     let R=tlRS.map((p,i)=>({g:html.slice(p,tlRR[i]),r:html.slice(tlRR[i],i+1<tlRS.length?tlRS[i+1]:tvL)}));
     const tail=html.slice(tvL,tvR1),newF=sugNo('tl|new');
@@ -3278,7 +3318,8 @@ function renderTimeline(pane){
       if(!sugNo('tl|pall')){const mid=R.slice(0,k).map(x=>x.g+x.r).join(''),nG=(mid.match(/gaprow|mvsug/g)||[]).length,L=list[k-1];
         fB='<button class="hour gap tlfold" id="pdFold"><span class="hh">▸</span><div class="body"><span class="gp-l">前の記録 <b>'+k+'</b>件　'+esc(list[0].sm)+'〜'+esc((L.en&&L.en.e)||L.sm)+'</span>'+(nG?'<span class="tlf-g">⬜ 空き '+nG+'</span>':'')+'<span class="gp-q">全部 ▾</span></div></button>';R=R.slice(k);}
       else fB='<button class="hour gap tlfold" id="pdFold"><span class="hh">▴</span><div class="body"><span class="gp-l">最新だけにする</span></div></button>';}
-    const body=newF?(tail+R.slice().reverse().map(x=>x.r+x.g).join('')+fB+cvB):(cvB+fB+R.map(x=>x.g+x.r).join('')+tail);
+    const srB=srBarHtml();
+    const body=newF?(srB+tail+R.slice().reverse().map(x=>x.r+x.g).join('')+fB+cvB):(cvB+srB+fB+R.map(x=>x.g+x.r).join('')+tail);
     html=html.slice(0,tvA)+html.slice(tvB,tvC)+body;}
   else html=html.slice(0,tvR0)+html.slice(tvR1);
   let foot='';
@@ -3288,6 +3329,7 @@ function renderTimeline(pane){
   const pf=$('pfoot')||pane;if(pf!==pane)pf.innerHTML=foot;else pane.insertAdjacentHTML('beforeend',foot);
   {const b=pane.querySelector('#tlFold');if(b)b.onclick=ev=>{ev.stopPropagation();const on=sugNo('tl|all');mutate(()=>{state.msx=state.msx||{};state.msx['tl|all']=on?{del:1,ts:Date.now()}:{ts:Date.now()};});};}
   if(topView==='diary')slpBarBind(pane.querySelector('.hour.wr'));
+  if(topView==='diary')dsrBind(pane);
   {const c=pane.querySelector('#cvFold');if(c)c.onclick=ev=>{ev.stopPropagation();msxTog('tl|cvo');};const d=pane.querySelector('#pdFold');if(d)d.onclick=ev=>{ev.stopPropagation();msxTog('tl|pall');};}
   {const o=$('tlOrd');if(o){o.style.display=topView==='diary'?'':'none';const nf=sugNo('tl|new');o.textContent=nf?'⇅ 新しい順':'⇅ 古い順';o.classList.toggle('on',nf);o.onclick=ev=>{ev.stopPropagation();msxTog('tl|new');};}}
   {const ab=pf.querySelector('#alarmBtn');if(ab)ab.onclick=ev=>{ev.stopPropagation();openAlarmSheet();};}
@@ -3615,7 +3657,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c17.4）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c17.5）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -4670,6 +4712,7 @@ function renderPage(){
   if(pageMode==='dream')renderDreamPage();
   else if(pageMode==='memo')renderMemoPage();
   else if(pageMode==='set')renderSetPage();
+  else if(pageMode==='learn')renderLearnPage();
 }
 
 function renderClock(){
@@ -6601,7 +6644,7 @@ const AI_TOOLS=[['cc','Claude Code','#c2410c'],['cx','Codex','#111827'],['gpt','
 const AI_KINDS={ai:1,aibiz:1,aiwork:1};
 function aiGuess(t){t=String(t||'');const o=[];if(/claude\s*code|クロード\s*コード/i.test(t))o.push('cc');if(/codex|コーデックス/i.test(t))o.push('cx');if(/chat\s*gpt|gpt|チャット\s*gpt/i.test(t))o.push('gpt');if(/gemini|ジェミニ/i.test(t))o.push('gm');if(/claude|クロード/i.test(t.replace(/claude\s*code|クロード\s*コード/ig,'')))o.push('cl');return o;}
 function aiTool(id){const x=AI_TOOLS.find(z=>z[0]===id);return x?{id,lb:x[1],co:x[2]}:null;}
-const ARM_LB={wrGo:'🚗 出発（移動を始める）',wrArr:'🏁 到着（移動を終わる）',wrCar:'🚙 車内滞在を始める',wrCarE:'🚙 車内滞在を終わる',wrSleep:'💤 寝る',bedPill:'💤 寝る',wrWake:'🌞 起きた',wrSlp:'🌙 睡眠のページ',wrSr:'🕳️ ムダ・ストレス・調子を残す',wrSp:'📲 スマホを計る',wrSpE:'📲 スマホを止める',wrTel:'📞 電話を計る',wrTelE:'📞 電話を止める',wrPzEnd:'▶ 休憩から出る（移動に戻る）',wrLearn:'🎬 動画で学ぶを始める',wrLearnE:'⏹ 学ぶを終える'};
+const ARM_LB={wrGo:'🚗 出発（移動を始める）',wrArr:'🏁 到着（移動を終わる）',wrCar:'🚙 車内滞在を始める',wrCarE:'🚙 車内滞在を終わる',wrSleep:'💤 寝る',bedPill:'💤 寝る',wrWake:'🌞 起きた',wrSlp:'🌙 睡眠のページ',wrSr:'🕳️ ムダ・ストレス・調子を残す',wrSp:'📲 スマホを計る',wrSpE:'📲 スマホを止める',wrTel:'📞 電話を計る',wrTelE:'📞 電話を止める',wrPzEnd:'▶ 休憩から出る（移動に戻る）',wrLearn:'🎬 動画で学ぶを始める',wrLearnE:'⏹ 学ぶを終える',lnGo:'▶ 学ぶを始める',lnEnd:'⏹ 学ぶを終える'};
 let armId='',armAt=0,armEl=null;
 function armTap(b,id,lb,fn){const now=Date.now();if(!lb||(armId===id&&now-armAt<3000)){armClear();fn();return;}armClear();armId=id;armAt=now;
   try{const r=b.getBoundingClientRect(),d=document.createElement('div');d.className='arm-tip';d.innerHTML=esc(lb)+'<small>もう一度押すと動く</small>';document.body.appendChild(d);
@@ -7731,7 +7774,7 @@ function toast(msg){
 let SP_ROWS=[];
 const spN=f=>{try{const v=Number(f());return v>0?String(v):'';}catch(e){return '';}};
 const spCount=(o,f)=>{try{return Object.keys(o||{}).filter(k=>o[k]&&!o[k].del&&(!f||f(o[k],k))).length;}catch(e){return 0;}};
-function spRefresh(){try{const p=$('page');if(pageMode==='set'&&p&&p.classList.contains('open')&&!$('ovl').classList.contains('open')&&!$('ovl2').classList.contains('open'))renderSetPage();}catch(e){}}
+function spRefresh(){try{const p=$('page');if((pageMode==='set'||pageMode==='learn')&&p&&p.classList.contains('open')&&!$('ovl').classList.contains('open')&&!$('ovl2').classList.contains('open')){if(pageMode==='set')renderSetPage();else renderLearnPage();}}catch(e){}}   /* c17.5：学ぶページも */
 function spArm(b,txt,fn){
   if(!b.classList.contains('arm')){const t0=b.textContent;b.classList.add('arm');b.textContent=txt;setTimeout(()=>{if(b.isConnected&&b.classList.contains('arm')){b.classList.remove('arm');b.textContent=t0;}},2500);return;}
   b.classList.remove('arm');fn();}
@@ -7757,7 +7800,8 @@ function spSections(){
      {ic:'💰',nm:'収入',n:N(()=>incList().length),go:()=>openIncSheet()},
      {ic:'👛',nm:'手元現金',n:N(()=>cashList().length),go:()=>openCashList()},
      {ic:'🕳️',nm:'自己申告（ムダ・ストレス・調子）',n:N(()=>srList().length),go:()=>renderSrPage()},
-     {ic:'📚',nm:'ルーティン',n:N(()=>rtnList().length),go:()=>openRtnPage()}]},
+     {ic:'📚',nm:'ルーティン',n:N(()=>rtnList().length),go:()=>openRtnPage()},
+     {ic:'🔍',nm:'検索',sm:'日記を言葉・場所・ボタンで探す',go:()=>openSearchPage()}]},
    {h:'夢と目標',ic:'⭐',co:'#fff0b8',rows:[
      {ic:'⭐',nm:'夢カード（夢手帳）',n:N(()=>dreamsActive().length),go:()=>{dseg='list';openDreamPage();}},
      {ic:'📌',nm:'トップに出す夢',n:N(()=>pinnedDreams().length),sm:'夢を開いて 📌 で選ぶ',go:()=>{dseg='list';openDreamPage();}},
@@ -8114,6 +8158,79 @@ function learnBtnHtml(){
   return openKindRec(['vstudy'])?'<button class="chip mvb lrnE ic2" id="wrLearnE" aria-label="学ぶを終える">⏹<small>学ぶ終</small></button>':'<button class="chip mvb lrn ic2" id="wrLearn" aria-label="動画で学ぶを始める">🎬<small>学ぶ</small></button>';}
 function quickLearnStart(){if(openKindRec(['vstudy'])){toast('もう計っている。終わったら⏹');return;}quickKindStart('vstudy','🎬','動画で学ぶ');}
 function quickLearnEnd(){const o=openKindRec(['vstudy']);if(!o)return;const mn=quickKindEnd(o);toast('🎬 学ぶ '+(durText(mn)||'1分未満')+'（記録した）');}
+var DSR={v:'',f:0,a:0,b:0};
+function dsrStash(pane){try{const o=pane&&pane.querySelector('#dsrIn');if(o){DSR.v=o.value;DSR.f=(document.activeElement===o)?1:0;DSR.a=o.selectionStart;DSR.b=o.selectionEnd;}}catch(e){}}
+function srBarHtml(){let v='';try{v=(typeof DSR!=='undefined'&&DSR&&DSR.v)||'';}catch(e){}
+  return '<div class="hour gap srbar" id="dsrBar"><span class="hh">🔍</span><div class="body"><input type="search" id="dsrIn" placeholder="日記を検索（場所・言葉・ボタン）" enterkeyhint="search" autocomplete="off" value="'+esc(v)+'"><button type="button" class="chip" id="dsrGo">検索</button></div></div>';}
+function dsrBind(pane){const i=pane.querySelector('#dsrIn'),g=pane.querySelector('#dsrGo');if(!i)return;
+  i.oninput=()=>{DSR.v=i.value;};
+  i.onkeydown=ev=>{if(ev.key==='Enter'&&!ev.isComposing&&ev.keyCode!==229){ev.preventDefault();dsrGo(i);}};
+  if(g)g.onclick=ev=>{ev.stopPropagation();dsrGo(i);};
+  if(DSR.f){try{i.focus({preventScroll:true});if(i.setSelectionRange&&DSR.a!=null)i.setSelectionRange(DSR.a,DSR.b);}catch(e){}}}
+function dsrGo(i){const v=String((i&&i.value)||'').trim();
+  if(v){SRQ.q=v;SRQ.lim=60;SRQ.view='res';}
+  DSR.v='';DSR.f=0;try{if(i){i.value='';i.blur();}}catch(e){}
+  navGo(openSearchPage);}
+
+var LNX={v:null},LNT=null;
+function learnMinOn(d){return learnTodayMin(d);}
+function learnStreak(){let d=todayStr(),n=0;if(learnMinOn(d)<1)d=addDays(d,-1);for(let i=0;i<400;i++){if(learnMinOn(d)>=1){n++;d=addDays(d,-1);}else break;}return n;}
+function learnRecs(t){
+  const LK={study:1,read:1,audio:1,vstudy:1},eo=(state.entries||{})[t]||{},isT=(t===todayStr()),out=[];
+  const hm=s=>{const a=String(s||'').split(':').map(Number);return (a[0]||0)*60+(a[1]||0);},now=hm(nowMin());
+  for(const k in eo){const en=eo[k];if(!en||en.del||en.noT||!en.s)continue;
+    const AX=actsExpand(en.acts).filter(ac=>ac&&LK[ac.k]);
+    if(LK[en.k]&&!AX.some(a=>a.k===en.k)){
+      if(en.e)out.push({k,kd:en.k,s:en.s,e:en.e,m:durMin(en.s,en.e,en.ed),open:false});
+      else if(isT&&hm(en.s)<=now)out.push({k,kd:en.k,s:en.s,e:'',m:now-hm(en.s),open:true});}
+    for(const ac of AX){let m=0;if(ac.s&&ac.e)m=durMin(ac.s,ac.e,0);else if(Number(ac.m)>0)m=Number(ac.m);
+      out.push({k,kd:ac.k,s:ac.s||en.s,e:(ac.s&&ac.e)?ac.e:'',m,open:false});}}
+  out.sort((a,b)=>a.s<b.s?-1:a.s>b.s?1:0);return out;}
+function openLearnPage(){closeSheet();LNX.v=null;renderLearnPage();}
+function renderLearnPage(){
+  const p=$('page'),was=(pageMode==='learn'&&p.classList.contains('open')),ob=p.querySelector('.page-body'),y=(was&&ob)?ob.scrollTop:0;
+  {const nx=$('lnNext');if(was&&nx)LNX.v=nx.value;}
+  pageMode='learn';
+  const t=todayStr(),G=goalCfg().learn,tm=learnMinOn(t),st=learnStreak(),o=openKindRec(['vstudy']),hit=(G>0&&tm>=G);
+  const sv=(state.learn&&typeof state.learn==='object'&&!state.learn.del)?String(state.learn.next||''):'';
+  const nv=(LNX.v!=null)?LNX.v:sv;
+  const wd=(parseD(t).getDay()+6)%7,mon=addDays(t,-wd),WK=['月','火','水','木','金','土','日'],days=[];
+  for(let i=0;i<7;i++){const d=addDays(mon,i);days.push({d,m:d>t?0:learnMinOn(d),td:d===t});}
+  const mx=Math.max(G,1,...days.map(x=>x.m))*1.2;
+  const cols=days.map(x=>{const h=x.m>0?Math.max(3,Math.round(x.m/mx*1000)/10):0;
+    return '<div class="ln-c'+(x.td?' td':'')+'"><em>'+(x.m>0?x.m:'')+'</em>'+(h?'<i'+(G>0&&x.m>=G?' class="hit"':'')+' style="height:'+h+'%"></i>':'')+'</div>';}).join('');
+  const lbs=days.map((x,i)=>'<span'+(x.td?' class="td"':'')+'>'+WK[i]+'</span>').join('');
+  const rc=learnRecs(t);
+  const rows=rc.map(r=>{const kd=kindOf(r.kd)||{ic:'🎓',lb:r.kd};
+    return '<button type="button" class="sp-row" data-lk="'+esc(r.k)+'"><span class="ln-tm">'+esc(r.s)+'</span><span class="sp-ic">'+kd.ic+'</span><span class="sp-nm">'+esc(kd.lb)+'</span><span class="sp-n">'+(r.open?'⏱ ':'')+(r.m?r.m+'分':'…')+'</span><span class="sp-go">›</span></button>';}).join('');
+  const big=o?'<button type="button" class="ln-go end" id="lnEnd"><span>⏹</span>学ぶ終<small>⏱ <span id="lnEl">'+esc(mvElText(mvElapsed(o)))+'</span></small></button>'
+             :'<button type="button" class="ln-go" id="lnGo"><span>▶</span>学ぶ開始</button>';
+  p.innerHTML='<div class="page-head"><button class="bk" id="pgBk">‹ 戻る</button><span class="tt">🎓 学ぶ</span><span style="width:36px"></span></div><div class="page-body">'+
+    '<div class="ln-sum"><span class="ln-t'+(hit?' hit':'')+'">今日 <b id="lnTn">'+tm+'</b>'+(G>0?'/'+G:'')+'分</span><span class="ln-st">🔥 連続 <b>'+st+'</b>日</span></div>'+
+    '<div class="ln-pgb'+(hit?' hit':'')+'" id="lnPgb"><i id="lnPg" style="width:'+(G>0?Math.min(100,tm/G*100):(tm>0?100:0))+'%"></i></div>'+
+    big+
+    '<div class="ln-card"><div class="ln-nh"><span>📌 次に見る</span>'+((sv&&nv===sv)?'<small class="ok">✓ 保存済み</small>':'')+'</div><div class="ln-nr"><input type="text" id="lnNext" maxlength="60" placeholder="次に見る講座・章を1行" enterkeyhint="done" autocomplete="off" value="'+esc(nv)+'"><button type="button" class="chip" id="lnSave">保存</button></div></div>'+
+    '<div class="ln-h">📅 今週</div><div class="ln-wk"><div class="ln-plot">'+cols+(G>0?'<div class="ln-gl" style="bottom:'+Math.round(G/mx*1000)/10+'%"><span>'+G+'</span></div>':'')+'</div><div class="ln-lb">'+lbs+'</div></div>'+
+    '<div class="ln-h">🧾 今日の記録</div>'+(rows?'<div class="sp-list">'+rows+'</div>':'<div class="sh-note" style="text-align:left;margin:2px">まだ無い。上の ▶ で始める</div>')+
+    '</div>';
+  p.classList.add('open');
+  $('pgBk').onclick=closePage;
+  {const b=$('lnGo');if(b)b.onclick=()=>armTap(b,'lnGo',ARM_LB.lnGo||'',()=>{quickLearnStart();renderLearnPage();});}
+  {const b=$('lnEnd');if(b)b.onclick=()=>armTap(b,'lnEnd',ARM_LB.lnEnd||'',()=>{quickLearnEnd();renderLearnPage();});}
+  const save=()=>{const i=$('lnNext');if(!i)return;const v=String(i.value||'').trim().slice(0,60);
+    mutate(()=>{state.learn={next:v,ts:Date.now()};});LNX.v=null;renderLearnPage();toast(v?'✓ 保存した':'✓ 空にした');};
+  $('lnSave').onclick=save;
+  $('lnNext').onkeydown=ev=>{if(ev.key==='Enter'&&!ev.isComposing&&ev.keyCode!==229){ev.preventDefault();save();}};
+  p.querySelectorAll('[data-lk]').forEach(b=>b.onclick=()=>openEntrySheet(t,{key:b.dataset.lk}));
+  const nb=p.querySelector('.page-body');if(nb&&y)nb.scrollTop=y;
+  if(y)Promise.resolve().then(()=>{const b=p.querySelector('.page-body');if(b)b.scrollTop=y;});
+  if(!LNT)LNT=setInterval(lnTick,20000);
+}
+function lnTick(){try{const p=$('page');if(pageMode!=='learn'||!p||!p.classList.contains('open')){clearInterval(LNT);LNT=null;return;}
+  const el=$('lnEl');if(el){const o=openKindRec(['vstudy']);if(o)el.textContent=mvElText(mvElapsed(o));}
+  const tn=$('lnTn');if(tn){const m=learnMinOn(todayStr()),G=goalCfg().learn,h=(G>0&&m>=G);tn.textContent=m;
+    const w=tn.closest('.ln-t');if(w)w.classList.toggle('hit',h);const pb=$('lnPgb');if(pb)pb.classList.toggle('hit',h);
+    const pg=$('lnPg');if(pg)pg.style.width=(G>0?Math.min(100,m/G*100):(m>0?100:0))+'%';}}catch(e){}}
 $('prevD').onclick=()=>{ui.date=addDays(ui.date,-1);render();};
 $('nextD').onclick=()=>{ui.date=addDays(ui.date,1);render();};
 $('todayBtn').onclick=()=>{ui.date=todayStr();render();scrollToNow();};
@@ -8126,7 +8243,7 @@ const navGo=fn=>{if($('page').classList.contains('open'))closePage();fn();};
 $('navHome').onclick=()=>{closePage();ui.date=todayStr();ui.tab='di';topView='top';render();try{$('scr').scrollTop=0;}catch(e){}};
 $('navDiary').onclick=()=>{closePage();ui.date=todayStr();ui.tab='di';topView='diary';render();scrollToNow();};
 $('navPay').onclick=()=>navGo(openPayPage);
-$('navMemo').onclick=()=>navGo(openMemoPage);$('navSrch').onclick=()=>navGo(openSearchPage);
+$('navMemo').onclick=()=>navGo(openMemoPage);$('navLearn').onclick=()=>navGo(openLearnPage);   /* c17.5：右端は🎓学ぶ（検索は📔日記の検索窓と、⚙設定の🔍検索） */
 $('navRtn').onclick=()=>navGo(openRtnPage);
 $('navAna').onclick=()=>navGo(openAnaPage);   /* 📊分析 */
 $('navTodo').onclick=()=>navGo(openTodoPage);
@@ -8163,9 +8280,9 @@ function gstripPaint(){try{const el=$('gstrip');if(!el)return;const html=gstripH
 function navPaint(){try{gstripPaint();}catch(e){}try{scrub.init();scrub.sync();}catch(e){}
   try{
     const pg=$('page'),open=pg.classList.contains('open');
-    const tab=!open?(topView==='diary'?'diary':'home'):pageMode==='pay'?'pay':pageMode==='memo'?'memo':pageMode==='rtn'?'rtn':pageMode==='ana'?'ana':(pageMode==='todo'||pageMode==='st')?'todo':pageMode==='rules'?'rule':pageMode==='plan'?'plan':pageMode==='aim'?'aim':pageMode==='srch'?'srch':'';
-    pg.classList.toggle('withnav',open&&(pageMode==='srch'||pageMode==='plan'||pageMode==='pay'||pageMode==='memo'||pageMode==='rules'||pageMode==='aim'||pageMode==='rtn'||pageMode==='ana'||pageMode==='st'||pageMode==='todo'||pageMode==='set'));
-    [['navHome','home'],['navDiary','diary'],['navPay','pay'],['navMemo','memo'],['navRtn','rtn'],['navAna','ana'],['navTodo','todo'],['navAim','aim'],['navRule','rule'],['navPlan','plan'],['navSrch','srch']].forEach(x=>{const b=$(x[0]);if(b)b.classList.toggle('on',tab===x[1]);});
+    const tab=!open?(topView==='diary'?'diary':'home'):pageMode==='pay'?'pay':pageMode==='memo'?'memo':pageMode==='rtn'?'rtn':pageMode==='ana'?'ana':(pageMode==='todo'||pageMode==='st')?'todo':pageMode==='rules'?'rule':pageMode==='plan'?'plan':pageMode==='aim'?'aim':pageMode==='srch'?'srch':pageMode==='learn'?'learn':'';
+    pg.classList.toggle('withnav',open&&(pageMode==='srch'||pageMode==='plan'||pageMode==='pay'||pageMode==='memo'||pageMode==='rules'||pageMode==='aim'||pageMode==='rtn'||pageMode==='ana'||pageMode==='st'||pageMode==='todo'||pageMode==='set'||pageMode==='learn'));
+    [['navHome','home'],['navDiary','diary'],['navPay','pay'],['navMemo','memo'],['navRtn','rtn'],['navAna','ana'],['navTodo','todo'],['navAim','aim'],['navRule','rule'],['navPlan','plan'],['navLearn','learn']].forEach(x=>{const b=$(x[0]);if(b)b.classList.toggle('on',tab===x[1]);});
     const nv=$('nav');if(nv&&nv.offsetHeight)document.documentElement.style.setProperty('--navh',nv.offsetHeight+'px');
     sleepBarTick();
   }catch(e){}
@@ -8975,7 +9092,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c17.4";
+const CL_APPVER="c17.5";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
   if(!cloudLoggedIn())return;
