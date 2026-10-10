@@ -3073,7 +3073,7 @@ function renderTimeline(pane){
       const os=openSleep(),night=(nowH>=21||nowH<5),op=nowCardOpen();
       const bp=os?'':sleepBedPill();
       const mvNow=!!openMove();
-      right='<span class="wr-r">'+mvBtnHtml()+(mvNow?'':carBtnHtml())+srBtnHtml()+   /* 🚗出発／🏁到着・🚙・🕳️📲📞。睡眠は上の帯へ（c8.2） */
+      right='<span class="wr-r">'+mvBtnHtml()+(mvNow?'':carBtnHtml())+srBtnHtml()+((topView==='diary'&&!mvNow)?(os?'<button class="chip mvb wake ic2" id="wrWake">🌞<small>起きた</small></button>':'<button class="chip mvb slp ic2" id="wrSleep">💤<small>寝る</small></button>'):'')+   /* c17.1：📔日記にも寝る／起きた */   /* 🚗出発／🏁到着・🚙・🕳️📲📞。睡眠は上の帯へ（c8.2） */
         '</span>';
     }
     tvA=html.length;
@@ -3198,6 +3198,7 @@ function renderTimeline(pane){
   pane.innerHTML=html;
   const pf=$('pfoot')||pane;if(pf!==pane)pf.innerHTML=foot;else pane.insertAdjacentHTML('beforeend',foot);
   {const b=pane.querySelector('#tlFold');if(b)b.onclick=ev=>{ev.stopPropagation();const on=sugNo('tl|all');mutate(()=>{state.msx=state.msx||{};state.msx['tl|all']=on?{del:1,ts:Date.now()}:{ts:Date.now()};});};}
+  if(topView==='diary')slpBarBind(pane.querySelector('.hour.wr'));
   {const ab=pf.querySelector('#alarmBtn');if(ab)ab.onclick=ev=>{ev.stopPropagation();openAlarmSheet();};}
   {const lb=pf.querySelector('#appLogout');if(lb)lb.onclick=ev=>{ev.stopPropagation();
     openSub('<div class="sh-time" style="justify-content:center"><span>🚪 ログアウトしますか？</span></div><div class="sh-note">送っていない記録を送ってからログアウトして、最新の版を読み込む。入り直せば続きから使える</div>'+
@@ -3523,7 +3524,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c17.0）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c17.1）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -8409,7 +8410,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c17.0";
+const CL_APPVER="c17.1";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
   if(!cloudLoggedIn())return;
