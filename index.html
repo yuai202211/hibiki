@@ -162,6 +162,7 @@
   .scr::-webkit-scrollbar{display:none}
   .scr>*{flex-shrink:0}
   .scr>.pane{flex:1 0 auto;min-height:0;overflow:visible}
+  .pfoot{padding:0 18px calc(10px + env(safe-area-inset-bottom))}.pfoot:empty{display:none}
   body.grab,body.grab *{cursor:grabbing!important;user-select:none!important}
 
   .hour{
@@ -1444,7 +1445,6 @@
   <button class="diagstrip" id="diagstrip" style="display:none"></button>
   <div class="gstrip" id="gstrip" style="display:none"></div>   <!-- c16.4：💰法人化引っ越しの帯（毎分意識する） -->
 
-  <div class="scr" id="scr">   <!-- c16.6：ここから下を1枚でスクロール（上の日付と帯は残る） -->
   <div class="dreamrow">
     <button class="dream" id="dreamBar">
       <span>⭐</span><span class="name" id="dreamName"></span><span class="cnt" id="dreamCnt"></span>
@@ -1463,6 +1463,7 @@
     <button class="camsm" id="camNow">📷</button>
   </div>
 
+  <div class="scr" id="scr">   <!-- c16.7：ここから下を1枚でスクロール（日付・帯・東証・📌カードは動かさない＝本人指示） -->
   <div class="seg">
     <button data-tab="pl" id="segL"></button>
     <button data-tab="di" class="on">日記</button>
@@ -1472,6 +1473,7 @@
   <div class="pane" id="pane"></div>
 
   <div class="decade" id="decade"></div>
+  <div class="pfoot" id="pfoot"></div>   <!-- c16.7：注意の時刻・ログアウトは1年前カードの下（一番下） -->
   </div>   <!-- /scr -->
 
   <div class="nav" id="nav"><div class="nvw" id="nvw"><div class="nvp">
@@ -3170,11 +3172,13 @@ function renderTimeline(pane){
       (ai.next?'<div class="txt" style="color:#8a90a0">→ 明日：'+esc(ai.next)+'</div>':'')
     ):'＋ 今日のAI — 触った？何を生み出した？')+
     '</div></button>';
-  html+='<div class="lgo"><button id="alarmBtn">⏰ 注意の時刻を変える</button><small>'+esc(alarmSummary())+'</small></div>';
-  if(typeof clLogout==='function'&&typeof cloudLoggedIn==='function'&&cloudLoggedIn())html+='<div class="lgo"><button id="appLogout">🚪 ログアウト（最新の版に入れ替える）</button><small>今の版 '+esc(String(typeof CL_APPVER!=='undefined'?CL_APPVER:''))+'。押すと、送っていない記録を送ってからログアウト→最新の版を読み込む。入り直せば続きから</small></div>';
+  let foot='';
+  foot+='<div class="lgo"><button id="alarmBtn">⏰ 注意の時刻を変える</button><small>'+esc(alarmSummary())+'</small></div>';
+  if(typeof clLogout==='function'&&typeof cloudLoggedIn==='function'&&cloudLoggedIn())foot+='<div class="lgo"><button id="appLogout">🚪 ログアウト（最新の版に入れ替える）</button><small>今の版 '+esc(String(typeof CL_APPVER!=='undefined'?CL_APPVER:''))+'。押すと、送っていない記録を送ってからログアウト→最新の版を読み込む。入り直せば続きから</small></div>';
   pane.innerHTML=html;
-  {const ab=pane.querySelector('#alarmBtn');if(ab)ab.onclick=ev=>{ev.stopPropagation();openAlarmSheet();};}
-  {const lb=pane.querySelector('#appLogout');if(lb)lb.onclick=ev=>{ev.stopPropagation();
+  const pf=$('pfoot')||pane;if(pf!==pane)pf.innerHTML=foot;else pane.insertAdjacentHTML('beforeend',foot);
+  {const ab=pf.querySelector('#alarmBtn');if(ab)ab.onclick=ev=>{ev.stopPropagation();openAlarmSheet();};}
+  {const lb=pf.querySelector('#appLogout');if(lb)lb.onclick=ev=>{ev.stopPropagation();
     openSub('<div class="sh-time" style="justify-content:center"><span>🚪 ログアウトしますか？</span></div><div class="sh-note">送っていない記録を送ってからログアウトして、最新の版を読み込む。入り直せば続きから使える</div>'+
       '<div class="sh-btns"><button class="delbtn" id="lgNo" style="flex:1">いいえ</button><button class="savebtn" id="lgYes">はい</button></div>',null);
     $('lgNo').onclick=()=>closeSub();$('lgYes').onclick=()=>{closeSub();appLogout();};};}
@@ -3277,7 +3281,7 @@ function openAiSheet(date){
   openOvl();
 }
 
-function renderPlans(pane,d){
+function renderPlans(pane,d){try{const pf=$('pfoot');if(pf)pf.innerHTML='';}catch(e){}
   const items=plansOf(d).sort((a,b)=>{
     const ka=a.hh||'99:99',kb=b.hh||'99:99';
     return ka<kb?-1:ka>kb?1:((a.ts||0)-(b.ts||0));
@@ -3498,7 +3502,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c16.6）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c16.7）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -8383,7 +8387,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c16.6";
+const CL_APPVER="c16.7";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
   if(!cloudLoggedIn())return;
