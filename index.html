@@ -3084,6 +3084,7 @@ function renderTimeline(pane){
   html+=srDayHtml(ui.date);
   if(isToday)html+=nextLineHtml();   /* c12.6：▶ 次の1つ＋⚡割り込み（今やるの1行の代わり） */   /* c7.9：📋今やる（残りN） */
   html+=payAlertHtml();
+  const tlCP=[],tlCT=[];
   {
     const carry=[];
     for(let back=1;back<=7;back++){
@@ -3096,7 +3097,7 @@ function renderTimeline(pane){
     }
     carry.sort((a,b)=>(b.back-a.back)||((a.en.s||'')<(b.en.s||'')?-1:1));
     for(const c of carry){
-      const en=c.en;
+      const en=c.en;tlCP.push(html.length);tlCT.push({sm:'前日 '+(en.s||''),e:en.e||''});
       const hk=kHead(en),head=(hk==='work'?'💼 仕事':hk==='ai'?'🤖 AI':hk==='sleep'?'🌙 睡眠':hk==='rest'?'☕ 休憩':hk==='meal'?'🍚 食事':(en.mv?(TRICON[en.tr]||'🚗')+' '+esc(en.rt||'移動'):(en.p?'📍 '+esc(en.p):'記録')));
       html+='<button class="hour filled" data-ck="'+esc(c.pd)+'|'+esc(c.k)+'" style="background:#f6f4ff">'+
         '<span class="hh"><b style="color:#7a6ef3;font-size:10px">'+(c.back===1?'前日':c.back+'日前')+'<br>から</b></span><div class="body">'+
@@ -3158,11 +3159,12 @@ function renderTimeline(pane){
   }
   flushRun();
   if(list.length&&ui.date>='2026-08-25'&&nowM>gEnd)html+=gapRow(gEnd,nowM);
-  if(isToday&&tlRS.length>2){const keep=Math.min(tlRS.length-2,tlOpen.length?tlOpen[0]:1e9);
-    if(keep>0){const all=sugNo('tl|all'),cut=tlRS[keep];
-      if(!all){const mid=html.slice(tlL0,cut),nG=(mid.match(/gaprow|mvsug/g)||[]).length,L=list[keep-1];
-        html=html.slice(0,tlL0)+'<button class="hour gap tlfold" id="tlFold"><span class="hh">▸</span><div class="body"><span class="gp-l">前の記録 <b>'+keep+'</b>件　'+esc(list[0].sm)+'〜'+esc((L.en&&L.en.e)||L.sm)+'</span>'+(nG?'<span class="tlf-g">⬜ 空き '+nG+'</span>':'')+'<span class="gp-q">全部 ▾</span></div></button>'+html.slice(cut);}
-      else html=html.slice(0,tlL0)+'<button class="hour gap tlfold" id="tlFold"><span class="hh">▴</span><div class="body"><span class="gp-l">最新だけにする</span></div></button>'+html.slice(tlL0);}}
+  {const P=tlCP.concat(tlRS),T=tlCT.concat(list.map(x=>({sm:x.sm,e:(x.en&&x.en.e)||''}))),tot=P.length;
+  if(isToday&&tot>2){const keep=Math.min(tot-2,tlOpen.length?tlCP.length+tlOpen[0]:1e9);
+    if(keep>0){const all=sugNo('tl|all'),st=P[0],cut=P[keep];
+      if(!all){const mid=html.slice(st,cut),nG=(mid.match(/gaprow|mvsug/g)||[]).length,L=T[keep-1];
+        html=html.slice(0,st)+'<button class="hour gap tlfold" id="tlFold"><span class="hh">▸</span><div class="body"><span class="gp-l">前の記録 <b>'+keep+'</b>件　'+esc(T[0].sm)+'〜'+esc(L.e||L.sm)+'</span>'+(nG?'<span class="tlf-g">⬜ 空き '+nG+'</span>':'')+'<span class="gp-q">全部 ▾</span></div></button>'+html.slice(cut);}
+      else html=html.slice(0,st)+'<button class="hour gap tlfold" id="tlFold"><span class="hh">▴</span><div class="body"><span class="gp-l">最新だけにする</span></div></button>'+html.slice(st);}}}
   const seedN=(ui.date<'2026-08-25'&&PHDATES&&PHDATES[ui.date])||0;
   if(seedN){
     html+='<button class="hour filled" id="albRow"><span class="hh">📕</span><div class="body">'+
@@ -3512,7 +3514,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c16.8）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c16.9）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -8397,7 +8399,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c16.8";
+const CL_APPVER="c16.9";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
   if(!cloudLoggedIn())return;
