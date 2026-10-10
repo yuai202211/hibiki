@@ -819,6 +819,23 @@
 .pinc{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:0 0 8px;padding:8px 12px;border-radius:14px;background:#fff7e6;font-size:13px;font-weight:700;color:#5b6475}.pinc b{color:#1f2a44;font-size:15px}.pinc .chip{margin-left:auto}
 .gstrip{display:flex;gap:6px;align-items:center;width:calc(100% - 24px);margin:4px 12px 2px;padding:5px 8px;border-radius:12px;background:#1f2430;overflow-x:auto;scrollbar-width:none}.gstrip::-webkit-scrollbar{display:none}.gstrip .gs{flex:0 0 auto;color:#fff;font-size:12.5px;font-weight:800;white-space:nowrap;padding:3px 8px;border-radius:999px;background:rgba(255,255,255,.08)}.gstrip .gs b{font-size:14px;color:#ffd166}.gstrip .gs.ov{background:rgba(255,120,140,.22)}.gstrip .gs.ov b{color:#ff8fa3}.gstrip .gs .hit{color:#7ef0a8}.gstrip .gs .hit b{color:#7ef0a8}
 .page .gstrip.pg{margin:0 16px 6px;flex-shrink:0}
+  .gstrip .gs.ok{background:rgba(80,200,120,.25)}.gstrip .gs.ok b{color:#7ef0a8}
+  .pin .pin-c{display:flex;gap:6px;margin-top:5px;min-width:0}
+  .pin .pin-chip{flex:0 1 auto;min-width:0;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;border:0;font-family:inherit;background:rgba(255,255,255,.88);color:#1a1c22;border-radius:999px;padding:0 7px;min-height:28px;font-size:11.5px;font-weight:800;line-height:28px;cursor:pointer}
+  .pin .pin-chip b{font-size:12.5px;font-variant-numeric:tabular-nums}
+  .pin .pin-chip:active{transform:scale(.95)}
+  .pin .pin-hit{display:inline-block;margin-top:4px;padding:1px 7px;border-radius:999px;background:rgba(255,255,255,.92);color:#0a7a3e;font-size:10px;font-weight:800;line-height:1.5}
+  .pin.hit{box-shadow:inset 0 0 0 2px #35c76a,0 8px 18px rgba(30,40,70,.16)}
+  .pin .pin-tx[data-ds]{cursor:pointer}
+  .dn-now{margin-top:8px;padding:8px 10px;border-radius:12px;background:#f6f7fb;font-size:14px;line-height:1.5}.dn-now b{font-size:19px}.dn-memo{margin-top:4px;font-size:12.5px;color:#5b6475;white-space:pre-wrap;word-break:break-word}
+  .dsh-in{display:block;width:100%;box-sizing:border-box;margin-top:8px;font:inherit;font-size:16px;padding:10px;border-radius:12px;border:1px solid var(--line)}
+  .dn-cnt{margin-top:8px;font-size:13px;font-weight:800;color:#5b6475}.dn-cnt b{font-size:18px;color:#1f2430}
+  .dn-it{gap:8px;padding:6px 8px}.dn-it .inc-x{flex-shrink:0;white-space:nowrap}.dn-t{flex:1;min-width:0;font-size:14px;line-height:1.35;word-break:break-word}.dn-it.ok .dn-t{color:#8a93a6;text-decoration:line-through}
+  .dn-ck{flex-shrink:0;min-width:34px;min-height:34px;font-size:22px;line-height:1;padding:0}
+  .dsx-ok{flex-shrink:0;width:34px;height:34px;border-radius:50%;background:#0bc167;color:#fff;font-size:17px;font-weight:800}.dsx-ok:active{transform:scale(.9)}
+  .dsx-dn{flex-shrink:0;width:34px;text-align:center;color:#0bc167;font-weight:800;font-size:17px}
+  .ds-it.done{opacity:.55}.ds-it.done .dn-t{text-decoration:line-through}.ds-it .inc-d{flex-shrink:0}
+  .ds-it.nx{background:#eefaf3;box-shadow:inset 0 0 0 2px #35c76a}.ds-it.nx .dn-t{font-weight:800}
 .td-hib{padding:0 10px;font-size:16px;opacity:.5}.td-hib.on{opacity:1;background:#fff3c9;color:#8a5a00}
 .fr-addbar{display:block;width:100%;margin:6px 0 2px;padding:9px 12px;border-radius:12px;background:#f4f2ff;color:#5b4fd6;font-weight:800;font-size:13px;text-align:center}
 .td-dlg{font-style:normal;font-size:11px;font-weight:800;background:#ede9fe;color:#5b21b6;border-radius:999px;padding:1px 7px;margin-left:4px}
@@ -3545,7 +3562,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c17.2）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c17.3）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -4492,20 +4509,105 @@ function renderPins(){
   const arr=pinnedDreams();
   if(!arr.length){el.style.display='none';el.innerHTML='';return;}
   el.innerHTML=arr.map(d=>{
-    const st=stepStat(d),n=st.n,c=catOf(d.cat);
+    const st=stepStat(d),n=st.n,c=catOf(d.cat),hit=dreamHit(d.id);
     const left=(n===null)?'期限なし':n<0?('⚠<em>'+(-n)+'</em>日超過'):n===0?'<em>今日</em>まで':('あと<em>'+n+'</em>日');
     const cnt=st.tot?('・'+st.dn+'/'+st.tot+'手'):'';
-    return '<div class="pin" data-pin="'+esc(d.id)+'" style="background-color:'+((n!==null&&n<0)?'#e0405a':c.c)+'">'+
+    return '<div class="pin'+(hit?' hit':'')+'" data-pin="'+esc(d.id)+'" style="background-color:'+((n!==null&&n<0)?'#e0405a':c.c)+'">'+
       '<div class="pin-h"><span class="pi">'+pinIcon(d.t)+'</span><span class="pt"><b>'+esc(d.t)+'</b><small>'+left+cnt+'</small></span></div>'+
-      (st.next?'<div class="pin-s"><button class="pin-ok" data-ok="'+esc(st.next.id)+'" aria-label="やった">✓</button><span class="pin-tx">'+esc(st.next.t)+'</span></div>'
-        :st.tot?'<div class="pin-s"><span class="pin-tx">🎉 手順は全部やった</span></div>'
-        :'<button class="pin-gen" data-gen="'+esc(d.id)+'">🤖 手順を作る</button>')+
+      pinLow(d,hit)+(st.next?'<div class="pin-s"><button class="pin-ok" data-ok="'+esc(st.next.id)+'" aria-label="やった">✓</button><span class="pin-tx" data-ds="'+esc(d.id)+'">'+esc(st.next.t)+'</span></div>'
+        :st.tot?'<div class="pin-s"><span class="pin-tx" data-ds="'+esc(d.id)+'">🎉 手順は全部やった</span></div>'
+        :'<button class="pin-gen" data-ds="'+esc(d.id)+'">＋ 次の1手を書く</button>')+
       '</div>';
   }).join('');
   el.style.display='';
   el.querySelectorAll('[data-pin]').forEach(b=>b.onclick=()=>openAimPage(b.dataset.pin));
   el.querySelectorAll('[data-ok]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();stepDone(b.dataset.ok);});
-  el.querySelectorAll('[data-gen]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();openAimPage(b.dataset.gen);openStepGen(b.dataset.gen);});
+  el.querySelectorAll('[data-dy]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();openDreamYen(b.dataset.dy);});
+  el.querySelectorAll('[data-dn]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();openDreamNeed(b.dataset.dn);});
+  el.querySelectorAll('[data-ds]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();openDreamSteps(b.dataset.ds);});
+}
+function dreamHit(id){try{return movesOn(todayStr()).some(m=>m.dr===id);}catch(e){return false;}}
+function needList(d){return (Array.isArray(d&&d.need)?d.need:[]).map((x,i)=>x?Object.assign({i:i},x):null).filter(x=>x&&!x.del&&x.t);}
+function pinLow(d,hit){
+  const y=Number(d.yen)>0,nl=needList(d),ok=nl.filter(x=>x.ok).length;
+  return '<div class="pin-c"><button class="pin-chip" data-dy="'+esc(d.id)+'" aria-label="必要額">💰 '+(y?'<b>'+manY(Number(d.yen))+'</b>':'＋')+'</button>'+
+    '<button class="pin-chip" data-dn="'+esc(d.id)+'" aria-label="必要なもの">📦 '+(nl.length?'<b>'+ok+'/'+nl.length+'</b>':'＋')+'</button></div>'+
+    (hit?'<div class="pin-hit">✓ 今日の1手 済</div>':'');
+}
+function openDreamYen(id){
+  const d0=(state.dreams||{})[id];if(!d0||d0.del)return;
+  const y=Number(d0.yen)>0?Number(d0.yen):0;
+  openSub('<div class="sh-time"><span>💰 必要額（'+esc(d0.t)+'）</span></div>'+
+    '<div class="dn-now">'+(y?('<b>'+fmtYen(y)+'円</b>'+(d0.yenMemo?'<div class="dn-memo">'+esc(d0.yenMemo)+'</div>':'')):'未入力')+'</div>'+
+    '<input type="number" id="dyAmt" class="dsh-in" inputmode="numeric" placeholder="円" min="0" step="1000" value="'+(y||'')+'">'+
+    '<textarea id="dyMemo" class="dsh-in" rows="4" placeholder="内訳（1行ずつ）">'+esc(d0.yenMemo||'')+'</textarea>'+
+    '<div class="sh-btns" style="margin-top:10px"><button class="delbtn" id="dyNo" style="flex:0 0 auto">閉じる</button><button class="savebtn" id="dyOk">入れる</button></div>',null);
+  $('dyNo').onclick=closeSub;
+  $('dyOk').onclick=()=>{
+    const amt=Math.round(Number($('dyAmt').value)||0),memo=($('dyMemo').value||'').trim().slice(0,2000);
+    mutate(()=>{const c=(state.dreams||{})[id];if(!c||c.del)return;const nx=Object.assign({},c,{yenMemo:memo,ts:Date.now()});if(amt>0)nx.yen=amt;else delete nx.yen;state.dreams[id]=nx;});
+    closeSub();
+  };
+}
+let dnArm=-1;
+function openDreamNeed(id){
+  dnArm=-1;
+  const paint=()=>{
+    const d0=(state.dreams||{})[id];if(!d0||d0.del){closeSub();return;}
+    const keep=($('dnIn')||{}).value||'';
+    const L=needList(d0),ok=L.filter(x=>x.ok).length;
+    openSub('<div class="sh-time"><span>📦 必要なもの（'+esc(d0.t)+'）</span></div>'+
+      (L.length?'<div class="dn-cnt"><b>'+ok+'/'+L.length+'</b> そろった</div>':'<div class="an-empty">まだ無い</div>')+
+      '<div class="inc-list">'+L.map(x=>'<div class="inc-it dn-it'+(x.ok?' ok':'')+'"><button class="dn-ck" data-nck="'+x.i+'" aria-label="そろった">'+(x.ok?'☑':'☐')+'</button><span class="dn-t">'+esc(x.t)+'</span><button class="inc-x'+(dnArm===x.i?' arm':'')+'" data-nx="'+x.i+'">'+(dnArm===x.i?'もう一度で消す':'✕')+'</button></div>').join('')+'</div>'+
+      '<div class="inc-row"><input type="text" id="dnIn" maxlength="40" placeholder="足す（1行）" enterkeyhint="done"><button class="chip" id="dnAdd">足す</button></div>'+
+      '<div class="sh-btns" style="margin-top:10px"><button class="delbtn" id="dnNo" style="flex:1">閉じる</button></div>',null);
+    const s=$('sheet2'),inp=$('dnIn');inp.value=keep;
+    $('dnNo').onclick=closeSub;
+    s.querySelectorAll('[data-nck]').forEach(b=>b.onclick=()=>{const i=Number(b.dataset.nck);
+      mutate(()=>{const c=(state.dreams||{})[id];if(!c||c.del||!Array.isArray(c.need)||!c.need[i])return;const nd=c.need.slice();nd[i]=Object.assign({},nd[i],{ok:nd[i].ok?0:1,ts:Date.now()});state.dreams[id]=Object.assign({},c,{need:nd,ts:Date.now()});});
+      dnArm=-1;paint();});
+    s.querySelectorAll('[data-nx]').forEach(b=>b.onclick=()=>{const i=Number(b.dataset.nx);
+      if(dnArm!==i){dnArm=i;paint();return;}
+      mutate(()=>{const c=(state.dreams||{})[id];if(!c||c.del||!Array.isArray(c.need)||!c.need[i])return;const nd=c.need.slice();nd[i]=Object.assign({},nd[i],{del:1,ts:Date.now()});state.dreams[id]=Object.assign({},c,{need:nd,ts:Date.now()});});
+      dnArm=-1;paint();});
+    const add=()=>{const v=inp.value.replace(/\s+/g,' ').trim().slice(0,40);if(!v){toast('1行だけ書いてくれ');return;}
+      mutate(()=>{const c=(state.dreams||{})[id];if(!c||c.del)return;const nd=(Array.isArray(c.need)?c.need:[]).concat([{t:v,ok:0,ts:Date.now()}]);state.dreams[id]=Object.assign({},c,{need:nd,ts:Date.now()});});
+      inp.value='';dnArm=-1;paint();try{$('dnIn').focus();}catch(e){}};
+    $('dnAdd').onclick=add;
+    inp.onkeydown=ev=>{if(ev.key==='Enter'&&!ev.isComposing&&ev.keyCode!==229){ev.preventDefault();add();}};
+  };
+  paint();
+}
+let dsArm='';
+function openDreamSteps(id){
+  dsArm='';
+  const md=t=>{const x=new Date(t);return String(x.getMonth()+1).padStart(2,'0')+'/'+String(x.getDate()).padStart(2,'0');};
+  const paint=()=>{
+    const d0=(state.dreams||{})[id];if(!d0||d0.del){closeSub();return;}
+    const keep=($('dsIn')||{}).value||'';
+    const L=stepsOf(id),nx=L.find(x=>!x.d);
+    openSub('<div class="sh-time"><span>✅ やる事（'+esc(d0.t)+'）</span></div>'+
+      (L.length?'':'<div class="an-empty">まだ無い</div>')+
+      '<div class="inc-list">'+L.map(x=>{const arm=dsArm===x.id,xb='<button class="inc-x'+(arm?' arm':'')+'" data-sx="'+esc(x.id)+'">'+(arm?'もう一度で消す':'✕')+'</button>';
+        return x.d?('<div class="inc-it dn-it ds-it done"><span class="dsx-dn">✓</span><span class="dn-t">'+esc(x.t)+'</span><span class="inc-d">'+(Number(x.d)>1e11?md(Number(x.d)):'')+'</span>'+xb+'</div>')
+          :('<div class="inc-it dn-it ds-it'+((nx&&nx.id===x.id)?' nx':'')+'"><button class="dsx-ok" data-sok="'+esc(x.id)+'" aria-label="やった">✓</button><span class="dn-t">'+esc(x.t)+'</span>'+xb+'</div>');}).join('')+'</div>'+
+      '<div class="inc-row"><input type="text" id="dsIn" maxlength="60" placeholder="次の1手を1行で（5分で終わる・動詞で始める）" enterkeyhint="done"><button class="chip" id="dsAdd">足す</button></div>'+
+      '<div class="sh-btns" style="margin-top:10px"><button class="delbtn" id="dsNo" style="flex:1">閉じる</button></div>',null);
+    const s=$('sheet2'),inp=$('dsIn');inp.value=keep;
+    $('dsNo').onclick=closeSub;
+    s.querySelectorAll('[data-sok]').forEach(b=>b.onclick=()=>{dsArm='';stepDone(b.dataset.sok);paint();});
+    s.querySelectorAll('[data-sx]').forEach(b=>b.onclick=()=>{const sid=b.dataset.sx;
+      if(dsArm!==sid){dsArm=sid;paint();return;}
+      mutate(()=>{const c=(state.steps||{})[sid];if(c&&!c.del)state.steps[sid]=Object.assign({},c,{del:1,ts:Date.now()});});
+      dsArm='';paint();});
+    const add=()=>{const v=inp.value.replace(/\s+/g,' ').trim().slice(0,60);if(!v){toast('1行だけ書いてくれ');return;}
+      const mx=stepsOf(id).reduce((m,x)=>Math.max(m,Number(x.o)||0),0);
+      mutate(()=>{state.steps=state.steps||{};state.steps[stepNewId(0)]={dr:id,t:v,o:mx+1,d:0,c:Date.now(),by:'me',ts:Date.now()};});
+      inp.value='';dsArm='';paint();try{$('dsIn').focus();}catch(e){}};
+    $('dsAdd').onclick=add;
+    inp.onkeydown=ev=>{if(ev.key==='Enter'&&!ev.isComposing&&ev.keyCode!==229){ev.preventDefault();add();}};
+  };
+  paint();
 }
 function openDreamPage(){pageMode='dream';renderPage();}
 function openMemoPage(){pageMode='memo';renderPage();}
@@ -4713,7 +4815,8 @@ function openDreamSheet(id,presetCat){
     const prog=Number($('dProg').value)||0;
     const memo=$('dMemo').value.trim();
     mutate(()=>{if(dPh)phKeep(dPh);state.dreams=state.dreams||{};
-      state.dreams[did]={t,cat,pr,due,prog,memo,ph:dPh||null,ach:(ex&&ex.ach)||null,created:(ex&&ex.created)||todayStr(),ts:Date.now()};
+      {const o0=state.dreams[did]||{};state.dreams[did]={t,cat,pr,due,prog,memo,ph:dPh||null,ach:(ex&&ex.ach)||null,created:(ex&&ex.created)||todayStr(),ts:Date.now()};
+        if(o0.yen!==undefined)state.dreams[did].yen=o0.yen;if(o0.yenMemo!==undefined)state.dreams[did].yenMemo=o0.yenMemo;if(o0.need!==undefined)state.dreams[did].need=o0.need;}
       if(pin!==pin0){state.pins=state.pins||{};state.pins[did]={on:pin?1:0,ts:Date.now()};}});
     closeSheet();renderPage();toast('✓ 夢を書いた');
   };
@@ -7203,7 +7306,7 @@ function stepDone(sid){
     '<div class="pc-s">今日 '+movesOn(t).length+'手目</div>'+
     ((st&&st.next)?'<div class="pc-s" style="opacity:.9;font-size:11.5px">次：'+esc(st.next.t)+'</div>':''));
 }
-function stepNudge(){
+function stepNudge(){return;
   try{
     if(Date.now()-nudgeAt<1800000)return;
     if(movesOn(todayStr()).length)return;
@@ -7610,7 +7713,7 @@ function actTodayCnt(t){const r={dm:0,rep:0,post:0},eo=(state.entries||{})[t]||{
 function gstripHtml(){try{const t=todayStr(),got=incSum('in',GOAL.from,t),left=Math.max(0,GOAL.yen-got-cashLatest());let s='<button class="gs" data-gs="money">💰 あと <b>'+manY(left)+'</b></button>';
   {const c=actTodayCnt(t),gd=ACT_GOAL.sns_xd,gp=ACT_GOAL.sns_xp;s+='<button class="gs" data-gs="act"><span'+(c.dm>=gd?' class="hit"':'')+'>📣 DM <b>'+c.dm+'</b>/'+gd+'</span>・✉ <b>'+c.rep+'</b>・<span'+(c.post>=gp?' class="hit"':'')+'>𝕏投稿 <b>'+c.post+'</b>/'+gp+'</span></button>';}
   for(const d of pinnedDreams()){const due=dreamDue(d);let lb='',cl='';if(due){const nn=Math.round((parseD(due).getTime()-parseD(t).getTime())/864e5);if(nn<0){lb='⚠ '+(-nn)+'日超過';cl=' ov';}else if(nn===0){lb='今日';cl=' ov';}else{lb='あと <b>'+nn+'</b>日';cl=nn<=14?' ov':'';}}else lb='期限なし';
-    s+='<button class="gs'+cl+'" data-gs="'+esc(d.id)+'">'+pinIcon(d.t)+' '+esc(String(d.t||'').slice(0,8))+' '+lb+'</button>';}
+    s+='<button class="gs'+cl+(dreamHit(d.id)?' ok':'')+'" data-gs="'+esc(d.id)+'">'+pinIcon(d.t)+' '+esc(String(d.t||'').slice(0,8))+' '+lb+'</button>';}
   return s;}catch(e){return '';}}
 function gstripBind(el){if(!el)return;el.querySelectorAll('[data-gs]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();const v=b.dataset.gs;if(v==='act')return;if(v==='money')openIncSheet();else openDreamSheet(v,null);});}
 function gstripPaint(){try{const el=$('gstrip');if(!el)return;const html=gstripHtml();el.innerHTML=html;el.style.display=html?'':'none';gstripBind(el);
@@ -8431,7 +8534,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c17.2";
+const CL_APPVER="c17.3";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
   if(!cloudLoggedIn())return;
