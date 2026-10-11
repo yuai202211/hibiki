@@ -817,6 +817,9 @@ display:flex;flex-direction:column;gap:11px;max-height:94%;overflow-y:auto;
 .cash-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:10px 0 2px;padding:8px 10px;border-radius:14px;background:#f1faf5}.cash-row .cash-l{flex:0 0 100%;font-size:12.5px;font-weight:800;color:#0a7a45}.cash-row input{flex:1;min-width:90px;font:inherit;font-size:16px;padding:8px 10px;border-radius:12px;border:1px solid var(--line)}.cash-row .cash-now{margin-left:auto;font-size:12px;font-weight:700;color:#5b6475}.cash-row .cash-now b{color:#1f2a44;font-size:14px}
 .inc-row{display:flex;gap:8px;margin-top:8px}.inc-row input{flex:1;min-width:0;font:inherit;font-size:16px;padding:10px;border-radius:12px;border:1px solid var(--line)}.inc-list{display:flex;flex-direction:column;gap:4px;margin-top:8px}.inc-it{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:10px;background:#f6f7fb;font-size:13px}.inc-it .inc-d{color:#8a93a6;font-weight:700}.inc-it .inc-m{flex:1;min-width:0;color:#5b6475;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.inc-x{font-size:12px;font-weight:800;color:#8a93a6;background:#eef0f5;border-radius:999px;padding:3px 9px}.inc-x.arm{background:#ffe9ec;color:#e0405a}
 .pinc{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:0 0 8px;padding:8px 12px;border-radius:14px;background:#fff7e6;font-size:13px;font-weight:700;color:#5b6475}.pinc b{color:#1f2a44;font-size:15px}.pinc .chip{margin-left:auto}
+.ftk{display:block;width:calc(100% - 24px);margin:2px 12px 2px;padding:4px 0;overflow:hidden;white-space:nowrap;text-align:left;border-radius:10px;background:#fff7e6;color:#8a3b00;font-size:12.5px;font-weight:800}
+.ftk span{display:inline-block;padding-left:100%;animation:ftkM 28s linear 1}
+@keyframes ftkM{from{transform:translateX(0)}to{transform:translateX(-100%)}}
 .gstrip{display:flex;flex-wrap:wrap;gap:5px 6px;align-items:center;width:calc(100% - 24px);margin:4px 12px 2px;padding:6px 8px;border-radius:12px;background:#1f2430;overflow:visible}.gstrip::-webkit-scrollbar{display:none}.gstrip .gs{flex:0 1 auto;max-width:100%;color:#fff;font-size:12.5px;font-weight:800;white-space:normal;line-height:1.35;text-align:left;padding:3px 8px;border-radius:12px;background:rgba(255,255,255,.08)}.gstrip .gs b{font-size:14px;color:#ffd166}.gstrip .gs.ov{background:rgba(255,120,140,.22)}.gstrip .gs.ov b{color:#ff8fa3}.gstrip .gs .hit{color:#7ef0a8}.gstrip .gs .hit b{color:#7ef0a8}
 .page .gstrip.pg{margin:0 16px 6px;flex-shrink:0}
 .gstrip .gs.ok{background:rgba(80,200,120,.25)}.gstrip .gs.ok b{color:#7ef0a8}
@@ -1705,7 +1708,8 @@ body.cardvis .fab{display:none!important}
 
 <!-- 保存に問題がある間だけ出る診断帯。スクショ1枚で原因が分かる -->
 <button class="diagstrip" id="diagstrip" style="display:none"></button>
-<div class="gstrip" id="gstrip" style="display:none"></div>   <!-- c16.4：💰法人化引っ越しの帯（毎分意識する） -->
+<div class="gstrip" id="gstrip" style="display:none"></div>
+<button type="button" class="ftk" id="ftk" aria-label="這い上がった話（押すと次）"><span id="ftkT"></span></button>   <!-- c16.4：💰法人化引っ越しの帯（毎分意識する） -->
 
 <div class="dreamrow">
 <button class="dream" id="dreamBar">
@@ -2006,6 +2010,8 @@ for(const d in (src.cond||{})){const nu=src.cond[d];if(!nu)continue;out.cond=out
 if(src.alarm&&typeof src.alarm==='object'&&(!out.alarm||((src.alarm.ts||0)>(out.alarm.ts||0))))out.alarm=src.alarm;
 if(src.goal&&typeof src.goal==='object'&&(!out.goal||((src.goal.ts||0)>(out.goal.ts||0))))out.goal=src.goal;
 if(src.rew&&typeof src.rew==='object'&&(!out.rew||((src.rew.ts||0)>(out.rew.ts||0))))out.rew=src.rew;
+if(src.tstep&&typeof src.tstep==='object'&&(!out.tstep||((src.tstep.ts||0)>(out.tstep.ts||0))))out.tstep=src.tstep;
+if(src.fst&&typeof src.fst==='object'&&(!out.fst||((src.fst.ts||0)>(out.fst.ts||0))))out.fst=src.fst;   /* c19.9：這い上がった話の消す・足す */   /* c19.8：時間の刻み */
 if(src.learn&&typeof src.learn==='object'&&(!out.learn||((src.learn.ts||0)>(out.learn.ts||0))))out.learn=src.learn;
 for(const id in (src.dreams||{})){const cur=out.dreams[id],nu=src.dreams[id];
 if(!cur||((nu.ts||0)>(cur.ts||0)))out.dreams[id]=nu;}
@@ -2044,7 +2050,7 @@ for(const id in (src.photos||{})){if(!out.photos[id])out.photos[id]=src.photos[i
 for(const id in (src.pha||{})){if(!out.pha[id]&&src.pha[id])out.pha[id]=src.pha[id];}
  }
 out.life=((b.life&&(!(a.life)||((b.life.ts||0)>(a.life.ts||0))))?b.life:a.life)||null;
-const known={updatedAt:1,dream:1,entries:1,plans:1,ai:1,dreams:1,memos:1,life:1,photos:1,pha:1,pays:1,rules:1,aims:1,moves:1,pins:1,steps:1,payrep:1,rtn:1,rlog:1,payppl:1,kinds:1,tools:1,places:1,projects:1,marks:1,bedp:1,scr:1,alarm:1,goal:1,learn:1,arp:1,todos:1,plreg:1,plgrp:1,kgrp:1,trs:1,srr:1,tdq:1,ksub:1,cond:1,dlg:1,dgoal:1,aip:1,msx:1,inc:1,cash:1,rtm:1,dep:1,prep:1,tbox:1,rew:1};
+const known={updatedAt:1,dream:1,entries:1,plans:1,ai:1,dreams:1,memos:1,life:1,photos:1,pha:1,pays:1,rules:1,aims:1,moves:1,pins:1,steps:1,payrep:1,rtn:1,rlog:1,payppl:1,kinds:1,tools:1,places:1,projects:1,marks:1,bedp:1,scr:1,alarm:1,goal:1,learn:1,arp:1,todos:1,plreg:1,plgrp:1,kgrp:1,trs:1,srr:1,tdq:1,ksub:1,cond:1,dlg:1,dgoal:1,aip:1,msx:1,inc:1,cash:1,rtm:1,dep:1,prep:1,tbox:1,rew:1,tstep:1,fst:1};
 const newer=((b.updatedAt||0)>=(a.updatedAt||0))?b:a;
 const older=(newer===b)?a:b;
 for(const k in older)if(!known[k]&&older[k]!==undefined)out[k]=older[k];
@@ -3815,7 +3821,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c19.7）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c19.8）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -6068,7 +6074,28 @@ renderMemoPage();toast('削除した');
 function durMin(s,e,ed){if(!s||!e)return 0;const a=s.split(':').map(Number),b=e.split(':').map(Number);let m=(b[0]*60+b[1])-(a[0]*60+a[1])+(ed||0)*1440;if(m<0)m+=1440;return m;}
 function hmAdd(s,m){const a=String(s||'').split(':').map(Number),t=((a[0]||0)*60+(a[1]||0)+Number(m||0))%1440;return pad(Math.floor(t/60))+':'+pad(t%60);}
 function durText(m){if(!m)return '';const h=Math.floor(m/60),mm=m%60;return (h?h+'時間':'')+(mm?mm+'分':'');}
-function nowHM(){const d=new Date();return pad(d.getHours())+':'+pad(d.getMinutes());}
+function tStep(){try{return Number(state&&state.tstep&&state.tstep.v)===5?5:1;}catch(e){return 1;}}
+function hmNowStep(){const d=new Date();let m=d.getHours()*60+d.getMinutes();if(tStep()===5)m=Math.min(1435,Math.round(m/5)*5);return pad(Math.floor(m/60))+':'+pad(m%60);}
+function nowHM(){return hmNowStep();}
+(function(){const ap=()=>{const s=String(tStep()*60);document.querySelectorAll('input[type=time]').forEach(i=>{if(i.getAttribute('step')!==s)i.setAttribute('step',s);});};window.tStepApply=ap;try{new MutationObserver(ap).observe(document.body,{childList:true,subtree:true});}catch(e){}})();
+const FST0=[["似鳥昭雄","ニトリ","札幌で始めた家具店は月の売上40万円。近所に5倍の大型店ができ、倒産の危機を何度も経験"],["似鳥昭雄","ニトリ","対人恐怖症で接客できず赤字続き。妻の愛嬌で売上が倍増した"],["似鳥昭雄","ニトリ","ライバル店に客を奪われ追い詰められたが、米国の家具視察で今のチェーン構想を思いついた"],["羽鳥兼市","ガリバー","同業の不渡りで3億円超の負債を負い倒産。同じ年に中古車販売を始め、のちガリバーを創業"],["広田靖治","ネクステージ","高校中退で大手系販売店に採用されず、23歳でボルボ専門の中古車店を開いた"],["孫正義","ソフトバンクグループ","創業2年後に慢性肝炎で入院。社員には伏せ、病院を抜けて役員会議に出て経営した"],["三木谷浩史","楽天グループ","楽天市場は13店舗・社員6人の小さな店から始まった"],["柳井正","ファーストリテイリング","青果宅配SKIPは高値と会員制が受けず、約28億円の赤字で2年足らずで撤退"],["宇野康秀","USEN-NEXT","父の急死で社長を継ぎ、約800億円の負債返済に奔走した"],["南場智子","DeNA","最初のオークション事業は失敗。自ら先頭に立ってショッピング事業へ切り替え、半年で黒字化"],["前澤友作","ZOZO","ZOZOSUITは製造が追いつかず不信を招き、会員割引策はブランドが離反して初の減益"],["田中仁","JINS","上場資金で出した新業態は多くが1年足らずで閉店し最終赤字。そこから立て直した"],["松本大","マネックス","創業前にソニーと出資比率で決裂寸前。一言で思いとどまり、創業にこぎつけた"],["辻庸介","マネーフォワード","最初のサービスは誰も使わず大失敗。その夏に自動家計簿へ作り替えた"],["寺田親弘","Sansan","創業当初は名刺管理クラウドの市場が存在せず、機器を抱えて1日8件の営業を回った"],["南壮一郎","ビズリーチ","窮地で打ったテレビCM。放映日は問い合わせゼロだったが、全社総出の電話対応で商談が動き出した"],["吉田浩一郎","クラウドワークス","学生時代の劇団で200万円の借金、ベトナムのアパレルも失敗。多くの事業を経て創業"],["藤田晋","サイバーエージェント","上場後に株価が8分の1へ急落。ファンドに解散を迫られたが、助けを得て乗り切った"],["安田隆夫","ドン・キホーテ","就職先が倒産。800万円を貯めて、18坪の小さな店「泥棒市場」を開いた"],["安田隆夫","ドン・キホーテ","駅から遠く駐車場もない店を一人で営業。深夜に客が入ったことから深夜営業を始め、軌道に乗った"],["坂本孝","ブックオフ","オーディオ店は3年で閉店。中古ピアノ販売を経て、新古本のブックオフ1号店を開いた"],["永守重信","日本電産","創業5年目に倒産の危機。翌年、大口の注文が入り乗り切った"],["稲盛和夫","京セラ","就職難で入った会社は労働争議、上司と衝突して退社。部下8人と京セラを創業"],["本田宗一郎","本田技研工業","機械の買いすぎと不況で買収話が出る苦境に。銀行融資で耐え、世界レース参戦で士気を立て直した"],["松下幸之助","パナソニック","父が米相場で失敗して一家は破産。9歳で火鉢店に丁稚奉公に出された"]];
+function fstList(){const f=(state&&state.fst)||{},off=f.off||{},add=Array.isArray(f.add)?f.add:[];return FST0.map((x,i)=>({k:'d'+i,x})).concat(add.map((x,i)=>({k:'a'+i,x}))).filter(o=>!off[o.k]&&o.x&&o.x[2]);}
+let ftkI=null;function ftkNext(step){const L=fstList();if(!L.length)return null;let i=ftkI;if(i==null){try{i=Number(localStorage.getItem('hibiki-ftk'))||0;}catch(e){i=0;}}else i+=step||1;i=((i%L.length)+L.length)%L.length;ftkI=i;try{localStorage.setItem('hibiki-ftk',String(i));}catch(e){}return L[i].x;}
+function ftkPaint(step){const el=$('ftk'),tx=$('ftkT');if(!el||!tx)return;const x=ftkNext(step);if(!x){el.style.display='none';return;}el.style.display='';tx.textContent='🔥 '+x[0]+'（'+x[1]+'）：'+x[2];tx.style.animation='none';void tx.offsetWidth;tx.style.animation='';}
+(function(){try{const el=$('ftk');if(el)el.onclick=()=>ftkPaint(1);const tx=$('ftkT');if(tx)tx.addEventListener('animationend',()=>ftkPaint(1));setTimeout(()=>ftkPaint(0),800);}catch(e){}})();
+function fstOne(){const L=fstList();if(!L.length)return '';const x=L[Math.floor(Math.random()*L.length)].x;return '<div class="pc-s" style="margin-top:10px;text-align:left">🔥 '+esc(x[0])+'（'+esc(x[1])+'）：'+esc(x[2])+'</div>';}
+function openFstList(){let arm='';const paint=()=>{const f=state.fst||{},off=f.off||{},ad=Array.isArray(f.add)?f.add:[];const all=FST0.map((x,i)=>({k:'d'+i,x})).concat(ad.map((x,i)=>({k:'a'+i,x})));
+openSub('<div class="sh-time"><span>🔥 這い上がった話</span></div><div class="sh-note">帯の下に1行ずつ流れる。押すと次。消した物は流れない</div>'+
+'<div style="display:flex;gap:6px;margin:6px 0"><input type="text" id="fsIn" maxlength="80" placeholder="名前：話（1行）" style="flex:1;min-width:0;font:inherit;font-size:16px;padding:10px;border-radius:12px;border:1px solid var(--line)"><button class="chip" id="fsAdd">足す</button></div>'+
+all.map(o=>'<div class="rc-it" style="'+(off[o.k]?'opacity:.45':'')+'"><b>'+esc(o.x[0])+'</b>　'+esc(o.x[2])+'<div class="sr-r"><button class="chip" data-fso="'+o.k+'">'+(off[o.k]?'↩ 戻す':'✕ 流さない')+'</button></div></div>').join('')+
+'<div class="sh-btns"><button class="savebtn" id="fsOk">閉じる</button></div>',null);
+const put=fn=>{mutate(()=>{const f=Object.assign({off:{},add:[]},state.fst||{});f.off=Object.assign({},f.off);f.add=(f.add||[]).slice();fn(f);f.ts=Date.now();state.fst=f;});};
+const add=()=>{const v=$('fsIn').value.trim();if(!v)return;const m=v.split(/[：:]/);put(f=>{f.add.push(m.length>1?[m[0].trim(),'',m.slice(1).join('：').trim()]:['',' ',v]);});toast('足した');paint();};
+$('fsAdd').onclick=add;$('fsIn').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();add();}};
+$('sheet2').querySelectorAll('[data-fso]').forEach(b=>b.onclick=()=>{const k=b.dataset.fso;put(f=>{if(f.off[k])delete f.off[k];else f.off[k]=1;});paint();});
+$('fsOk').onclick=()=>{closeSub();ftkI=null;ftkPaint(0);};};paint();}
+function openTStep(){const v=tStep();openSub('<div class="sh-time"><span>⏱ 時間の刻み</span></div><div class="sh-note">ボタンで入る時刻と、時刻を選ぶ欄の刻み。アプリ全部に効く</div><div class="sr-r big"><button class="chip'+(v===1?' sel':'')+'" data-tst="1">1分刻み</button><button class="chip'+(v===5?' sel':'')+'" data-tst="5">5分刻み</button></div>',null);
+$('sheet2').querySelectorAll('[data-tst]').forEach(b=>b.onclick=()=>{const nv=Number(b.dataset.tst);mutate(()=>{state.tstep={v:nv,ts:Date.now()};});try{tStepApply();}catch(e){}closeSub();toast('⏱ '+nv+'分刻みにした');});}
 function slpElapsed(o){const n=new Date();return durMin(o.en.s,pad(n.getHours())+':'+pad(n.getMinutes()),o.d===todayStr()?0:1);}
 function openSleep(){
 for(const d of [todayStr(),addDays(todayStr(),-1)]){
@@ -6158,7 +6185,7 @@ toast('🏁 到着 '+e+'（'+(durText(durMin(s,e,ed))||'10分未満')+'）');
 }
 const SR_K={muda:['🕳️','ムダ'],stress:['😤','ストレス'],bad:['😫','調子悪い']};
 const SR_R=[['search','🔎','探し物'],['back','↩️','取りに戻る'],['miss','🚪','空振り'],['tel','📞','電話'],['phone','📲','スマホ'],['wait','⏳','待ち'],['dandori','🧩','段取りが悪い']];
-const nowMin=()=>{const d=new Date();return pad(d.getHours())+':'+pad(d.getMinutes());};
+const nowMin=()=>hmNowStep();
 function srList(d){const M=state.marks||{};return Object.keys(M).filter(i=>M[i]&&!M[i].del&&M[i].d&&(!d||M[i].d===d)).map(i=>Object.assign({id:i},M[i])).sort((a,b)=>(a.d+a.t)<(b.d+b.t)?-1:1);}
 function srReason(r){return SR_R.find(z=>z[0]===r)||null;}
 function openSelfReport(id){const ex=id&&state.marks&&state.marks[id]&&!state.marks[id].del?state.marks[id]:null;let k=ex?ex.k:'muda',r=ex?(ex.r||''):'';if(!SR_K[k])k='muda';
@@ -8021,7 +8048,7 @@ tbClear(nb,k,rw);}
 function tbClear(b,k,rw){const X=tbLv(tbXp()),t=todayStr(),st=tbStreak();
 celShow('<div class="pc-ck">✓</div><div class="pc-t">＋'+tbXp1(b)+' XP</div><div class="pc-n">'+TB_DR[b.dream]+' '+esc(tbDrLb(b.dream))+'へ1歩'+(b.combo?'　🔥コンボ×2':'')+'</div><div class="pc-s">'+tbDots(t)+(st?'　🔥'+st+'日連続':'')+'</div>'+
 '<div class="pc-s">Lv'+X.lv+' '+X.nm+'</div><div class="tb-bar"><div class="tb-bf" style="width:'+X.pct+'%"></div></div><div class="pc-s">'+(X.nn?X.nn+'まであと '+X.left+' XP':'いちばん上の称号')+'</div>'+
-(k>=3?'<div class="pc-t" style="font-size:24px;margin-top:12px">🏆 今日クリア</div>':'')+(rw?'<div class="pc-n">🎰 今日クリアのご褒美：'+esc(rw)+'</div>':'')+'<div class="pc-s">📱 遊び枠 ＋10分（今日 '+tbPlayA(t)+'分）</div><button type="button" class="tb-ok" id="tbClrOk">閉じる</button>');
+(k>=3?'<div class="pc-t" style="font-size:24px;margin-top:12px">🏆 今日クリア</div>':'')+(rw?'<div class="pc-n">🎰 今日クリアのご褒美：'+esc(rw)+'</div>':'')+'<div class="pc-s">📱 遊び枠 ＋10分（今日 '+tbPlayA(t)+'分）</div>'+fstOne()+'<button type="button" class="tb-ok" id="tbClrOk">閉じる</button>');
 const el=$('paycel');if(el){const c=el.cloneNode(true);el.replaceWith(c);const q=c.querySelector('#tbClrOk');if(q)q.onclick=ev=>{ev.stopPropagation();c.remove();};}}
 function tbMore(id){const b=(state.tbox||{})[id];if(!b||b.st!=='run')return;const z=Math.max(b.z,Date.now())+15*60000;mutate(()=>{state.tbox[id]=Object.assign({},b,{z,e:tbHM(z),ts:Date.now()});});toast('＋15分　'+tbHM(z)+'まで');}
 const tbDel=id=>{mutate(()=>{state.tbox[id]=Object.assign({},state.tbox[id],{del:1,ts:Date.now()});});toast('外した');};
@@ -8107,7 +8134,7 @@ opt('🧠','AIで何をした','aip'),opt('🤖','任せる先','dlg'),opt('🎯
 {h:'覚えた物',ic:'🧠',co:'#d8eefc',rows:[
 mem('🗾','場所 → 県','places'),mem('🏙️','場所 → 区・市町村','arp'),mem('🛏️','場所 → 🛏️ / 🪑','bedp'),mem('📍','場所のボタン','plreg'),mem('🙅','「入れない」にした提案','msx')]},
 {h:'時刻と数え方',ic:'⏰',co:'#ffe6d0',rows:[
-{ic:'⏰',nm:'注意の時刻',sm:(()=>{try{return alarmSummary();}catch(e){return '';}})(),go:()=>openAlarmSheet()},
+{ic:'⏰',nm:'注意の時刻',sm:(()=>{try{return alarmSummary();}catch(e){return '';}})(),go:()=>openAlarmSheet()},{ic:'⏱',nm:'時間の刻み',sm:(()=>tStep()===5?'5分刻み':'1分刻み')(),go:()=>openTStep()},{ic:'🔥',nm:'這い上がった話',sm:'帯の下に流れる話を消す・足す',go:()=>openFstList()},
 {ic:'🕳️',nm:'ムダの数え方',n:(()=>{try{return mudaAuto()?'自動も':'押した分だけ';}catch(e){return '';}})(),go:()=>openMudaCfg()},
 {ic:'👁️',nm:'見え方（古い順・畳む）',go:()=>openViewCfg()}]},
 {h:'データと版',ic:'☁️',co:'#dbeaff',note:ph,rows:[
@@ -10048,7 +10075,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c19.7";
+const CL_APPVER="c19.8";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
