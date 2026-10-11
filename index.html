@@ -3807,7 +3807,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c19.5）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c19.6）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -6704,11 +6704,11 @@ const shown=tdMore?op:op.slice(0,3);
 const ng=dn.filter(x=>x.ng).length;
 p.innerHTML='<div class="page-head"><button class="bk" id="pgBk">‹ 戻る</button><span class="tt">📋 今日のやる事</span><span style="width:36px"></span></div><div class="page-body">'+
 ((tdBadDay())?'<div class="td-bad">😵 しんどい日：'+(tdAllShow?'全部出している':'🙌手を動かす・🤖AIに任せる物だけ出している'+(hid?'（🧠など '+hid+'件は隠した）':''))+'<button class="chip" id="tdAllB">'+(tdAllShow?'🙌🤖だけにする':'全部見る')+'</button></div>':'')+
-'<div class="td-add"><input type="text" id="tdIn" maxlength="60" placeholder="＋ やる事を1行で（Enterで足す）"><button class="fr-mic" id="tdMic" aria-label="音声で書く">'+MICSVG+'</button><button class="chip td-hib'+(tdHibOn?' on':'')+'" id="tdHibT" aria-label="HIBIKIの直す・足す">🛠</button><button class="chip" id="tdGo">足す</button></div>'+
+'<div class="td-add"><input type="text" id="tdIn" maxlength="60" placeholder="＋ やる事を1行で（Enterで足す）"><button class="fr-mic" id="tdMic" aria-label="音声で書く">'+MICSVG+'</button><button class="chip" id="tdGo">足す</button></div>'+
 (op.length?shown.map(item).join('')+(op.length>3?'<button class="an-more" id="tdMoreB">'+(tdMore?'▲ たたむ':'▼ ほか'+(op.length-3)+'つ')+'</button>':''):'<div class="an-empty">今日のやる事は無い。上に1行で足す</div>')+
 (rowsWip.length?'<div class="sh-label" style="margin-top:12px">⏸ 日記で途中（1行ずつの⏸）</div>'+rowsWip.map((x,j)=>'<div class="td-it"><button class="td-ck" data-rwc="'+j+'">◻️</button><button class="td-b" data-rwo="'+j+'"><b>'+esc(x.a.t)+'</b><i>'+esc(x.d.slice(5).replace('-','/'))+(x.en.p?' 📍'+esc(x.en.p):'')+'</i></button></div>').join(''):'')+
 (later.length?'<div class="sh-label" style="margin-top:12px">📅 明日以降 '+later.length+'</div>'+later.map(x=>'<div class="td-it"><button class="td-b" data-tde="'+esc(x.id)+'"><b>'+esc(x.t)+'</b><i>🕐 '+esc(x.sd.slice(5).replace('-','/')+' '+(x.s||''))+'</i></button></div>').join(''):'')+
-(hib.length?'<div class="sh-label" style="margin-top:12px">🛠 HIBIKI（直す・足す）'+hib.length+'<small style="display:block;font-weight:600;color:#8a93a6">溜めるだけ。1日の終わりにAIがまとめる</small></div>'+hib.map(item).join(''):'')+
+''+   /* c19.6：🛠HIBIKIは ⚙設定 へ移した（やる事は商売だけ） */
 '<div class="td-done"><div class="sh-label">✅ 今日やった '+(dn.length+rowsDone.length)+(ng?'（⚡ながら完了 '+ng+'）':'')+'</div>'+
 dn.map(x=>'<div class="td-dn'+(x.ng?' ng':'')+'"><span>'+(x.ng?'⚡':'✅')+'</span><b>'+esc(x.t)+'</b><button data-tdu="'+esc(x.id)+'">戻す</button></div>').join('')+rowsDone.map(x=>'<div class="td-dn"><span>✅</span><b>'+esc(x.a.t)+'</b></div>').join('')+'</div>'+
 (sd.length?'<details class="td-sd"><summary>⏳ いつか '+sd.length+'</summary>'+sd.map(x=>'<div class="td-dn"><span>⏳</span><b>'+esc(x.t)+'</b><button data-tdr="'+esc(x.id)+'">今日に戻す</button></div>').join('')+'</details>':'')+
@@ -7935,6 +7935,16 @@ b.classList.remove('arm');fn();}
 function openSetPage(){closeSheet();renderSetPage();}
 function spKind(w){openKindSheet(w,()=>{try{btnRefresh();}catch(e){}},true);}
 function spVer(){try{return (typeof CL_APPVER!=='undefined')?String(CL_APPVER):'';}catch(e){return '';}}
+function openHibList(){let arm='';const paint=()=>{const L=tdSorted(tdOpen()).filter(tdHib);
+openSub('<div class="sh-time"><span>🛠 HIBIKIの直したい事</span></div><div class="sh-note">溜めるだけ。1日の終わりにAIがまとめて直す（商売のやる事とは別）</div>'+
+'<div style="display:flex;gap:6px;margin:6px 0"><input type="text" id="hbIn" maxlength="120" placeholder="気づいた事を1行で" style="flex:1;min-width:0;font:inherit;font-size:16px;padding:10px;border-radius:12px;border:1px solid var(--line)"><button class="chip" id="hbAdd">足す</button></div>'+
+(L.length?L.map(x=>'<div class="rc-it"><b>'+esc(x.t)+'</b><div class="sr-r"><button class="chip" data-hbd="'+esc(x.id)+'">✓ 済み</button><button class="chip'+(arm===x.id?' sel':'')+'" data-hbx="'+esc(x.id)+'">'+(arm===x.id?'もう一度で消す':'✕')+'</button></div></div>').join(''):'<div class="an-empty">今は無い</div>')+
+'<div class="sh-btns"><button class="savebtn" id="hbOk">閉じる</button></div>',null);
+const S=$('sheet2'),add=()=>{const v=$('hbIn').value;if(!v.trim())return;tdNew(v,{fl:{hib:1}});toast('🛠 溜めた');paint();};
+$('hbAdd').onclick=add;$('hbIn').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();add();}};
+S.querySelectorAll('[data-hbd]').forEach(b=>b.onclick=()=>{const id=b.dataset.hbd;mutate(()=>{state.todos[id]=Object.assign({},state.todos[id],{done:Date.now(),ts:Date.now()});});paint();});
+S.querySelectorAll('[data-hbx]').forEach(b=>b.onclick=()=>{const id=b.dataset.hbx;if(arm!==id){arm=id;paint();return;}arm='';mutate(()=>{state.todos[id]=Object.assign({},state.todos[id],{del:1,ts:Date.now()});});paint();});
+$('hbOk').onclick=closeSub;};paint();}
 function spSections(){
 const T=todayStr(),N=spN;
 const opt=(ic,nm,k)=>({ic,nm,n:N(()=>optItems(k).filter(x=>!x.gone&&!x.off).length),go:()=>openOptEdit(k,ic+' '+nm)});
@@ -7957,7 +7967,7 @@ return [
 {ic:'👛',nm:'手元現金',n:N(()=>cashList().length),go:()=>openCashList()},
 {ic:'🕳️',nm:'自己申告（ムダ・ストレス・調子）',n:N(()=>srList().length),go:()=>renderSrPage()},
 {ic:'📚',nm:'ルーティン',n:N(()=>rtnList().length),go:()=>openRtnPage()},
-{ic:'🔍',nm:'検索',sm:'日記を言葉・場所・ボタンで探す',go:()=>openSearchPage()}]},
+{ic:'🔍',nm:'検索',sm:'日記を言葉・場所・ボタンで探す',go:()=>openSearchPage()},{ic:'🛠',nm:'HIBIKIの直したい事',sm:'溜めるだけ。1日の終わりにAIがまとめる',go:()=>openHibList()}]},
 {h:'夢と目標',ic:'⭐',co:'#fff0b8',rows:[
 {ic:'⭐',nm:'夢カード（夢手帳）',n:N(()=>dreamsActive().length),go:()=>{dseg='list';openDreamPage();}},
 {ic:'📌',nm:'トップに出す夢',n:N(()=>pinnedDreams().length),sm:'夢を開いて 📌 で選ぶ',go:()=>{dseg='list';openDreamPage();}},
@@ -9113,7 +9123,7 @@ sleepBarTick();
 try{const pb=$('navPayB'),n=payMonthView(todayStr().slice(0,7)).up.length;pb.textContent=String(n);pb.style.display=n?'':'none';}catch(e){}
 try{const rb=$('navRtnB'),rs=rtnList(),lg=rlogList(),t=todayStr(),dn=rs.filter(r=>rtnDone(r.id,t,lg)).length;
 if(!rs.length){rb.style.display='none';}else{rb.textContent=dn+'/'+rs.length;rb.className='nbdg '+(dn>=rs.length?'g':'z');rb.style.display='';}}catch(e){}
-try{const tb=$('navTodoB');if(tb){const op=tdOpen().length,dn=tdDoneToday().length;if(op){tb.textContent=String(op);tb.className='nbdg';tb.style.display='';}else if(dn){tb.textContent='✓';tb.className='nbdg g';tb.style.display='';}else tb.style.display='none';}}catch(e){}
+try{const tb=$('navTodoB');if(tb){const op=tdOpen().filter(x=>!tdHib(x)).length,dn=tdDoneToday().length;if(op){tb.textContent=String(op);tb.className='nbdg';tb.style.display='';}else if(dn){tb.textContent='✓';tb.className='nbdg g';tb.style.display='';}else tb.style.display='none';}}catch(e){}
 try{const sb=$('navStB'),c=stCount();const n=c.unset+c.over;if(n){sb.textContent=String(n);sb.className='nbdg';sb.style.display='';}else if(c.today){sb.textContent=String(c.today);sb.className='nbdg g';sb.style.display='';}else sb.style.display='none';}catch(e){}
 try{const ab=$('navAimB'),n=movesOn(todayStr()).length;
 ab.textContent=String(n);ab.className='nbdg '+(n?'g':'z');ab.style.display='';}catch(e){}
@@ -9916,7 +9926,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c19.5";
+const CL_APPVER="c19.6";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
