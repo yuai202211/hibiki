@@ -1577,6 +1577,11 @@
   #pqDosB{display:flex;flex-direction:column;gap:6px}
   .pq-d1{display:flex;align-items:center;gap:6px}
   .pq-d1 input{flex:1;min-width:0}
+.pq-d1+.pq-d1{margin-top:6px}
+.pq-dok{flex:0 0 auto;min-width:52px;min-height:44px;border-radius:12px;background:#e7f9f0;color:#0a8f4e;font-size:15px;font-weight:800}
+.pq-dok.on{background:#0bc167;color:#fff}
+.dw-list{display:flex;flex-direction:column;gap:6px;max-height:50vh;overflow:auto}
+.dw-it{text-align:left;padding:10px 12px;border-radius:12px;background:#f3f5f9;font-size:14px;font-weight:800;color:#1f2430}
   .pq-fl{flex-shrink:0;min-width:46px;min-height:44px;font-size:18px;padding:0 10px;background:#f1f3f8;opacity:.55}
   .pq-fl.sel{opacity:1}
   .pq-fl.m.sel{background:#ffe08a}
@@ -3799,7 +3804,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c19.0）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c19.1）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -8526,7 +8531,17 @@ function prepBind(pane){
   pane.querySelectorAll('[data-pedit]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();openPrepSheet(todayStr());});
   try{fabCardWatch();}catch(e){}
 }
-function prepDoTap(i){const t=todayStr();let all=false;
+function prepDoSet(i,v){const t=todayStr();let all=false;mutate(()=>{const p=(state.prep||{})[t];if(!p)return;const n=prepDos(p).length,dd=Array.isArray(p.dd)?p.dd.slice(0,n):[];while(dd.length<n)dd.push(0);dd[i]=v?1:0;p.dd=dd;if(v&&dd.every(Boolean)){p.done=1;all=true;}else if(!v)p.done=0;p.ts=Date.now();});if(all)toast('✓ ぜんぶ済み');}
+function openDoWhere(i,txt0){const t=todayStr(),p=prepToday();if(!p)return;const txt=String(txt0||prepDos(p)[i]||'').trim();if(!txt)return;
+  const eo=(state.entries||{})[t]||{},L=Object.keys(eo).filter(k=>{const en=eo[k];return en&&!en.del&&en.s&&!en.mv&&en.k!=='sleep';}).sort((a,b)=>(eo[a].s<eo[b].s?1:eo[a].s>eo[b].s?-1:0));
+  const lab=en=>esc(en.s)+(en.e?'–'+esc(en.e):'')+'　📍'+esc(en.p||'（場所なし）');
+  openSub('<div class="sh-time"><span>✓ できた：どこでやった？</span></div><div class="sh-note" style="text-align:left">「'+esc(txt)+'」を、押した記録の行に入れる</div>'+
+    (L.length?'<div class="dw-list">'+L.map(k=>'<button type="button" class="dw-it" data-dw="'+esc(k)+'">'+lab(eo[k])+'</button>').join('')+'</div>':'<div class="an-empty">今日の記録がまだ無い</div>')+
+    '<div class="sh-btns"><button class="delbtn" id="dwNo" style="flex:1">閉じる</button><button class="savebtn" id="dwOnly">記録に入れず済みだけ</button></div>',null);
+  $('sheet2').querySelectorAll('[data-dw]').forEach(b=>b.onclick=()=>{const k=b.dataset.dw;mutate(()=>{const en=state.entries[t]&&state.entries[t][k];if(!en)return;en.acts=(Array.isArray(en.acts)?en.acts.slice():[]).concat([{t:txt}]);en.ts=Date.now();});closeSub();prepDoSet(i,1);const en=eo[k];toast('✓ '+(en?en.s+' '+(en.p||''):'')+' に入れた');});
+  $('dwOnly').onclick=()=>{closeSub();prepDoSet(i,1);toast('✓ 済みにした');};$('dwNo').onclick=()=>closeSub();}
+function prepDoTap(i){const p=prepToday(),dd=(p&&Array.isArray(p.dd))?p.dd:[];if(!dd[i]){openDoWhere(i);return;}
+  const t=todayStr();let all=false;
   mutate(()=>{const p=(state.prep||{})[t];if(!p)return;const n=prepDos(p).length,dd=Array.isArray(p.dd)?p.dd.slice(0,n):[];while(dd.length<n)dd.push(0);
     dd[i]=dd[i]?0:1;p.dd=dd;if(dd.every(Boolean)){p.done=1;all=true;}p.ts=Date.now();});
   if(all)toast('✓ ぜんぶ済み');}
@@ -8591,8 +8606,8 @@ function openPrepSheet(date,pre){
       '<div class="pq-tr" id="pqTrRow"><select id="pqTr" aria-label="移動手段">'+TRS.map(x=>'<option value="'+esc(x[0])+'">'+esc(x[1])+'</option>').join('')+'</select><span class="pq-pf" id="pqPf"></span></div></div>'+
     '<div><div class="pq-dh"><button type="button" class="pq-fold" id="pqDosT"></button><span class="pq-flg" id="pqFlg"><button type="button" class="chip pq-fl m" id="pqFlM" aria-label="稼ぎに直結">💰</button><button type="button" class="chip pq-fl f" id="pqFlF" aria-label="放置で損">🔥</button></span></div>'+
       '<div id="pqDosB"><div class="pq-help"><div>💰 稼ぎに直結（売上・入金・成約・買取・DM・出品）</div><div>🔥 放置で損（人間関係・訴訟・延滞・手付が流れる・期限）</div><div>迷ったら：必ずやらなければいけないものの中で、一番軽いものから順に！</div></div>'+
-      '<div class="pq-d1"><input type="text" id="pqD0" maxlength="60" placeholder="1つ目（例：書類を渡す）" autocomplete="off"></div>'+
-      '<input type="text" id="pqD1" maxlength="60" placeholder="2つ目" autocomplete="off"><input type="text" id="pqD2" maxlength="60" placeholder="3つ目" autocomplete="off"></div></div>'+
+      '<div class="pq-d1"><input type="text" id="pqD0" maxlength="60" placeholder="1つ目（例：書類を渡す）" autocomplete="off"><button type="button" class="pq-dok" data-dok="0" aria-label="できた">✓</button></div>'+
+      '<div class="pq-d1"><input type="text" id="pqD1" maxlength="60" placeholder="2つ目" autocomplete="off"><button type="button" class="pq-dok" data-dok="1" aria-label="できた">✓</button></div><div class="pq-d1"><input type="text" id="pqD2" maxlength="60" placeholder="3つ目" autocomplete="off"><button type="button" class="pq-dok" data-dok="2" aria-label="できた">✓</button></div></div></div>'+
     '<div class="pq-act"><button type="button" class="savebtn pq-reg" id="pqOk">'+(ok0?'登録（上書き）':'登録')+'</button><button type="button" class="pq-skip" id="pqSkip">'+(date===td?'今日は飛ばす':'今夜は飛ばす')+'</button>'+(ok0?'<button type="button" class="pq-skip pq-redo" id="pqRedo">やり直す（空にする）</button>':'')+'</div>'+
     '<div id="pqLine"></div>',null);
   const arrI=$('pqArr'),trS=$('pqTr'),dI=[$('pqD0'),$('pqD1'),$('pqD2')];
@@ -8600,6 +8615,11 @@ function openPrepSheet(date,pre){
   arrI.value=S.arr;if(!S.arrT)arrI.classList.add('auto');
   trS.value=S.tr;if(trS.value!==S.tr)S.tr=trS.value;
   dI.forEach((x,i)=>{x.value=S.dos[i]||'';x.oninput=()=>{S.dos[i]=x.value;upd();};});
+  {const paintDok=()=>{const pp=(state.prep||{})[date],dd=(pp&&Array.isArray(pp.dd))?pp.dd:[],can=date===td&&!!(pp&&!pp.del&&!pp.skip);
+    $('sheet2').querySelectorAll('[data-dok]').forEach(b=>{const i=Number(b.dataset.dok);b.style.display=(can&&String(S.dos[i]||'').trim())?'':'none';b.classList.toggle('on',!!dd[i]);b.textContent=dd[i]?'✓済':'✓';});};
+    paintDok();$('sheet2').querySelectorAll('[data-dok]').forEach(b=>b.onclick=()=>{const i=Number(b.dataset.dok),pp=(state.prep||{})[date],dd=(pp&&Array.isArray(pp.dd))?pp.dd:[];if(dd[i]){prepDoSet(i,0);toast('戻した');paintDok();return;}
+      const tx=String(S.dos[i]||'').trim();if(!tx)return;if(String(prepDos(pp)[i]||'')!==tx){mutate(()=>{const q=Object.assign({},state.prep[date]);const a=prepDos(q);a[i]=tx;q.dos=a;q.do=a[0]||'';q.ts=Date.now();state.prep[date]=q;});}
+      openDoWhere(i,tx);setTimeout(paintDok,400);});}
   const cv=()=>{const c=S.cur;return String(c==='f'?S.from:c[0]==='v'?(S.vias[Number(c.slice(1))]||''):S.to).trim();};
   const retr=()=>{if(S.trd)return;const P=prepPts(S);S.tr=S.to?prepTrGuess(P[P.length-2],S.to,date):mvGuessTr(date);trS.value=S.tr;};
   const toChg=()=>{S.pf=S.to?placePf(S.to):0;
@@ -9867,7 +9887,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c19.0";
+const CL_APPVER="c19.1";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
   if(!cloudLoggedIn())return;
