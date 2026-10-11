@@ -1606,7 +1606,13 @@
   .pq-tok{margin-top:6px;font-size:14px;font-weight:800;color:var(--green);word-break:break-all}.pq-tok:empty{display:none}
   .pq-where{font-size:11.5px;font-weight:700;color:#8a90a0;margin-bottom:6px}
   .pq-mrow{display:flex;align-items:center;gap:6px;margin-top:6px;font-size:13.5px;font-weight:800}
-  .pq-mrow .pq-ml{flex:1 1 auto;min-width:0;word-break:break-all}
+  .pq-mrow .pq-ml{flex:1 1 auto;min-width:0;display:flex;align-items:center;gap:4px;font-size:12.5px;font-weight:700;color:#5b4a00}
+.pq-ml i{font-style:normal;min-width:0;flex:0 1 auto;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:46%}
+.pq-ml em{font-style:normal;flex:0 0 auto;opacity:.6}
+.pq-me{flex:0 0 auto;font-size:10.5px;font-weight:800;color:#8a7a2a}
+.pq-mrow input{flex:0 0 64px;width:64px;min-height:40px;font-size:16px;text-align:center;border-radius:10px;border:1px solid #e8dcae;background:#fff}
+.pq-fold small{font-size:11px;font-weight:700;color:#8a93a6;white-space:nowrap}
+.pq-fold{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:13.5px}
   .pq-mrow input{width:84px;flex:0 0 auto;font-size:16px;padding:8px;border-radius:12px;border:1px solid var(--line);background:#fff;color:var(--ink)}
   .pq-dh{display:flex;align-items:center;gap:6px}.pq-dh .pq-fold{flex:1 1 0;min-width:0;width:auto}
   .pq-flg{display:flex;gap:6px;flex-shrink:0}
@@ -3784,7 +3790,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c18.0）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c18.1）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -6061,9 +6067,9 @@ function lastPlaceRecent(){
 }
 function quickSleepStart(){
   if(openSleep()){toast('もう寝てる記録がある。起きたら☀を押す');return;}
-  const d=todayStr(),p=lastSleepPlace();
+  const d=todayStr(),n0=new Date(),s0=pad(n0.getHours())+':'+pad(n0.getMinutes()),p=placeBefore(d,s0)||lastPlaceRecent()||lastSleepPlace();
   const key='e'+Date.now()+Math.floor(Math.random()*1e4);
-  const bd0=bedOfPlace(p);mutate(()=>{state.entries[d]=state.entries[d]||{};const ne={p,t:'',ph:[],s:nowHM(),e:'',k:'sleep',ts:Date.now()};if(bd0!=null)ne.bd=bd0;state.entries[d][key]=ne;});
+  const bd0=bedOfPlace(p);mutate(()=>{state.entries[d]=state.entries[d]||{};const ne={p,t:'',ph:[],s:s0,e:'',k:'sleep',ts:Date.now()};if(bd0!=null)ne.bd=bd0;state.entries[d][key]=ne;});
   if(bd0==null)setTimeout(()=>askBed(p,v=>{mutate(()=>{const en=state.entries[d]&&state.entries[d][key];if(en){en.bd=v;en.ts=Date.now();}bedRemember(p,v);});}),60);
   toast('😴 おやすみ'+(p?'（'+p+'）':'')+'。起きたら☀を押す');try{prepAfterSleep(bd0==null);}catch(e){}
 }
@@ -8615,14 +8621,14 @@ function openPrepSheet(date,pre){
     el.innerHTML='<div class="pq-lnh">'+esc(lab)+'の並び</div><div class="pq-ln">'+segs.map(s=>'<span>'+s+'</span>').join('<i>→</i>')+'</div>'+q;
     {const y=$('pqTopY');if(y)y.onclick=()=>{S.top=1;upd();};}
     {const n=$('pqTopN');if(n)n.onclick=()=>{PPD={d:date,v:Object.assign({},S,{dos:S.dos.slice(),fl:Object.assign({},S.fl),vias:S.vias.slice(),mm:Object.assign({},S.mm),mshow:Object.assign({},S.mshow)})};closeSub();openPlanPage();};}};
-  const paintDos=()=>{$('pqDosT').textContent=(S.dosO?'▾':'▸')+' 何からスタートする？（任意・3つまで）';$('pqDosB').style.display=S.dosO?'':'none';$('pqFlg').style.display=S.dosO?'':'none';
+  const paintDos=()=>{$('pqDosT').innerHTML=(S.dosO?'▾':'▸')+' 何からスタートする？<small>（任意・3つまで）</small>';$('pqDosB').style.display=S.dosO?'':'none';$('pqFlg').style.display=S.dosO?'':'none';
     $('pqFlM').classList.toggle('sel',!!S.fl.money);$('pqFlF').classList.toggle('sel',!!S.fl.fire);};
   let minKeys=[],minSig='';
   const paintMins=(c,show)=>{const el=$('pqMins');
-    const rows=show?(c.segs||[]).filter(g=>!(g.min>0)||g.man>0||S.mshow[g.key]):[];
+    const rows=show?(c.segs||[]).filter(g=>(c.segs.length>1)||!(g.min>0)||g.man>0||S.mshow[g.key]):[];
     rows.forEach(g=>{S.mshow[g.key]=1;});
     const sig=rows.map(g=>g.key).join('#');if(sig===minSig)return;minSig=sig;minKeys=rows.map(g=>g.key);
-    el.innerHTML=rows.map((g,i)=>'<div class="pq-mrow"><span class="pq-ml">'+esc(g.a||'出発')+' → '+esc(g.b)+'</span><input type="number" inputmode="numeric" min="1" max="720" data-mi="'+i+'" placeholder="'+(g.est?g.est.min:'分')+'" value="'+(g.man>0?g.man:'')+'"><span>分</span></div>').join('');
+    el.innerHTML=rows.map((g,i)=>'<div class="pq-mrow"><span class="pq-ml"><i>'+esc(g.a||'出発')+'</i><em>→</em><i>'+esc(g.b)+'</i></span>'+(g.est&&!(g.man>0)?'<small class="pq-me">最大'+g.est.min+'</small>':'')+'<input type="number" inputmode="numeric" min="1" max="720" data-mi="'+i+'" placeholder="'+(g.est?g.est.min:'分')+'" value="'+(g.man>0?g.man:'')+'"><span>分</span></div>').join('');
     el.querySelectorAll('input').forEach(x=>x.oninput=()=>{const k=minKeys[Number(x.dataset.mi)];S.mm[k]=Math.max(0,Math.round(Number(x.value)||0));upd();});};
   const upd=()=>{
     const c=prepCalc(S),hm=!!S.home;
@@ -8635,9 +8641,8 @@ function openPrepSheet(date,pre){
     if(hm)ref='🏠 家の日：移動なし'+(c.wake?' → '+tm:'');
     else if(!String(S.to||'').trim())ref='到着の場所を選ぶと、出発と起きる時刻が出る';
     else if(c.segs.length>1){
-      ref=c.segs.map(g=>esc(g.a||'出発')+' → '+esc(g.b)+'　'+(g.min>0?(g.man>0?'手入力 ':'最大 ')+g.min+'分':'<span class="lnov">所要が要る</span>')).join('<br>');
-      if(c.need)ref+='<br>実績の無い区間は、所要の分を1回だけ入れる（次から覚える）';
-      else{ref+='<br>合計 <b>'+c.min+'分</b>（'+esc(c.band)+'） → '+tm;if(c.cross)ref+='　※出発が前の日の夜になる';}}
+      if(c.need)ref='⏱ 所要（実績が無い区間は分を入れる・次から覚える）';
+      else{ref='合計 <b>'+c.min+'分</b>（'+esc(c.band)+'） → '+tm;if(c.cross)ref+='　※出発が前の日の夜になる';}}
     else if(c.need)ref='この区間は実績が無い。所要の分を1回だけ入れる（次から覚える）';
     else{ref=(c.src==='手入力'?'手入力 '+c.min+'分（'+esc(c.band)+'）':'最大 '+c.min+'分（'+esc(c.band)+'・'+esc(c.ref)+'）'+(c.w===1?'　※近い帯も含む':c.w===2?'　※ほかの帯から':''))+' → '+tm;
       if(c.cross)ref+='　※出発が前の日の夜になる';}
@@ -8884,7 +8889,7 @@ function openDepSheet(id){
     const rows=show?(c.segs||[]).filter(g=>!g.est||g.man>0||S.mshow[g.key]):[];
     rows.forEach(g=>{S.mshow[g.key]=1;});
     const sig=rows.map(g=>g.key).join('#');if(sig===minSig)return;minSig=sig;minKeys=rows.map(g=>g.key);
-    el.innerHTML=rows.map((g,i)=>'<div class="pq-mrow"><span class="pq-ml">'+esc(g.a||'出発')+' → '+esc(g.b)+'</span><input type="number" inputmode="numeric" min="1" max="720" data-mi="'+i+'" placeholder="'+(g.est?g.est.min:'分')+'" value="'+(g.man>0?g.man:'')+'"><span>分</span></div>').join('');
+    el.innerHTML=rows.map((g,i)=>'<div class="pq-mrow"><span class="pq-ml"><i>'+esc(g.a||'出発')+'</i><em>→</em><i>'+esc(g.b)+'</i></span>'+(g.est&&!(g.man>0)?'<small class="pq-me">最大'+g.est.min+'</small>':'')+'<input type="number" inputmode="numeric" min="1" max="720" data-mi="'+i+'" placeholder="'+(g.est?g.est.min:'分')+'" value="'+(g.man>0?g.man:'')+'"><span>分</span></div>').join('');
     el.querySelectorAll('input').forEach(x=>x.oninput=()=>{const k=minKeys[Number(x.dataset.mi)];S.mm[k]=Math.max(0,Math.round(Number(x.value)||0));upd();});};
   const upd=()=>{
     const c=calc(),hasTo=!!String(S.to||'').trim();
@@ -9810,7 +9815,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c18.0";
+const CL_APPVER="c18.1";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
   if(!cloudLoggedIn())return;
