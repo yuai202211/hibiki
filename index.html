@@ -1652,6 +1652,9 @@ body.cardvis .fab{display:none!important}
 .dpcard .dpc-b{display:flex;gap:6px;flex:0 0 auto}
 .dpcard .dpc-go{min-height:46px;padding:0 18px;border-radius:14px;background:var(--green);color:#fff;font-size:16px;font-weight:800}
 .dpcard .dpc-ed{min-height:46px;min-width:46px;border-radius:14px;background:rgba(0,0,0,.08);color:#1f2430;font-size:18px;font-weight:800}
+.dpc-r{flex:1 1 100%;display:flex;gap:6px}
+.dpc-s{flex:1 1 0;min-width:0;min-height:40px;border-radius:12px;background:rgba(255,255,255,.75);color:#1f2430;font-size:13px;font-weight:800;white-space:nowrap;padding:0 6px}
+.dpc-s.q{flex:0 0 auto;color:#8a93a6;background:rgba(255,255,255,.5)}
 .dp-perm{display:flex;flex-direction:column;align-items:flex-start;gap:4px}.dp-perm:empty{display:none}
 .dp-cal{min-height:44px;font-weight:800;font-size:14px;margin-top:6px;background:#eef3ff;color:#2b4a9a;white-space:normal;text-align:center}
 .dp-choice{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -3804,7 +3807,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c19.4）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c19.5）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -8779,7 +8782,7 @@ for(const k in eo){const en=eo[k];if(!en||en.del||!en.s||(Number(en.ts)||0)<cr)c
 if(en.mv){if(placeKey(String(en.rt||'').split('→').pop())===tk)return true;}
 else if(placeKey(en.p)===tk)return true;}
 return false;}
-function depLive(x){return !!(x&&!x.del&&!x.done&&x.d&&/^\d\d:\d\d$/.test(x.at||'')&&String(x.to||'').trim()&&!depAuto(x));}
+function depLive(x){return !!(x&&!x.del&&!x.done&&!x.quit&&x.d&&/^\d\d:\d\d$/.test(x.at||'')&&String(x.to||'').trim()&&!depAuto(x));}
 function depList(){const D=state.dep||{},td=todayStr(),out=[];
 for(const id in D){const x=D[id];if(!depLive(x)||x.d<td)continue;out.push(Object.assign({id},x));}
 return out.sort((a,b)=>(a.d+a.at)<(b.d+b.at)?-1:(a.d+a.at)>(b.d+b.at)?1:0);}
@@ -8802,10 +8805,18 @@ function depCardHtml(){const s=depCardSel();DEPCSIG=depSig(s);
 if(!s||ui.date!==todayStr())return '';
 const x=s.x,md=openMove();
 return '<div class="dpcard '+s.st+'" id="depCard" data-dep="'+esc(x.id)+'"><div class="dpc-t" data-dpcf>🚩 <b>'+esc(x.at)+'</b> 出発 → 📍<b>'+esc(depTo(x,14))+'</b></div><div class="dpc-cd" id="dpcCd">'+(s.late?esc(durText(-s.diff)||'1分')+' 過ぎた':'あと'+esc(durText(s.diff)||'0分'))+'</div>'+
-'<div class="dpc-b"><button type="button" class="dpc-go" id="dpcGo">'+(TRICON[x.tr]||'🚗')+' 出発</button><button type="button" class="dpc-ed" id="dpcEd" aria-label="直す">✎</button></div></div>';}
+'<div class="dpc-b"><button type="button" class="dpc-go" id="dpcGo">'+(TRICON[x.tr]||'🚗')+' 出発</button></div>'+
+'<div class="dpc-r"><button type="button" class="dpc-s" id="dpcTm">⏰ 時間を変える</button><button type="button" class="dpc-s" id="dpcPl">📍 場所を変える</button><button type="button" class="dpc-s q" id="dpcQ">やめた</button></div></div>';}
+function depShift(id){const x=(state.dep||{})[id];if(!x)return;const n=new Date(),now=n.getHours()*60+n.getMinutes(),at=m=>prepHM(Math.ceil((now+m)/5)*5);
+openSub('<div class="sh-time"><span>⏰ 出発の時間を変える</span></div><div class="sh-note">今：'+esc(x.at)+' 出発 → 📍'+esc(x.to)+'</div><div class="sr-r">'+[15,30,60,90].map(m=>'<button class="chip" data-dsh="'+m+'">今から'+m+'分後 '+at(m)+'</button>').join('')+'</div>'+
+'<div class="sh-btns"><button class="delbtn" id="dshNo" style="flex:1">閉じる</button><button class="savebtn" id="dshPick">時刻を選ぶ</button></div>',null);
+$('sheet2').querySelectorAll('[data-dsh]').forEach(b=>b.onclick=()=>{const v=at(Number(b.dataset.dsh));mutate(()=>{state.dep[id]=Object.assign({},state.dep[id],{at:v,d:todayStr(),at0:state.dep[id].at0||state.dep[id].at,ts:Date.now()});});closeSub();toast('⏰ 出発を '+v+' にした');});
+$('dshNo').onclick=()=>closeSub();$('dshPick').onclick=()=>{closeSub();openDepSheet(id);};}
 function depCardBind(pane){const g=id=>pane.querySelector('#'+id),c=pane.querySelector('#depCard');if(!c)return;const id=c.dataset.dep;
 {const b=g('dpcGo');if(b)b.onclick=ev=>{ev.stopPropagation();depGo(id);};}
-{const b=g('dpcEd');if(b)b.onclick=ev=>{ev.stopPropagation();openDepSheet(id);};}
+{const b=g('dpcTm');if(b)b.onclick=ev=>{ev.stopPropagation();depShift(id);};}
+{const b=g('dpcPl');if(b)b.onclick=ev=>{ev.stopPropagation();openDepSheet(id);};}
+{const b=g('dpcQ');if(b)b.onclick=ev=>{ev.stopPropagation();armTap(b,'dpcQ','この出発をやめる',()=>{mutate(()=>{state.dep[id]=Object.assign({},state.dep[id],{quit:Date.now(),ts:Date.now()});});toast('やめた（記録には残る）');});};}
 {const b=c.querySelector('[data-dpcf]');if(b)b.onclick=ev=>{ev.stopPropagation();openDepList(id);};}}
 function depNotifOk(){return typeof Notification!=='undefined';}
 function depNotified(){try{return JSON.parse(localStorage.getItem(DEPNK)||'{}')||{};}catch(e){return {};}}
@@ -9905,7 +9916,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c19.4";
+const CL_APPVER="c19.5";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
