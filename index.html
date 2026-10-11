@@ -1533,6 +1533,9 @@
   .pcard .pk-cd{margin-top:6px;font-size:15px;font-weight:800;font-variant-numeric:tabular-nums;color:#ffd54a}
   .pcard.late .pk-cd{color:#fff}
   .pcard .pk-cd:empty{display:none}
+  .pcard .pk-went{display:flex;align-items:center;gap:8px;margin-top:10px;padding:8px 10px;border-radius:12px;background:rgba(255,255,255,.16);font-size:15px;font-weight:800}
+  .pcard .pk-went span{flex:1 1 auto}
+  .pcard .pk-went .chip{min-height:40px;min-width:64px;font-size:14px;font-weight:800;background:#fff;color:#1f2430}
   .pcard .pk-dm{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:13.5px;font-weight:700;color:rgba(255,255,255,.9);flex-wrap:wrap}
   .pcard .pk-dm.hit{color:#7cf0b0;font-weight:800}
   .pcard .pk-dm .chip{background:#fff;color:#1f2430;font-weight:800;padding:7px 12px;min-height:40px}
@@ -2988,13 +2991,13 @@ const KIND_BASE=[['ai','🤖','AI','#7a6ef3','A',0,'h'],['aibiz','💡','AIビ�
  ['pcwork','💻','PC作業','#475569','D',0,'h'],['spwork','📱','スマホ作業','#64748b','D',0,'h'],
  ['mkt','📈','相場リサーチ','#0f766e','V',0,'h'],['c_list','📸','出品準備','#0d9488','V',0,'h'],['c_aaadj','🔁','AA調整','#0e7490','V',0,'h'],['c_aalive','🔴','AAライブ','#dc2626','V',0,'h'],
  ['c_aapick','🚛','AA落札分引取','#b45309','V',0,'b'],['c_in','📥','車両搬入','#0e7490','V',0,'b'],['c_out','📤','車両搬出','#b45309','V',0,'b'],['c_aaafter','📋','AA落札後対応','#a16207','V',0,'h'],['c_aafax','📠','AA会場へ名変後車検証FAX','#92400e','V',0,'h'],['c_aaclaim','⚠️','AAクレーム対応','#b91c1c','V',0,'h'],['repair','🔧','整備','#c2410c','V',0,'b'],
- ['c_buy','🤝','買取商談','#15803d','V',0,'h'],['c_sell','💰','販売商談','#16a34a','V',0,'h'],['c_cust','🙋','客対応','#2563eb','V',0,'h'],['c_dmv','🏛️','陸自対応','#4b5563','V',1,'h'],['c_garage','🅿️','車庫証明 申請・受取','#334155','V',1,'b'],['c_kscan','🪪','車検証スキャン','#475569','V',0,'h'],['carsee','🏎️','好きな車を見る（イベント・展示）','#b91c1c','V',0,''],['c_unload','🧳','荷物の積み下ろし（車を空にする）','#64748b','V',0,'b']   /* c15.8：車屋で色々な車に乗るので荷物を一旦おろして空にする（本人 2026-10-10） */,['c_fuel','⛽','給油（商品車）','#b45309','V',0,'b'],['c_int','🧽','内装クリーニング','#0d9488','V',0,'b'],['c_wash','🚿','洗車','#0284c7','V',0,'b'],['c_polish','✨','外装磨き','#ca8a04','V',0,'b'],['c_mnt','🛠️','点検・整備外注対応','#9a3412','V',0,'h'],['c_body','🎨','鈑金塗装外注対応','#7c2d12','V',0,'h'],['c_kaiso','🚘','車両回送','#a16207','V',0,'b'],['c_oil','🛢️','オイル交換','#92400e','V',0,'b'],['c_photo','📷','写真撮影','#0d9488','V',0,'b'],['c_imgedit','🖼️','画像編集','#7c3aed','V',0,'h'],['c_goo_list','🌐','掲載サイト出品対応','#ea580c','V',0,'h'],['c_yahoo','🔖','ヤフオク出品作業','#d97706','V',0,'h'],['c_price','💹','価格変更','#15803d','V',0,'h'],['c_goo_inq','📨','掲載サイト問合せ対応','#2563eb','V',0,'h'],['c_deliv','🔑','納車対応','#16a34a','V',0,'b'],
+ ['c_buy','🤝','買取商談','#15803d','V',0,'h'],['c_sell','💰','販売商談','#16a34a','V',0,'h'],['c_cust','🙋','客対応','#2563eb','V',0,'h'],['c_snsc','💬','SNS閲覧＋コメント','#b45309','V',0,'h'],['c_dmv','🏛️','陸自対応','#4b5563','V',1,'h'],['c_garage','🅿️','車庫証明 申請・受取','#334155','V',1,'b'],['c_kscan','🪪','車検証スキャン','#475569','V',0,'h'],['carsee','🏎️','好きな車を見る（イベント・展示）','#b91c1c','V',0,''],['c_unload','🧳','荷物の積み下ろし（車を空にする）','#64748b','V',0,'b']   /* c15.8：車屋で色々な車に乗るので荷物を一旦おろして空にする（本人 2026-10-10） */,['c_fuel','⛽','給油（商品車）','#b45309','V',0,'b'],['c_int','🧽','内装クリーニング','#0d9488','V',0,'b'],['c_wash','🚿','洗車','#0284c7','V',0,'b'],['c_polish','✨','外装磨き','#ca8a04','V',0,'b'],['c_mnt','🛠️','点検・整備外注対応','#9a3412','V',0,'h'],['c_body','🎨','鈑金塗装外注対応','#7c2d12','V',0,'h'],['c_kaiso','🚘','車両回送','#a16207','V',0,'b'],['c_oil','🛢️','オイル交換','#92400e','V',0,'b'],['c_photo','📷','写真撮影','#0d9488','V',0,'b'],['c_imgedit','🖼️','画像編集','#7c3aed','V',0,'h'],['c_goo_list','🌐','掲載サイト出品対応','#ea580c','V',0,'h'],['c_yahoo','🔖','ヤフオク出品作業','#d97706','V',0,'h'],['c_price','💹','価格変更','#15803d','V',0,'h'],['c_goo_inq','📨','掲載サイト問合せ対応','#2563eb','V',0,'h'],['c_deliv','🔑','納車対応','#16a34a','V',0,'b'],
  ['gyg','⛩️','GetYourGuide','#be123c','T',0,'h'],
  ['b_sell','📣','売る','#ea580c','B',0,'h'],['b_make','🛠','作る','#c2410c','B',0,'h'],['b_res','🔎','調べる','#9a3412','B',0,'h'],['b_idea','💡','考える','#b45309','B',0,'h'],
  ['sns_xv','𝕏','X 閲覧','#111827','P',0,''],['sns_xp','𝕏','X 投稿','#111827','P',0,'h'],['sns_xd','𝕏','X DM','#111827','P',0,'h'],['sns_iv','📷','インスタ 閲覧','#c13584','P',0,''],['sns_ip','📷','インスタ 投稿','#c13584','P',0,'h'],['sns_id','📷','インスタ DM','#c13584','P',0,'h'],
  ['mk_blog','✍️','ブログ・note記事','#0f766e','P',0,'h'],['mk_video','🎬','動画・ショート作り','#dc2626','P',0,'h'],['mk_lp','🖥️','LP・HP作り・直し','#2563eb','P',0,'h'],['mk_ads','💰','広告の運用','#ca8a04','P',0,'h'],['mk_gmap','📍','Googleマップ（口コミ・投稿）','#16a34a','P',0,'h'],['mk_reply','💬','問い合わせ・DMの返事','#0891b2','P',0,'h'],['mk_kpi','📊','数字の確認（見られた数・反応）','#7c3aed','P',0,'h'],   /* c15.6：📣集客 */
  ['m_tr','🏦','振込み対応','#4338ca','Y',0,'h'],['m_io','💳','入出金対応','#4f46e5','Y',0,'h'],['m_atm','🏧','ATM対応','#6366f1','Y',1,'h'],['m_tax','🧾','確定申告','#3730a3','Y',0,'h'],['gov','🏢','役所・警察・郵便','#4b5563','Y',1,'b'],['post','📮','郵便物受取','#0f766e','L',0,'b'],['docscan','🖨️','書類スキャン','#0f766e','L',0,'h']   /* c14.8：中古車に📠AA会場へ名変後車検証FAX（AAの中）・🪪車検証スキャン、🏬会社に🖨️書類スキャン */,['receipt','🧾','領収書対応','#0f766e','L',0,'h'],
- ['sleep','🌙','睡眠','#475569','S',0,''],['meal','🍚','食事','#f08a24','S',0,''],['mdrec','🕳️','ムダ（自分で付けた）','#e0405a','M',1,''],['mealto','🥡','食事（持ち帰り）','#f08a24','S',0,''],['move','🚗','移動','#12a6a0','S',0,''],['exer','🏃','運動','#16a34a','S',0,'b'],['bath','🛁','身支度','#06b6d4','S',0,''],['spa','♨️','風呂・サウナ','#0891b2','S',0,''],['shower','🚿','シャワー','#0ea5e9','S',0,''],['haircut','✂️','髪切り','#a855f7','S',0,''],['beauty','💈','美容（脱毛など）','#db2777','S',0,''],['drive','🚘','ひとりドライブ','#0ea5e9','S',0,''],   /* c15.9：本人 2026-10-10 */   /* c14.6 */   /* c14.2：シャワー（本人指示 2026-10-08・風呂・サウナの隣） */['laundry','🧺','洗濯','#0ea5e9','S',0,'b'],['dryer','🌬️','乾燥','#38bdf8','S',0,'b'],['fold','👕','洗濯たたみ','#0284c7','S',0,'b'],['massage','💆','マッサージ','#0d9488','S',0,''],['akasuri','🧖','あかすり','#0891b2','S',0,''],['shop','🛒','買い物','#f59e0b','S',0,''],['fuel','⛽','給油','#d97706','S',0,''],['rest','☕','休憩','#c98a2f','S',0,''],['nap','😴','仮眠','#64748b','S',0,''],['incar','🚙','車内滞在','#0f766e','S',1,''],['spplay','📲','スマホ操作','#d946ef','S',1,''],['wc','🚻','トイレ','#94a3b8','S',0,''],
+ ['sleep','🌙','睡眠','#475569','S',0,''],['meal','🍚','食事','#f08a24','S',0,''],['mdrec','🕳️','ムダ（自分で付けた）','#e0405a','M',1,''],['mealto','🥡','食事（持ち帰り）','#f08a24','S',0,''],['move','🚗','移動','#12a6a0','S',0,''],['exer','🏃','運動','#16a34a','S',0,'b'],['bath','🛁','身支度','#06b6d4','S',0,''],['spa','♨️','風呂・サウナ','#0891b2','S',0,''],['shower','🚿','シャワー','#0ea5e9','S',0,''],['haircut','✂️','髪切り','#a855f7','S',0,''],['beauty','💈','美容（脱毛など）','#db2777','S',0,''],['drive','🚘','ひとりドライブ','#0ea5e9','S',0,''],   /* c15.9：本人 2026-10-10 */   /* c14.6 */   /* c14.2：シャワー（本人指示 2026-10-08・風呂・サウナの隣） */['laundry','🧺','洗濯','#0ea5e9','S',0,'b'],['laundry_bl','🫧','洗濯（漂白）','#0ea5e9','S',0,'b'],['dryer','🌬️','乾燥','#38bdf8','S',0,'b'],['fold','👕','洗濯たたみ','#0284c7','S',0,'b'],['massage','💆','マッサージ','#0d9488','S',0,''],['akasuri','🧖','あかすり','#0891b2','S',0,''],['shop','🛒','買い物','#f59e0b','S',0,''],['fuel','⛽','給油','#d97706','S',0,''],['rest','☕','休憩','#c98a2f','S',0,''],['nap','😴','仮眠','#64748b','S',0,''],['incar','🚙','車内滞在','#0f766e','S',1,''],['spplay','📲','スマホ操作','#d946ef','S',1,''],['wc','🚻','トイレ','#94a3b8','S',0,''],
  ['bizcall','📞','仕事の連絡','#2f8fcf','C',0,'h'],['famcall','👪','家族との連絡','#f472b6','F',0,''],['errand','🧾','用事の連絡','#64748b','C',1,'h'],['chat','💬','雑談（私用）','#d946ef','C',1,''],['son','👦','息子','#f472b6','F',0,''],['family','🏡','家族の用事','#ec4899','F',0,''],
  ['work','💼','仕事','#1e3a8a','X',0,'h'],['think','🧠','企画・考える','#6b7280','X',0,'h'],['money','🧮','お金・事務','#4338ca','X',0,'h'],['doc','📄','資料確認','#5b7fa6','X',0,'h'],['call','📞','電話・連絡','#2f8fcf','X',1,'h'],['meet','🤝','商談・人と会う','#d9633b','X',0,'h'],
  ['study','🎓','勉強','#c2410c','X',0,'h'],['read','📖','読書','#8b5e3c','X',0,'h'],['audio','🔊','音声で学ぶ','#9333ea','X',0,'h'],['vstudy','🎬','動画で学ぶ','#0891b2','X',0,'h'],['write','✍️','書く・発信','#be123c','X',0,'h'],['reflect','📝','振り返り','#15803d','S',0,'h'],['diary','✏️','日記を書く','#15803d','S',0,'h'],
@@ -3793,7 +3796,7 @@ function openSyncSheet(){
     '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
     '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
     (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c18.3）：'+
+    '<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c18.4）：'+
       '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
       '起動 '+esc(BOOTLOG)+'<br>'+
       '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -8446,6 +8449,10 @@ function prepNopHtml(){
 function prepRoute(p){const f=String(p.from||'').trim(),vs=(Array.isArray(p.vias)?p.vias:[]).map(v=>String(v||'').trim()).filter(Boolean);
   return '<span class="pk-rt">'+(f?'<span class="rs fr">'+esc(f)+'</span>':'')+vs.map(v=>'<span class="rs via">'+esc(v)+'</span>').join('')+'<span class="rs to">📍 '+esc(p.to)+'</span></span>';}
 function prepVias(p){return (Array.isArray(p&&p.vias)?p.vias:[]).map(x=>String(x||'').trim()).filter(Boolean);}
+function prepWentAsk(p){if(!p||p.home||p.went)return '';const t=todayStr(),eo=(state.entries||{})[t]||{},fk=placeKey(p.from||'');let lk='',ls='';
+  for(const k in eo){const en=eo[k];if(!en||en.del||!en.s||en.k==='sleep')continue;if((Number(en.ts)||0)<(Number(p.ts)||0))continue;
+    if(!(en.mv||(en.p&&placeKey(en.p)!==fk)))continue;if(en.s>=ls){ls=en.s;lk=k;}}
+  return (lk&&p.wentNo!==lk)?lk:'';}
 function prepCardHtml(){
   const t=todayStr();if(ui.date!==t)return '';
   const p=prepToday();
@@ -8464,17 +8471,22 @@ function prepCardHtml(){
     return '<div class="pcard tag" id="prepCard">'+PED+'<div class="pk-h" data-pedit>📍 '+esc(p.to)+'　ここで：</div>'+
       dos.map((x,i)=>'<button type="button" class="pk-do'+(dd[i]?' on':'')+'" data-pdo="'+i+'"><i>'+(dd[i]?'✓':'')+'</i><span>'+prepDosMark(p,i)+esc(x)+'</span></button>').join('')+quit+'</div>';
   }
+  if(!mv&&p.went){
+    return '<div class="pcard" id="prepCard">'+PED+'<div class="pk-t" data-pedit><b>'+tri+'</b><span class="pk-u">出発済み</span><em>'+prepRoute(p)+'</em></div><div class="pk-cd">着いたら 🏁 到着を押す</div><div class="pk-btns">'+map+'</div>'+foot+'</div>';
+  }
   if(mv){
     return '<div class="pcard" id="prepCard">'+PED+'<div class="pk-t" data-pedit><b>'+tri+'</b><span class="pk-u">移動中</span><em>'+prepRoute(p)+'</em></div><div class="pk-cd">着いたら 🏁 を押す</div><div class="pk-btns">'+map+'</div>'+foot+'</div>';
   }
   const ci=prepCdInfo(p);
   return '<div class="pcard'+((ci&&ci.late)?' late':'')+'" id="prepCard">'+PED+'<div class="pk-t" data-pedit><b>'+esc(p.dep||'--:--')+'</b><span class="pk-u">出発</span><em>'+prepRoute(p)+'</em></div>'+
-    '<div class="pk-cd" id="pqCd">'+esc(ci?ci.txt:'')+'</div>'+dmRow+
+    '<div class="pk-cd" id="pqCd">'+esc(ci?ci.txt:'')+'</div>'+((wk=>wk?'<div class="pk-went"><span>もう出発してる？</span><button type="button" class="chip" id="pqWentY">はい</button><button type="button" class="chip" id="pqWentN" data-lk="'+esc(wk)+'">いいえ</button></div>':'')(prepWentAsk(p)))+dmRow+
     '<div class="pk-btns"><button type="button" class="pk-big go" id="pqGo">'+tri+' 出発</button>'+map+'</div>'+foot+'</div>';}
 function prepBind(pane){
   const g=id=>pane.querySelector('#'+id);
   {const b=g('pqNew');if(b)b.onclick=ev=>{ev.stopPropagation();const us=b.dataset.pu||'';openPrepSheet(todayStr(),us?{to:us}:undefined);};}
   {const b=g('pqGo');if(b)b.onclick=ev=>{ev.stopPropagation();prepGo();};}
+  {const b=g('pqWentY');if(b)b.onclick=ev=>{ev.stopPropagation();const t=todayStr();mutate(()=>{state.prep[t]=Object.assign({},state.prep[t],{went:Date.now(),ts:Date.now()});});toast('出発済みにした。着いたら🏁');};}
+  {const b=g('pqWentN');if(b)b.onclick=ev=>{ev.stopPropagation();const t=todayStr(),lk=b.dataset.lk;mutate(()=>{state.prep[t]=Object.assign({},state.prep[t],{wentNo:lk,ts:Date.now()});});};}
   {const b=g('pqMap');if(b)b.onclick=ev=>{ev.stopPropagation();prepMap();};}
   {const b=g('pqDone');if(b)b.onclick=ev=>{ev.stopPropagation();prepDone();};}
   {const b=g('pqDm');if(b)b.onclick=ev=>{ev.stopPropagation();quickKindStart('sns_xd','𝕏','X DM');};}
@@ -9825,7 +9837,7 @@ phUrl=function(id){
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c18.3";
+const CL_APPVER="c18.4";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
   if(!cloudLoggedIn())return;
