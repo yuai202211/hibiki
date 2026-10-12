@@ -885,6 +885,15 @@ display:flex;flex-direction:column;gap:11px;max-height:94%;overflow-y:auto;
 .te-dtq{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.te-dtq .chip{font-size:12px}
 .td-add{display:flex;gap:6px;align-items:center;margin-bottom:10px}.td-add input{flex:1;min-width:0;font-size:16px}
 .td-it{display:flex;flex-wrap:wrap;align-items:flex-start;gap:8px;padding:10px;border-radius:16px;background:#fff;border:1px solid var(--line);margin-top:8px}.td-it.pin{border:2px solid #3b63d9;background:#f5f8ff}
+.td-sec{margin-top:16px;font-weight:900;font-size:14.5px;color:#1f2430}.td-sec small{color:#8a90a0;font-weight:800;margin-left:6px}
+.td-pn{font-size:20px;line-height:1;padding:6px 8px;border-radius:12px;background:#eef3ff;align-self:center}
+.td-slot{margin-top:8px;padding:12px;border:2px dashed #d5dcf0;border-radius:16px;color:#8a90a0;font-size:12.5px;font-weight:800;text-align:center}
+.td-day{font-size:11.5px;color:#8a93a6;font-weight:800;margin-top:6px}
+.te-main{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.te-main .chip{flex:1 1 45%;min-height:48px;font-size:15px;font-weight:800;justify-content:center}
+.te-more{margin-top:12px}.te-more>summary{cursor:pointer;font-weight:800;color:#5b6475;padding:6px 2px}
+.tl-t{padding:12px 4px 10px;font-size:19px;font-weight:900}.tl-t small{display:block;color:#8a90a0;font-size:12px;margin-top:4px}
+.tl-b{display:flex;flex-direction:column;gap:8px}.tl-b button{min-height:54px;border-radius:14px;background:#f1f3f8;font-size:16px;font-weight:800;color:#1f2430}.tl-b .tl-go{background:var(--green);color:#fff}
+.pq-stk{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}.pq-stk .chip{font-size:12.5px}.pq-stk small{width:100%;color:#8a90a0;font-size:11.5px;font-weight:800}
 .td-ck{font-size:24px;line-height:1;padding:2px}.td-b{flex:1;min-width:0;text-align:left;display:flex;flex-wrap:wrap;gap:4px 8px;align-items:center}.td-b b{font-size:15px;font-weight:800;width:100%}.td-b i{font-style:normal;font-size:12px;color:#5b6475;font-weight:700}.td-b small{width:100%;color:#8a93a6;font-size:12px}
 .td-b em{font-style:normal;font-size:11px;font-weight:800;border-radius:8px;padding:2px 7px}.td-b em.c1{background:#fff4e5;color:#b45309}.td-b em.c2{background:#ffe9d6;color:#c2410c}.td-b em.c3{background:#ffe1e6;color:#be123c}
 .td-ac{width:100%;display:flex;gap:6px;padding-left:36px}.td-ac button{padding:6px 10px;border-radius:10px;background:#f1f3f8;font-size:12px;font-weight:800;color:#3b4252}
@@ -3821,7 +3830,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c19.9）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c20.0）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -6462,10 +6471,10 @@ for(const k in eo){const en=eo[k];if(!en||en.del)continue;if(k!==r.k&&en.mv&&en.
 (en.acts||[]).forEach((b,j)=>{});for(let j=0;j<(en.acts||[]).length;j++){if(k===r.k&&j===r.i)continue;const b=en.acts[j];if(!b||!b.s||!b.e)continue;const bs=hmMin(b.s);let be=hmMin(b.e);if(be<=bs)be+=1440;if(bs<e&&s<be)return true;}}return false;}
 function celebrate(t,sub,big){try{const d=document.createElement('div');d.className='cele'+(big?' big':'');const em=big?['⚡','🚗','🎉','✨','🔥','⚡','✨','🎊','💪']:['🎉','✨','🎊','👏','✨','🎉'];
 d.innerHTML='<div class="cele-c"><b>'+esc(t)+'</b><span>'+esc(sub||'')+'</span></div>'+em.map((e,i)=>'<i style="left:'+(6+i*88/em.length)+'%;animation-delay:'+(i*70)+'ms">'+e+'</i>').join('');document.body.appendChild(d);setTimeout(()=>{try{d.remove();}catch(e){}},big?2400:1600);}catch(e){}}
-function tdComplete(id,quiet){const T=state.todos||{};if(!T[id])return;const t=todayStr();mutate(()=>{const x=T[id];x.done=1;x.dn=t;x.ts=Date.now();const r=tdRowOf(id);if(r){r.a.st='done';r.a.dn=t;r.en.ts=Date.now();}});
+function tdComplete(id,quiet){const T=state.todos||{};if(!T[id])return;const t=todayStr();mutate(()=>{const x=T[id];x.done=1;x.dn=t;x.ts=Date.now();const r=tdRowOf(id);if(r){r.a.st='done';r.a.dn=t;r.en.ts=Date.now();}prepTdSync(id,1);});
 const ng=tdNagara(id);if(ng)mutate(()=>{T[id].ng=1;T[id].ts=Date.now();});const n=tdDoneToday().length,nn=tdDoneToday().filter(x=>x.ng).length;
 if(!quiet)celebrate(ng?'⚡ ながら完了！':'🎉 完了！','今日 ✅'+n+'個目'+(ng?'（同時進行 '+nn+'個目）':''),ng);}
-function tdUndo(id){const T=state.todos||{};if(!T[id])return;mutate(()=>{const x=T[id];delete x.done;delete x.dn;delete x.ng;x.ts=Date.now();const r=tdRowOf(id);if(r){delete r.a.st;delete r.a.dn;r.en.ts=Date.now();}});}
+function tdUndo(id){const T=state.todos||{};if(!T[id])return;mutate(()=>{const x=T[id];delete x.done;delete x.dn;delete x.ng;x.ts=Date.now();const r=tdRowOf(id);if(r){delete r.a.st;delete r.a.dn;r.en.ts=Date.now();}prepTdSync(id,0);});}
 const PLAN_R0=[['fixed','🕐','時間が決まっている'],['mf','💰🔥','お金に直結 かつ 放置で損'],['money','💰','お金に直結'],['fire','🔥','放置で損（期限・待たせている含む）'],['quick','⏱','15分以内']];
 const PLAN_FL=[['due','📅','今日が期限'],['money','💰','お金に直結'],['wait','🙋','人を待たせている'],['fire','🔥','放置で損が増える'],['quick','⏱','15分以内'],['hib','🛠','HIBIKI（直す・足す）']];
 const tdHib=x=>!!(x&&x.fl&&x.fl.hib);let tdHibOn=false;
@@ -6698,6 +6707,8 @@ $('dlNo').onclick=closeSub;};
 paint();}
 function tdEditSheet(id,after){const x=(state.todos||{})[id];if(!x)return;const t=todayStr();
 openSub('<div class="sh-time"><span>📋 やる事</span></div><input type="text" id="teT" maxlength="60" value="'+esc(x.t)+'" style="width:100%">'+
+'<div class="te-main"><button class="chip" id="teDone">✅ 完了</button><button class="chip" id="teNext">⏭ 明日へ</button><button class="chip" id="teDlg">'+(x.dlg?'🤖 任せるを外す':'🤖 任せる')+'</button><button class="chip" id="teQuit">🗑 やめる</button></div>'+
+'<details class="te-more"><summary>▸ くわしく（詳細・日時・印・場所・消す）</summary>'+
 '<textarea id="teC" rows="3" placeholder="詳細（このタイトルの中身・書かなくてもいい）" style="width:100%;margin-top:6px">'+esc(x.c||'')+'</textarea>'+
 '<details class="te-dt"'+(x.s?' open':'')+'><summary>🕐 日時（任意）'+(x.s?'：'+esc((x.sd&&x.sd!==t?x.sd.slice(5).replace('-','/')+' ':'')+x.s+'–'+(x.e||'')):'')+'</summary>'+
 '<div class="te-dtb"><input type="date" id="teD" value="'+esc(x.sd||t)+'"><input type="time" id="teS" step="300" value="'+esc(x.s||'')+'"><span>→</span><input type="time" id="teE" step="300" value="'+esc(x.e||'')+'"></div>'+
@@ -6706,8 +6717,8 @@ openSub('<div class="sh-time"><span>📋 やる事</span></div><input type="text
 '<div class="sr-r te-fl">'+PLAN_FL.map(f=>'<button class="chip'+((x.fl||{})[f[0]]?' sel':'')+'" data-tefl="'+f[0]+'">'+f[1]+' '+f[2]+'</button>').join('')+'</div>'+
 '<div class="te-pl"><span>📍 場所（段取りでまとめる）</span><select id="tePl"><option value="">なし</option>'+(()=>{const ps=[];plGroups().concat([{g:'ot'}]).forEach(g=>placeReg(g.g).forEach(p=>{if(ps.indexOf(p)<0)ps.push(p);}));if(x.pl&&ps.indexOf(x.pl)<0)ps.unshift(x.pl);return ps.map(p=>'<option'+(x.pl===p?' selected':'')+'>'+esc(p)+'</option>').join('');})()+'</select></div>'+
 '<div class="sr-r te-tg">'+Object.keys(TD_TG).map(k=>'<button class="chip'+(x.tg===k?' sel':'')+'" data-tetg="'+k+'">'+TD_TG[k][0]+' '+TD_TG[k][1]+'</button>').join('')+'</div>'+
-'<div class="sr-r big" style="margin-top:6px"><button class="chip" id="teDone">✅ 完了</button><button class="chip" id="tePin">'+(x.pin===t?'🎯 今やるを外す':'🎯 今やる')+'</button>'+(tdDays(x)>=2?'<button class="chip" id="teSmall">🪄 小さくする</button>':'')+'<button class="chip" id="teDlg">🤖 任せる</button><button class="chip" id="teQuit">🗑 やめる</button></div>'+
-'<div class="sh-btns"><button class="delbtn" id="teDel">消す</button><button class="savebtn" id="teOk">保存</button></div>',null);
+'<div class="sr-r big" style="margin-top:6px"><button class="chip" id="tePin">'+(x.pin===t?'🎯 今日の3つから外す':'🎯 今日の3つに入れる')+'</button><button class="chip" id="teSmall">🪄 小さくする</button><button class="chip" id="teSd">⏳ いつか</button><button class="chip" id="teDel" style="color:#d33">消す</button></div></details>'+
+'<div class="sh-btns"><button class="savebtn" id="teOk">保存</button></div>',null);
 const rd=m=>pad(Math.floor(m/60)%24)+':'+pad(m%60);
 $('sheet2').querySelectorAll('[data-teq]').forEach(b=>b.onclick=()=>{const v=b.dataset.teq,n=new Date(),now=Math.ceil((n.getHours()*60+n.getMinutes())/5)*5;
 if(v==='clr'){$('teS').value='';$('teE').value='';$('teD').value=t;return;}
@@ -6720,43 +6731,71 @@ $('sheet2').querySelectorAll('[data-tefl]').forEach(b=>b.onclick=()=>{const k=b.
 $('sheet2').querySelectorAll('[data-tetg]').forEach(b=>b.onclick=()=>{const v=b.dataset.tetg;const cur=(state.todos[id]||{}).tg;tdSet(id,{tg:cur===v?null:v});$('sheet2').querySelectorAll('[data-tetg]').forEach(y=>y.classList.toggle('sel',y.dataset.tetg===v&&cur!==v));});
 $('teOk').onclick=()=>{save();closeSub();if(after)after();};
 $('teDone').onclick=()=>{save();closeSub();tdComplete(id);if(after)after();};
-$('tePin').onclick=()=>{save();closeSub();tdSet(id,{pin:x.pin===t?null:t});if(after)after();};
+$('tePin').onclick=()=>{save();closeSub();if(x.pin===t)tdSet(id,{pin:null});else tdPinTo(id,t);if(after)after();};
+$('teNext').onclick=()=>{save();closeSub();tdToDay(id,addDays(t,1));if(after)after();};
+$('teSd').onclick=()=>{save();closeSub();tdSet(id,{quit:{r:'someday',m:'',at:t},pin:null});toast('⏳ いつかへ回した');if(after)after();};
 
 {const b=$('teSmall');if(b)b.onclick=()=>{save();closeSub();tdNew('最初の5分だけ：'+x.t,{pin:t,par:id});toast('🪄 最初の5分だけ、を今やるにした');if(after)after();};}
-$('teQuit').onclick=()=>{save();tdQuitSheet(id,after);};
-$('teDlg').onclick=()=>{save();dlgSheet(id,after);};
+$('teQuit').onclick=()=>{save();closeSub();tdQuitNow(id);if(after)after();};
+$('teDlg').onclick=()=>{save();closeSub();tdDlgNow(id);if(after)after();};
 $('teDel').onclick=()=>{if(!confirm('このやる事を消す？（やめるなら🗑やめるの方が記録が残る）'))return;closeSub();mutate(()=>{tdUnplace(id);state.todos[id]={del:1,ts:Date.now()};});if(after)after();};}
-function openTodoPage(){closeSheet();renderTodoPage();}
+function openTodoPage(){closeSheet();try{prepLinkFix();}catch(e){}renderTodoPage();}
 let tdMore=false;
 let tdAllShow=false;
-function renderTodoPage(){pageMode='todo';const p=$('page');const t=todayStr();const hib=tdSorted(tdOpen()).filter(tdHib);const op0=tdSorted(tdOpen()).filter(x=>!tdHib(x)),bad=tdBadDay()&&!tdAllShow,op=bad?op0.filter(x=>x.tg==='hand'||x.tg==='ai'):op0,hid=op0.length-op.length,later=tdSorted(tdLater()),dn=tdDoneToday(),sd=tdAll().filter(x=>x.quit&&x.quit.r==='someday');
+function tdPinnedOn(dt){return tdAll().filter(x=>!x.quit&&!tdDone(x)&&!tdHib(x)&&!x.dlg&&x.pin===dt);}
+function tdPinTo(id,dt){const x=(state.todos||{})[id];if(!x)return false;if(x.pin!==dt&&tdPinnedOn(dt).length>=3){toast('🎯は3つまで。どれかを済ませるか外す');return false;}tdSet(id,{pin:dt,sd:dt>todayStr()?dt:null,dlg:null});return true;}
+function tdToDay(id,dt){const x=(state.todos||{})[id];if(!x)return;const full=x.pin!==dt&&tdPinnedOn(dt).length>=3,lb=dt===addDays(todayStr(),1)?'明日':dt.slice(5).replace('-','/');
+tdSet(id,{pin:full?null:dt,sd:dt>todayStr()?dt:null,cf:(x.cf||0)+1});toast(full?'⏭ '+lb+'へ（🎯が埋まっているのでストック）':'⏭ '+lb+'の🎯へ回した');}
+function tdQuitNow(id){tdSet(id,{quit:{r:'none',m:'',at:todayStr()},pin:null});toast('🗑 やめた（消さずに残した）');}
+function tdDlgNow(id){const x=(state.todos||{})[id];if(!x)return;if(x.dlg){tdSet(id,{dlg:null});toast('🤖 任せるを外した');return;}tdSet(id,{dlg:{to:'',ic:'🤖',at:Date.now()},tg:'ai',pin:null});toast('🤖 任せ中へ移した');}
+const tdDnOf=x=>x.dn||((tdRowOf(x.id)||{}).a||{}).dn||'';
+function tdLeftOver(date){return tdAll().filter(x=>!x.quit&&!tdDone(x)&&!tdHib(x)&&!x.dlg&&x.pin&&x.pin<date);}
+let TDLS='';
+function tdLeftSheet(date,next){const L=tdLeftOver(date);if(!L.length){TDLS=date;next();return;}
+const x=L[0],noNext=(x.cf||0)>=2,base=String(x.t||'').replace(/^最初の5分だけ：/,'');
+openSub('<div class="sh-time"><span>🌙 残ったやる事　あと'+L.length+'つ</span></div><div class="tl-t">'+esc(x.t)+'<small>'+(noNext?'⏭ を2回押した（3日目）→ 小さくするか、やめる':(x.cf?'⏭ '+x.cf+'回目':'今日の分'))+'</small></div>'+
+'<div class="tl-b">'+(noNext?'':'<button type="button" class="tl-go" data-tl="n">⏭ 明日へ</button>')+'<button type="button" data-tl="s">🪄 小さくして明日へ</button><button type="button" data-tl="q">🗑 やめる</button></div>'+
+'<div class="sh-btns"><button class="delbtn" id="tlLater" style="flex:1">あとで（準備へ進む）</button></div>',null);
+$('sheet2').querySelectorAll('[data-tl]').forEach(b=>b.onclick=()=>{const v=b.dataset.tl;
+if(v==='n')tdToDay(x.id,date);
+else if(v==='s'){tdSet(x.id,{pin:null,cf:(x.cf||0)+1});const full=tdPinnedOn(date).length>=3;tdNew('最初の5分だけ：'+base,{pin:full?null:date,sd:date>todayStr()?date:null,par:x.id});toast('🪄 最初の5分だけ、を'+(full?'ストック':'🎯')+'へ');}
+else tdQuitNow(x.id);
+tdLeftSheet(date,next);});
+$('tlLater').onclick=()=>{TDLS=date;next();};}
+function renderTodoPage(){pageMode='todo';const p=$('page');const t=todayStr();
+const all=tdSorted(tdOpen()).filter(x=>!tdHib(x)),pins=all.filter(x=>x.pin===t&&!x.dlg),dlg=all.filter(x=>x.dlg),st0=all.filter(x=>x.pin!==t&&!x.dlg),bad=tdBadDay()&&!tdAllShow,stock=bad?st0.filter(x=>x.tg==='hand'||x.tg==='ai'):st0,hid=st0.length-stock.length;
+const later=tdSorted(tdLater()).filter(x=>!tdHib(x)),sd=tdAll().filter(x=>x.quit&&x.quit.r==='someday'),d7=addDays(t,-6);
+const dnA=tdAll().filter(x=>tdDone(x)&&!tdHib(x)&&tdDnOf(x)>=d7).sort((a,b)=>{const p1=tdDnOf(a),p2=tdDnOf(b);return p1<p2?1:p1>p2?-1:0;}),dnT=dnA.filter(x=>tdDnOf(x)===t);
 const rowsWip=stList().filter(x=>x.a.st==='wip'&&!x.a.td),rowsDone=stList().filter(x=>x.a.st==='done'&&!x.a.td&&(x.a.dn||x.d)===t);
 const tagC=x=>{const n=tdDays(x);return n<=0?'':n===1?'c1':n<6?'c2':'c3';};
-const item=x=>'<div class="td-it'+(x.pin===t?' pin':'')+'"><button class="td-ck" data-tdc="'+esc(x.id)+'" aria-label="完了">◻️</button><button class="td-b" data-tde="'+esc(x.id)+'"><b>'+(x.pin===t?'🎯 ':'')+(x.tg&&TD_TG[x.tg]?TD_TG[x.tg][0]+' ':'')+esc(x.t)+'</b>'+(x.dlg?'<em class="td-dlg">🤖→'+esc(x.dlg.to)+'</em>':'')+
-(tdTag(x)?'<em class="'+tagC(x)+'">'+esc(tdTag(x))+'</em>':'')+(x.s?'<i>🕐 '+esc((x.sd&&x.sd!==t?x.sd.slice(5).replace('-','/')+' ':'')+x.s+'–'+(x.e||''))+'</i>':'')+(x.c?'<small>'+esc(x.c.slice(0,60))+'</small>':'')+'</button>'+
-(tdDays(x)>=2?'<div class="td-ac"><button data-tds="'+esc(x.id)+'">🪄 小さく</button><button data-tdt="'+esc(x.id)+'">🕐 時間</button><button data-tdq="'+esc(x.id)+'">🗑 やめる</button></div>':'')+'</div>';
-const shown=tdMore?op:op.slice(0,3);
-const ng=dn.filter(x=>x.ng).length;
+const meta=x=>(x.dlg&&x.dlg.to?'<em class="td-dlg">🤖→'+esc(x.dlg.to)+'</em>':'')+(tdTag(x)?'<em class="'+tagC(x)+'">'+esc(tdTag(x))+'</em>':'')+(x.s?'<i>🕐 '+esc((x.sd&&x.sd!==t?x.sd.slice(5).replace('-','/')+' ':'')+x.s+'–'+(x.e||''))+'</i>':'')+(x.c?'<small>'+esc(x.c.slice(0,60))+'</small>':'');
+const item=(x,m)=>'<div class="td-it'+(m==='pin'?' pin':'')+'"><button class="td-ck" data-tdc="'+esc(x.id)+'" aria-label="完了">◻️</button><button class="td-b" data-tde="'+esc(x.id)+'"><b>'+(x.tg&&TD_TG[x.tg]?TD_TG[x.tg][0]+' ':'')+esc(x.t)+'</b>'+meta(x)+'</button>'+
+(m==='stock'?'<button class="td-pn" data-tdp="'+esc(x.id)+'" aria-label="今日の3つに入れる">🎯</button>':m==='dlg'?'<button class="td-pn" data-tdg="'+esc(x.id)+'" aria-label="指示文を出す">📋</button>':'')+'</div>';
+const shown=tdMore?stock:stock.slice(0,5);
+const days={};dnA.forEach(x=>{const d=tdDnOf(x);(days[d]=days[d]||[]).push(x);});
 p.innerHTML='<div class="page-head"><button class="bk" id="pgBk">‹ 戻る</button><span class="tt">📋 今日のやる事</span><span style="width:36px"></span></div><div class="page-body">'+
-((tdBadDay())?'<div class="td-bad">😵 しんどい日：'+(tdAllShow?'全部出している':'🙌手を動かす・🤖AIに任せる物だけ出している'+(hid?'（🧠など '+hid+'件は隠した）':''))+'<button class="chip" id="tdAllB">'+(tdAllShow?'🙌🤖だけにする':'全部見る')+'</button></div>':'')+
-'<div class="td-add"><input type="text" id="tdIn" maxlength="60" placeholder="＋ やる事を1行で（Enterで足す）"><button class="fr-mic" id="tdMic" aria-label="音声で書く">'+MICSVG+'</button><button class="chip" id="tdGo">足す</button></div>'+
-(op.length?shown.map(item).join('')+(op.length>3?'<button class="an-more" id="tdMoreB">'+(tdMore?'▲ たたむ':'▼ ほか'+(op.length-3)+'つ')+'</button>':''):'<div class="an-empty">今日のやる事は無い。上に1行で足す</div>')+
-(rowsWip.length?'<div class="sh-label" style="margin-top:12px">⏸ 日記で途中（1行ずつの⏸）</div>'+rowsWip.map((x,j)=>'<div class="td-it"><button class="td-ck" data-rwc="'+j+'">◻️</button><button class="td-b" data-rwo="'+j+'"><b>'+esc(x.a.t)+'</b><i>'+esc(x.d.slice(5).replace('-','/'))+(x.en.p?' 📍'+esc(x.en.p):'')+'</i></button></div>').join(''):'')+
-(later.length?'<div class="sh-label" style="margin-top:12px">📅 明日以降 '+later.length+'</div>'+later.map(x=>'<div class="td-it"><button class="td-b" data-tde="'+esc(x.id)+'"><b>'+esc(x.t)+'</b><i>🕐 '+esc(x.sd.slice(5).replace('-','/')+' '+(x.s||''))+'</i></button></div>').join(''):'')+
-''+   /* c19.6：🛠HIBIKIは ⚙設定 へ移した（やる事は商売だけ） */
-'<div class="td-done"><div class="sh-label">✅ 今日やった '+(dn.length+rowsDone.length)+(ng?'（⚡ながら完了 '+ng+'）':'')+'</div>'+
-dn.map(x=>'<div class="td-dn'+(x.ng?' ng':'')+'"><span>'+(x.ng?'⚡':'✅')+'</span><b>'+esc(x.t)+'</b><button data-tdu="'+esc(x.id)+'">戻す</button></div>').join('')+rowsDone.map(x=>'<div class="td-dn"><span>✅</span><b>'+esc(x.a.t)+'</b></div>').join('')+'</div>'+
-(sd.length?'<details class="td-sd"><summary>⏳ いつか '+sd.length+'</summary>'+sd.map(x=>'<div class="td-dn"><span>⏳</span><b>'+esc(x.t)+'</b><button data-tdr="'+esc(x.id)+'">今日に戻す</button></div>').join('')+'</details>':'')+
+'<div class="td-add"><input type="text" id="tdIn" maxlength="60" placeholder="＋ やる事を1行で（Enterで足す→📦ストック）"><button class="fr-mic" id="tdMic" aria-label="音声で書く">'+MICSVG+'</button><button class="chip" id="tdGo">足す</button></div>'+
+'<div class="td-sec">🎯 今日の3つ<small>'+pins.length+'/3</small></div>'+pins.map(x=>item(x,'pin')).join('')+
+(pins.length<3?'<div class="td-slot">'+(st0.length?'📦 ストックの 🎯 を押すと、ここに入る':'空き')+'</div>':'')+
+'<div class="td-sec">📦 ストック<small>'+st0.length+'</small></div>'+
+(tdBadDay()?'<div class="td-bad">😵 しんどい日：'+(tdAllShow?'全部出している':'🙌手を動かす・🤖AIに任せる物だけ'+(hid?'（'+hid+'件は隠した）':''))+'<button class="chip" id="tdAllB">'+(tdAllShow?'🙌🤖だけにする':'全部見る')+'</button></div>':'')+
+(stock.length?shown.map(x=>item(x,'stock')).join('')+(stock.length>5?'<button class="an-more" id="tdMoreB">'+(tdMore?'▲ たたむ':'▼ ほか'+(stock.length-5)+'つ')+'</button>':''):'<div class="an-empty">ストックは空。上に1行で足す</div>')+
+(dlg.length?'<div class="td-sec">🤖 任せ中<small>'+dlg.length+'</small></div>'+dlg.map(x=>item(x,'dlg')).join(''):'')+
+'<details class="td-sd"><summary>✅ やった　今日 '+(dnT.length+rowsDone.length)+'・7日 '+(dnA.length)+'</summary>'+
+Object.keys(days).sort().reverse().map(d=>'<div class="td-day">'+(d===t?'今日':d.slice(5).replace('-','/'))+'</div>'+days[d].map(x=>'<div class="td-dn'+(x.ng?' ng':'')+'"><span>'+(x.ng?'⚡':'✅')+'</span><b>'+esc(x.t)+'</b>'+(d===t?'<button data-tdu="'+esc(x.id)+'">戻す</button>':'')+'</div>').join('')).join('')+
+rowsDone.map(x=>'<div class="td-dn"><span>✅</span><b>'+esc(x.a.t)+'</b></div>').join('')+'</details>'+
+(later.length?'<details class="td-sd"><summary>📅 明日以降 '+later.length+'</summary>'+later.map(x=>'<div class="td-it"><button class="td-b" data-tde="'+esc(x.id)+'"><b>'+(x.pin?'🎯 ':'')+esc(x.t)+'</b><i>'+esc(x.sd.slice(5).replace('-','/')+' '+(x.s||''))+'</i></button></div>').join('')+'</details>':'')+
+(sd.length?'<details class="td-sd"><summary>⏳ いつか '+sd.length+'</summary>'+sd.map(x=>'<div class="td-dn"><span>⏳</span><b>'+esc(x.t)+'</b><button data-tdr="'+esc(x.id)+'">ストックへ戻す</button></div>').join('')+'</details>':'')+
+(rowsWip.length?'<details class="td-sd"><summary>⏸ 日記で途中 '+rowsWip.length+'</summary>'+rowsWip.map((x,j)=>'<div class="td-it"><button class="td-ck" data-rwc="'+j+'">◻️</button><button class="td-b" data-rwo="'+j+'"><b>'+esc(x.a.t)+'</b><i>'+esc(x.d.slice(5).replace('-','/'))+(x.en.p?' 📍'+esc(x.en.p):'')+'</i></button></div>').join('')+'</details>':'')+
 '</div>';
 p.classList.add('open');$('pgBk').onclick=closePage;const re=()=>renderTodoPage();
 const add=()=>{const v=$('tdIn').value;if(!v.trim())return;tdNew(v,tdHibOn?{fl:{hib:1}}:null);re();setTimeout(()=>{try{$('tdIn').focus();}catch(e){}},50);};
-$('tdGo').onclick=add;{const hb=$('tdHibT');if(hb)hb.onclick=()=>{tdHibOn=!tdHibOn;hb.classList.toggle('on',tdHibOn);$('tdIn').placeholder=tdHibOn?'🛠 HIBIKIで直したい・足したい事を1行で':'＋ やる事を1行で（Enterで足す）';try{$('tdIn').focus();}catch(e){}};}$('tdIn').onkeydown=ev=>{if(ev.key==='Enter'&&!ev.isComposing&&ev.keyCode!==229){ev.preventDefault();add();}};{const mb=$('tdMic');if(mb)mb.onclick=()=>micToggle(mb,$('tdIn'));}
+$('tdGo').onclick=add;$('tdIn').onkeydown=ev=>{if(ev.key==='Enter'&&!ev.isComposing&&ev.keyCode!==229){ev.preventDefault();add();}};{const mb=$('tdMic');if(mb)mb.onclick=()=>micToggle(mb,$('tdIn'));}
 {const mb=$('tdMoreB');if(mb)mb.onclick=()=>{tdMore=!tdMore;re();};}{const ab=$('tdAllB');if(ab)ab.onclick=()=>{tdAllShow=!tdAllShow;re();};}
 p.querySelectorAll('[data-tdc]').forEach(b=>b.onclick=()=>{b.textContent='✅';setTimeout(()=>{tdComplete(b.dataset.tdc);re();},120);});
 p.querySelectorAll('[data-tde]').forEach(b=>b.onclick=()=>tdEditSheet(b.dataset.tde,re));
-p.querySelectorAll('[data-tds]').forEach(b=>b.onclick=()=>{const x=state.todos[b.dataset.tds];tdNew('最初の5分だけ：'+x.t,{pin:t,par:b.dataset.tds});toast('🪄 最初の5分だけ、を今やるにした');re();});
-p.querySelectorAll('[data-tdt]').forEach(b=>b.onclick=()=>tdTimeSheet(b.dataset.tdt,re));
-p.querySelectorAll('[data-tdq]').forEach(b=>b.onclick=()=>tdQuitSheet(b.dataset.tdq,re));
+p.querySelectorAll('[data-tdp]').forEach(b=>b.onclick=()=>{if(tdPinTo(b.dataset.tdp,t))toast('🎯 今日の3つに入れた');re();});
+p.querySelectorAll('[data-tdg]').forEach(b=>b.onclick=()=>dlgSheet(b.dataset.tdg,re));
 p.querySelectorAll('[data-tdu]').forEach(b=>b.onclick=()=>{tdUndo(b.dataset.tdu);re();});
 p.querySelectorAll('[data-tdr]').forEach(b=>b.onclick=()=>{tdSet(b.dataset.tdr,{quit:null,d:t});re();});
 p.querySelectorAll('[data-rwc]').forEach(b=>b.onclick=()=>{const x=rowsWip[+b.dataset.rwc];mutate(()=>{const en=state.entries[x.d][x.k];const a=en.acts[x.i];if(a){a.st='done';a.dn=t;delete a.due;en.ts=Date.now();}});celebrate('🎉 完了！','途中だった「'+x.a.t+'」');re();});
@@ -8727,7 +8766,18 @@ openSub('<div class="sh-time"><span>✓ できた：どこでやった？</span>
 '<div class="sh-btns"><button class="delbtn" id="dwNo" style="flex:1">閉じる</button><button class="savebtn" id="dwOnly">記録に入れず済みだけ</button></div>',null);
 $('sheet2').querySelectorAll('[data-dw]').forEach(b=>b.onclick=()=>{const k=b.dataset.dw;mutate(()=>{const en=state.entries[t]&&state.entries[t][k];if(!en)return;en.acts=(Array.isArray(en.acts)?en.acts.slice():[]).concat([{t:txt}]);en.ts=Date.now();});closeSub();prepDoSet(i,1);const en=eo[k];toast('✓ '+(en?en.s+' '+(en.p||''):'')+' に入れた');});
 $('dwOnly').onclick=()=>{closeSub();prepDoSet(i,1);toast('✓ 済みにした');};$('dwNo').onclick=()=>closeSub();}
-function prepDoTap(i){const p=prepToday(),dd=(p&&Array.isArray(p.dd))?p.dd:[];if(!dd[i]){openDoWhere(i);return;}
+function prepTdId(p,i){if(!p)return '';const T=state.todos||{},si=Array.isArray(p.dsi)?p.dsi:[];if(si[i]&&T[si[i]]&&!T[si[i]].del)return si[i];const tx=prepDos(p)[i];if(!tx)return '';const L=tdAll().filter(x=>!x.quit&&String(x.t||'').trim()===tx);return (L.find(x=>!tdDone(x))||L[0]||{}).id||'';}
+function prepTdIdx(p,id){if(!p)return -1;const x=(state.todos||{})[id],si=Array.isArray(p.dsi)?p.dsi:[];let i=si.indexOf(id);if(i<0&&x)i=prepDos(p).indexOf(String(x.t||'').trim());return i;}
+function prepTdSync(id,v){const t=todayStr(),pp=(state.prep||{})[t];if(!pp||pp.del)return;const i=prepTdIdx(pp,id);if(i<0)return;const n=prepDos(pp).length,dd=Array.isArray(pp.dd)?pp.dd.slice(0,n):[];while(dd.length<n)dd.push(0);dd[i]=v?1:0;pp.dd=dd;pp.done=dd.every(Boolean)?1:0;pp.ts=Date.now();}
+function prepLinkTd(date,dos){const t=todayStr(),ids=[];dos.forEach(tx=>{tx=String(tx||'').trim();if(!tx)return;const L=tdAll().filter(x=>!x.quit&&!tdHib(x)&&String(x.t||'').trim()===tx),op=L.find(x=>!tdDone(x)),dn=L.find(x=>tdDone(x)&&tdDnOf(x)===t);
+let id='';if(op){id=op.id;if(op.pin!==date||op.dlg)tdSet(id,{pin:date,sd:date>t?date:null,dlg:null});}else if(dn)id=dn.id;else id=tdNew(tx,{pin:date,sd:date>t?date:null});if(id)ids.push(id);});
+if(ids.length)tdPinnedOn(date).forEach(x=>{if(ids.indexOf(x.id)<0)tdSet(x.id,{pin:null});});return ids;}
+function prepLinkFix(){const t=todayStr(),p=(state.prep||{})[t];if(!p||p.del||p.skip||p.quit||Array.isArray(p.dsi))return;const ds=prepDos(p);if(!ds.length)return;
+const ids=prepLinkTd(t,ds),dd=Array.isArray(p.dd)?p.dd:[];mutate(()=>{const q=state.prep[t];if(q){q.dsi=ids;q.ts=Date.now();}});
+ids.forEach((id,i)=>{const x=(state.todos||{})[id];if(dd[i]&&x&&!tdDone(x))tdComplete(id,true);});}
+function prepDoTap(i){const p=prepToday();if(!p)return;const dd=Array.isArray(p.dd)?p.dd:[],v=!dd[i],id=prepTdId(p,i);
+toast(v?'✓ 済み':'戻した');prepDoSet(i,v);if(id){const x=(state.todos||{})[id];if(v&&x&&!tdDone(x))tdComplete(id,true);else if(!v&&x&&tdDone(x))tdUndo(id);}}
+function prepDoTapOld(i){const p=prepToday(),dd=(p&&Array.isArray(p.dd))?p.dd:[];if(!dd[i]){openDoWhere(i);return;}
 const t=todayStr();let all=false;
 mutate(()=>{const p=(state.prep||{})[t];if(!p)return;const n=prepDos(p).length,dd=Array.isArray(p.dd)?p.dd.slice(0,n):[];while(dd.length<n)dd.push(0);
 dd[i]=dd[i]?0:1;p.dd=dd;if(dd.every(Boolean)){p.done=1;all=true;}p.ts=Date.now();});
@@ -8765,6 +8815,7 @@ function prepArrDef(place){return prepArrBefore(place)||((prepLast()||{}).arr)||
 var PPD=null;
 function openPrepSheet(date,pre){
 const td=todayStr();date=date||addDays(td,1);
+if(!pre&&date>td&&TDLS!==date&&tdLeftOver(date).length){tdLeftSheet(date,()=>openPrepSheet(date,pre));return;}
 const old=(state.prep||{})[date],ok0=!!(old&&!old.del&&!old.skip),last=prepLast(),lab=prepLabel(date),sp=prepSleepPlace(date);
 const dr=(PPD&&PPD.d===date)?PPD.v:null;PPD=null;
 const od=ok0?prepDos(old):[],f0=(ok0&&old.dos1fl)||{};
@@ -8794,7 +8845,7 @@ openSub('<div class="sh-time"><span>🌅 '+esc(lab)+'の準備　'+esc(prepDateT
 '<div><div class="pq-dh"><button type="button" class="pq-fold" id="pqDosT"></button><span class="pq-flg" id="pqFlg"><button type="button" class="chip pq-fl m" id="pqFlM" aria-label="稼ぎに直結">💰</button><button type="button" class="chip pq-fl f" id="pqFlF" aria-label="放置で損">🔥</button></span></div>'+
 '<div id="pqDosB"><div class="pq-help"><div>💰 稼ぎに直結（売上・入金・成約・買取・DM・出品）</div><div>🔥 放置で損（人間関係・訴訟・延滞・手付が流れる・期限）</div><div>迷ったら：必ずやらなければいけないものの中で、一番軽いものから順に！</div></div>'+
 '<div class="pq-d1"><input type="text" id="pqD0" maxlength="60" placeholder="1つ目（例：書類を渡す）" autocomplete="off"><button type="button" class="pq-dok" data-dok="0" aria-label="できた">✓</button></div>'+
-'<div class="pq-d1"><input type="text" id="pqD1" maxlength="60" placeholder="2つ目" autocomplete="off"><button type="button" class="pq-dok" data-dok="1" aria-label="できた">✓</button></div><div class="pq-d1"><input type="text" id="pqD2" maxlength="60" placeholder="3つ目" autocomplete="off"><button type="button" class="pq-dok" data-dok="2" aria-label="できた">✓</button></div></div></div>'+
+'<div class="pq-d1"><input type="text" id="pqD1" maxlength="60" placeholder="2つ目" autocomplete="off"><button type="button" class="pq-dok" data-dok="1" aria-label="できた">✓</button></div><div class="pq-d1"><input type="text" id="pqD2" maxlength="60" placeholder="3つ目" autocomplete="off"><button type="button" class="pq-dok" data-dok="2" aria-label="できた">✓</button></div><div class="pq-stk" id="pqStk"></div></div></div>'+
 '<div class="pq-act"><button type="button" class="savebtn pq-reg" id="pqOk">'+(ok0?'登録（上書き）':'登録')+'</button><button type="button" class="pq-skip" id="pqSkip">'+(date===td?'今日は飛ばす':'今夜は飛ばす')+'</button>'+(ok0?'<button type="button" class="pq-skip pq-redo" id="pqRedo">やり直す（空にする）</button>':'')+'</div>'+
 '<div id="pqLine"></div>',null);
 const arrI=$('pqArr'),trS=$('pqTr'),dI=[$('pqD0'),$('pqD1'),$('pqD2')];
@@ -8806,7 +8857,7 @@ dI.forEach((x,i)=>{x.value=S.dos[i]||'';x.oninput=()=>{S.dos[i]=x.value;upd();};
 $('sheet2').querySelectorAll('[data-dok]').forEach(b=>{const i=Number(b.dataset.dok);b.style.display=(can&&String(S.dos[i]||'').trim())?'':'none';b.classList.toggle('on',!!dd[i]);b.textContent=dd[i]?'✓済':'✓';});};
 paintDok();$('sheet2').querySelectorAll('[data-dok]').forEach(b=>b.onclick=()=>{const i=Number(b.dataset.dok),pp=(state.prep||{})[date],dd=(pp&&Array.isArray(pp.dd))?pp.dd:[];if(dd[i]){prepDoSet(i,0);toast('戻した');paintDok();return;}
 const tx=String(S.dos[i]||'').trim();if(!tx)return;if(String(prepDos(pp)[i]||'')!==tx){mutate(()=>{const q=Object.assign({},state.prep[date]);const a=prepDos(q);a[i]=tx;q.dos=a;q.do=a[0]||'';q.ts=Date.now();state.prep[date]=q;});}
-openDoWhere(i,tx);setTimeout(paintDok,400);});}
+prepDoSet(i,1);{const id=prepTdId((state.prep||{})[date],i),x=(state.todos||{})[id];if(id&&x&&!tdDone(x))tdComplete(id,true);}toast('✓ 済み');paintDok();});}
 const cv=()=>{const c=S.cur;return String(c==='f'?S.from:c[0]==='v'?(S.vias[Number(c.slice(1))]||''):S.to).trim();};
 const retr=()=>{if(S.trd)return;const P=prepPts(S);S.tr=S.to?prepTrGuess(P[P.length-2],S.to,date):mvGuessTr(date);trS.value=S.tr;};
 const toChg=()=>{S.pf=S.to?placePf(S.to):0;
@@ -8874,7 +8925,11 @@ if(!(top.fl&&(top.fl.money||planFire(top))))q+='<small class="pq-weak">💰🔥�
 el.innerHTML='<div class="pq-lnh">'+esc(lab)+'の並び</div><div class="pq-ln">'+segs.map(s=>'<span>'+s+'</span>').join('<i>→</i>')+'</div>'+q;
 {const y=$('pqTopY');if(y)y.onclick=()=>{S.top=1;upd();};}
 {const n=$('pqTopN');if(n)n.onclick=()=>{PPD={d:date,v:Object.assign({},S,{dos:S.dos.slice(),fl:Object.assign({},S.fl),vias:S.vias.slice(),mm:Object.assign({},S.mm),mshow:Object.assign({},S.mshow)})};closeSub();openPlanPage();};}};
-const paintDos=()=>{$('pqDosT').innerHTML=(S.dosO?'▾':'▸')+' 何からスタートする？<small>（任意・3つまで）</small>';$('pqDosB').style.display=S.dosO?'':'none';$('pqFlg').style.display=S.dosO?'':'none';
+const paintStk=()=>{const el=$('pqStk');if(!el)return;const has=S.dos.map(x=>String(x||'').trim());
+const L=tdPinnedOn(date).concat(tdSorted(tdOpenOn(date)).filter(x=>!tdHib(x)&&!x.dlg&&x.pin!==date)).filter(x=>has.indexOf(String(x.t||'').trim())<0).slice(0,12);
+el.innerHTML=L.length?'<small>📦 押すと上に入る（🎯＝回した物）</small>'+L.map(x=>'<button type="button" class="chip" data-pst="'+esc(x.id)+'">'+(x.pin===date?'🎯 ':'')+esc(x.t)+'</button>').join(''):'';
+el.querySelectorAll('[data-pst]').forEach(b=>b.onclick=()=>{const x=(state.todos||{})[b.dataset.pst];if(!x)return;const i=[0,1,2].find(k=>!String(S.dos[k]||'').trim());if(i==null){toast('3つ埋まっている。どれかを消してから');return;}S.dos[i]=String(x.t||'').slice(0,60);dI[i].value=S.dos[i];upd();paintStk();});};
+const paintDos=()=>{paintStk();$('pqDosT').innerHTML=(S.dosO?'▾':'▸')+' 何からスタートする？<small>（任意・3つまで）</small>';$('pqDosB').style.display=S.dosO?'':'none';$('pqFlg').style.display=S.dosO?'':'none';
 $('pqFlM').classList.toggle('sel',!!S.fl.money);$('pqFlF').classList.toggle('sel',!!S.fl.fire);};
 let minKeys=[],minSig='';
 const paintMins=(c,show)=>{const el=$('pqMins'),tg=$('pqMinT'),multi=(c.segs||[]).length>1;
@@ -8932,6 +8987,7 @@ const rec={arr:S.arr,from:h?'':fr,vias:h?[]:vs,to:h?'':to,pf:h?0:(S.pf||0),tr:h?
 if(d0&&(S.fl.money||S.fl.fire))rec.dos1fl={money:S.fl.money?1:0,fire:S.fl.fire?1:0};
 mutate(()=>{state.prep=state.prep||{};state.prep[date]=rec;
 if(!h){state.rtm=state.rtm||{};c.segs.forEach(g=>{if(g.man>0&&(!g.est||g.est.min!==g.man))state.rtm[prepRtmId(g.a,g.b,g.tr||S.tr,g.band)]={from:g.a||'',to:g.b,tr:g.tr||S.tr,band:g.band,min:g.man,ts:Date.now()};});}});
+{const ids=dos.length?prepLinkTd(date,dos):[];mutate(()=>{const q=state.prep[date];if(q){q.dsi=ids;q.ts=Date.now();}});}
 closeSub();toast('🌅 '+lab+'の準備を登録'+(h?'　起きる '+c.wake:'　出発 '+c.dep+'・起きる '+c.wake));};
 paintPts();paintFlt();paintChips();paintCand();paintDos();paintTn();upd();}
 function prepAfterSleep(wait){
@@ -10082,7 +10138,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c19.9";
+const CL_APPVER="c20.0";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
