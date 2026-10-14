@@ -1,7 +1,7 @@
 /* HIBIKI Service Worker：オフラインでも開けるようにする。
    index.html は「まずネット、だめならキャッシュ」（新しい版をすぐ拾う）。アイコン類は「キャッシュ優先」。
    データ（Supabase の API）と写真はここでは触らない（アプリが自分で端末に控える）。 */
-const VER='hibiki-c20.5';
+const VER='hibiki-c20.6';
 const CORE=['./','./index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png','./icon-512-maskable.png','./apple-touch-icon.png'];
 self.addEventListener('install',e=>{
   e.waitUntil(caches.open(VER).then(c=>c.addAll(CORE).catch(()=>{})).then(()=>self.skipWaiting()));
@@ -30,10 +30,22 @@ self.addEventListener('fetch',e=>{
   }
   e.respondWith(caches.match(req).then(hit=>hit||fetch(req).then(r=>{const cp=r.clone();caches.open(VER).then(c=>c.put(req,cp)).catch(()=>{});return r;})));
 });
-/* c17.9：🚩 出発予定の通知を押したら、アプリを前面に出す（開いていなければ開く） */
+/* c20.6：🔔 閉じていても鳴る通知（Web Push）。iOS は「受けた Push には必ず通知を出す」が約束＝出さないと3回で購読が消える。
+   どの経路でも（中身が空でも JSON が壊れていても）必ず showNotification を waitUntil に渡す。アプリを開いている最中でも出す（早期 return しない） */
+self.addEventListener('push',e=>{
+  let d={};
+  try{d=e.data?e.data.json():{};}catch(x){try{d={body:e.data.text()};}catch(y){}}
+  if(!d||typeof d!=='object')d={};
+  const title=String(d.title||'HIBIKI').slice(0,120),tag=String(d.tag||'').replace(/^tb\|play\|.*$/,'tb|play');   /* 遊び枠は日付入りで積む（毎日別の行）→ 画面の通知は アプリ内の 'tb|play' と同じ tag で置き換える */
+  const opt={body:String(d.body||'').slice(0,300),icon:'icon-192.png',badge:'icon-192.png',data:{url:String(d.url||'./')}};
+  if(tag)opt.tag=tag;
+  e.waitUntil(Promise.resolve().then(()=>self.registration.showNotification(title,opt)).catch(()=>self.registration.showNotification('HIBIKI')));
+});
+/* c17.9：🚩 出発予定の通知を押したら、アプリを前面に出す（開いていなければ開く）。c20.6：通知の data.url があればそこを開く（同じ場所の相対だけ・無ければ './'） */
 self.addEventListener('notificationclick',e=>{e.notification.close();
+  let u='./';try{const w=e.notification.data&&e.notification.data.url;if(w){const x=new URL(w,self.registration.scope);if(x.origin===self.location.origin)u=x.href;}}catch(z){}
   e.waitUntil(self.clients.matchAll({type:'window',includeUncontrolled:true}).then(cs=>{
-    for(const c of cs){if('focus' in c)return c.focus();}
-    if(self.clients.openWindow)return self.clients.openWindow('./');}));});
+    for(const c of cs){if('focus' in c)return Promise.resolve().then(()=>c.focus()).catch(()=>self.clients.openWindow&&self.clients.openWindow(u));}   /* c20.6：focus() が拒まれたら開き直す（ホーム画面のアプリで前面に出せない時） */
+    if(self.clients.openWindow)return self.clients.openWindow(u);}));});
 /* ページからの「新しい版に入れ替えて」 */
 self.addEventListener('message',e=>{if(e.data==='skipWaiting')self.skipWaiting();});

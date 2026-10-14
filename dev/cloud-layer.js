@@ -11,7 +11,7 @@
    ・整合の点検（件数と ts の合計）で黙った食い違いを見つけて直す
    ・画面を離れる瞬間に keepalive で送る。ログインの更新は1本にまとめ、別タブの更新を先に読む
    ・同期の記録（直近40件）を「保存ランプの意味」の画面に出す */
-const CLOUD={url:'__SUPABASE_URL__',key:'__SUPABASE_KEY__',bucket:'photos'};
+const CLOUD={url:'__SUPABASE_URL__',key:'__SUPABASE_KEY__',bucket:'photos',vapid:'__VAPID_PUBLIC__'};   /* c20.6：🔔 VAPID 公開鍵（公開してよい鍵。秘密鍵は入れない） */
 const CL_SESS='hibiki-session',CL_SYNC='hibiki-sync',CL_LOGK='hibiki-cl-log',CL_KA='hibiki-ka';
 const CL_SHVER='c19-2';   /* 影の形式（署名の作り方）の版。変えたら影は作り直し */
 const CL_KA_MAX=40000;    /* keepalive の本文の上限（バイト）。ブラウザの上限 64KB に余裕を見る */

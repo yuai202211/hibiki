@@ -10,3 +10,4 @@ photos-export/
 *.log
 dev/build.js
 dev/make-baseline.js
+dev/push/
