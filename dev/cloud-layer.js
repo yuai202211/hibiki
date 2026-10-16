@@ -993,7 +993,7 @@ let afterCloudReady=function(){};
 async function cloudBoot(){
   clBaseSigs();CL.trackHot=true;   /* ここから先の保存は「書いた項目」として追う */
   const verUp=clGet('hibiki-ver','')!==CL_APPVER&&!!clGet('hibiki-ver','');   /* 版が上がった（初めての起動は除く） */
-  if(clGet('hibiki-ver','')!==CL_APPVER){clSet('hibiki-ver',CL_APPVER);clSet(CL_PWDAY,null);}   /* 版が上がった＝パスワード確認をやり直す */
+  if(clGet('hibiki-ver','')!==CL_APPVER){clSet('hibiki-ver',CL_APPVER);}   /* c21.6：版が上がってもパスワード確認はやり直さない（1日1回のまま） */
   if(!cloudConfigured()){CL.ready=true;renderSync();return;}
   try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().then(p=>(navigator.storage.estimate?navigator.storage.estimate():Promise.resolve({})).then(es=>{
     const mb=x=>x?(x/1048576).toFixed(1):'?';clNote('storage','永続保存 '+(p?'許可':'未許可')+'・使用 '+mb(es.usage)+'/'+mb(es.quota)+'MB');})).catch(()=>{});}catch(e){}
@@ -1008,7 +1008,7 @@ async function cloudBoot(){
   /* 起動した最初の画面：未ログインならログイン画面、ログイン済みでも今日まだならパスワード確認（自動ログインなら出さない）。
      起動フラッシュ（毎日のルールの画面）が出ている間は、閉じられてから出す */
   /* 本人の決め事（2026-10-03）：ログインは「毎日のルールの画面より前の、本当の最初」。起動フラッシュの上に重ねて出す */
-  if(!cloudLoggedIn()||clDailyDue()||verUp){try{$('ovl').classList.add('cl-first');openLoginSheet({daily:cloudLoggedIn(),ver:verUp});}catch(e){}}   /* 版が上がった最初の起動は、自動ログインでもログイン画面（本人指示 2026-10-06） */
+  if(!cloudLoggedIn()||clDailyDue()){try{$('ovl').classList.add('cl-first');openLoginSheet({daily:cloudLoggedIn(),ver:false});}catch(e){}}else if(verUp){try{toast('✨ 新しい版（'+CL_APPVER+'）にした');}catch(e){}}   /* c21.6：版が上がってもログインは続ける（パスワードは1日1回だけ。本人OK 2026-10-17） */   /* 版が上がった最初の起動は、自動ログインでもログイン画面（本人指示 2026-10-06） */
   if(!cloudLoggedIn()){return;}
   clNote('boot','起動 '+CL_APPVER+'｜影 '+(CL.shadowOk?'あり（受信位置 '+CL.seq+'）':'なし → 全件受信')+'｜未送信 '+clDirtyCount()+'件｜署名 '+CL.perf.baseSigs+'ms');
   CL.integ.due=true;   /* 起動ごとに1回は整合を確かめる */
