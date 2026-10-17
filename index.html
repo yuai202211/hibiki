@@ -1763,6 +1763,10 @@ body.cardvis .fab{display:none!important}
 .srbar{cursor:pointer}.srbar input{pointer-events:none}
 
 .topset{width:auto;min-width:34px;height:auto;padding:3px 6px 2px;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;border-radius:10px}.topset small{font-size:9px;font-weight:800;color:#5b6475;line-height:1}
+
+.app.fold #gstrip,.app.fold #ftk,.app.fold .dreamrow,.app.fold #pinRow,.app.fold #nowCard{display:none!important}
+.foldbar{display:none;width:100%;margin:0;padding:4px 10px;background:#1f2430;color:#fff;font-size:12px;font-weight:800;text-align:center;border:0;letter-spacing:.04em}
+.app.fold .foldbar{display:block}
 </style>
 
 <div id="bootmsg" style="position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:24px;background:#faf9f5;color:#6a7080;font:800 15px -apple-system,BlinkMacSystemFont,sans-serif;text-align:center"><div style="font-size:34px">📔</div><div class="hb-logo" style="font-size:24px;color:#0a9a54"><b>HIBIKI</b><i>日々記</i></div><div id="bootmsgT">読み込み中…</div><div id="bootmsgS" style="font-size:12px;color:#9aa3b5;font-weight:700"></div></div>
@@ -1787,6 +1791,7 @@ body.cardvis .fab{display:none!important}
 </div>
 
 <!-- 保存に問題がある間だけ出る診断帯。スクショ1枚で原因が分かる -->
+<button type="button" class="foldbar" id="foldBar" style="display:none" aria-label="上の帯とカードを出す">▾ 💰🏢🏠📣</button>   <!-- c21.7：日記をスクロールすると上（帯・東証・📌カード・書く）がたたまれる。押すと戻る -->
 <button class="diagstrip" id="diagstrip" style="display:none"></button>
 <div class="gstrip" id="gstrip" style="display:none"></div>
 <button type="button" class="ftk" id="ftk" aria-label="這い上がった話（押すと次）"><span id="ftkT"></span></button>   <!-- c16.4：💰法人化引っ越しの帯（毎分意識する） -->
@@ -3919,7 +3924,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c21.6）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c21.7）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -9472,6 +9477,13 @@ $('syncdot').onclick=openSyncSheet;
 $('streak').onclick=openStatsSheet;
 $('dreamBar').onclick=()=>{dseg='clock';openDreamPage();};
 $('topSet2').onclick=openSetPage;
+{const sc=$('scr'),ap=$('app'),fb=$('foldBar');let lastY=0,foldAt=0;
+const setFold=on=>{if(!ap)return;ap.classList.toggle('fold',on);if(on)foldAt=Date.now();};
+if(sc&&ap){sc.addEventListener('scroll',()=>{const y=sc.scrollTop,room=sc.scrollHeight-sc.clientHeight;
+if(!ap.classList.contains('fold')){if(y>80&&y>lastY+2&&room>300)setFold(true);}
+else if(y<=0&&Date.now()-foldAt>700)setFold(false);
+lastY=y;},{passive:true});}
+if(fb)fb.onclick=()=>{setFold(false);try{sc.scrollTo({top:0,behavior:'smooth'});}catch(e){sc.scrollTop=0;}};}
 const navGo=fn=>{if($('page').classList.contains('open'))closePage();fn();};
 $('navHome').onclick=()=>{closePage();ui.date=todayStr();ui.tab='di';topView='top';render();try{$('scr').scrollTop=0;}catch(e){}};
 $('navDiary').onclick=()=>{closePage();ui.date=todayStr();ui.tab='di';topView='diary';render();scrollToNow();};
@@ -10554,7 +10566,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c21.6";
+const CL_APPVER="c21.7";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
