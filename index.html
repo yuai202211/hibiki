@@ -36,7 +36,7 @@ display:flex;justify-content:center;
 button,input,textarea{font-family:var(--maru);font-size:inherit;color:inherit}
 button{border:0;background:none;cursor:pointer}
 .app{
-width:100%;max-width:430px;height:100dvh;
+width:100%;max-width:390px;height:100dvh;
 background:var(--bg);color:var(--ink);
 font-size:13.5px;line-height:1.6;font-weight:500;
 display:flex;flex-direction:column;overflow:hidden;
@@ -899,7 +899,7 @@ display:flex;flex-direction:column;gap:11px;max-height:94%;overflow-y:auto;
 .te-dtb{display:flex;gap:6px;align-items:center;margin-top:8px}.te-dtb input{min-width:0;font:inherit;padding:6px;border-radius:10px;border:1px solid var(--line)}.te-dtb input[type=date]{flex:1.3}.te-dtb input[type=time]{flex:1}.te-dtb span{flex:0}
 .te-dtq{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.te-dtq .chip{font-size:12px}
 .td-add{display:flex;gap:6px;align-items:center;margin-bottom:10px}.td-add input{flex:1;min-width:0;font-size:16px}
-.td-it{display:flex;flex-wrap:wrap;align-items:flex-start;gap:8px;padding:10px;border-radius:16px;background:#fff;border:1px solid var(--line);margin-top:8px}.td-it.pin{border:2px solid #3b63d9;background:#f5f8ff}
+.td-it{display:flex;flex-wrap:wrap;align-items:flex-start;gap:8px;padding:10px;border-radius:16px;background:#fff;border:1px solid var(--line);margin-top:8px}.td-it.tdpin{border:2px solid #3b63d9;background:#f5f8ff}
 .td-sec{margin-top:16px;font-weight:900;font-size:14.5px;color:#1f2430}.td-sec small{color:#8a90a0;font-weight:800;margin-left:6px}
 .td-pn{font-size:20px;line-height:1;padding:6px 8px;border-radius:12px;background:#eef3ff;align-self:center}
 .td-slot{margin-top:8px;padding:12px;border:2px dashed #d5dcf0;border-radius:16px;color:#8a90a0;font-size:12.5px;font-weight:800;text-align:center}
@@ -1767,6 +1767,8 @@ body.cardvis .fab{display:none!important}
 .app.fold #gstrip,.app.fold #ftk,.app.fold .dreamrow,.app.fold #pinRow,.app.fold #nowCard{display:none!important}
 .foldbar{display:none;width:100%;margin:0;padding:4px 10px;background:#1f2430;color:#fff;font-size:12px;font-weight:800;text-align:center;border:0;letter-spacing:.04em}
 .app.fold .foldbar{display:block}
+
+.hour.wr .wr-r{row-gap:4px}.wr-l{display:flex;width:100%;justify-content:flex-end;gap:4px}
 </style>
 
 <div id="bootmsg" style="position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:24px;background:#faf9f5;color:#6a7080;font:800 15px -apple-system,BlinkMacSystemFont,sans-serif;text-align:center"><div style="font-size:34px">📔</div><div class="hb-logo" style="font-size:24px;color:#0a9a54"><b>HIBIKI</b><i>日々記</i></div><div id="bootmsgT">読み込み中…</div><div id="bootmsgS" style="font-size:12px;color:#9aa3b5;font-weight:700"></div></div>
@@ -3446,7 +3448,7 @@ if(isToday){
 const os=openSleep(),night=(nowH>=21||nowH<5),op=nowCardOpen();
 const bp=os?'':sleepBedPill();
 const mvNow=!!openMove();
-right='<span class="wr-r"><span class="wr-g">'+mvBtnHtml()+(mvNow?'':carBtnHtml()+rojuBtnHtml())+'</span><span class="wr-g">'+srBtnHtml()+((topView==='diary'&&!mvNow)?learnBtnHtml()+rdBtnHtml()+chBtnHtml():'')+'</span><span class="wr-g">'+((topView==='diary'&&!mvNow)?(os?'<button class="chip mvb wake ic2" id="wrWake">🌞<small>起きた</small></button>':'<button class="chip mvb slp ic2" id="wrSleep">💤<small>寝る</small></button>'):'')+srMudaHtml()+'</span>'+   /* c17.1：📔日記にも寝る／起きた */   /* 🚗出発／🏁到着・🚙・🕳️📲📞。睡眠は上の帯へ（c8.2） */
+right='<span class="wr-r"><span class="wr-l"><span class="wr-g">'+mvBtnHtml()+(mvNow?'':carBtnHtml()+rojuBtnHtml())+'</span><span class="wr-g">'+(mvNow?'':(os?'<button class="chip mvb wake ic2" id="wrWake">🌞<small>起きた</small></button>':'<button class="chip mvb slp ic2" id="wrSleep">💤<small>寝る</small></button>'))+srMudaHtml()+'</span></span><span class="wr-l"><span class="wr-g">'+srBtnHtml()+(mvNow?'':learnBtnHtml()+rdBtnHtml()+chBtnHtml())+'</span></span>'+   /* c22.1：PCもスマホも同じ2段（幅で変えない） */   /* c17.1：📔日記にも寝る／起きた */   /* 🚗出発／🏁到着・🚙・🕳️📲📞。睡眠は上の帯へ（c8.2） */
 '</span>';
  }
 tvA=html.length;
@@ -3924,7 +3926,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c22.0）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c22.1）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -6880,7 +6882,7 @@ const dnA=tdAll().filter(x=>tdDone(x)&&!tdHib(x)&&tdDnOf(x)>=d7).sort((a,b)=>{co
 const rowsWip=stList().filter(x=>x.a.st==='wip'&&!x.a.td),rowsDone=stList().filter(x=>x.a.st==='done'&&!x.a.td&&(x.a.dn||x.d)===t);
 const tagC=x=>{const n=tdDays(x);return n<=0?'':n===1?'c1':n<6?'c2':'c3';};
 const meta=x=>(x.dlg&&x.dlg.to?'<em class="td-dlg">🤖→'+esc(x.dlg.to)+'</em>':'')+(tdTag(x)?'<em class="'+tagC(x)+'">'+esc(tdTag(x))+'</em>':'')+(x.s?'<i>🕐 '+esc((x.sd&&x.sd!==t?x.sd.slice(5).replace('-','/')+' ':'')+x.s+'–'+(x.e||''))+'</i>':'')+(x.c?'<small>'+esc(x.c.slice(0,60))+'</small>':'');
-const item=(x,m)=>'<div class="td-it'+(m==='pin'?' pin':'')+'"><button class="td-ck" data-tdc="'+esc(x.id)+'" aria-label="完了">◻️</button><button class="td-b" data-tde="'+esc(x.id)+'"><b>'+(x.tg&&TD_TG[x.tg]?TD_TG[x.tg][0]+' ':'')+esc(x.t)+'</b>'+meta(x)+'</button>'+
+const item=(x,m)=>'<div class="td-it'+(m==='pin'?' tdpin':'')+'"><button class="td-ck" data-tdc="'+esc(x.id)+'" aria-label="完了">◻️</button><button class="td-b" data-tde="'+esc(x.id)+'"><b>'+(x.tg&&TD_TG[x.tg]?TD_TG[x.tg][0]+' ':'')+esc(x.t)+'</b>'+meta(x)+'</button>'+
 (m==='stock'?'<button class="td-pn" data-tdp="'+esc(x.id)+'" aria-label="今日の3つに入れる">🎯</button>':m==='dlg'?'<button class="td-pn" data-tdg="'+esc(x.id)+'" aria-label="指示文を出す">📋</button>':'')+'</div>';
 const shown=tdMore?stock:stock.slice(0,5);
 const days={};dnA.forEach(x=>{const d=tdDnOf(x);(days[d]=days[d]||[]).push(x);});
@@ -7063,8 +7065,7 @@ function mvBtnTick(){try{for(const [id,f] of [['wrSpE',openSp],['wrTelE',openTel
 function wrFit(){try{const row=document.querySelector('.hour.wr'),r=row&&row.querySelector('.wr-r'),bd=row&&row.querySelector('.body');if(!r||!bd)return;
 const over=()=>bd.scrollWidth>bd.clientWidth+1||row.scrollWidth>row.clientWidth+1;
 if(over()){const s=$('wrSlp');if(s)s.remove();}
-if(over())r.classList.add('tight');
-if(over())r.classList.add('wrap');}catch(e){}}
+r.classList.add('wrap');}catch(e){}}
 function quickPlace(p){
 if(ui.date!==todayStr()){ui.date=todayStr();ui.tab='di';render();}
 openEntrySheet(todayStr(),{hour:new Date().getHours()});
@@ -10566,7 +10567,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c22.0";
+const CL_APPVER="c22.1";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
