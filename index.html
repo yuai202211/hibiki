@@ -3924,7 +3924,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c21.9）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c22.0）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -4341,7 +4341,7 @@ mvCutPaint();
 const drv=(!trSel||trSel==='car'||trSel==='carrier'||trSel==='walk');
 const isCar=(eType==='incar');
 const isStay=(eType==='stay');const mv1=eType==='move'&&!!(sheetSt&&sheetSt.one);   /* c13.8：移動の☝️ */
-const q=qgList(isCar?['rest','pcwork','ai','bizcall','famcall','nap','sleep','spplay','chat']:isStay?['sleep','nap','ai','@B','@P','work','meal','rest','pcwork','spplay']:(eType!=='move')?[]:(drv?(qMore?['audio','bizcall','famcall','think','chat','ai','@B','@P','work','read','doc','vstudy']:['audio','bizcall','famcall','think']):['ai','@B','@P','work','bizcall','read','doc','vstudy','audio','chat']));
+const q=qgList(isCar?['rest','pcwork','ai','bizcall','famcall','nap','sleep','spplay','chat']:isStay?['sleep','nap','ai','@B','@P','@V','work','meal','rest','pcwork','spplay']:(eType!=='move')?[]:(drv?(qMore?['audio','bizcall','famcall','think','chat','ai','@B','@P','@V','work','read','doc','vstudy']:['audio','bizcall','famcall','think']):['ai','@B','@P','@V','work','bizcall','read','doc','vstudy','audio','chat']));
 const onW=id=>(isCar||isStay)&&acts.some(a=>a&&a.w&&a.k===id);
 const onR=id=>acts.some(a=>a&&!a.w&&a.k===id);
 const qh=q.map(id=>{if(id[0]==='@')return qgHtml(id.slice(1),'data-qg',acts.filter(a=>a&&a.k).map(a=>a.k));const k=kindOf(id);return (k&&!k.off)?'<button class="chip ac-q'+(onW(id)?' sel':((isCar||isStay)&&onR(id)?' on2':''))+'" data-aq="'+id+'" style="--kc:'+k.co+'">'+esc(k.ic)+' '+esc(k.lb)+'</button>':'';}).join('')+((eType==='move'&&drv&&!qgOn(q))?'<button class="chip ac-qm" id="acQm">'+(qMore?'－ たたむ':'＋ ほか')+'</button>':'');
@@ -4491,7 +4491,7 @@ items.map(x=>'<div class="so-row"><div class="so-t">'+esc(x.a.t)+((x.a.s&&x.a.e)
 '<button class="chip so-more" data-sm="'+x.i+'">ほか…</button><button class="chip'+(!ch[x.i]?' sel':'')+'" data-si="'+x.i+'" data-sk="">なし</button></div>'+
 ((AI_KINDS[ch[x.i]]&&acts[x.i])?'<div class="so-d so-ai"><span>使ったAI</span>'+AI_TOOLS.map(z=>{const on=(Array.isArray(acts[x.i].ai)?acts[x.i].ai:aiGuess(acts[x.i].t)).indexOf(z[0])>=0;return '<button class="chip'+(on?' sel':'')+'" data-soai="'+x.i+'" data-ait="'+z[0]+'" style="--ac:'+z[2]+'">'+esc(z[1])+'</button>';}).join('')+'</div>':'')+
 (x.a.d==='_other'?'':'<div class="so-d"><span>使った物</span>'+dsg[x.i].map(d=>{const t=toolOf(d);return '<button class="chip'+(dch[x.i]===d?' sel':'')+'" data-di="'+x.i+'" data-dk="'+esc(d)+'">'+esc(t.ic)+'</button>';}).join('')+'<button class="chip'+(!dch[x.i]?' sel':'')+'" data-di="'+x.i+'" data-dk="">なし</button></div>')+'</div>').join('')+
-(lqs!==null?'<div class="so-row"><div class="so-t">'+(eType==='incar'?'🚙 車内で':'📍 ここで')+'何をしていた？（'+esc(durText(durMin(tS,tE,(tE<=tS&&tEd===0)?1:tEd)))+'）</div><div class="so-c">'+qgList(['sleep','nap','ai','@B','@P','work','pcwork','spplay','rest']).map(id=>{if(id[0]==='@')return qgHtml(id.slice(1),'data-lqg',lqs);const k=kindOf(id);return k?'<button class="chip'+(lqs.indexOf(id)>=0?' sel':'')+'" data-lq="'+id+'">'+esc(k.ic)+' '+esc(k.lb)+'</button>':'';}).join('')+(QG_OPEN?'':'<button class="chip'+(!lqs.length?' sel':'')+'" data-lq="">なし</button>')+'</div>'+
+(lqs!==null?'<div class="so-row"><div class="so-t">'+(eType==='incar'?'🚙 車内で':'📍 ここで')+'何をしていた？（'+esc(durText(durMin(tS,tE,(tE<=tS&&tEd===0)?1:tEd)))+'）</div><div class="so-c">'+qgList(['sleep','nap','ai','@B','@P','@V','work','pcwork','spplay','rest']).map(id=>{if(id[0]==='@')return qgHtml(id.slice(1),'data-lqg',lqs);const k=kindOf(id);return k?'<button class="chip'+(lqs.indexOf(id)>=0?' sel':'')+'" data-lq="'+id+'">'+esc(k.ic)+' '+esc(k.lb)+'</button>':'';}).join('')+(QG_OPEN?'':'<button class="chip'+(!lqs.length?' sel':'')+'" data-lq="">なし</button>')+'</div>'+
 (lqs.length>=2?'<div class="so-seg">'+lqSegs().map((g,i)=>{const k=kindOf(g.id);return '<div class="so-sg"><span>'+esc(k.ic)+' '+esc(k.lb)+'</span>'+(i===0?'<b>'+esc(g.s)+'</b>':'<input type="time" step="300" lang="ja-JP" data-lqs="'+i+'" value="'+esc(g.s)+'">')+'<i>→ '+esc(g.e)+'</i></div>';}).join('')+'<div class="sh-note" style="margin:2px 0 0">順に時間を分けた。開始の時刻は直せる</div></div>':'')+'</div>':'')+
 (canE&&es&&es!==eType?'<div class="so-row"><div class="so-t">記録の種類</div><div class="so-c"><button class="chip'+(eSel===es?' sel':'')+'" data-se="'+es+'">'+ETL[es]+'</button><button class="chip'+(eSel===eType?' sel':'')+'" data-se="'+eType+'">'+ETL[eType]+'</button></div></div>':'')+
 '<div class="sh-btns"><button class="delbtn" id="soAs" style="flex:0 0 auto">そのまま保存</button><button class="savebtn" id="soOk">これで保存</button></div>';
@@ -6914,7 +6914,7 @@ p.querySelectorAll('[data-tdx]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();
 p.querySelectorAll('[data-rwc]').forEach(b=>b.onclick=()=>{const x=rowsWip[+b.dataset.rwc];mutate(()=>{const en=state.entries[x.d][x.k];const a=en.acts[x.i];if(a){a.st='done';a.dn=t;delete a.due;en.ts=Date.now();}});celebrate('🎉 完了！','途中だった「'+x.a.t+'」');re();});
 p.querySelectorAll('[data-rwo]').forEach(b=>b.onclick=()=>{const x=rowsWip[+b.dataset.rwo];closePage();ui.date=x.d;ui.tab='di';render();openEntrySheet(x.d,{key:x.k});});}
 let QG_OPEN='';
-const QG_NODE={B:'bizdev',P:'shuukyaku'};
+const QG_NODE={B:'bizdev',P:'shuukyaku',V:'car'}   /* c22.0：🚗中古車も▾で（本人「中古車も目立つところに」） */;
 function qgKids(G){const t=KIND_TREE.find(x=>x.id===QG_NODE[G||QG_OPEN||'B']),o=[];((t&&t.ch)||[]).forEach(c=>{if(typeof c==='string')o.push(c);else (c.ch||[]).forEach(x=>o.push(x));});return o.filter(id=>{const k=kindOf(id);return k&&!k.off;});}
 function qgOn(q){return !!QG_OPEN&&q.indexOf('@'+QG_OPEN)>=0;}
 function qgIn(id,q){const k=id&&kindOf(id);return !!(k&&QG_NODE[k.g]&&(!q||q.indexOf('@'+k.g)>=0));}
@@ -10566,7 +10566,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c21.9";
+const CL_APPVER="c22.0";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
