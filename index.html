@@ -1776,6 +1776,8 @@ body.cardvis .fab{display:none!important}
 .qg-open .ac-kl button.sel{background:var(--green);color:#fff;border-color:var(--green)}
 .qg-open .ac-kl button.on2{box-shadow:inset 0 0 0 2px var(--kc)}
 .qg-open .ac-kgh{cursor:pointer}
+
+.mvsug.oesug{background:#fff7e6;border:1.5px solid #f59e0b}.mvsug.oesug .gp-l{color:#b45309;font-weight:900}
 </style>
 
 <div id="bootmsg" style="position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:24px;background:#faf9f5;color:#6a7080;font:800 15px -apple-system,BlinkMacSystemFont,sans-serif;text-align:center"><div style="font-size:34px">📔</div><div class="hb-logo" style="font-size:24px;color:#0a9a54"><b>HIBIKI</b><i>日々記</i></div><div id="bootmsgT">読み込み中…</div><div id="bootmsgS" style="font-size:12px;color:#9aa3b5;font-weight:700"></div></div>
@@ -2919,6 +2921,11 @@ if(!best)continue;mv.e=best.x.s;const ed=Math.floor(best.a/1440);if(ed)mv.ed=ed;
 if(best.x.p){const pts=String(mv.rt||'').split('→').map(z=>z.trim()).filter(Boolean);if(pts.length<2)mv.rt=(pts[0]?pts[0]+' ':'')+'→ '+best.x.p;}
 mv.ts=Date.now();ch=true;}}
 return ch;}
+let mvLearnC={u:-1,v:null};
+function mvLearn(){const u=state.updatedAt||0;if(mvLearnC.u===u&&mvLearnC.v)return mvLearnC.v;const pr={},all=[],lim=addDays(todayStr(),-120),md=a=>{const s=a.slice().sort((x,y)=>x-y);return s[Math.floor(s.length/2)];};
+for(const d in (state.entries||{})){if(d<lim)continue;const eo=state.entries[d];for(const k in eo){const e=eo[k];if(!e||e.del||!e.mv||!e.s||!e.e||!e.rt)continue;const p=String(e.rt).split('→').map(x=>x.trim());if(p.length<2||!p[0]||!p[p.length-1])continue;
+const m=durMin(e.s,e.e,e.ed?1:0);if(!(m>0&&m<300))continue;all.push(m);const a=placeKey(p[0]),b=placeKey(p[p.length-1]);(pr[a+'>'+b]=pr[a+'>'+b]||[]).push(m);}}
+const v={pair:(A,B)=>{const a=placeKey(A),b=placeKey(B),x=(pr[a+'>'+b]||[]).concat(pr[b+'>'+a]||[]);return x.length?md(x):0;},all:all.length?Math.max(5,Math.round(md(all)/5)*5):20};mvLearnC={u,v};return v;}
 function sugNo(k){return !!(state.msx&&state.msx[k]&&!state.msx[k].del);}
 function msxTog(k){const on=sugNo(k);mutate(()=>{state.msx=state.msx||{};state.msx[k]=on?{del:1,ts:Date.now()}:{ts:Date.now()};});}
 function sugSet(k){mutate(()=>{state.msx=state.msx||{};state.msx[k]={ts:Date.now()};});}
@@ -3497,6 +3504,7 @@ actsHtml(en)+
  }
 let gEnd=0;{const td=ui.date;for(let back=1;back<=7;back++){const pe=entriesOf(addDays(td,-back));for(const k in pe){const en=pe[k];if(en&&en.ed&&en.ed>=back&&en.e&&!en.noT)gEnd=Math.max(gEnd,en.ed>back?1440:hmMin(en.e));}}}
 const nowM=isToday?(new Date().getHours()*60+new Date().getMinutes()):1440;
+const sgW=s=>s?'<b hidden data-sg="1"></b>'+s+'<b hidden data-sg="0"></b>':'';
 const gapRow=(a,b)=>{if(b-a<30)return '';const hm=m=>pad(Math.floor(m/60)%24)+':'+pad(m%60),s=hm(a),e=hm(Math.min(b,1439));
 return '<button class="hour gap gaprow" data-gs="'+s+'" data-ge="'+(b>=1440?'23:59':hm(b))+'"><span class="hh">⬜</span><div class="body"><span class="gp-l">空き '+s+'–'+(b>=1440?'24:00':hm(b))+'（'+esc(durText(b-a))+'）</span><span class="gp-q">何してた？ ＋</span></div></button>';};
 const mvSugKey=(s,e,P,N)=>'mv|'+ui.date+'|'+s+'|'+e+'|'+P.p+'|'+N.p;
@@ -3505,18 +3513,24 @@ return '<div class="hour gap mvsug arsug"><span class="hh">🏁</span><div class
 const mvHasDest=rt=>{const p=String(rt||'').split('→').map(x=>x.trim());return p.length>=2&&!!p[p.length-1];};
 const dsRow=(M,mk,N)=>{const k='ds|'+ui.date+'|'+mk;if(sugNo(k))return '';
 return '<div class="hour gap mvsug arsug"><span class="hh">🏁</span><div class="body"><span class="gp-l">行き先は ここ？ '+esc(M.s)+'–'+esc(M.e)+'</span><span class="ms-rt">'+esc(M.rt||'移動')+' → <b>'+esc(N.p)+'</b></span><span class="ms-ac"><button class="ms-ok ds-ok" data-dsk="'+esc(mk)+'" data-dsp="'+esc(N.p)+'" data-dspf="'+esc(String(N.pf||''))+'">✓ 入れる</button><button class="ms-no" data-msno="'+esc(k)+'">✕ 入れない</button></span></div></div>';};
-const mvSugRow=(a,b,P,N,X)=>{const hm=m=>pad(Math.floor(m/60)%24)+':'+pad(m%60),s=X?X.s:hm(a),e=X?X.e:hm(b),tr=mvGuessTr(X?X.d:ui.date,s),dur=X?X.dur:(b-a),xd=X?' data-msd="'+esc(X.d)+'" data-msed="1"':'';
-return '<div class="hour gap mvsug"><span class="hh">🚗</span><div class="body"><span class="gp-l">移動していた？ '+s+'–'+e+'（'+esc(durText(dur))+'）</span><span class="ms-rt">'+esc(P.p)+' → '+esc(N.p)+'</span><span class="ms-ac"><select class="ms-tr" aria-label="移動手段">'+TRS.map(x=>'<option value="'+esc(x[0])+'"'+(x[0]===tr?' selected':'')+'>'+esc(x[1])+'</option>').join('')+'</select>'+
-'<button class="ms-ok"'+xd+' data-mss="'+s+'" data-mse="'+e+'" data-msf="'+esc(P.p)+'" data-mst="'+esc(N.p)+'" data-mspf0="'+esc(String(P.pf||''))+'" data-mspf="'+esc(String(N.pf||''))+'">✓ 入れる</button><button class="ms-no" data-msno="'+esc(mvSugKey(s,e,P,N))+'">✕ 入れない</button>'+(dur>=30&&!X?'<button class="gp-q" data-gs="'+s+'" data-ge="'+e+'">何してた？ ＋</button>':'')+'</span></div></div>';};
+const mvSugRow=(a,b,P,N,X)=>{const hm=m=>pad(Math.floor(m/60)%24)+':'+pad(m%60);let pre='',how='';
+if(!X){const L=mvLearn(),pm=L.pair(P.p,N.p),g=b-a;let m=0;if(pm&&pm<g){m=pm;how='いつも約'+durText(pm);}else if(!pm&&g>90){m=L.all;how='時間は目安';}
+if(m>0&&m<g){pre=gapRow(a,b-m);a=b-m;}}
+const s=X?X.s:hm(a),e=X?X.e:hm(b),tr=mvGuessTr(X?X.d:ui.date,s),dur=X?X.dur:(b-a),xd=X?' data-msd="'+esc(X.d)+'" data-msed="1"':'',fk=(!X&&!P.e&&P._k)?' data-msfk="'+esc(P._k)+'"':'';
+return pre+sgW('<div class="hour gap mvsug"><span class="hh">🚗</span><div class="body"><span class="gp-l">移動していた？ '+s+'–'+e+'（'+esc(durText(dur))+(how?'・'+how:'')+'）</span><span class="ms-rt">'+esc(P.p)+' → '+esc(N.p)+'</span><span class="ms-ac"><select class="ms-tr" aria-label="移動手段">'+TRS.map(x=>'<option value="'+esc(x[0])+'"'+(x[0]===tr?' selected':'')+'>'+esc(x[1])+'</option>').join('')+'</select>'+
+'<button class="ms-ok"'+xd+fk+' data-mss="'+s+'" data-mse="'+e+'" data-msf="'+esc(P.p)+'" data-mst="'+esc(N.p)+'" data-mspf0="'+esc(String(P.pf||''))+'" data-mspf="'+esc(String(N.pf||''))+'">✓ 入れる</button><button class="ms-no" data-msno="'+esc(mvSugKey(s,e,P,N))+'">✕ 入れない</button>'+(dur>=30&&!X?'<button class="gp-q" data-gs="'+s+'" data-ge="'+e+'">何してた？ ＋</button>':'')+'</span></div></div>');};
 let gPrev=null;const gPl=x=>!!(x&&!x.mv&&x.p&&!x.noT&&x.s);
+const dayS=(()=>{const eo=entriesOf(ui.date),o=[];for(const k in eo){const x=eo[k];if(x&&!x.del&&!x.noT&&x.s){o.push(hmMin(x.s));if(!x.e&&!x._k)try{Object.defineProperty(x,'_k',{value:k,enumerable:false,configurable:true});}catch(e){}}}return o;})();
 let xPrev=null;try{const pe=entriesOf(addDays(ui.date,-1));let best=null;for(const k in pe){const en=pe[k];if(gPl(en)&&en.e&&!en.ed&&en.e>='20:00'&&en.e>en.s&&(!best||en.e>best.e))best=en;}if(best){for(const k in pe){const en=pe[k];if(en&&!en.del&&en.ed&&en.s&&en.s>=best.e){best=null;break;}}}xPrev=best;}catch(e){}   /* c21.9：昨日に0時またぎの記録（ed）が既にあれば出さない（✓入れた後に何度も出ていた） */
 let xDone=false;
-const gapBefore=en=>{if(!en||en.noT||!en.s)return;const a=hmMin(en.s),arC=!!(gPrev&&gPrev.mv&&!gPrev.e&&gPrev.s&&!gPrev.noT&&(en.p||en.k==='incar')&&!en.mv&&TEL_KS.indexOf(en.k)<0&&en.k!=='spplay'&&a>hmMin(gPrev.s));
+const oeRow=(P,N)=>{const ic=(kindOf(P.k)||{}).ic||'📍',nm=P.p||((kindOf(P.k)||{}).lb)||'記録';
+return '<div class="hour gap mvsug oesug"><span class="hh">⚠️</span><div class="body"><span class="gp-l">終わりが入っていない</span><span class="ms-rt">'+esc(ic)+' '+esc(nm)+' '+esc(P.s)+'〜 ？ → 次は '+esc(N.s)+' '+esc(N.p||((kindOf(N.k)||{}).lb)||'')+'</span><span class="ms-ac"><button class="ms-ok oe-ok" data-oek="'+esc(P._k)+'" data-oee="'+esc(N.s)+'">✓ '+esc(N.s)+' で終わり</button><button class="ms-no oe-ed" data-oek="'+esc(P._k)+'">✎ 時刻を入れる</button></span></div></div>';};
+const gapBefore=en=>{if(!en||en.noT||!en.s)return;if(gPrev&&!gPrev.mv&&!gPrev.e&&gPrev.s&&!gPrev.noT&&gPrev._k&&en.s>=gPrev.s)html+=sgW(oeRow(gPrev,en));const a=hmMin(en.s),arC=!!(gPrev&&gPrev.mv&&!gPrev.e&&gPrev.s&&!gPrev.noT&&(en.p||en.k==='incar')&&!en.mv&&TEL_KS.indexOf(en.k)<0&&en.k!=='spplay'&&a>hmMin(gPrev.s));
 if(!gPrev&&!xDone&&xPrev&&gPl(en)&&placeKey(xPrev.p)!==placeKey(en.p)&&a<=nowM){const g=(1440-hmMin(xPrev.e))+a,hm0=m=>pad(Math.floor(m/60)%24)+':'+pad(m%60);if(g>=3&&g<=120&&!sugNo(mvSugKey(xPrev.e,hm0(a),xPrev,en))){html+=mvSugRow(0,a,xPrev,en,{s:xPrev.e,e:hm0(a),dur:g,d:addDays(ui.date,-1)});xDone=true;}}
-if(a>gEnd&&a<=nowM&&!arC&&!(xDone&&!gPrev)){const g=a-gEnd,hm=m=>pad(Math.floor(m/60)%24)+':'+pad(m%60);if(gPl(gPrev)&&gPl(en)&&gPrev.p!==en.p&&g>=3&&g<=120&&gEnd<1440&&!sugNo(mvSugKey(hm(gEnd),hm(a),gPrev,en)))html+=mvSugRow(gEnd,a,gPrev,en);else html+=gapRow(gEnd,a);}
-if(arC){const eo=entriesOf(ui.date),mk=Object.keys(eo).find(k=>eo[k]===gPrev);if(mk)html+=arRow(gPrev,mk,en);}
-{const dsC=!!(gPrev&&gPrev.mv&&gPrev.e&&!gPrev.noT&&gPrev.s&&!mvHasDest(gPrev.rt)&&en.p&&!en.mv&&TEL_KS.indexOf(en.k)<0&&en.k!=='spplay');if(dsC){const eo=entriesOf(ui.date),mk=Object.keys(eo).find(k=>eo[k]===gPrev);if(mk)html+=dsRow(gPrev,mk,en);}}
-gPrev=en;const e=en.e?(en.ed?1440:hmMin(en.e)):(isToday?nowM:a);gEnd=Math.max(gEnd,e<a?1440:e);};
+if(a>gEnd&&a<=nowM&&!arC&&!(xDone&&!gPrev)){const g=a-gEnd,hm=m=>pad(Math.floor(m/60)%24)+':'+pad(m%60);if(gPl(gPrev)&&gPl(en)&&placeKey(gPrev.p)!==placeKey(en.p)&&g>=3&&gEnd<1440&&!sugNo(mvSugKey(hm(gEnd),hm(a),gPrev,en)))html+=mvSugRow(gEnd,a,gPrev,en);else html+=gapRow(gEnd,a);}
+if(arC){const eo=entriesOf(ui.date),mk=Object.keys(eo).find(k=>eo[k]===gPrev);if(mk)html+=sgW(arRow(gPrev,mk,en));}
+{const dsC=!!(gPrev&&gPrev.mv&&gPrev.e&&!gPrev.noT&&gPrev.s&&!mvHasDest(gPrev.rt)&&en.p&&!en.mv&&TEL_KS.indexOf(en.k)<0&&en.k!=='spplay');if(dsC){const eo=entriesOf(ui.date),mk=Object.keys(eo).find(k=>eo[k]===gPrev);if(mk)html+=sgW(dsRow(gPrev,mk,en));}}
+gPrev=en;const e=en.e?(en.ed?1440:hmMin(en.e)):((isToday&&!dayS.some(m=>m>a))?nowM:a);gEnd=Math.max(gEnd,e<a?1440:e);};
 const flushRun=()=>{run=[];};
 const tlL0=html.length,tlRS=[],tlOpen=[],tlRR=[];
 for(let h=0;h<24;h++){
@@ -3555,8 +3569,8 @@ if(list.length&&ui.date>='2026-08-25'&&nowM>gEnd)html+=gapRow(gEnd,nowM);
 {const P=tlCP.concat(tlRS),T=tlCT.concat(list.map(x=>({sm:x.sm,e:(x.en&&x.en.e)||''}))),tot=P.length;
 if(isToday&&tot>2&&topView!=='diary'){const keep=Math.min(tot-2,tlOpen.length?tlCP.length+tlOpen[0]:1e9);
 if(keep>0){const all=sugNo('tl|all'),st=P[0],cut=P[keep];
-if(!all){const mid=html.slice(st,cut),nG=(mid.match(/gaprow|mvsug/g)||[]).length,L=T[keep-1];
-html=html.slice(0,st)+'<button class="hour gap tlfold" id="tlFold"><span class="hh">▸</span><div class="body"><span class="gp-l">前の記録 <b>'+keep+'</b>件　'+esc(T[0].sm)+'〜'+esc(L.e||L.sm)+'</span>'+(nG?'<span class="tlf-g">⬜ 空き '+nG+'</span>':'')+'<span class="gp-q">全部 ▾</span></div></button>'+html.slice(cut);}
+if(!all){const mid=html.slice(st,cut),sgs=mid.match(/<b hidden data-sg="1"><\/b>[\s\S]*?<b hidden data-sg="0"><\/b>/g)||[],nG=(mid.match(/gaprow/g)||[]).length,L=T[keep-1];
+html=html.slice(0,st)+'<button class="hour gap tlfold" id="tlFold"><span class="hh">▸</span><div class="body"><span class="gp-l">前の記録 <b>'+keep+'</b>件　'+esc(T[0].sm)+'〜'+esc(L.e||L.sm)+'</span>'+(nG?'<span class="tlf-g">⬜ 空き '+nG+'</span>':'')+'<span class="gp-q">全部 ▾</span></div></button>'+sgs.join('')+html.slice(cut);}
 else html=html.slice(0,st)+'<button class="hour gap tlfold" id="tlFold"><span class="hh">▴</span><div class="body"><span class="gp-l">最新だけにする</span></div></button>'+html.slice(st);}}}
 const seedN=(ui.date<'2026-08-25'&&PHDATES&&PHDATES[ui.date])||0;
 if(seedN){
@@ -3587,8 +3601,8 @@ cvB=sugNo('tl|cvo')?('<button class="hour gap tlfold" id="cvFold"><span class="h
 :('<button class="hour gap tlfold" id="cvFold"><span class="hh">▸</span><div class="body"><span class="gp-l">前日から <b>'+cv.length+'</b>件　'+esc(String(T0.sm).replace('前日 ',''))+'〜'+esc(T1.e||'')+'</span><span class="gp-q">開く ▾</span></div></button>');}
 let fB='';
 if(!isToday&&R.length>2){const k=R.length-2;
-if(!sugNo('tl|pall')){const mid=R.slice(0,k).map(x=>x.g+x.r).join(''),nG=(mid.match(/gaprow|mvsug/g)||[]).length,L=list[k-1];
-fB='<button class="hour gap tlfold" id="pdFold"><span class="hh">▸</span><div class="body"><span class="gp-l">前の記録 <b>'+k+'</b>件　'+esc(list[0].sm)+'〜'+esc((L.en&&L.en.e)||L.sm)+'</span>'+(nG?'<span class="tlf-g">⬜ 空き '+nG+'</span>':'')+'<span class="gp-q">全部 ▾</span></div></button>';R=R.slice(k);}
+if(!sugNo('tl|pall')){const mid=R.slice(0,k).map(x=>x.g+x.r).join(''),sgs=mid.match(/<b hidden data-sg="1"><\/b>[\s\S]*?<b hidden data-sg="0"><\/b>/g)||[],nG=(mid.match(/gaprow/g)||[]).length,L=list[k-1];
+fB='<button class="hour gap tlfold" id="pdFold"><span class="hh">▸</span><div class="body"><span class="gp-l">前の記録 <b>'+k+'</b>件　'+esc(list[0].sm)+'〜'+esc((L.en&&L.en.e)||L.sm)+'</span>'+(nG?'<span class="tlf-g">⬜ 空き '+nG+'</span>':'')+'<span class="gp-q">全部 ▾</span></div></button>'+sgs.join('');R=R.slice(k);}
 else fB='<button class="hour gap tlfold" id="pdFold"><span class="hh">▴</span><div class="body"><span class="gp-l">最新だけにする</span></div></button>';}
 const srB=srBarHtml();
 const body=newF?(srB+tail+R.slice().reverse().map(x=>x.r+x.g).join('')+fB+cvB):(cvB+srB+fB+R.map(x=>x.g+x.r).join('')+tail);
@@ -3623,9 +3637,13 @@ wB('bedPill',quickSleepStart);
 wB('wrSleep',quickSleepStart);
 wB('wrSlp',openSleepPage);
 pane.querySelectorAll('.ms-ok').forEach(b=>b.onclick=ev=>{ev.stopPropagation();const row=b.closest('.mvsug'),tr=(row.querySelector('.ms-tr')||{}).value||'car',D=b.dataset,d=D.msd||ui.date;
-mutate(()=>{state.entries[d]=state.entries[d]||{};const ne={p:'',t:'',ph:[],s:D.mss,e:D.mse,mv:1,rt:D.msf+' → '+D.mst,tr,ts:Date.now(),mn:1,mt:'m'};if(D.msed)ne.ed=1;if(Number(D.mspf0))ne.pf0=Number(D.mspf0);if(Number(D.mspf))ne.pf=Number(D.mspf);state.entries[d]['e'+Date.now()+Math.floor(Math.random()*1e4)]=ne;});
-toast('🚗 移動を入れた（'+D.mss+'–'+D.mse+'）');render();});
+mutate(()=>{state.entries[d]=state.entries[d]||{};const ne={p:'',t:'',ph:[],s:D.mss,e:D.mse,mv:1,rt:D.msf+' → '+D.mst,tr,ts:Date.now(),mn:1,mt:'m'};if(D.msed)ne.ed=1;if(Number(D.mspf0))ne.pf0=Number(D.mspf0);if(Number(D.mspf))ne.pf=Number(D.mspf);state.entries[d]['e'+Date.now()+Math.floor(Math.random()*1e4)]=ne;
+if(D.msfk){const pe=state.entries[d][D.msfk];if(pe&&!pe.del&&!pe.e&&pe.s&&pe.s<=D.mss){pe.e=D.mss;pe.ts=Date.now();}}});
+toast('🚗 移動を入れた（'+D.mss+'–'+D.mse+'）'+(D.msfk?'・前の終わりも '+D.mss:''));render();});
 pane.querySelectorAll('.ms-tr').forEach(x=>x.onclick=ev=>ev.stopPropagation());
+pane.querySelectorAll('.oe-ok').forEach(b=>b.onclick=ev=>{ev.stopPropagation();const d=ui.date,k=b.dataset.oek,e=b.dataset.oee;
+mutate(()=>{const x=(state.entries[d]||{})[k];if(x&&!x.del&&!x.e){x.e=e;x.ts=Date.now();}});toast('✓ 終わりを '+e+' で入れた');render();});
+pane.querySelectorAll('.oe-ed').forEach(b=>b.onclick=ev=>{ev.stopPropagation();openEntrySheet(ui.date,{key:b.dataset.oek});});
 pane.querySelectorAll('[data-msno]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();sugSet(b.dataset.msno);toast('入れなかった（もう出さない）');});
 {const g=$('goalLine');if(g)g.onclick=ev=>{ev.stopPropagation();openIncSheet();};}
 pane.querySelectorAll('.ds-ok').forEach(b=>b.onclick=ev=>{ev.stopPropagation();const d=ui.date,k=b.dataset.dsk,p=b.dataset.dsp,pf=Number(b.dataset.dspf)||0;
@@ -3933,7 +3951,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c22.2）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c22.3）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -10590,7 +10608,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c22.2";
+const CL_APPVER="c22.3";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
