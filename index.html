@@ -4120,7 +4120,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c22.7）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c22.8）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -7036,7 +7036,7 @@ $('ttOk').onclick=()=>{const s=$('ttS').value,e=$('ttE').value,d=$('ttD').value|
 {const b=$('ttNo');if(b)b.onclick=()=>{closeSub();tdSet(id,{sd:null,s:null,e:null});mutate(()=>tdUnplace(id));if(after)after();};}{const b=$('ttX');if(b)b.onclick=closeSub;}}
 function tdQuitSheet(id,after){let r='';const paint=()=>{openSub('<div class="sh-time"><span>🗑 やめる（戦略的撤退）</span></div><div class="sh-note" style="text-align:left">消さずに「やめた」として残す。理由は分析に出る</div>'+
 '<div class="sr-r big">'+TD_Q.map(q=>'<button class="chip'+(r===q[0]?' sel':'')+'" data-tq="'+q[0]+'">'+q[1]+' '+q[2]+'</button>').join('')+'</div>'+
-'<textarea id="tqM" rows="2" placeholder="細かい事情（書かなくてもいい）" style="width:100%;margin-top:6px"></textarea>'+
+'<textarea id="tqM" rows="2" placeholder="細かい事情（あれば）" style="width:100%;margin-top:6px"></textarea>'+
 '<div class="sh-btns"><button class="delbtn" id="tqNo">戻る</button><button class="savebtn" id="tqOk">やめる</button></div>',null);
 $('sheet2').querySelectorAll('[data-tq]').forEach(b=>b.onclick=()=>{const m=$('tqM').value;r=b.dataset.tq;paint();$('tqM').value=m;});
 $('tqNo').onclick=closeSub;$('tqOk').onclick=()=>{if(!r){toast('理由を1つ押してくれ');return;}const m=($('tqM').value||'').trim().slice(0,200);closeSub();tdSet(id,{quit:{r,m,at:todayStr()}});mutate(()=>tdUnplace(id));toast(r==='someday'?'⏳ いつかに入れた':'🗑 やめた（記録は残る）');if(after)after();};};paint();}
@@ -7075,7 +7075,7 @@ function tdEditSheet(id,after){const x=(state.todos||{})[id];if(!x)return;const 
 openSub('<div class="sh-time"><span>📋 やる事</span></div><input type="text" id="teT" maxlength="60" value="'+esc(x.t)+'" style="width:100%">'+
 '<div class="te-main"><button class="chip" id="teDone">✅ 完了</button><button class="chip" id="teNext">⏭ 明日へ</button><button class="chip" id="teDlg">'+(x.dlg?'🤖 任せるを外す':'🤖 任せる')+'</button><button class="chip" id="teQuit">🗑 やめる</button></div>'+
 '<details class="te-more"><summary>▸ くわしく（詳細・日時・印・場所・消す）</summary>'+
-'<textarea id="teC" rows="3" placeholder="詳細（このタイトルの中身・書かなくてもいい）" style="width:100%;margin-top:6px">'+esc(x.c||'')+'</textarea>'+
+'<textarea id="teC" rows="3" placeholder="詳細（このタイトルの中身。あれば）" style="width:100%;margin-top:6px">'+esc(x.c||'')+'</textarea>'+
 '<details class="te-dt"'+(x.s?' open':'')+'><summary>🕐 日時（任意）'+(x.s?'：'+esc((x.sd&&x.sd!==t?x.sd.slice(5).replace('-','/')+' ':'')+x.s+'–'+(x.e||'')):'')+'</summary>'+
 '<div class="te-dtb"><input type="date" id="teD" value="'+esc(x.sd||t)+'"><input type="time" id="teS" step="300" value="'+esc(x.s||'')+'"><span>→</span><input type="time" id="teE" step="300" value="'+esc(x.e||'')+'"></div>'+
 '<div class="te-dtq"><button class="chip" data-teq="now">今から30分</button><button class="chip" data-teq="night">今日の夜 21:00</button><button class="chip" data-teq="morn">明日の朝 9:00</button>'+(x.s?'<button class="chip" data-teq="clr">日時を外す</button>':'')+'</div>'+
@@ -10841,7 +10841,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c22.7";
+const CL_APPVER="c22.8";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
