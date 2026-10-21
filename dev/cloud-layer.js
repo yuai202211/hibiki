@@ -792,9 +792,9 @@ function openLoginSheet(opt){
   const loginForm=(title,note)=>
       '<div class="sh-note" style="text-align:left;margin-bottom:6px">'+note+'</div>'+
       '<div><div class="sh-label">メールアドレス</div><input type="email" id="clEmail" autocomplete="username" inputmode="email" placeholder="登録したメールアドレス" value="'+esc(remEmail)+'" style="width:100%;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 13px;outline:none'+(daily?';background:#f1f3f8;color:#6a7080'+'" readonly':'"')+'></div>'+
-      '<label style="display:flex;align-items:center;gap:8px;margin:6px 2px 0;font-size:12.5px;font-weight:700;color:#6a7080"><input type="checkbox" id="clRem" '+(clGet(CL_EMAIL,'')||!u?'checked':'')+' style="width:18px;height:18px">メールアドレスを覚える（次から表示したまま）</label>'+
+      '<label style="display:block;position:relative;margin:6px 2px 0"><input type="checkbox" id="clRem" '+(clGet(CL_EMAIL,'')||!u?'checked':'')+' tabindex="-1" aria-hidden="true" style="opacity:0;position:absolute;width:1px;height:1px;margin:0;pointer-events:none">'+iosSw('',!!(clGet(CL_EMAIL,'')||!u),'メールアドレスを覚える（次から表示したまま）','data-clcb="clRem"','sm row wrap')+'</label>'+
       '<div style="margin-top:10px"><div class="sh-label">パスワード</div><div style="display:flex;gap:6px"><input type="password" id="clPass" autocomplete="current-password" style="flex:1;min-width:0" autofocus><button class="chip" id="clEye" style="flex-shrink:0">表示</button></div></div>'+
-      '<label style="display:flex;align-items:center;gap:8px;margin:8px 2px 0;font-size:12.5px;font-weight:700;color:#6a7080"><input type="checkbox" id="clAuto" '+(clGet(CL_AUTO,'0')==='1'?'checked':'')+' style="width:18px;height:18px">自動ログイン（1日1回のパスワード入力も省く）</label>'+
+      '<label style="display:block;position:relative;margin:8px 2px 0"><input type="checkbox" id="clAuto" '+(clGet(CL_AUTO,'0')==='1'?'checked':'')+' tabindex="-1" aria-hidden="true" style="opacity:0;position:absolute;width:1px;height:1px;margin:0;pointer-events:none">'+iosSw('',clGet(CL_AUTO,'0')==='1','自動ログイン（1日1回のパスワード入力も省く）','data-clcb="clAuto"','sm row wrap')+'</label>'+
       '<div class="sh-note" id="clMsg" style="color:#e0405a;display:none"></div>'+
       '<div class="sh-btns"><button class="savebtn" id="clIn">'+title+'</button></div>';
   $('sheet').innerHTML='<div class="grab"></div><div class="sh-time" style="justify-content:center"><span><span class="hb-logo"><b>HIBIKI</b><i>日々記</i></span></span></div>'+
@@ -830,6 +830,7 @@ function openLoginSheet(opt){
   {const _cs=closeSheet;if(!window.__clCsWrapped){window.__clCsWrapped=1;closeSheet=function(){try{$('ovl').classList.remove('cl-first');}catch(e){}return _cs.apply(this,arguments);};}}
   if($('clRem'))$('clRem').onchange=()=>{if(!$('clRem').checked)clSet(CL_EMAIL,null);};
   if($('clAuto'))$('clAuto').onchange=()=>{clSet(CL_AUTO,$('clAuto').checked?'1':'0');};
+  $('sheet').querySelectorAll('[data-clcb]').forEach(b=>b.onclick=ev=>{ev.preventDefault();const cb=$(b.dataset.clcb);if(!cb)return;cb.checked=!cb.checked;iosSet(b,cb.checked);cb.dispatchEvent(new Event('change'));});   /* c22.7：スイッチ→checkbox を反転して change を流す */
   const eye=$('clEye');if(eye)eye.onclick=()=>{const p=$('clPass');p.type=(p.type==='password')?'text':'password';eye.textContent=(p.type==='password')?'表示':'隠す';};
   const out=$('clOut');if(out)out.onclick=async()=>{if(clDirtyCount()){toast('まだ送っていない記録がある（'+clDirtyCount()+'件）。先に同期してくれ');return;}await clLogout();closeSheet();toast('ログアウトした');};
   const sn=$('clSyncNow');if(sn)sn.onclick=async()=>{sn.disabled=true;CL.integ.due=true;await cloudSync(true);sn.disabled=false;openLoginSheet();};
