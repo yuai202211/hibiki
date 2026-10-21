@@ -3544,10 +3544,10 @@ return sgW('<div class="hour gap mvsug asksug" data-ak="'+esc(sk)+'" data-akd0="
 const gPl=x=>!!(x&&!x.mv&&x.p&&!x.noT&&x.s);let gPrev=(gCarry&&gPl(gCarry))?gCarry:null;
 const dayS=(()=>{const eo=entriesOf(ui.date),o=[];for(const k in eo){const x=eo[k];if(x&&!x.del&&!x.noT&&x.s){o.push(hmMin(x.s));if(!x.e&&!x._k)try{Object.defineProperty(x,'_k',{value:k,enumerable:false,configurable:true});}catch(e){}}}return o;})();
 let xPrev=null;try{const pe=entriesOf(addDays(ui.date,-1));let best=null;for(const k in pe){const en=pe[k];if(gPl(en)&&en.e&&!en.ed&&en.e>en.s&&(!best||en.e>best.e))best=en;}if(best){for(const k in pe){const en=pe[k];if(en&&!en.del&&!en.noT&&en.s&&(en.s>best.e||(en.ed&&en.s>=best.e))){best=null;break;}}}xPrev=best;   /* c22.5：20時の条件を外した（毎日・時間に関係なく）。後ろに記録（終わり無しも）があれば組まない */}catch(e){}   /* c21.9：昨日に0時またぎの記録（ed）が既にあれば出さない（✓入れた後に何度も出ていた） */
-let xDone=false;
+let xDone=false,xoDone=false,xOpen=null;try{const pd=addDays(ui.date,-1),pe=entriesOf(pd);let lk=null;for(const k in pe){const x=pe[k];if(x&&!x.del&&!x.noT&&x.s&&(!lk||x.s>pe[lk].s))lk=k;}if(lk&&!pe[lk].e&&!pe[lk].mv)xOpen={d:pd,k:lk,x:pe[lk]};}catch(e){}
 const oeRow=(P,N)=>{const ic=(kindOf(P.k)||{}).ic||'📍',nm=P.p||((kindOf(P.k)||{}).lb)||'記録';
 return '<div class="hour gap mvsug oesug"><span class="hh">⚠️</span><div class="body"><span class="gp-l">終わりが入っていない</span><span class="ms-rt">'+esc(ic)+' '+esc(nm)+' '+esc(P.s)+'〜 ？ → 次は '+esc(N.s)+' '+esc(N.p||((kindOf(N.k)||{}).lb)||'')+'</span><span class="ms-ac"><button class="ms-ok oe-ok" data-oek="'+esc(P._k)+'" data-oee="'+esc(N.s)+'">✓ '+esc(N.s)+' で終わり</button><button class="ms-no oe-ed" data-oek="'+esc(P._k)+'">✎ 時刻を入れる</button></span></div></div>';};
-const gapBefore=en=>{if(!en||en.noT||!en.s)return;if(gPrev&&!gPrev.mv&&!gPrev.e&&gPrev.s&&!gPrev.noT&&gPrev._k&&en.s>=gPrev.s)html+=sgW(oeRow(gPrev,en));const a=hmMin(en.s),arC=!!(gPrev&&gPrev.mv&&!gPrev.e&&gPrev.s&&!gPrev.noT&&(en.p||en.k==='incar')&&!en.mv&&TEL_KS.indexOf(en.k)<0&&en.k!=='spplay'&&a>hmMin(gPrev.s));
+const gapBefore=en=>{if(!en||en.noT||!en.s)return;if(!xoDone&&xOpen){xoDone=true;const L=xOpen.x,ic=(kindOf(L.k)||{}).ic||'📍',nm=L.p||((kindOf(L.k)||{}).lb)||'記録';html+=sgW('<div class="hour gap mvsug oesug"><span class="hh">⚠️</span><div class="body"><span class="gp-l">前の日の終わりが入っていない</span><span class="ms-rt">'+esc(ic)+' '+esc(nm)+' 前日 '+esc(L.s)+'〜 ？ → 今日は '+esc(en.s)+' から記録あり</span><span class="ms-ac"><button class="ms-ok oe-ed" data-oed="'+esc(xOpen.d)+'" data-oek="'+esc(xOpen.k)+'">✎ 終わりの時刻を入れる</button></span></div></div>');}if(gPrev&&!gPrev.mv&&!gPrev.e&&gPrev.s&&!gPrev.noT&&gPrev._k&&en.s>=gPrev.s)html+=sgW(oeRow(gPrev,en));const a=hmMin(en.s),arC=!!(gPrev&&gPrev.mv&&!gPrev.e&&gPrev.s&&!gPrev.noT&&(en.p||en.k==='incar')&&!en.mv&&TEL_KS.indexOf(en.k)<0&&en.k!=='spplay'&&a>hmMin(gPrev.s));
 if(!gPrev&&!xDone&&xPrev&&gPl(en)&&placeKey(xPrev.p)!==placeKey(en.p)&&a<=nowM){const g=(1440-hmMin(xPrev.e))+a,hm0=m=>pad(Math.floor(m/60)%24)+':'+pad(m%60);if(g>=3&&!sugNo(mvSugKey(xPrev.e,hm0(a),xPrev,en))){   /* c22.4：日またぎも長さ関係なく（長ければ「この間どうしてた？」） */html+=mvSugRow(0,a,xPrev,en,{s:xPrev.e,e:hm0(a),dur:g,d:addDays(ui.date,-1)});xDone=true;}}
 if(a>gEnd&&a<=nowM&&!arC&&!(xDone&&!gPrev)){const g=a-gEnd,hm=m=>pad(Math.floor(m/60)%24)+':'+pad(m%60);if(gPl(gPrev)&&gPl(en)&&placeKey(gPrev.p)!==placeKey(en.p)&&g>=3&&gEnd<1440&&!sugNo(mvSugKey(hm(gEnd),hm(a),gPrev,en)))html+=mvSugRow(gEnd,a,gPrev,en);else html+=gapRow(gEnd,a);}
 if(arC){const eo=entriesOf(ui.date),mk=Object.keys(eo).find(k=>eo[k]===gPrev);if(mk)html+=sgW(arRow(gPrev,mk,en));}
@@ -3592,7 +3592,8 @@ if(P){for(const k in eo){const x=eo[k];if(x&&!x.del&&!x.noT&&x.s&&(x.s>P.e||(x.e
 if(P){const ne=entriesOf(nd);let N=null;for(const k in ne){const x=ne[k];if(x&&!x.del&&!x.noT&&x.s&&(!N||x.s<N.s))N=x;}
 if(N&&gPl(N)&&placeKey(N.p)!==placeKey(P.p)&&!sugNo('mv|'+nd+'|'+P.e+'|'+N.s+'|'+P.p+'|'+N.p))xn={P,N,nd,g:(1440-hmMin(P.e))+hmMin(N.s)};}}catch(e){}
 if(!isToday&&ui.date>='2026-08-25'){try{const eo=entriesOf(ui.date);let lk=null;for(const k in eo){const x=eo[k];if(x&&!x.del&&!x.noT&&x.s&&(!lk||x.s>eo[lk].s))lk=k;}const L=lk&&eo[lk];
-if(L&&!L.e&&!L.mv){const ic=(kindOf(L.k)||{}).ic||'📍',nm=L.p||((kindOf(L.k)||{}).lb)||'記録';html+=sgW('<div class="hour gap mvsug oesug"><span class="hh">⚠️</span><div class="body"><span class="gp-l">終わりが入っていない</span><span class="ms-rt">'+esc(ic)+' '+esc(nm)+' '+esc(L.s)+'〜 ？（この日の最後の記録）</span><span class="ms-ac"><button class="ms-ok oe-ed" data-oek="'+esc(lk)+'">✎ 終わりの時刻を入れる</button></span></div></div>');}}catch(e){}}
+const live=ui.date===addDays(todayStr(),-1)&&!Object.values(entriesOf(todayStr())).some(x=>x&&!x.del&&!x.noT&&x.s);
+if(L&&!L.e&&!L.mv&&!live){const ic=(kindOf(L.k)||{}).ic||'📍',nm=L.p||((kindOf(L.k)||{}).lb)||'記録';html+=sgW('<div class="hour gap mvsug oesug"><span class="hh">⚠️</span><div class="body"><span class="gp-l">終わりが入っていない</span><span class="ms-rt">'+esc(ic)+' '+esc(nm)+' '+esc(L.s)+'〜 ？（この日の最後の記録）</span><span class="ms-ac"><button class="ms-ok oe-ed" data-oek="'+esc(lk)+'">✎ 終わりの時刻を入れる</button></span></div></div>');}}catch(e){}}
 if(list.length&&ui.date>='2026-08-25'&&nowM>gEnd){if(xn&&gEnd<1440)html+=sgW('<button class="hour gap mvsug xnsug" data-xnd="'+esc(xn.nd)+'"><span class="hh">🌙</span><div class="body"><span class="gp-l">'+esc(xn.P.e)+' → 翌'+esc(xn.N.s)+'（'+esc(durText(xn.g))+'）</span><span class="ms-rt">'+esc(xn.P.p)+' → '+esc(xn.N.p)+'</span><span class="gp-q">この間どうしてた？ 続きは翌日 ›</span></div></button>');else html+=gapRow(gEnd,nowM);}}
 {const P=tlCP.concat(tlRS),T=tlCT.concat(list.map(x=>({sm:x.sm,e:(x.en&&x.en.e)||''}))),tot=P.length;
 if(isToday&&tot>2&&topView!=='diary'){const keep=Math.min(tot-2,tlOpen.length?tlCP.length+tlOpen[0]:1e9);
@@ -3698,7 +3699,7 @@ if(D.akpk){const pe=(state.entries[D0]||{})[D.akpk];if(pe&&!pe.del&&!pe.e&&mvS[0
 delete askSt[sk];toast('✓ 寄った場所 '+S.length+'件と移動 '+(S.length+1)+'件を入れた');render();};};
 card.querySelector('.ak-yori').onclick=()=>{const a=A();a.open=!a.open;if(a.open&&!a.stops.length)a.stops.push({p:'',t:hm(r5((t0+t1)/2))});card.querySelector('.ak-yori').classList.toggle('on',a.open);paint();};
 paint();});
-pane.querySelectorAll('.oe-ed').forEach(b=>b.onclick=ev=>{ev.stopPropagation();openEntrySheet(ui.date,{key:b.dataset.oek});});
+pane.querySelectorAll('.oe-ed').forEach(b=>b.onclick=ev=>{ev.stopPropagation();openEntrySheet(b.dataset.oed||ui.date,{key:b.dataset.oek});});
 pane.querySelectorAll('[data-msno]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();sugSet(b.dataset.msno);toast('入れなかった（もう出さない）');});
 {const g=$('goalLine');if(g)g.onclick=ev=>{ev.stopPropagation();openIncSheet();};}
 pane.querySelectorAll('.ds-ok').forEach(b=>b.onclick=ev=>{ev.stopPropagation();const d=ui.date,k=b.dataset.dsk,p=b.dataset.dsp,pf=Number(b.dataset.dspf)||0;
@@ -4006,7 +4007,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c22.5）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c22.6）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -10663,7 +10664,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c22.5";
+const CL_APPVER="c22.6";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
