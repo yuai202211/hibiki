@@ -4188,7 +4188,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c23.8）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c23.9）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -9147,7 +9147,8 @@ const c={};T.forEach(x=>{c[x.tr]=(c[x.tr]||0)+1;});let b=T[0].tr;T.forEach(x=>{i
 var PTC=null;
 function prepPts(S){return [String(S.from||'').trim()].concat((S.vias||[]).map(x=>String(x||'').trim()).filter(Boolean),[String(S.to||'').trim()]);}
 function prepSegKey(a,b,tr){return placeKey(a)+'>'+placeKey(b)+'|'+tr;}
-function prepSleepPlace(date){const o=openSleep();if(o&&String(o.en.p||'').trim())return String(o.en.p).trim();return prepFromPlace(date);}
+function sleepPlaceUsual(){const c={},lim=addDays(todayStr(),-14);for(const d in (state.entries||{})){if(d<lim)continue;const eo=state.entries[d];for(const k in eo){const en=eo[k];if(!en||en.del||en.noT||!en.p)continue;const z=[en.k].concat((en.acts||[]).map(a=>a&&a.k));if(z.indexOf('sleep')<0)continue;const p=String(en.p).trim();c[p]=(c[p]||0)+1;}}let b='',n=0;for(const p in c)if(c[p]>n){n=c[p];b=p;}return b;}
+function prepSleepPlace(date){const o=openSleep();if(o&&String(o.en.p||'').trim())return String(o.en.p).trim();const u=sleepPlaceUsual();if(u)return u;return prepFromPlace(date);}
 function prepCalc(S){
 const o={dep:'',wake:'',bed:'',min:0,src:'',band:'',ref:'',w:0,est:null,need:false,cross:false,segs:[]};
 if(!/^\d\d:\d\d$/.test(S.arr||''))return o;
@@ -9361,7 +9362,7 @@ const dr=(PPD&&PPD.d===date)?PPD.v:null;PPD=null;
 const od=ok0?prepDos(old):[],f0=(ok0&&old.dos1fl)||{};
 const ovs=(ok0&&Array.isArray(old.vias))?old.vias.map(x=>String(x||'').trim()).filter(Boolean):[];
 const oldFrom=(ok0&&!old.home&&String(old.from||'').trim())?String(old.from).trim():'';
-const S=dr||{arr:(ok0&&old.arr)||(last&&last.arr)||'10:00',arrT:(ok0&&old.arr)?1:0,to:(ok0&&!old.home)?(old.to||''):'',home:(ok0&&old.home)?1:0,
+const S=dr||{arr:(ok0&&old.arr)||'',arrT:(ok0&&old.arr)?1:0,to:(ok0&&!old.home)?(old.to||''):'',home:(ok0&&old.home)?1:0,
 dos:[od[0]||'',od[1]||'',od[2]||''],fl:{money:f0.money?1:0,fire:f0.fire?1:0},bring:ok0?(old.bring||''):'',
 wake:'',wd:0,tr:(ok0&&old.tr)||'',trd:(ok0&&old.tr)?1:0,pf:ok0?(Number(old.pf)||0):0,top:0,cdone:0,pfl:'_rc',dosO:od.length?1:0,
 from:oldFrom||sp,fromA:(!oldFrom&&sp)?1:0,vias:ovs,toOk:(ok0&&!old.home&&old.to)?1:0,cur:'t',mm:{},mshow:{},trs:(ok0&&Array.isArray(old.trs))?old.trs.slice():[],minO:0,more:(ovs.length?1:0)}; /* c17.8：出発・経由・到着。出発は寝た場所が自動で入る（青）。所要の手入力は区間ごと（mm） */
@@ -9405,7 +9406,7 @@ const retr=()=>{if(S.trd)return;const P=prepPts(S);S.tr=S.to?prepTrGuess(P[P.len
 const toChg=()=>{S.pf=S.to?placePf(S.to):0;
 if(String(S.to||'').trim()&&!S.arrT){const a=prepArrDef(S.to);S.arr=a;arrI.value=a;arrI.classList.add('auto');}};
 const paintTn=()=>{const el=$('pqTn');if(!el)return;let t='';
-if(!S.arrT&&!S.home){if(S.to&&prepArrBefore(S.to))t='⏪ 前回ここに着いた時刻';else if(last&&last.arr)t='⏪ 前の準備と同じ';}
+if(!S.arrT&&!S.home){if(S.to&&prepArrBefore(S.to))t='⏪ 前回ここに着いた時刻';else if(!S.arr)t='行き先を選ぶと時刻が入る';}
 el.textContent=t;};
 const paintWhere=()=>{const el=$('pqWhere');if(el)el.textContent='タップした場所は → '+(S.cur==='f'?'🟢 出発':S.cur==='t'?'🏁 到着':'⋯ 経由')+' に入る';};
 const paintToOk=()=>{const el=$('pqToOk');if(el)el.innerHTML=(S.toOk&&String(S.to||'').trim())?'📍到着：<b>'+esc(String(S.to).trim())+'</b> ✓':'';};
@@ -10927,7 +10928,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c23.8";
+const CL_APPVER="c23.9";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
