@@ -4188,7 +4188,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c23.9）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c24.0）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -9428,7 +9428,7 @@ const inp=(f,val,ph,auto)=>'<input type="text" class="mvpi pqpi'+(S.cur===f?' pq
 let h='';
 if(S.more){h+='<div class="mvpt"><span>🟢 出発</span>'+inp('f',S.from,'どこから',!!(S.fromA&&S.from))+'<button type="button" class="chip pq-sw lbl" id="pqSw" aria-label="出発と到着を入れ替える">⇅<small class="bn">入替</small></button></div>';
 S.vias.forEach((v,i)=>{h+='<div class="mvpt"><span>⋯ 経由</span>'+inp('v'+i,v,'どこを通る',false)+'<button type="button" class="mvpx lbl" data-vx="'+i+'" aria-label="この行を消す">✕<small class="bn">消す</small></button><button type="button" class="chip pq-vn lbl" data-vn="'+i+'" aria-label="経由をもう1行足す">→<small class="bn">足す</small></button></div>';});}
-else h+='<div class="mvpt pq-fa"><span>🟢 出発</span><b class="pq-fv'+((S.fromA&&S.from)?' auto':'')+'">'+(S.from?esc(S.from):'—')+'</b></div>';
+else h+='<div class="mvpt"><span>🟢 出発</span>'+inp('f',S.from,'どこから',!!(S.fromA&&S.from))+'</div>';
 h+='<div class="mvpt"><span>🏁 到着</span>'+inp('t',S.to,'どこへ',false)+(S.more?'<button type="button" class="chip pq-arr" id="pqArrB" aria-label="ここで区切る">✓ここまで</button>':'')+'</div>';
 if(S.more&&!S.vias.length)h+='<div class="pq-addv"><button type="button" class="chip" id="pqAddV">＋経由</button></div>';
 w.innerHTML=h;paintToOk();paintWhere();
@@ -10928,7 +10928,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c23.9";
+const CL_APPVER="c24.0";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
