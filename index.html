@@ -1666,7 +1666,7 @@ button.sp-row:active{background:#f1f3f8}
 .fab:active{transform:scale(.94)}
 .fab-ck{position:absolute;top:-3px;right:-3px;width:20px;height:20px;border-radius:50%;background:var(--green);color:#fff;font-size:12px;font-style:normal;font-weight:800;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 2px #fff;line-height:1}
 .ovl.open~.fab,body.kb .fab{display:none!important}
-@media (max-width:340px){.tlord .tlw{display:none}}
+.tlord .tlw2{display:none}@media (max-width:340px){.tlord .tlw{display:none}.tlord .tlw2{display:inline}}
 .pq-pts{display:flex;flex-direction:column;gap:6px}
 .pqpi.pqcur{border-color:var(--green);box-shadow:0 0 0 2px rgba(11,193,103,.22)}
 .pq-sw,.pq-vn{flex:0 0 auto;width:36px;min-width:36px;height:36px;padding:0;font-weight:800;font-size:15px}
@@ -1850,11 +1850,51 @@ body.cardvis .fab{display:none!important}
 #acRows .unit .hbox .ac-t{flex:1;min-width:0;width:auto;height:auto;border:0;background:none;margin:0;padding:2px 0;font-size:16px;font-weight:700;box-shadow:none;outline:0}
 .unit .more{flex:0 0 auto;width:30px;height:30px;border-radius:999px;background:#f1f3f8;color:#8a93a6;font-weight:900;padding:0;border:0}.unit .more.on{background:#3b63d9;color:#fff}
 .tmline{display:flex;align-items:center;flex-wrap:wrap;gap:6px;padding:4px 0 0 4px}.tmb{font-size:11.5px;font-weight:800;color:#8a93a6;padding:4px 6px;border-radius:8px;background:none;border:0}.tmline.open .tmb{color:#3b63d9}
-.unit .tmw,.unit:not(.um) .tools,.unit .ac-side .ac-x{display:none!important}.unit .tmline.open .tmw{display:flex!important;flex-direction:column;gap:4px;flex:1 1 100%;min-width:0}.unit .tmw .ac-l2{margin-top:0}
+.unit .tmw,.unit .ac-side .ac-x{display:none!important}.unit .tmline.open .tmw{display:flex!important;flex-direction:column;gap:4px;flex:1 1 100%;min-width:0}.unit .tmw .ac-l2{margin-top:0}
 .unit .tools{display:flex;flex-wrap:wrap;gap:6px;padding:8px;border-radius:12px;background:#f1f3f8;margin-top:6px}.unit .tools>:not(.ac-side){flex:1 1 100%;min-width:0;margin-top:0}
 .actrow.unit .tools .ac-side{display:flex;flex-direction:row;flex-wrap:wrap;gap:6px}.actrow.unit .ac-side .ac-pb{display:flex}.actrow.unit.err{box-shadow:none}
 
 .bdp{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:6px}.bdc{padding:8px 12px;border-radius:12px;background:#f1f3f8;color:#5b6170;font-weight:800;font-size:13px}.bdc.l.on{background:#e0f2fe;color:#075985;box-shadow:inset 0 0 0 2px #0ea5e9}.bdc.s.on{background:#fde8ec;color:#b4234a;box-shadow:inset 0 0 0 2px #e0405a}.bdq{font-size:11.5px;color:#e0405a;font-weight:800}
+
+.lbl{flex-direction:column!important;align-items:center;justify-content:center;gap:1px;line-height:1!important}
+.lbl>.bn{display:block;font-size:9.5px;font-weight:800;line-height:1.05;white-space:nowrap;letter-spacing:0;font-style:normal;margin:1px 0 0;padding:0;opacity:.9;text-shadow:none}
+.syncdot{position:relative;margin-right:26px}.syncdot::after{content:'同期';position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:10px;font-weight:800;color:#8a90a0;white-space:nowrap;line-height:1}
+.datebar .chev.lbl{display:inline-flex;padding:2px 5px}.datebar .chev.lbl .bn{font-size:9px;color:#9aa1b0}
+.micbig.lbl{gap:2px}.micbig.lbl svg{width:21px;height:21px}.micbig .bn{color:#fff}
+.camsm.lbl{gap:0;font-size:17px}.camsm .bn{color:#5b6170}
+.now .nowx.lbl{width:auto;min-width:36px;height:auto;min-height:32px;border-radius:12px;padding:3px 5px}
+.actrow .ac-k.ac-kg .ac-plus.lbl,.ac-plus.lbl{display:inline-flex;font-size:16px}.ac-plus .bn{font-size:9px}
+.actrow .ac-k.ac-kg .ac-kx.lbl{display:inline-flex}
+.hcm.lbl{width:auto;min-width:34px;height:auto;min-height:30px;border-radius:12px;padding:3px 4px;font-size:13px}.hcm .bn{font-size:9px;color:#3b63d9}.hour.filled:has(>.body>.hcm) .body{padding-right:44px}
+.plan2 .tg2.lbl{width:auto;min-width:32px;height:auto;min-height:24px;padding:2px 3px;border-radius:8px}.plan2 .tg2 .bn{color:#4d7dff;font-size:9px}.plan2.done .tg2 .bn{color:#fff}
+.addbtn.lbl{display:inline-flex;font-size:16px;width:44px;height:44px;border-radius:14px}.addbtn .bn{font-size:9.5px}
+#mvSwap.lbl,#mvArrow.lbl{display:inline-flex;padding:4px 8px}
+.sh-mic.lbl{gap:0;width:34px;height:34px}.sh-mic.lbl svg{width:13px;height:13px}.sh-mic .bn{color:#fff;font-size:9px}
+.frrow .fr-mic.lbl,.fr-mic.lbl{gap:1px}.fr-mic.lbl svg{width:17px;height:17px}.fr-mic .bn{font-size:9px;color:#5b6170}
+.mvpt .mvpx.lbl{display:inline-flex;width:auto;min-width:34px;height:auto;min-height:32px;padding:3px 4px}
+.unit .ix.lbl{width:auto;min-width:36px;height:auto;min-height:32px;border-radius:12px;padding:3px 5px}.unit .ix .bn{font-size:9px}
+.actrow .ac-side>button.lbl{height:44px}.actrow .ac-side>button.lbl .bn{font-size:9px;color:#5b6170}
+.actrow .ac-cb.lbl,.actrow .ac-pb.lbl{width:44px}
+.ac-x.lbl{border-radius:12px}.ac-x.lbl .bn{font-size:9px}
+.phadd.lbl{gap:2px;font-size:20px}.phadd .bn{color:#8a90a0}
+.pin .pin-ok.lbl{width:auto;min-width:38px;height:auto;min-height:32px;border-radius:12px;padding:2px 4px}.pin .pin-ok .bn{font-size:9px}
+.dn-ck.lbl{display:inline-flex;font-size:20px}.dn-ck .bn{font-size:9px;color:#5b6170}
+.dsx-ok.lbl{display:inline-flex;width:auto;min-width:40px;height:auto;min-height:34px;border-radius:12px;padding:2px 4px}.dsx-ok .bn{font-size:9px}
+.ynav button.lbl{display:inline-flex}.ynav .bn,.pmon .pmv .bn,.an-nav .bn,.sh-time button .bn{font-size:9.5px;color:#8a90a0}
+.pmon .pmv.lbl,.an-nav button.lbl,.sh-time button.lbl{display:inline-flex}
+.sr-x.lbl{width:auto;min-width:34px;height:auto;min-height:30px;border-radius:10px;padding:2px 4px}.sr-x .bn{font-size:9px}
+.pl-ac button.lbl{display:inline-flex}.pl-ac .bn{font-size:9px;color:#5b6170}
+.td-ck.lbl{display:inline-flex;font-size:20px}.td-ck .bn,.td-pn .bn{font-size:9px;color:#5b6170}.td-pn.lbl{display:inline-flex;font-size:18px}
+.rf-ck.lbl{display:inline-flex;width:auto;min-width:44px;padding:0 4px;font-size:17px}.rf-ck .bn{font-size:9px}
+.slpbar .sb-x.lbl{display:inline-flex;width:auto;min-width:34px;height:auto;min-height:30px;border-radius:10px;padding:2px 4px}.slpbar .sb-x .bn{font-size:9px}
+.op-b.lbl{display:inline-flex;padding:4px 6px}.op-b .bn{font-size:9px}
+.pcard .pk-ok.lbl{display:inline-flex;font-size:22px}.pcard .pk-ok .bn{font-size:10px}
+.pcard #pqMo.lbl{display:inline-flex;font-size:18px;padding:3px 10px}.pcard #pqMo .bn{font-size:9.5px}
+.pq-fl.lbl{display:inline-flex;font-size:16px;padding:2px 8px}.pq-fl .bn{font-size:9px;color:#5b6170}
+.pq-sw.lbl,.pq-vn.lbl{display:inline-flex;width:auto;min-width:38px;height:auto;min-height:36px;padding:2px 4px}.pq-sw .bn,.pq-vn .bn{font-size:9px}
+.tmline .tmb small{font-size:10.5px;font-weight:700;color:#9aa1b0;margin-left:4px}
+.actrow.unit .ac-side>button:not(.ac-x):not(.ac-mo){display:flex}.actrow.unit .ac-side .ac-mo{display:none}
+#acRows .actrow.unit .ac-ait .chip,#acRows .actrow.unit .ac-fdw .chip{display:inline-block}#acRows .actrow.unit .ac-fd{display:none}
 </style>
 
 <div id="bootmsg" style="position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:24px;background:#faf9f5;color:#6a7080;font:800 15px -apple-system,BlinkMacSystemFont,sans-serif;text-align:center"><div style="font-size:34px">📔</div><div class="hb-logo" style="font-size:24px;color:#0a9a54"><b>HIBIKI</b><i>日々記</i></div><div id="bootmsgT">読み込み中…</div><div id="bootmsgS" style="font-size:12px;color:#9aa3b5;font-weight:700"></div></div>
@@ -1864,22 +1904,22 @@ body.cardvis .fab{display:none!important}
 <div class="top">
 <div class="datebar">
 <span class="hb-brand"><span class="hb-logo"><b>HIBIKI</b><i>日々記</i></span><span class="yr" id="yr"></span></span>
-<button class="chev" id="prevD">‹</button>
+<button class="chev lbl" id="prevD" aria-label="前の日">‹<small class="bn">前の日</small></button>
 <span class="d" id="dd"></span>
 <span class="yobi" id="yb"></span>
-<button class="chev" id="nextD">›</button>
+<button class="chev lbl" id="nextD" aria-label="次の日">›<small class="bn">次の日</small></button>
 <button class="topset" id="topSet2" aria-label="設定"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.5-2-3.4-2.3 1a7 7 0 0 0-2-1.2L14.2 3h-4l-.4 2.7a7 7 0 0 0-2 1.2l-2.3-1-2 3.4 2 1.5A7 7 0 0 0 5 12a7 7 0 0 0 .1 1.2l-2 1.5 2 3.4 2.3-1a7 7 0 0 0 2 1.2l.4 2.7h4l.4-2.7a7 7 0 0 0 2-1.2l2.3 1 2-3.4-2-1.5A7 7 0 0 0 19 12z"/></svg><small>設定</small></button>
 <button class="todaybtn" id="todayBtn" style="display:none">今日</button>
 </div>
 <div class="right-top">
 <button class="mlchip" id="mlChip" style="display:none"></button>
 <span class="streak" id="streak" style="display:none"></span>
-<span class="syncdot" id="syncdot" title=""></span>
+<span class="syncdot" id="syncdot" title="" role="button" aria-label="同期"></span>
 </div>
 </div>
 
 <!-- 保存に問題がある間だけ出る診断帯。スクショ1枚で原因が分かる -->
-<button type="button" class="foldbar" id="foldBar" aria-label="上の帯とカードを出す">▾ 💰🏢🏠📣</button>   <!-- c21.7：日記をスクロールすると上（帯・東証・📌カード・書く）がたたまれる。押すと戻る -->
+<button type="button" class="foldbar" id="foldBar" aria-label="上の帯とカードを出す">▾ 上を開く 💰🏢🏠📣</button>   <!-- c21.7：日記をスクロールすると上（帯・東証・📌カード・書く）がたたまれる。押すと戻る -->
 <button class="diagstrip" id="diagstrip" style="display:none"></button>
 <div class="gstrip" id="gstrip" style="display:none"></div>
 <button type="button" class="ftk" id="ftk" aria-label="這い上がった話（押すと次）"><span id="ftkT"></span></button>   <!-- c16.4：💰法人化引っ越しの帯（毎分意識する） -->
@@ -1893,12 +1933,12 @@ body.cardvis .fab{display:none!important}
 <div class="pinrow" id="pinRow" style="display:none"></div>
 
 <div class="now" id="nowCard">
-<button class="micbig" id="micNow"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button>
+<button class="micbig lbl" id="micNow" aria-label="書く"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg><small class="bn">書く</small></button>
 <div class="right">
 <div class="nh"><span class="pulse"></span><span id="nowQ"></span></div>
 <div class="hint" style="font-size:11px;color:#8a90a0;margin-top:4px;font-weight:700">タップして書く・話す・撮る</div>
 </div>
-<button class="camsm" id="camNow">📷</button>
+<button class="camsm lbl" id="camNow" aria-label="写真">📷<small class="bn">写真</small></button>
 </div>
 
 <div class="scr" id="scr">   <!-- c16.7：ここから下を1枚でスクロール（日付・帯・東証・📌カードは動かさない＝本人指示） -->
@@ -3046,7 +3086,7 @@ $('nowQ').textContent=h+'時、いま何してた？';
 let ch=$('nowChips');
 if(!ch){ch=document.createElement('div');ch.className='chips';ch.id='nowChips';$('nowCard').querySelector('.right').appendChild(ch);}
 let nx=$('nowClose');
-if(!nx){nx=document.createElement('button');nx.className='nowx';nx.id='nowClose';nx.setAttribute('aria-label','閉じる');nx.textContent='✕';$('nowCard').appendChild(nx);}
+if(!nx){nx=document.createElement('button');nx.className='nowx lbl';nx.id='nowClose';nx.setAttribute('aria-label','閉じる');nx.innerHTML='✕<small class="bn">閉じる</small>';$('nowCard').appendChild(nx);}
 nx.onclick=ev=>{ev.stopPropagation();nowCardSet(false);render();};
 const os=openSleep();
 const night=(h>=21||h<5);
@@ -3107,7 +3147,7 @@ const ids=g=>{const r=R();return Object.keys(r).filter(id=>r[id]&&r[id].g===g&&r
 const paint=()=>{const r=R(),G=plGroups(),all=G.map(x=>x.g).concat(['ot']);
 let s='<div class="sh-time"><span>✎ 場所のボタンを編集</span></div><div class="sh-note" style="text-align:left">場所を押すと、名前を直す・移す・並べ替え・外すができる。日記の記録は変わらない</div>';
 all.forEach((g,gi)=>{const L=ids(g);
-s+='<div class="pe-g"><div class="pe-h"><b>'+esc(plgName(g))+'</b>'+(g!=='ot'?'<span class="pe-gb"><button class="chip" data-gu="'+g+'"'+(gi===0?' disabled':'')+'>⬅ 前へ</button><button class="chip" data-gd="'+g+'"'+(gi>=G.length-1?' disabled':'')+'>➡ 後ろへ</button><button class="chip pe-del" data-gx="'+g+'">'+(gxArm===g?'🗑 本当に消す？':'🗑')+'</button></span>':'')+'</div>'+
+s+='<div class="pe-g"><div class="pe-h"><b>'+esc(plgName(g))+'</b>'+(g!=='ot'?'<span class="pe-gb"><button class="chip" data-gu="'+g+'"'+(gi===0?' disabled':'')+'>⬅ 前へ</button><button class="chip" data-gd="'+g+'"'+(gi>=G.length-1?' disabled':'')+'>➡ 後ろへ</button><button class="chip pe-del" data-gx="'+g+'">'+(gxArm===g?'🗑 本当に消す？':'🗑 消す')+'</button></span>':'')+'</div>'+
 '<div class="sr-r">'+L.map(id=>'<button class="chip'+(id===sel?' sel':'')+'" data-pe="'+id+'">'+esc(r[id].p)+'</button>').join('')+'<button class="chip pe-add" data-pa="'+g+'">＋ 場所を足す</button></div>';
 if(sel&&r[sel]&&r[sel].g===g){const i=L.indexOf(sel);
 s+='<div class="pe-op"><div class="pe-nm"><input type="text" id="peNm" maxlength="120" value="'+esc(r[sel].p)+'"><button class="chip" id="peRn">名前を直す</button></div>'+
@@ -3169,7 +3209,7 @@ const many=chips.length>CHIP_FOLD;
 const list=(all||!many)?chips:chips.slice(0,CHIP_FOLD);
 return list.map(p=>'<button class="chip" data-p="'+esc(p)+'">'+esc(p)+'</button>').join('')+
 (many?(all?'<button class="chip" id="pLess" style="background:#f1f3f8;color:#8a90a0">－ たたむ</button>'
-:'<button class="chip" id="pMore" style="background:#e7f9f0;color:#0a9a54">＋'+(chips.length-CHIP_FOLD)+'</button>'):'');
+:'<button class="chip" id="pMore" style="background:#e7f9f0;color:#0a9a54">＋ ほか'+(chips.length-CHIP_FOLD)+'</button>'):'');
 }
 
 var NOWOPEN=false;
@@ -3264,25 +3304,25 @@ const nb=(nd,pth,on)=>'<button class="ac-kc'+(on?' on':'')+'" data-akp="'+pth+'"
 const kb=(id,t)=>{const x=kindOf(id);if(!x||(x.off&&id!==k))return '';return '<button data-ak="'+esc(id)+'" data-akd="'+(t.d||'')+'" style="--kc:'+esc(x.co)+'"'+((k===id||KX.indexOf(id)>=0)?' class="sel"':'')+'>'+esc(x.ic)+'<span>'+esc(x.lb)+'</span></button>';};
 if(P[0]==='_tool'){const ls=toolList().filter(x=>!(devK&&(x.id==='pc'||x.id==='phone')));
 return '<button class="ac-kc on" data-akp="_tool">🛠<span>使った物</span><i>▴</i></button><div class="ac-kl">'+ls.map(x=>'<button data-ad="'+esc(x.id)+'"'+((d===x.id||DD.indexOf(x.id)>=0)?' class="sel"':'')+'>'+esc(x.ic)+'<span>'+esc(x.lb)+'</span></button>').join('')+
-'<button data-ad="_other"'+((d==='_other'||DD.indexOf('_other')>=0)?' class="sel"':'')+'>✍️<span>その他</span></button><button class="ac-plus" data-ad-add="1" aria-label="道具を足す">＋</button>'+
+'<button data-ad="_other"'+((d==='_other'||DD.indexOf('_other')>=0)?' class="sel"':'')+'>✍️<span>その他</span></button><button class="ac-plus lbl" data-ad-add="1" aria-label="道具を足す">＋<small class="bn">足す</small></button>'+
 ((d==='_other'||DD.indexOf('_other')>=0)?'<input type="text" class="ac-dx" maxlength="20" placeholder="使った物を書く（この行だけ）" value="'+esc(dx||'')+'">':'')+'</div>';}
 const t=KIND_TREE.find(x=>x.id===P[0]);
 if(t){const ch=t.ch||etc,sub=P[1]&&ch.find(c=>typeof c!=='string'&&c.id===P[1]);let s=nb(t,t.id,!sub);
 if(sub)s+=nb(sub,t.id+'/'+sub.id,true)+'<div class="ac-kl">'+sub.ch.map(c=>kb(c,t)).join('')+'</div>';
-else s+='<div class="ac-kl">'+ch.map(c=>typeof c==='string'?kb(c,t):nb(c,t.id+'/'+c.id,false)).join('')+((t.ch&&!t.plus)?'':'<button class="ac-plus" data-ak-add="1" aria-label="種類を足す">＋</button>')+'</div>';
+else s+='<div class="ac-kl">'+ch.map(c=>typeof c==='string'?kb(c,t):nb(c,t.id+'/'+c.id,false)).join('')+((t.ch&&!t.plus)?'':'<button class="ac-plus lbl" data-ak-add="1" aria-label="種類を足す">＋<small class="bn">足す</small></button>')+'</div>';
 return s;}
-const tb=devK?'':'<button class="ac-kc tl'+(d?' has':'')+'" data-akp="_tool" aria-label="使った物">🛠'+(d?'<span>'+[d].concat(DD).map(x=>x==='_other'?'✍️'+esc(dx||'その他'):esc((toolOf(x)||{ic:'❓'}).ic)).join('')+'</span>':'')+'</button>';
+const tb=devK?'':'<button class="ac-kc tl'+(d?' has':'')+'" data-akp="_tool" aria-label="使った物">🛠 道具'+(d?'<span>'+[d].concat(DD).map(x=>x==='_other'?'✍️'+esc(dx||'その他'):esc((toolOf(x)||{ic:'❓'}).ic)).join('')+'</span>':'')+'</button>';
 if(k&&P[0]!=='_top'){const cur=kindOf(k)||{ic:'❓',lb:String(k).slice(0,4),co:'#9aa3b5'},dv=(devK&&d)?toolOf(d):null;
-return '<button class="ac-ksel sel" data-akp="_top" style="--kc:'+esc(cur.co)+'">'+esc(cur.ic)+'<span>'+esc(cur.lb)+KX.map(x=>{const q=kindOf(x);return q?'・'+esc(q.ic)+esc(q.lb):'';}).join('')+(dv?' '+esc(dv.ic):'')+'</span><i>▾</i></button><button class="ac-kx" data-akx="1" aria-label="種類を外す">✕</button>'+tb;}
+return '<button class="ac-ksel sel" data-akp="_top" style="--kc:'+esc(cur.co)+'">'+esc(cur.ic)+'<span>'+esc(cur.lb)+KX.map(x=>{const q=kindOf(x);return q?'・'+esc(q.ic)+esc(q.lb):'';}).join('')+(dv?' '+esc(dv.ic):'')+'</span><i>▾</i></button><button class="ac-kx lbl" data-akx="1" aria-label="種類を外す">✕<small class="bn">外す</small></button>'+tb;}
 if(P[0]!=='_top')return '<button class="ac-kc pick" data-akp="_top">🏷️<span>種類をえらぶ</span><i>▾</i></button>'+tb;
 {const top=kindTop5(),og=P[1]||'';
-const lvOf=t=>t.ch?t.ch.map(c=>typeof c==='string'?kb(c,t):('<div class="ka-subw"><div class="ka-sub">'+c.ic+' '+esc(c.lb)+'</div>'+c.ch.map(x=>kb(x,t)).join('')+'</div>')).join('')+(t.plus?'<button class="ac-plus" data-ak-add="1" aria-label="種類を足す">＋</button>':''):(etc.map(id=>kb(id,t)).join('')+'<button class="ac-plus" data-ak-add="1" aria-label="種類を足す">＋</button>');
+const lvOf=t=>t.ch?t.ch.map(c=>typeof c==='string'?kb(c,t):('<div class="ka-subw"><div class="ka-sub">'+c.ic+' '+esc(c.lb)+'</div>'+c.ch.map(x=>kb(x,t)).join('')+'</div>')).join('')+(t.plus?'<button class="ac-plus lbl" data-ak-add="1" aria-label="種類を足す">＋<small class="bn">足す</small></button>':''):(etc.map(id=>kb(id,t)).join('')+'<button class="ac-plus lbl" data-ak-add="1" aria-label="種類を足す">＋<small class="bn">足す</small></button>');
 if(og){const t=KIND_TREE.find(x=>x.id===og);if(t)return '<div class="ac-kcats"><button class="ac-kcat on" data-akp="_top">'+t.ic+'<span>'+esc(t.lb)+'</span><i>▴</i></button><div class="ac-kl ac-kopen">'+lvOf(t)+'</div></div>';}
 return '<button class="ac-kc on" data-akp="">▴<span>とじる</span></button><div class="ac-kq"><span class="ac-kqh">よく使う</span>'+top.map(id=>kb(id,{d:''})).join('')+'</div>'+
 '<div class="ac-kcats">'+kSecHtml(t=>t.dir?'<button class="ac-kcat'+((k===t.dir||KX.indexOf(t.dir)>=0)?' on':'')+'" data-ak="'+esc(t.dir)+'" data-akd="">'+t.ic+'<span>'+esc(t.lb)+'</span></button>':'<button class="ac-kcat'+(og===t.id?' on':'')+'" data-akp="_top/'+t.id+'">'+t.ic+'<span>'+esc(t.lb)+'</span><i>'+(og===t.id?'▾':'▸')+'</i></button>'+(og===t.id?'<div class="ac-kl ac-kopen">'+lvOf(t)+'</div>':''))+'</div>';}
 let FD={};try{FD=JSON.parse(localStorage.getItem('hibiki-kfold')||'{}')||{};}catch(e){}
 return '<button class="ac-kc on" data-akp="">▴<span>とじる</span></button><div class="ac-kall">'+KIND_TREE.map(t=>{const fo=!!FD[t.id];
-const lv=t.ch?t.ch.map(c=>typeof c==='string'?kb(c,t):('<div class="ka-subw"><div class="ka-sub">'+c.ic+' '+esc(c.lb)+'</div>'+c.ch.map(x=>kb(x,t)).join('')+'</div>')).join('')+(t.plus?'<button class="ac-plus" data-ak-add="1" aria-label="種類を足す">＋</button>':''):(etc.map(id=>kb(id,t)).join('')+'<button class="ac-plus" data-ak-add="1" aria-label="種類を足す">＋</button>');
+const lv=t.ch?t.ch.map(c=>typeof c==='string'?kb(c,t):('<div class="ka-subw"><div class="ka-sub">'+c.ic+' '+esc(c.lb)+'</div>'+c.ch.map(x=>kb(x,t)).join('')+'</div>')).join('')+(t.plus?'<button class="ac-plus lbl" data-ak-add="1" aria-label="種類を足す">＋<small class="bn">足す</small></button>':''):(etc.map(id=>kb(id,t)).join('')+'<button class="ac-plus lbl" data-ak-add="1" aria-label="種類を足す">＋<small class="bn">足す</small></button>');
 return '<div class="ac-kgp"><button class="ac-kgh'+(fo?' f':'')+'" data-akf="'+t.id+'">'+t.ic+'<span>'+esc(t.lb)+'</span><i>'+(fo?'▸':'▾')+'</i></button>'+(fo?'':'<div class="ac-kl">'+lv+'</div>')+'</div>';}).join('')+'</div>';}
 const KIND_WORDS=[[/車検証.{0,4}スキャン/,'c_kscan'],[/スキャン/,'docscan'],[/FAX|ファックス|ファクス/i,'c_aafax'],[/郵便物|郵送物|郵便受|ポスト/,'post'],[/車庫証明|車庫/,'c_garage'],[/役所|区役所|市役所|警察|郵便局|免許|年金|税務署/,'gov'],[/オイル|整備|修理|交換|洗車|磨き|板金|タイヤ|バッテリー/,'repair'],[/相場|リサーチ|価格調査/,'mkt'],[/ヤフオク/,'c_yahoo'],[/脱毛|美容/,'beauty'],[/ドライブ/,'drive'],[/モーターショー|車のイベント|オートサロン/,'carsee'],[/荷物.{0,6}(おろ|下ろ|降ろ|積)/,'c_unload'],[/髪切|散髪|床屋|美容院/,'haircut'],[/出品|撮影|写真撮り|掲載/,'c_list'],[/落札後|名変|書類/,'c_aaafter'],[/引取|陸送|回送/,'c_aapick'],[/クレーム/,'c_aaclaim'],
 [/AAライブ|ライブ入札|入札/,'c_aalive'],[/AA|オークション/,'c_aaadj'],[/陸自|陸運|車検|登録|ナンバー/,'c_dmv'],[/買取/,'c_buy'],[/販売|成約|納車/,'c_sell'],[/客|問い合わせ|問合せ|見積/,'c_cust'],
@@ -3350,7 +3390,7 @@ openSub('<div class="sh-time"><span>💰 収入（'+Number(ym.slice(5))+'月）<
 '<input type="text" id="incMemo" maxlength="40" placeholder="メモ（例：ミニ 成約・手付）" style="width:100%;margin-top:6px">'+
 '<div class="sh-btns"><button class="delbtn" id="incNo" style="flex:0 0 auto">閉じる</button><button class="savebtn" id="incOk">入れる</button></div>'+
 '<div class="psum" style="margin-top:12px"><div class="dn"><div class="ps-l">💵 入金</div><div class="ps-v">'+fmtYen(sIn)+'<small>円</small></div></div><div class="dn"><div class="ps-l">📈 粗利</div><div class="ps-v">'+fmtYen(sGp)+'<small>円</small></div></div></div>'+
-(L.length?'<div class="inc-list">'+L.map(x=>'<div class="inc-it"><span class="inc-d">'+esc(x.d.slice(5).replace('-','/'))+'</span><span class="inc-ty">'+(x.ty==='gp'?'📈':'💵')+'</span><b>'+fmtYen(x.amt)+'円</b><span class="inc-m">'+esc(x.memo||'')+'</span><button class="inc-x'+(incArm===x.id?' arm':'')+'" data-incx="'+esc(x.id)+'">'+(incArm===x.id?'もう一度で消す':'✕')+'</button></div>').join('')+'</div>':'<div class="an-empty">まだ無い</div>'),null);
+(L.length?'<div class="inc-list">'+L.map(x=>'<div class="inc-it"><span class="inc-d">'+esc(x.d.slice(5).replace('-','/'))+'</span><span class="inc-ty">'+(x.ty==='gp'?'📈':'💵')+'</span><b>'+fmtYen(x.amt)+'円</b><span class="inc-m">'+esc(x.memo||'')+'</span><button class="inc-x'+(incArm===x.id?' arm':'')+'" data-incx="'+esc(x.id)+'">'+(incArm===x.id?'もう一度で消す':'✕ 消す')+'</button></div>').join('')+'</div>':'<div class="an-empty">まだ無い</div>'),null);
 const s=$('sheet2');s.querySelectorAll('[data-incty]').forEach(b=>b.onclick=()=>{ty=b.dataset.incty;const a=$('incAmt').value,m=$('incMemo').value;d=$('incD').value||d;paint();$('incAmt').value=a;$('incMemo').value=m;});
 $('incNo').onclick=closeSub;
 $('cashOk').onclick=()=>{const amt=Math.round(Number($('cashAmt').value)||0);if(!(amt>0)){toast('金額を入れてくれ');return;}mutate(()=>{state.cash=state.cash||{};state.cash['c'+Date.now()+Math.floor(Math.random()*1e4)]={d:todayStr(),amt,ts:Date.now()};});toast('💴 手元 '+fmtYen(amt)+'円');paint();};
@@ -3462,7 +3502,7 @@ function undoBar(msg,fn,ref){let el=$('mgUndo');if(!el){el=document.createElemen
 clearTimeout(el._t);const hide=()=>{clearTimeout(el._t);el._open=false;el.classList.remove('show','hito');el.style.bottom='';};
 const paint=open=>{el._open=!!open;el.classList.toggle('hito',!!open);
 el.innerHTML='<span>'+esc(msg)+'</span>'+((ref&&!open)?'<button type="button" class="ub-hb">💬 一言</button>':'')+(fn?'<button type="button" class="ub-u">↩️ 元に戻す</button>':'')+
-(open?'<div class="ub-h"><input type="text" class="ub-in" maxlength="400" placeholder="一言…" enterkeyhint="done" autocomplete="off"><button type="button" class="ub-ok" aria-label="入れる">✓</button><button type="button" class="ub-x" aria-label="閉じる">✕</button></div>':'');
+(open?'<div class="ub-h"><input type="text" class="ub-in" maxlength="400" placeholder="一言…" enterkeyhint="done" autocomplete="off"><button type="button" class="ub-ok" aria-label="入れる">✓ 入れる</button><button type="button" class="ub-x" aria-label="閉じる">✕ 閉じる</button></div>':'');
 {const u=el.querySelector('.ub-u');if(u)u.onclick=()=>{hide();fn();};}
 {const b=el.querySelector('.ub-hb');if(b)b.onclick=()=>paint(true);}
 if(open){clearTimeout(el._t);const ip=el.querySelector('.ub-in'),go=()=>{const v=ip.value.trim();hide();if(v)hitoAdd(ref.d,ref.k,v);};
@@ -3494,7 +3534,7 @@ if(!re&&HCM&&HCM.k===k&&HCM.d===ui.date){HCM=null;return;}
 if(re&&(!HCM||HCM.d!==ui.date)){HCM=null;return;}
 const row=[...pane.querySelectorAll('.hour[data-k]')].find(x=>x.dataset.k===k);if(!row){HCM=null;return;}
 const keep=re?HCM:null;HCM={d:ui.date,k,v:keep?keep.v:'',f:keep?keep.f:true};const d=HCM.d;
-row.insertAdjacentHTML('afterend','<div class="hinl"><input type="text" maxlength="400" placeholder="一言…" enterkeyhint="done" autocomplete="off"><button type="button" class="ok">✓</button></div>');
+row.insertAdjacentHTML('afterend','<div class="hinl"><input type="text" maxlength="400" placeholder="一言…" enterkeyhint="done" autocomplete="off"><button type="button" class="ok" aria-label="入れる">✓ 入れる</button></div>');
 const box=row.nextElementSibling,ip=box.querySelector('input');ip.value=HCM.v;box.addEventListener('click',ev=>ev.stopPropagation());
 ip.oninput=()=>{if(HCM)HCM.v=ip.value;};ip.onfocus=()=>{if(HCM)HCM.f=true;};ip.onblur=()=>{if(HCM&&ip.isConnected)HCM.f=false;};
 const go=()=>{const v=ip.value.trim();HCM=null;box.remove();if(v)hitoAdd(d,k,v);};
@@ -3707,7 +3747,7 @@ recHead(en,kHead(en)).g+pill+(en.md?'<span class="dpill mdp">🕳️ ムダ</spa
 (en.t?'<div class="txt">'+hitoHtml(en.t)+'</div>':'')+
 (en.ph&&en.ph.length?'<span class="phrow">'+en.ph.slice(0,4).map(id=>'<img class="phth" src="'+esc(phUrl(id))+'" alt="" onerror="this.style.visibility=\'hidden\'">').join('')+(en.ph.length>4?'<span class="phmore">+'+(en.ph.length-4)+'</span>':'')+'</span>':'')+
 (isToday&&h===nowH&&idx===0?'<span class="nowmark">いま</span>':'')+
-'<span class="hcm'+((hitoMust()&&!hitoHas(en)&&!en.mv)?' need':'')+'" data-hcm="'+esc(it.k)+'" role="button" aria-label="一言">'+(hitoHas(en)?'✎':'💬')+'</span>'+
+'<span class="hcm lbl'+((hitoMust()&&!hitoHas(en)&&!en.mv)?' need':'')+'" data-hcm="'+esc(it.k)+'" role="button" aria-label="一言">'+(hitoHas(en)?'✎':'💬')+'<small class="bn">一言</small></span>'+
 '</div></button>';
 });
 }else{
@@ -3778,7 +3818,7 @@ try{depCardBind(pane);}catch(e){}
 tbBind(pane);
 prepBind(pane);
 {const c=pane.querySelector('#cvFold');if(c)c.onclick=ev=>{ev.stopPropagation();msxTog('tl|cvo');};const d=pane.querySelector('#pdFold');if(d)d.onclick=ev=>{ev.stopPropagation();msxTog('tl|pall');};}
-{const o=$('tlOrd');if(o){o.style.display=topView==='diary'?'':'none';const nf=sugNo('tl|new');o.innerHTML='⇅<span class="tlw"> '+(nf?'新しい順':'古い順')+'</span>';o.setAttribute('aria-label',nf?'新しい順':'古い順');o.classList.toggle('on',nf);o.onclick=ev=>{ev.stopPropagation();msxTog('tl|new');};}}
+{const o=$('tlOrd');if(o){o.style.display=topView==='diary'?'':'none';const nf=sugNo('tl|new');o.innerHTML='⇅<span class="tlw"> '+(nf?'新しい順':'古い順')+'</span><span class="tlw2"> 並び</span>';o.setAttribute('aria-label',nf?'新しい順':'古い順');o.classList.toggle('on',nf);o.onclick=ev=>{ev.stopPropagation();msxTog('tl|new');};}}
 
 {const ab=pf.querySelector('#alarmBtn');if(ab)ab.onclick=ev=>{ev.stopPropagation();openAlarmSheet();};}
 {const lb=pf.querySelector('#appLogout');if(lb)lb.onclick=ev=>{ev.stopPropagation();
@@ -3809,7 +3849,7 @@ const A=()=>askSt[sk]||(askSt[sk]={open:false,stops:[]});
 const rel=t=>{if(!/^\d\d:\d\d$/.test(String(t||'')))return NaN;let m=hmMin(t);if(m<=t0%1440&&t0<1440)m+=1440;else if(t0>=1440)m+=1440;return m;};
 const ed=card.querySelector('.ak-edw');
 const paint=()=>{const S=A().stops;if(!A().open){ed.innerHTML='';return;}const rc=akRecent([D.akp,D.akn].concat(S.map(x=>x.p)));
-ed.innerHTML='<div class="ak-ed"><div class="ak-pt">📍 '+esc(D.akp)+' <b>'+hm(t0)+'</b></div>'+S.map((x,i)=>'<div class="ak-arw">↓ 🚗</div><div class="ak-stop" data-i="'+i+'"><div class="ak-row"><span class="ak-n">'+(i+1)+'</span><input class="ak-p" type="text" maxlength="60" placeholder="寄った場所" value="'+esc(x.p)+'"><input class="ak-t" type="time" value="'+esc(x.t)+'" aria-label="着いた時刻"><button class="ak-x" aria-label="消す">✕</button></div>'+(x.p?'':'<div class="ak-rc">'+rc.map(p=>'<button class="chip ak-c" data-p="'+esc(p)+'">'+esc(Array.from(p).slice(0,14).join(''))+'</button>').join('')+'</div>')+'</div>').join('')+
+ed.innerHTML='<div class="ak-ed"><div class="ak-pt">📍 '+esc(D.akp)+' <b>'+hm(t0)+'</b></div>'+S.map((x,i)=>'<div class="ak-arw">↓ 🚗</div><div class="ak-stop" data-i="'+i+'"><div class="ak-row"><span class="ak-n">'+(i+1)+'</span><input class="ak-p" type="text" maxlength="60" placeholder="寄った場所" value="'+esc(x.p)+'"><input class="ak-t" type="time" value="'+esc(x.t)+'" aria-label="着いた時刻"><button class="ak-x" aria-label="消す">✕ 消す</button></div>'+(x.p?'':'<div class="ak-rc">'+rc.map(p=>'<button class="chip ak-c" data-p="'+esc(p)+'">'+esc(Array.from(p).slice(0,14).join(''))+'</button>').join('')+'</div>')+'</div>').join('')+
 '<div class="ak-arw">↓ 🚗</div><div class="ak-pt">📍 '+esc(D.akn)+' <b>'+hm(t1)+'</b></div><div class="ak-foot"><button class="chip ak-add">＋ 寄った場所</button><button class="ak-ok">✓ これで入れる</button></div><div class="ak-note">着いた時刻だけ選ぶ。出た時刻は次の移動の始まり（移動の時間は過去の日記から）</div></div>';
 ed.querySelectorAll('.ak-stop').forEach(row=>{const i=Number(row.dataset.i),x=S[i];
 row.querySelector('.ak-p').oninput=ev=>{x.p=ev.target.value;};row.querySelector('.ak-p').onchange=()=>paint();
@@ -3925,7 +3965,7 @@ let g2c=true;
 try{g2c=localStorage.getItem('nippo10-g2cal')!=='0';}catch(e){}
 const endOf=(hh,mm)=>{const a=hh.split(':').map(Number);let t=a[0]*60+a[1]+(mm||60);if(t>1439)t=1439;return pad(Math.floor(t/60))+':'+pad(t%60);};
 const durLabel=m=>m>=60?((m%60?(m/60).toFixed(1):(m/60))+'時間'):(m+'分');
-const row=it=>'<div class="plan2'+(it.done?' done':'')+'"><button class="tg2" data-tg="'+esc(it.id)+'">✓</button>'+
+const row=it=>'<div class="plan2'+(it.done?' done':'')+'"><button class="tg2 lbl" data-tg="'+esc(it.id)+'" aria-label="できた">✓<small class="bn">できた</small></button>'+
 '<span class="p2t">'+(it.hh?(esc(it.hh)+'<br><small style="font-weight:700;color:#9aa3b5">–'+endOf(it.hh,it.mm)+'</small>'):'--:--')+'</span>'+
 '<button class="p2b" data-ed="'+esc(it.id)+'"><div class="p2c">'+esc(it.t)+(it.mm?' <small style="color:#4d7dff;font-weight:800">'+durLabel(it.mm)+'</small>':'')+'</div>'+
 (it.pl?'<div class="p2p">📍'+esc(it.pl)+'</div>':'')+'</button></div>';
@@ -3933,7 +3973,7 @@ const timed=items.filter(it=>it.hh),untimed=items.filter(it=>!it.hh);
 let html='<div class="glab blue">📅 Googleカレンダー</div><div class="planwrap">'+renderGcal(d)+'</div>';
 html+='<div class="glab blue">☑ 予定（やること）</div>';
 html+='<div class="planwrap">'+
-'<div class="prow" style="margin-bottom:2px"><input type="text" id="pTodo" maxlength="200" placeholder="やることを書く（Enterで追加）"><button class="addbtn" id="planAdd" style="background:#4d7dff;flex-shrink:0">＋</button></div>'+
+'<div class="prow" style="margin-bottom:2px"><input type="text" id="pTodo" maxlength="200" placeholder="やることを書く（Enterで追加）"><button class="addbtn lbl" id="planAdd" style="background:#4d7dff;flex-shrink:0" aria-label="追加">＋<small class="bn">追加</small></button></div>'+
 '<div class="prow" style="align-items:center;flex-wrap:wrap;gap:4px"><input type="time" id="pTime" step="600" lang="ja-JP" style="flex-shrink:0"><span style="color:#8a90a0;font-weight:800">→</span><input type="time" id="pEnd" step="600" lang="ja-JP" style="flex-shrink:0" aria-label="何時まで"><span id="pDurT" style="font-size:12px;font-weight:800;color:#0a9a54;white-space:nowrap"></span>'+
 [15,30,60,120].map(m=>'<button class="gchip" data-dur="'+m+'">'+durLabel(m)+'</button>').join('')+
 '<input type="text" id="pPlace" maxlength="120" placeholder="場所（任意）" style="flex:1;min-width:90px"></div>'+
@@ -4136,7 +4176,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c23.5）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c23.6）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -4296,18 +4336,18 @@ $('sheet').innerHTML=
 '<div class="sh-label">🚗 移動（どこから→どこまで・自由に1行）</div>'+
 '<div style="display:flex;gap:6px;align-items:center">'+
 '<input type="text" id="mvRt" maxlength="200" style="display:none"><div id="mvPts" style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px"></div>'+
-'<div style="display:flex;flex-direction:column;justify-content:space-between;gap:6px;flex-shrink:0;align-self:stretch"><button class="chip" id="mvSwap" style="font-weight:800;font-size:15px" aria-label="出発と到着を入れ替える">⇅</button><button class="chip" id="mvArrow" style="font-weight:800;font-size:15px" aria-label="次の場所の行を足す">→</button></div></div>'+
+'<div style="display:flex;flex-direction:column;justify-content:space-between;gap:6px;flex-shrink:0;align-self:stretch"><button class="chip lbl" id="mvSwap" style="font-weight:800;font-size:15px" aria-label="出発と到着を入れ替える">⇅<small class="bn">入替</small></button><button class="chip lbl" id="mvArrow" style="font-weight:800;font-size:15px" aria-label="次の場所の行を足す">→<small class="bn">次の地</small></button></div></div>'+
 '<div class="sh-label" id="trLab" style="margin-top:8px">移動手段（1タップ）</div><div class="sh-chips" id="trChips">'+
 TRS.map(x=>'<button class="chip" data-tr="'+x[0]+'">'+x[1]+'</button>').join('')+'</div>'+
 '<div id="acQw" style="display:none"><div class="sh-label" style="margin-top:8px">移動中にしたこと（押すだけで移動中ずっと）'+(mudaAuto()?'<small style="display:block;font-weight:600;color:#8a93a6">何も押さなければ「🚗 運転だけ（何もしない移動）」＝ムダに数える</small>':'')+'</div><div class="sh-chips" id="acQ"></div></div><div id="mvCutW"></div></div>'+
-'<div class="pfrow" id="secPf"><button class="pfchip" id="pf0Chip" style="display:none">🗾 出発</button><button class="pfchip" id="pfChip">🗾 都道府県</button><button class="pfchip ar" id="arChip" aria-label="区・市町村（任意）">🏙️</button></div>'+
+'<div class="pfrow" id="secPf"><button class="pfchip" id="pf0Chip" style="display:none">🗾 出発</button><button class="pfchip" id="pfChip">🗾 都道府県</button><button class="pfchip ar" id="arChip" aria-label="区・市町村（任意）">🏙️ 区市</button></div>'+
 '<div id="secMode" style="display:none"><div class="sh-label">✎ 内容</div><div class="cmode" id="cMode"><button data-cm="list">☰ 1行ずつ書く<i></i></button><button data-cm="free">✎ 自由に書く<i></i></button></div></div>'+
 '<div id="secActs"><div class="sh-label">✎ 内容<span class="tref" data-tref="1"></span></div><div class="sh-note" id="acNote" style="text-align:left;margin:0 0 2px">Enterで次の行。時間は入れても入れなくてもいい（入れると、かかった時間が出る）</div>'+
 '<div class="lblrow" id="hitoH2"><div class="sh-label" style="margin:0">💬 一言（1行ずつ）</div>'+iosSw('hitoSw2',hitoMust(),'必ず','data-hito="1"','sm')+'</div>'+
 '<div id="acRows"></div><div class="sh-chips" id="acChips" style="margin-top:6px"></div>'+
 '<div id="acSum" style="font-size:11.5px;color:#8a90a0;font-weight:700;margin-top:5px;display:none"></div></div>'+
 '<div id="secFree"><div class="sh-label">✎ 自由に書く<span class="tref" data-tref="1"></span></div><div id="frRows"></div><div class="sh-ta-wrap" style="display:none"><textarea id="shTa" placeholder="'+(SR?'話すか、書く':'ここに書く（キーボードのマイクで音声入力もできる）')+'"></textarea>'+
-'<button class="sh-mic" id="shMic">'+MICSVG+'</button>'+
+'<button class="sh-mic lbl" id="shMic" aria-label="声で書く">'+MICSVG+'<small class="bn">声</small></button>'+
 '</div></div>'+
 '<button class="fr-addbar" id="frAdd2">＋ 自由に書く</button>'+
 '<div id="secPh"'+((sheetSt.ph&&sheetSt.ph.length)?'':' style="display:none"')+'><div class="sh-label">📷 写真（前に付けた分）</div><div class="phrow" id="shPhotos"></div></div>'+
@@ -4330,7 +4370,7 @@ if(bestV){$('mvRt').value=bestV+' → ';$('mvRt').classList.add('auto');}
 let mvPts=(()=>{const v=$('mvRt').value;const a=v.split('→').map(x=>x.trim());if(a.length>1&&a[a.length-1]==='')return a.filter((x,i)=>x||i===a.length-1);const b=a.filter(Boolean);return b.length?b:[''];})();
 const mvSync=()=>{const ps=mvPts.map(x=>x.trim()).filter(Boolean);$('mvRt').value=ps.join(' → ')+((mvPts.length>ps.length&&ps.length)?' → ':'');};
 const mvPaint=focusIx=>{const w=$('mvPts');if(!w)return;const auto=$('mvRt').classList.contains('auto');
-w.innerHTML=mvPts.map((p,i)=>'<div class="mvpt"><span>'+(i===0?'🟢 出発':i===mvPts.length-1?'🏁 到着':'⋯ 経由')+'</span><input type="text" class="mvpi'+(auto&&i===0&&p?' auto':'')+'" maxlength="80" value="'+esc(p)+'" placeholder="'+(i===0?'どこから':'どこへ')+'">'+(i>0?'<button class="mvpx" aria-label="この行を消す">✕</button>':'')+'</div>').join('');
+w.innerHTML=mvPts.map((p,i)=>'<div class="mvpt"><span>'+(i===0?'🟢 出発':i===mvPts.length-1?'🏁 到着':'⋯ 経由')+'</span><input type="text" class="mvpi'+(auto&&i===0&&p?' auto':'')+'" maxlength="80" value="'+esc(p)+'" placeholder="'+(i===0?'どこから':'どこへ')+'">'+(i>0?'<button class="mvpx lbl" aria-label="この行を消す">✕<small class="bn">消す</small></button>':'')+'</div>').join('');
 w.querySelectorAll('.mvpi').forEach((x,i)=>{x.oninput=()=>{mvPts[i]=x.value;$('mvRt').classList.remove('auto');x.classList.remove('auto');mvSync();};
 x.onkeydown=ev=>{if(ev.key==='Enter'&&!ev.isComposing&&ev.keyCode!==229){ev.preventDefault();if(i===mvPts.length-1){mvPts.push('');mvSync();mvPaint(mvPts.length-1);}else{const nx=w.querySelectorAll('.mvpi')[i+1];if(nx)nx.focus();}}};});
 w.querySelectorAll('.mvpx').forEach((b,j)=>b.onclick=()=>{mvPts.splice(j+1,1);mvSync();mvPaint();});
@@ -4371,7 +4411,7 @@ el.querySelectorAll('[data-td]').forEach(b=>b.onclick=()=>{const v=b.dataset.td;
 tdPaint();
 function pfPaint(){if(!sheetSt)return;const mvT=eType==='move';
 {const pc=$('pfChip'),pi=$('pfInl'),sp=$('secPf');if(pc&&pi&&sp){if(mvT){if(pc.parentNode!==sp)sp.appendChild(pc);sp.style.display='';}else{if(pc.parentNode!==pi)pi.insertBefore(pc,pi.firstChild);sp.style.display='none';}}}
-{const ac=$('arChip'),pc=$('pfChip');if(ac&&pc){if(mvT){ac.style.display='none';}else{ac.style.display='';if(pc.nextSibling!==ac)pc.parentNode.insertBefore(ac,pc.nextSibling);ac.textContent=sheetSt.ar?('🏙️ '+sheetSt.ar):'🏙️';ac.classList.toggle('on',!!sheetSt.ar);}}}
+{const ac=$('arChip'),pc=$('pfChip');if(ac&&pc){if(mvT){ac.style.display='none';}else{ac.style.display='';if(pc.nextSibling!==ac)pc.parentNode.insertBefore(ac,pc.nextSibling);ac.textContent=sheetSt.ar?('🏙️ '+sheetSt.ar):'🏙️ 区市';ac.classList.toggle('on',!!sheetSt.ar);}}}
 if(mvT&&!sheetSt.pf0&&sheetSt.pfAuto){sheetSt.pf0=pfAuto(date,tS)||sheetSt.pf;sheetSt.pf0Auto=true;sheetSt.pf=0;sheetSt.pfAuto=false;}
 if(!mvT&&!sheetSt.pf&&sheetSt.pf0Auto){sheetSt.pf=sheetSt.pf0;sheetSt.pfAuto=true;sheetSt.pf0=0;sheetSt.pf0Auto=false;}
 const one=(b,code,auto,lab)=>{if(!b)return;const p=prefOf(code);b.textContent='🗾 '+lab+(p?p.short:(lab?'未選択':'都道府県'));b.style.background=p?p.co:'';b.classList.toggle('on',!!p);b.classList.toggle('auto',!!(p&&auto));};
@@ -4466,15 +4506,15 @@ let ch='',opn=false;if(i!==ri)QG_OPEN='';try{opn=!L.mvMin&&qgOn(q);ch=qOrgHtml(i
 const pk=sel.map(id=>{const z=kindOf(id);return z?z.ic+z.lb:'';}).filter(Boolean).join('・');
 const t=r.querySelector('.ac-t'),l1=r.querySelector('.ac-l1'),l2=r.querySelector('.ac-l2'),tq=r.querySelector('.ac-tq'),tools=document.createElement('div');tools.className='tools';
 [...r.children].forEach(c=>{if(c!==l1&&c!==l2&&c!==tq)tools.appendChild(c);});
-r.innerHTML=(n>1?'<button type="button" class="ix" data-rx="'+i+'" aria-label="この組を消す">✕</button>':'')+
+r.innerHTML=(n>1?'<button type="button" class="ix lbl" data-rx="'+i+'" aria-label="この組を消す">✕<small class="bn">消す</small></button>':'')+
 '<div class="sh-label" style="margin:0 0 4px">🏷️ ここで何をした'+(i>0?' <span class="nth">'+(i+1)+'組目</span>':'')+'<small>押すだけ。いくつでも押せる（もう一度で外す）</small></div>'+
 '<div class="sh-chips">'+ch+(opn?'':'<div class="qsec">'+((eType==='move'&&L.drv)?'<button type="button" class="chip ac-qm" data-rqm="1">'+(qMore?'－ たたむ':'＋ ほか')+'</button>':'')+'<button type="button" class="chip ac-qall" data-rall="'+i+'">🏷️ ほか（全部）</button></div>')+'</div>'+
 (i===0?'<div class="lblrow"><div class="sh-label" style="margin:0">💬 一言</div>'+iosSw('hitoSw2u',hitoMust(),'必ず','data-hito="1"','sm')+'</div>':'<div class="sh-label" style="margin:8px 0 4px">💬 一言</div>')+
-'<div class="hbox"><span class="pre'+(pk?'':' nok')+'">'+esc(pk||'🏷️ 上から選ぶ')+'</span><span class="bar"></span><i class="hslot"></i><button type="button" class="more'+(u.more?' on':'')+'" data-rm="'+i+'" aria-label="ほかのボタン">⋯</button></div>'+bdPair(a,'data-rbd')+
-'<div class="tmline'+(u.tm?' open':'')+'"><button type="button" class="tmb" data-rt="'+i+'">'+esc(acTmLb(a))+'</button><div class="tmw"></div></div>';
+'<div class="hbox"><span class="pre'+(pk?'':' nok')+'">'+esc(pk||'🏷️ 上から選ぶ')+'</span><span class="bar"></span><i class="hslot"></i></div>'+bdPair(a,'data-rbd')+
+'<div class="tmline open"><span class="tmb">🕐 時間'+((a.s||a.e)?'':'<small>（空＝記録と同じ）</small>')+'</span><div class="tmw"></div></div>';
 if(t){t.placeholder='一言を書く…';t.maxLength=400;r.querySelector('.hslot').replaceWith(t);}else r.querySelector('.hslot').remove();
 {const w=r.querySelector('.tmw');if(l2)w.appendChild(l2);if(tq)w.appendChild(tq);}
-r.appendChild(tools);r.classList.add('unit');r.classList.toggle('um',!!u.more);r.dataset.um=u.more?'1':'0';r.dataset.ut=u.tm?'1':'0';});};
+r.appendChild(tools);r.classList.add('unit','um');r.dataset.um='1';r.dataset.ut='1';});};
 const acUnitBind=()=>{[...$('acRows').querySelectorAll('.actrow.unit')].forEach((r,i)=>{
 r.querySelectorAll('[data-rk]').forEach(b=>b.onclick=()=>{const go=id=>{acRead();const a=acts[i];if(!a)return;acKTog(a,id,'');acPaint();acFocusT(i);};
 acRead();const a=acts[i];if(!a)return;const z=[a.k].concat(a.kx||[]).filter(Boolean),id=b.dataset.rk;
@@ -4494,13 +4534,13 @@ $('acRows').innerHTML=acts.map(a=>{
 return '<div class="actrow'+(sxHas(a,'m')?' sxm':'')+(sxHas(a,'ai')?' sxai':'')+(sxHas(a,'ap')?' sxap':'')+'" data-sx="'+esc(a.sx||'')+'" data-m0="'+((a.s&&a.e)?0:(Number(a.m)||0))+'" data-k="'+esc(a.k||'')+'" data-d="'+esc(a.d||'')+'" data-dx="'+esc(a.dx||'')+'" data-nk="'+(a.nk?1:'')+'" data-w="'+(a.w?1:'')+'" data-bd="'+(a.bd===0?'0':a.bd===1?'1':'')+'" data-st="'+esc(a.st||'')+'" data-due="'+esc(a.due||'')+'" data-dn="'+esc(a.dn||'')+'" data-ai="'+esc(Array.isArray(a.ai)?a.ai.join(','):'')+'" data-ai0="'+(Array.isArray(a.ai)?1:'')+'" data-td="'+esc(a.td||'')+'" data-ph="'+esc((a.ph||[]).join(','))+'" data-md="'+(a.md?1:'')+'" data-sp="'+esc(a.sp||'')+'" data-ap="'+esc((a.ap||[]).join(','))+'" data-mp="'+esc((a.mp||[]).join(','))+'" data-nn="'+(Number(a.n)>0?Number(a.n):'')+'" data-bz="'+esc(a.bz||'')+'" data-kx="'+esc((a.kx||[]).join(','))+'" data-dd="'+esc((a.dd||[]).join(','))+'">'+
 '<div class="ac-l1"><input type="text" class="ac-t" maxlength="40" placeholder="一言…" enterkeyhint="next" value="'+esc(a.t)+'" data-full="'+esc(a.t)+'">'+
 '</div>'+
-'<div class="ac-side"><button class="ac-cb'+(a.c?' on':'')+'" aria-label="詳細を書く">📝</button><button class="ac-md'+(a.md?' on':'')+'" aria-label="この行をムダにする">🕳️</button><button class="ac-mo'+((a.st||a.sp)?' on':'')+'" aria-label="ほかの操作">⋯'+(a.st?'<i>'+(a.st==='done'?'✅':'⏸')+'</i>':'')+'</button><button class="ac-pb'+((a.ph&&a.ph.length)?' on':'')+'" aria-label="この行に写真を付ける">📷</button><button class="ac-sp'+(a.sp?' on':'')+'" aria-label="この行を記録に分ける">'+(a.sp?(SPLIT_TY[a.sp]||['🔀'])[0]:'🔀')+'</button><button class="ac-dn'+(a.st==='done'?' on':'')+'" aria-label="完了">✅</button><button class="ac-wp'+(a.st==='wip'?' on':'')+'" aria-label="'+(a.st==='wip'&&a.due?'途中（続きは'+esc(stDueLb(a.due))+'）':'途中')+'">⏸</button><button class="ac-x" aria-label="この行を消す">✕</button></div>'+
+'<div class="ac-side"><button class="ac-cb lbl'+(a.c?' on':'')+'" aria-label="詳細を書く">📝<small class="bn">詳細</small></button><button class="ac-md lbl'+(a.md?' on':'')+'" aria-label="この行をムダにする">🕳️<small class="bn">ムダ</small></button><button class="ac-mo lbl'+((a.st||a.sp)?' on':'')+'" aria-label="ほかの操作">⋯<small class="bn">ほか</small>'+(a.st?'<i>'+(a.st==='done'?'✅':'⏸')+'</i>':'')+'</button><button class="ac-pb lbl'+((a.ph&&a.ph.length)?' on':'')+'" aria-label="この行に写真を付ける">📷<small class="bn">写真</small></button><button class="ac-sp lbl'+(a.sp?' on':'')+'" aria-label="この行を記録に分ける">'+(a.sp?(SPLIT_TY[a.sp]||['🔀'])[0]:'🔀')+'<small class="bn">分ける</small></button><button class="ac-dn lbl'+(a.st==='done'?' on':'')+'" aria-label="完了">✅<small class="bn">完了</small></button><button class="ac-wp lbl'+(a.st==='wip'?' on':'')+'" aria-label="'+(a.st==='wip'&&a.due?'途中（続きは'+esc(stDueLb(a.due))+'）':'途中')+'">⏸<small class="bn">途中</small></button><button class="ac-x lbl" aria-label="この行を消す">✕<small class="bn">消す</small></button></div>'+
 '<div class="ac-l2"><input type="time" class="ac-s" step="300" lang="ja-JP" aria-label="何時から" value="'+esc(a.s||'')+'"><span class="ac-ar">→</span>'+
 '<input type="time" class="ac-e" step="300" lang="ja-JP" aria-label="何時まで" value="'+esc(a.e||'')+'">'+
 '<span class="ac-d">'+(a.m?('⏱ '+esc(durText(a.m))):'')+'</span></div>'+
 '<div class="ac-tq"><button data-tq="rec">⏱ 記録と同じ</button><button data-tq="prev">⏭ 前の行から</button></div>'+
 '<div class="ac-kw"><div class="ac-k ac-kg">'+kCatHtml(a.k,'',a.d,a.dx,a.kx,a.dd)+'</div>'+bdBtn(a)+'</div>'+
-(((a.k&&AI_KINDS[a.k])||(a.kx||[]).some(x=>AI_KINDS[x]))?(()=>{const on=Array.isArray(a.ai)?a.ai:aiGuess(a.t),auto=!Array.isArray(a.ai);return '<div class="ac-ai ac-ait"><span>🤖 使ったAI</span>'+AI_TOOLS.map(z=>'<button class="chip'+(on.indexOf(z[0])>=0?(auto?' sel auto':' sel'):'')+'" data-aitl="'+z[0]+'" style="--ac:'+z[2]+'">'+esc(z[1])+'</button>').join('')+'<button type="button" class="ac-fd" data-fd="ai" aria-label="全部出す">'+(sxHas(a,'ai')?'▾':'▸')+'</button></div>'+aipChips(Array.isArray(a.ap)?a.ap:[],'data-aip',1,sxHas(a,'ap'));})():'')+(isMkRow(a)?mpChips(Array.isArray(a.mp)?a.mp:[],'data-mp'):'')+nnChips(a)+(isMkRow(a)?bzBox(a.bz,'data-bz'):'')+
+(((a.k&&AI_KINDS[a.k])||(a.kx||[]).some(x=>AI_KINDS[x]))?(()=>{const on=Array.isArray(a.ai)?a.ai:aiGuess(a.t),auto=!Array.isArray(a.ai);return '<div class="ac-ai ac-ait"><span>🤖 使ったAI</span>'+AI_TOOLS.map(z=>'<button class="chip'+(on.indexOf(z[0])>=0?(auto?' sel auto':' sel'):'')+'" data-aitl="'+z[0]+'" style="--ac:'+z[2]+'">'+esc(z[1])+'</button>').join('')+'<button type="button" class="ac-fd" data-fd="ai" aria-label="全部出す">'+(sxHas(a,'ai')?'▾ たたむ':'▸ 開く')+'</button></div>'+aipChips(Array.isArray(a.ap)?a.ap:[],'data-aip',1,sxHas(a,'ap'));})():'')+(isMkRow(a)?mpChips(Array.isArray(a.mp)?a.mp:[],'data-mp'):'')+nnChips(a)+(isMkRow(a)?bzBox(a.bz,'data-bz'):'')+
 '<textarea class="ac-c" rows="2" maxlength="1000" placeholder="詳細（自由に書く）"'+(a.c?'':' style="display:none"')+'>'+esc(a.c||'')+'</textarea>'+((a.ph&&a.ph.length)?'<div class="ac-ph">'+a.ph.map(id=>'<img class="phth" data-v="'+esc(id)+'" src="'+esc(phUrl(id))+'" alt="" onerror="this.style.visibility=\'hidden\'">').join('')+'</div>':'')+'</div>';}).join('');
 if(acU())acUnitize();
 [...$('acRows').querySelectorAll('.actrow')].forEach((r,i)=>{
@@ -4515,7 +4555,7 @@ r.querySelectorAll('[data-aitl]').forEach(b=>b.onclick=()=>{acRead();const a=act
 {const bd=r.querySelector('.ac-dn');if(bd)bd.onclick=()=>{acRead();const a=acts[i];if(!a)return;if(a.st==='done'){delete a.st;delete a.dn;}else{a.st='done';a.dn=todayStr();delete a.due;}acPaint();};}
 {const bw=r.querySelector('.ac-wp');if(bw)bw.onclick=()=>{acRead();const a=acts[i];if(!a)return;if(a.st==='wip'){delete a.st;delete a.due;}else{a.st='wip';delete a.dn;}acPaint();};}
 {const mo=r.querySelector('.ac-mo');if(mo)mo.onclick=()=>{const v=sxTog(r.dataset.sx,'m');r.dataset.sx=v;r.classList.toggle('sxm',sxHas({sx:v},'m'));};}
-r.querySelectorAll('[data-fd]').forEach(b=>b.onclick=()=>{const t=b.dataset.fd,v=sxTog(r.dataset.sx,t),on=sxHas({sx:v},t);r.dataset.sx=v;r.classList.toggle('sx'+t,on);b.textContent=on?'▾':'▸';});
+r.querySelectorAll('[data-fd]').forEach(b=>b.onclick=()=>{const t=b.dataset.fd,v=sxTog(r.dataset.sx,t),on=sxHas({sx:v},t);r.dataset.sx=v;r.classList.toggle('sx'+t,on);b.textContent=on?'▾ たたむ':'▸ 開く';});
 r.querySelector('.ac-cb').onclick=()=>{const ta=r.querySelector('.ac-c');const open=ta.style.display==='none';if(!open&&ta.value.trim())return;ta.style.display=open?'':'none';r.querySelector('.ac-cb').classList.toggle('on',open);if(open){try{ta.focus();}catch(e){}}};
 r.querySelector('.ac-pb').onclick=()=>{acRead();phTarget=i;$('phInput').value='';$('phInput').click();};
 r.querySelectorAll('.ac-ph [data-v]').forEach(im=>im.onclick=()=>openViewer(im.dataset.v,()=>{acRead();if(acts[i])acts[i].ph=(acts[i].ph||[]).filter(x=>x!==im.dataset.v);acPaint();}));
@@ -4584,7 +4624,7 @@ if(tE){let te=hmMin(tE)+1440*(tEd||0);if(te<=S)te+=1440;if(ce>te){toast('終わ�
 const c={ty,s,e,ks:D.ks.slice()};if(ty==='stay')c.p=D.p;if(old)sheetSt.cuts[ix]=c;else sheetSt.cuts.push(c);closeSub();mvCutPaint();};};
 paint();};
 const mvCutPaint=()=>{const w=$('mvCutW');if(!w)return;if(eType!=='move'){w.innerHTML='';return;}const L=(sheetSt.cuts||[]).map((c,i)=>({c,i})).sort((a,b)=>a.c.s<b.c.s?-1:1);
-w.innerHTML=L.map(({c,i})=>'<div class="mvcut-on"><button class="chip mvcut sel" data-mce="'+i+'">'+(c.ty==='incar'?'🚙':'📍'+esc(c.p||''))+' '+esc(c.s)+'–'+esc(c.e)+' '+(c.ks||[]).map(k=>{const q=kindOf(k);return q?esc(q.ic)+esc(q.lb):'';}).join(' ')+'<small>記録を押すと分かれる</small></button><button class="chip" data-mcx="'+i+'" aria-label="分けるのをやめる">✕</button></div>').join('')+
+w.innerHTML=L.map(({c,i})=>'<div class="mvcut-on"><button class="chip mvcut sel" data-mce="'+i+'">'+(c.ty==='incar'?'🚙':'📍'+esc(c.p||''))+' '+esc(c.s)+'–'+esc(c.e)+' '+(c.ks||[]).map(k=>{const q=kindOf(k);return q?esc(q.ic)+esc(q.lb):'';}).join(' ')+'<small>記録を押すと分かれる</small></button><button class="chip" data-mcx="'+i+'" aria-label="分けるのをやめる">✕ やめる</button></div>').join('')+
 '<div class="mvcut-btns"><button class="chip mvcut" id="mvCutS">📍 途中で寄る</button><button class="chip mvcut" id="mvCutB">🚙 途中で車内（休憩・仮眠）</button></div>';
 w.querySelectorAll('[data-mce]').forEach(b=>b.onclick=()=>{const i=+b.dataset.mce;mvCutOpen(sheetSt.cuts[i].ty,i);});
 w.querySelectorAll('[data-mcx]').forEach(b=>b.onclick=()=>{sheetSt.cuts.splice(+b.dataset.mcx,1);mvCutPaint();});
@@ -4664,7 +4704,7 @@ acPaint();
 {const w=$('contW');if(w){w.innerHTML='';if(!ex&&date===todayStr()){const nw=new Date(),nowA=nw.getHours()*60+nw.getMinutes();let best=null;
 for(const [dd,off] of [[date,0],[addDays(date,-1),-1440]]){const eo2=state.entries[dd]||{};for(const k2 in eo2){const x=eo2[k2];if(!x||x.del||x.noT||!x.s||!x.e)continue;const s2=hmMin(x.s)+off;let e2=hmMin(x.e)+off+1440*(Number(x.ed)||0);if(e2<s2)e2+=1440;if(e2>nowA+5)continue;const rows=(x.acts||[]).filter(a=>a&&a.k);if(!rows.length)continue;if(!best||e2>best.e2)best={e2,x,k2,row:rows[rows.length-1]};}}
 if(best&&nowA-best.e2<=120&&!sugNo('ct|'+date+'|'+best.k2)){const a=best.row,kl=(kindOf(a.k)||{}).lb||'',ks=[a.k].concat(a.kx||[]).map(k=>{const q=kindOf(k);return q?q.ic+q.lb:k;}).join('・'),ai=(a.ai||[]).map(id=>(aiTool(id)||{}).lb||id).join('/'),ap=(a.ap||[]).map(id=>(aipOf(id)||{}).lb||id).join('/'),pjn=(best.x.pj&&(state.projects||{})[best.x.pj]&&!state.projects[best.x.pj].del)?state.projects[best.x.pj].n:'';
-w.innerHTML='<div class="mvcut-on ctsug"><button class="chip mvcut sel" id="ctOk">⏭ さっきの続き：'+esc((a.t&&a.t!==kl)?a.t+'（'+ks+'）':ks)+(ai?'・'+esc(ai):'')+(ap?'・'+esc(ap):'')+(pjn?'・📌'+esc(pjn):'')+'<small>✓ 入れる（ずっと）</small></button><button class="chip" id="ctNo" aria-label="入れない">✕</button></div>';
+w.innerHTML='<div class="mvcut-on ctsug"><button class="chip mvcut sel" id="ctOk">⏭ さっきの続き：'+esc((a.t&&a.t!==kl)?a.t+'（'+ks+'）':ks)+(ai?'・'+esc(ai):'')+(ap?'・'+esc(ap):'')+(pjn?'・📌'+esc(pjn):'')+'<small>✓ 入れる（ずっと）</small></button><button class="chip" id="ctNo" aria-label="入れない">✕ 入れない</button></div>';
 $('ctOk').onclick=()=>{acRead();const o={t:a.t||'',m:0,s:'',e:'',w:1,k:a.k};if(a.kx&&a.kx.length)o.kx=a.kx.slice();if(a.d)o.d=a.d;if(a.dx)o.dx=a.dx;if(Array.isArray(a.ai))o.ai=a.ai.slice();if(Array.isArray(a.ap))o.ap=a.ap.slice();if(Array.isArray(a.mp))o.mp=a.mp.slice();if(a.bz)o.bz=a.bz;
 const last=acts[acts.length-1];if(last&&!String(last.t||'').trim()&&!last.k&&!last.s&&!last.e)acts[acts.length-1]=o;else acts.push(o);if(best.x.pj&&!sheetSt.pj&&pjn){sheetSt.pj=best.x.pj;pjPaint();}w.innerHTML='';acPaint();};
 $('ctNo').onclick=()=>{sugSet('ct|'+date+'|'+best.k2);w.innerHTML='';};}}}}
@@ -4707,7 +4747,7 @@ if(sheetSt)sheetSt.pflSync=()=>{if(picked)return;const v=auto();if(v!==pfl){pfl=
 function renderShPhotos(){
 const w=$('shPhotos');
 w.innerHTML=sheetSt.ph.map(id=>'<img class="phth" data-v="'+esc(id)+'" src="'+esc(phUrl(id))+'" alt="" onerror="this.style.visibility=\'hidden\'">').join('')+
-'<button class="phadd" id="phAdd">＋</button>';
+'<button class="phadd lbl" id="phAdd" aria-label="写真を足す">＋<small class="bn">写真</small></button>';
 w.querySelectorAll('[data-v]').forEach(im=>im.onclick=()=>openViewer(im.dataset.v,()=>{
 sheetSt.ph=sheetSt.ph.filter(x=>x!==im.dataset.v);renderShPhotos();
 }));
@@ -4725,7 +4765,7 @@ if(ids.length)toast('✓ '+ids.length+'枚追加（「記録」で確定）');
 };
 const frSync=()=>{$('shTa').value=frs.map(x=>String(x||'').trim()).filter(Boolean).join('\n\n');};if(dft&&dft.text)setTimeout(()=>{try{frSync();}catch(e){}},0);
 frPaint=focusLast=>{const w=$('frRows');if(!w)return;
-w.innerHTML=frs.map(x=>'<div class="frrow"><textarea class="fr-t" rows="3" placeholder="'+(SR?'話すか、書く':'自由に書く（キーボードのマイクで音声入力もできる）')+'">'+esc(x||'')+'</textarea><div class="fr-side"><button class="ac-x fr-x" aria-label="この欄を消す">✕</button><button class="fr-mic" aria-label="音声で書く">'+MICSVG+'</button></div></div>').join('');
+w.innerHTML=frs.map(x=>'<div class="frrow"><textarea class="fr-t" rows="3" placeholder="'+(SR?'話すか、書く':'自由に書く（キーボードのマイクで音声入力もできる）')+'">'+esc(x||'')+'</textarea><div class="fr-side"><button class="ac-x fr-x lbl" aria-label="この欄を消す">✕<small class="bn">消す</small></button><button class="fr-mic lbl" aria-label="音声で書く">'+MICSVG+'<small class="bn">声</small></button></div></div>').join('');
 [...w.querySelectorAll('.frrow')].forEach((r,i)=>{const ta=r.querySelector('.fr-t');ta.oninput=()=>{frs[i]=ta.value;frSync();};
 r.querySelector('.fr-x').onclick=()=>{frs.splice(i,1);frSync();frPaint();cPaint();};
 r.querySelector('.fr-mic').onclick=()=>{micToggle(r.querySelector('.fr-mic'),ta);setTimeout(()=>{frs[i]=ta.value;frSync();},0);};});
@@ -4750,7 +4790,7 @@ $('sheet2').innerHTML='<div class="grab"></div><div class="sh-time"><span>🏷�
 items.map(x=>'<div class="so-row"><div class="so-t">'+esc(x.a.t)+((x.a.s&&x.a.e)?'<small class="so-tm">'+esc(x.a.s)+' – '+esc(x.a.e)+'</small>':(Number(x.a.m)>0?'<small class="so-tm">'+esc(durText(Number(x.a.m)))+'</small>':''))+'</div><div class="so-c">'+sug[x.i].map(id=>chip(x.i,id,ch[x.i]===id)).join('')+
 '<button class="chip so-more" data-sm="'+x.i+'">ほか…</button><button class="chip'+(!ch[x.i]?' sel':'')+'" data-si="'+x.i+'" data-sk="">なし</button></div>'+
 ((AI_KINDS[ch[x.i]]&&acts[x.i])?'<div class="so-d so-ai"><span>使ったAI</span>'+AI_TOOLS.map(z=>{const on=(Array.isArray(acts[x.i].ai)?acts[x.i].ai:aiGuess(acts[x.i].t)).indexOf(z[0])>=0;return '<button class="chip'+(on?' sel':'')+'" data-soai="'+x.i+'" data-ait="'+z[0]+'" style="--ac:'+z[2]+'">'+esc(z[1])+'</button>';}).join('')+'</div>':'')+
-(x.a.d==='_other'?'':'<div class="so-d"><span>使った物</span>'+dsg[x.i].map(d=>{const t=toolOf(d);return '<button class="chip'+(dch[x.i]===d?' sel':'')+'" data-di="'+x.i+'" data-dk="'+esc(d)+'">'+esc(t.ic)+'</button>';}).join('')+'<button class="chip'+(!dch[x.i]?' sel':'')+'" data-di="'+x.i+'" data-dk="">なし</button></div>')+'</div>').join('')+
+(x.a.d==='_other'?'':'<div class="so-d"><span>使った物</span>'+dsg[x.i].map(d=>{const t=toolOf(d);return '<button class="chip'+(dch[x.i]===d?' sel':'')+'" data-di="'+x.i+'" data-dk="'+esc(d)+'">'+esc(t.ic)+' '+esc(t.lb)+'</button>';}).join('')+'<button class="chip'+(!dch[x.i]?' sel':'')+'" data-di="'+x.i+'" data-dk="">なし</button></div>')+'</div>').join('')+
 (lqs!==null?'<div class="so-row"><div class="so-t">'+(eType==='incar'?'🚙 車内で':'📍 ここで')+'何をしていた？（'+esc(durText(durMin(tS,tE,(tE<=tS&&tEd===0)?1:tEd)))+'）</div><div class="so-c">'+qOrgHtml(['sleep','nap','ai','work','pcwork','spplay','rest'],'data-lqg',(id,y)=>{const k=kindOf(id);if(!k||k.off)return '';const on=lqs.indexOf(id)>=0;return y?'<button'+(on?' class="sel"':'')+' data-lq="'+id+'" style="--kc:'+k.co+'">'+esc(k.ic)+'<span>'+esc(k.lb)+'</span></button>':'<button class="chip'+(on?' sel':'')+'" data-lq="'+id+'">'+esc(k.ic)+' '+esc(k.lb)+'</button>';},lqs)+(qgOn([])?'':'<button class="chip'+(!lqs.length?' sel':'')+'" data-lq="">なし</button>')+'</div>'+
 (lqs.length>=2?'<div class="so-seg">'+lqSegs().map((g,i)=>{const k=kindOf(g.id);return '<div class="so-sg"><span>'+esc(k.ic)+' '+esc(k.lb)+'</span>'+(i===0?'<b>'+esc(g.s)+'</b>':'<input type="time" step="300" lang="ja-JP" data-lqs="'+i+'" value="'+esc(g.s)+'">')+'<i>→ '+esc(g.e)+'</i></div>';}).join('')+'<div class="sh-note" style="margin:2px 0 0">順に時間を分けた。開始の時刻は直せる</div></div>':'')+'</div>':'')+
 (canE&&es&&es!==eType?'<div class="so-row"><div class="so-t">記録の種類</div><div class="so-c"><button class="chip'+(eSel===es?' sel':'')+'" data-se="'+es+'">'+ETL[es]+'</button><button class="chip'+(eSel===eType?' sel':'')+'" data-se="'+eType+'">'+ETL[eType]+'</button></div></div>':'')+
@@ -5147,7 +5187,7 @@ const left=(n===null)?'期限なし':n<0?('⚠<em>'+(-n)+'</em>日超過'):n===0
 const cnt=st.tot?('・'+st.dn+'/'+st.tot+'手'):'';
 return '<div class="pin'+(hit?' hit':'')+'" data-pin="'+esc(d.id)+'" style="background-color:'+((n!==null&&n<0)?'#e0405a':c.c)+'">'+
 '<div class="pin-h"><span class="pi">'+pinIcon(d.t)+'</span><span class="pt"><b>'+esc(d.t)+'</b><small>'+left+cnt+'</small></span></div>'+
-pinLow(d,hit)+(st.next?'<div class="pin-s"><button class="pin-ok" data-ok="'+esc(st.next.id)+'" aria-label="やった">✓</button><span class="pin-tx" data-ds="'+esc(d.id)+'">'+esc(st.next.t)+'</span></div>'
+pinLow(d,hit)+(st.next?'<div class="pin-s"><button class="pin-ok lbl" data-ok="'+esc(st.next.id)+'" aria-label="やった">✓<small class="bn">やった</small></button><span class="pin-tx" data-ds="'+esc(d.id)+'">'+esc(st.next.t)+'</span></div>'
 :st.tot?'<div class="pin-s"><span class="pin-tx" data-ds="'+esc(d.id)+'">🎉 手順は全部やった</span></div>'
 :'<button class="pin-gen" data-ds="'+esc(d.id)+'">＋ 次の1手を書く</button>')+
 '</div>';
@@ -5163,8 +5203,8 @@ function dreamHit(id){try{return movesOn(todayStr()).some(m=>m.dr===id);}catch(e
 function needList(d){return (Array.isArray(d&&d.need)?d.need:[]).map((x,i)=>x?Object.assign({i:i},x):null).filter(x=>x&&!x.del&&x.t);}
 function pinLow(d,hit){
 const y=Number(d.yen)>0,nl=needList(d),ok=nl.filter(x=>x.ok).length;
-return '<div class="pin-c"><button class="pin-chip" data-dy="'+esc(d.id)+'" aria-label="必要額">💰 '+(y?'<b>'+manY(Number(d.yen))+'</b>':'＋')+'</button>'+
-'<button class="pin-chip" data-dn="'+esc(d.id)+'" aria-label="必要なもの">📦 '+(nl.length?'<b>'+ok+'/'+nl.length+'</b>':'＋')+'</button></div>'+
+return '<div class="pin-c"><button class="pin-chip" data-dy="'+esc(d.id)+'" aria-label="必要額">💰 '+(y?'<b>'+manY(Number(d.yen))+'</b>':'＋額')+'</button>'+
+'<button class="pin-chip" data-dn="'+esc(d.id)+'" aria-label="必要なもの">📦 '+(nl.length?'<b>'+ok+'/'+nl.length+'</b>':'＋もの')+'</button></div>'+
 (hit?'<div class="pin-hit">✓ 今日の1手 済</div>':'');
 }
 function openDreamYen(id){
@@ -5191,7 +5231,7 @@ const keep=($('dnIn')||{}).value||'';
 const L=needList(d0),ok=L.filter(x=>x.ok).length;
 openSub('<div class="sh-time"><span>📦 必要なもの（'+esc(d0.t)+'）</span></div>'+
 (L.length?'<div class="dn-cnt"><b>'+ok+'/'+L.length+'</b> そろった</div>':'<div class="an-empty">まだ無い</div>')+
-'<div class="inc-list">'+L.map(x=>'<div class="inc-it dn-it'+(x.ok?' ok':'')+'"><button class="dn-ck" data-nck="'+x.i+'" aria-label="そろった">'+(x.ok?'☑':'☐')+'</button><span class="dn-t">'+esc(x.t)+'</span><button class="inc-x'+(dnArm===x.i?' arm':'')+'" data-nx="'+x.i+'">'+(dnArm===x.i?'もう一度で消す':'✕')+'</button></div>').join('')+'</div>'+
+'<div class="inc-list">'+L.map(x=>'<div class="inc-it dn-it'+(x.ok?' ok':'')+'"><button class="dn-ck lbl" data-nck="'+x.i+'" aria-label="そろった">'+(x.ok?'☑':'☐')+'<small class="bn">そろった</small></button><span class="dn-t">'+esc(x.t)+'</span><button class="inc-x'+(dnArm===x.i?' arm':'')+'" data-nx="'+x.i+'">'+(dnArm===x.i?'もう一度で消す':'✕ 消す')+'</button></div>').join('')+'</div>'+
 '<div class="inc-row"><input type="text" id="dnIn" maxlength="40" placeholder="足す（1行）" enterkeyhint="done"><button class="chip" id="dnAdd">足す</button></div>'+
 '<div class="sh-btns" style="margin-top:10px"><button class="delbtn" id="dnNo" style="flex:1">閉じる</button></div>',null);
 const s=$('sheet2'),inp=$('dnIn');inp.value=keep;
@@ -5221,9 +5261,9 @@ const keep=($('dsIn')||{}).value||'';
 const L=stepsOf(id),nx=L.find(x=>!x.d);
 openSub('<div class="sh-time"><span>✅ やる事（'+esc(d0.t)+'）</span></div>'+
 (L.length?'':'<div class="an-empty">まだ無い</div>')+
-'<div class="inc-list">'+L.map(x=>{const arm=dsArm===x.id,xb='<button class="inc-x'+(arm?' arm':'')+'" data-sx="'+esc(x.id)+'">'+(arm?'もう一度で消す':'✕')+'</button>';
+'<div class="inc-list">'+L.map(x=>{const arm=dsArm===x.id,xb='<button class="inc-x'+(arm?' arm':'')+'" data-sx="'+esc(x.id)+'">'+(arm?'もう一度で消す':'✕ 消す')+'</button>';
 return x.d?('<div class="inc-it dn-it ds-it done"><span class="dsx-dn">✓</span><span class="dn-t">'+esc(x.t)+'</span><span class="inc-d">'+(Number(x.d)>1e11?md(Number(x.d)):'')+'</span>'+xb+'</div>')
-:('<div class="inc-it dn-it ds-it'+((nx&&nx.id===x.id)?' nx':'')+'"><button class="dsx-ok" data-sok="'+esc(x.id)+'" aria-label="やった">✓</button><span class="dn-t">'+esc(x.t)+'</span>'+xb+'</div>');}).join('')+'</div>'+
+:('<div class="inc-it dn-it ds-it'+((nx&&nx.id===x.id)?' nx':'')+'"><button class="dsx-ok lbl" data-sok="'+esc(x.id)+'" aria-label="やった">✓<small class="bn">やった</small></button><span class="dn-t">'+esc(x.t)+'</span>'+xb+'</div>');}).join('')+'</div>'+
 '<div class="inc-row"><input type="text" id="dsIn" maxlength="60" placeholder="次の1手を1行で（5分で終わる・動詞で始める）" enterkeyhint="done"><button class="chip" id="dsAdd">足す</button></div>'+
 '<div class="sh-btns" style="margin-top:10px"><button class="delbtn" id="dsNo" style="flex:1">閉じる</button></div>',null);
 const s=$('sheet2'),inp=$('dsIn');inp.value=keep;
@@ -5286,7 +5326,7 @@ const L=state.life;
 const arr=Object.keys(state.dreams||{}).map(id=>({id,...state.dreams[id]})).filter(d=>!d.del);
 let age='';
 if(L&&L.bd){const by=parseD(L.bd).getFullYear();age='（'+(ytYear-by-1)+'歳〜'+(ytYear-by)+'歳）';}
-let html='<div class="ynav"><button id="ytPrev">‹</button><span>'+ytYear+'年<span class="age">'+age+'</span></span><button id="ytNext">›</button></div>';
+let html='<div class="ynav"><button id="ytPrev" class="lbl" aria-label="前年">‹<small class="bn">前年</small></button><span>'+ytYear+'年<span class="age">'+age+'</span></span><button id="ytNext" class="lbl" aria-label="翌年">›<small class="bn">翌年</small></button></div>';
 let any=false;
 for(const c of CATS){
 const ds=dSort(arr.filter(d=>Number(d.cat)===c.id&&dreamDue(d)&&dreamDue(d).slice(0,4)==String(ytYear)));
@@ -5347,7 +5387,7 @@ return '<button class="drow" data-de="'+esc(d.id)+'"><span class="cdot" style="b
 '<span class="dt"><span class="dtt">🎉 '+esc(d.t)+'</span><span class="dmeta"><span class="badge won">'+(d.ach>1000?fmt(new Date(d.ach))+' ':'')+'実現</span></span></span></button>';
 }).join(''):'<div class="empty-hint">かなった夢はここに殿堂入りする。<br>消さない——見返すたびに自信になる</div>';
  }
-p.innerHTML='<div class="page-head"><button class="bk" id="pgBk">‹ 戻る</button><span class="tt">⭐ 夢手帳</span><button class="padd" id="pgAdd">＋</button></div>'+
+p.innerHTML='<div class="page-head"><button class="bk" id="pgBk">‹ 戻る</button><span class="tt">⭐ 夢手帳</span><button class="padd tx" id="pgAdd">＋ 夢</button></div>'+
 goal+
 '<div class="pseg" style="flex-wrap:wrap">'+
 '<button data-ds="clock"'+(dseg==='clock'?' class="on"':'')+'>人生時計</button>'+
@@ -5392,7 +5432,7 @@ $('sheet').innerHTML=
 '<div class="sh-time"><span>'+(ex?'夢をなおす':'やりたいこと/夢')+'</span></div>'+
 '<div>'+iosSw('dPin',false,'📌 トップに大きく出す（'+PIN_MAX+'つまで）','','row')+'</div>'+
 '<div><div class="sh-label">✦ 夢（目をつぶって浮かぶくらい具体的に・話してもOK）</div><div class="sh-ta-wrap"><input type="text" id="dTt" maxlength="200" style="padding-right:46px" placeholder="例：自分の店を持つ">'+
-'<button class="sh-mic" id="dMic" style="top:5px;bottom:auto">'+MICSVG+'</button></div></div>'+
+'<button class="sh-mic lbl" id="dMic" style="top:5px;bottom:auto" aria-label="声で書く">'+MICSVG+'<small class="bn">声</small></button></div></div>'+
 '<div><div class="sh-label">六分野（1タップ）</div><div class="catbtns" id="dCats">'+
 CATS.map(c=>'<button data-c="'+c.id+'">'+esc(c.n)+'</button>').join('')+'</div></div>'+
 '<div style="display:flex;gap:10px">'+
@@ -5422,7 +5462,7 @@ toast(pin?'📌 トップに大きく出す（「記録」で確定）':'📌 �
 function renderDPh(){
 const w=$('dPhRow');
 w.innerHTML=(dPh?'<img class="phth" id="dPhImg" src="'+esc(phUrl(dPh))+'" alt="" onerror="this.style.visibility=\'hidden\'">':'')+
-'<button class="phadd" id="dPhAdd">'+(dPh?'⟳':'＋')+'</button>';
+'<button class="phadd lbl" id="dPhAdd" aria-label="写真">'+(dPh?'⟳<small class="bn">替える</small>':'＋<small class="bn">写真</small>')+'</button>';
 const im=$('dPhImg');
 if(im)im.onclick=()=>openViewerRaw(im.src);
 $('dPhAdd').onclick=()=>{
@@ -5875,8 +5915,8 @@ ser.map((s,i)=>s.yr?payRepCard(s,i):'').join('')):''))
 :'<div class="empty-hint">まだ登録なし。右上の［＋ 支払い］で「支払日・金額・内容」を入れる。<br>「毎月」にすると翌月分は仮の日付で勝手に出る（日付は直せる）</div>'));
 p.innerHTML='<div class="page-head"><button class="bk" id="pgBk">‹ 戻る</button><span class="tt">💴 支払い</span><button class="padd tx" id="pgAdd">＋ 支払い</button></div>'+
 '<div class="page-body">'+
-'<div class="pmon"><button class="pmv" id="pmPrev">‹</button><span class="pm-y">'+esc(ym.slice(0,4))+'</span><span class="pm-m">'+Number(ym.slice(5))+'<small>月</small></span>'+
-'<button class="pmv" id="pmNext">›</button>'+(isCur?'':'<button class="todaybtn" id="pmNow">今月</button>')+'</div>'+
+'<div class="pmon"><button class="pmv lbl" id="pmPrev" aria-label="前月">‹<small class="bn">前月</small></button><span class="pm-y">'+esc(ym.slice(0,4))+'</span><span class="pm-m">'+Number(ym.slice(5))+'<small>月</small></span>'+
+'<button class="pmv lbl" id="pmNext" aria-label="次月">›<small class="bn">次月</small></button>'+(isCur?'':'<button class="todaybtn" id="pmNow">今月</button>')+'</div>'+
 '<div class="psum"><div class="up'+(up.length?'':' zero')+'"><div class="ps-l">未払い</div><div class="ps-v">'+fmtYen(sum(up))+'<small>円</small></div><div class="ps-c">'+up.length+'件'+(over?'（うち期限超過 '+over+'件）':'')+naTxt(up)+'</div></div>'+
 '<div class="dn"><div class="ps-l">払った</div><div class="ps-v">'+fmtYen(sum(dn))+'<small>円</small></div><div class="ps-c">'+dn.length+'件'+naTxt(dn)+'</div></div></div>'+
 (tot?'<div class="payprog'+(up.length?'':' all')+'" style="padding:10px 14px;margin:0 0 4px"><div class="pp-bar" style="margin-top:0"><i style="width:'+Math.round(dn.length/tot*100)+'%"></i></div>'+
@@ -5985,7 +6025,7 @@ holdT.map(v=>'<button class="chip" data-hold="'+esc(v)+'">'+esc(v)+'</button>').
 '</div></div>'+
 '<div><div class="sh-label">⑤ 支払先</div><input type="text" id="pyN" maxlength="60" data-need="1" placeholder="例：〇〇不動産／〇〇モバイル">'+chipRow('pyChips',names,'n',5)+'</div>'+
 '<div><div class="sh-label">⑥ メモ</div><div class="sh-ta-wrap"><textarea id="pyMemo" style="min-height:56px;padding-right:13px" placeholder="例：請求書の番号／残高を先に確認 など"></textarea></div></div>'+
-(ex&&!ex.done?'<div class="pdbox" id="pyPdBox" style="display:none"><div class="pd-h"><span>✓ いつ払った？</span><button id="pyPdX">✕</button></div>'+
+(ex&&!ex.done?'<div class="pdbox" id="pyPdBox" style="display:none"><div class="pd-h"><span>✓ いつ払った？</span><button id="pyPdX" aria-label="閉じる">✕ 閉じる</button></div>'+
 '<div class="pd-chips" id="pyPdChips"></div>'+
 '<div class="pd-o"><input type="date" id="pyPd" max="'+td+'"><button id="pyPdGo">この日で登録</button></div></div>':'')+
 '<div class="sh-btns">'+(ex?'<button class="delbtn" id="pyDel">削除</button>':'')+
@@ -6182,7 +6222,7 @@ let pplEdit=false;
 const paintPpl=()=>{const el=$('pyPpl');if(!el)return;const cur=$('pyN').value.trim();
 el.innerHTML=payPeople().map(p=>'<button class="chip'+(!pplEdit&&p.n===cur?' sel':'')+'" data-pp="'+esc(p.id)+'"'+(pplEdit?' style="background:#ffe9ec;color:#e0405a"':'')+'>'+(pplEdit?'✕ ':'👤 ')+esc(p.n)+'</button>').join('')+
 (pplEdit?'<button class="chip" id="pyPplDone" style="background:var(--ink);color:#fff">終わる</button>'
-:'<button class="chip" id="pyPplPlus" style="background:#eefaf3;color:#0a9a54">＋ 人を足す</button><button class="chip" id="pyPplEd" style="background:#f1f3f8;color:#8a90a0">✎</button>');
+:'<button class="chip" id="pyPplPlus" style="background:#eefaf3;color:#0a9a54">＋ 人を足す</button><button class="chip" id="pyPplEd" style="background:#f1f3f8;color:#8a90a0">✎ 直す</button>');
 el.querySelectorAll('[data-pp]').forEach(b=>b.onclick=()=>{const p=payPeople().find(x=>x.id===b.dataset.pp);if(!p)return;
 if(pplEdit){if(!b.classList.contains('arm')){b.classList.add('arm');b.textContent='本当に消す？ '+p.n;return;}
 mutate(()=>{payPplSet(p.id,{del:1});});paintPpl();toast('「'+p.n+'」を消した（今までの支払いはそのまま）');return;}
@@ -6379,7 +6419,7 @@ const dt=(now-(m.ts||0)<604800000)?((d.getMonth()+1)+'/'+d.getDate()):(d.getFull
 return '<button class="memo-row" data-me="'+esc(m.id)+'"><div class="m1">'+esc((lines[0]||'（無題）').slice(0,42))+'</div>'+
 '<div class="m2"><span style="color:#9aa3b5;font-weight:700">'+dt+'</span>　'+esc(lines.slice(1).join(' ').slice(0,44))+'</div></button>';
 }).join('');
-p.innerHTML='<div class="page-head"><button class="bk" id="pgBk">‹ 戻る</button><span class="tt">📝 メモ</span><button class="padd" id="pgAdd">＋</button></div>'+
+p.innerHTML='<div class="page-head"><button class="bk" id="pgBk">‹ 戻る</button><span class="tt">📝 メモ</span><button class="padd tx" id="pgAdd">＋ メモ</button></div>'+
 '<div class="page-body">'+
 '<div style="color:#8a90a0;font-size:11.5px;font-weight:700;padding:0 2px 4px">'+arr.length+'件のメモ</div>'+
 (arr.length?groups.map(g=>'<div class="glab" style="margin:10px 0 4px;color:var(--green)">'+esc(g.label)+'</div>'+rows(g)).join('')
@@ -6398,7 +6438,7 @@ const d=ex?new Date(ex.ts||Date.now()):new Date();
 const dtxt=d.getFullYear()+'年'+(d.getMonth()+1)+'月'+d.getDate()+'日 '+pad(d.getHours())+':'+pad(d.getMinutes());
 p.innerHTML='<div class="page-head"><button class="bk" id="mBk">‹ メモ</button><span class="tt" style="color:#9aa3b5;font-size:11px;font-weight:700">'+dtxt+'</span><span style="width:36px"></span></div>'+
 '<div class="memo-ed"><div class="sh-ta-wrap" style="flex:1;min-height:0;display:flex"><textarea id="mTa" style="flex:1;min-height:0" placeholder="書けば自動で保存される。思いつくまま書き殴れ。整理はAIにやらせる"></textarea>'+
-'<button class="sh-mic" id="mMic">'+MICSVG+'</button></div>'+
+'<button class="sh-mic lbl" id="mMic" aria-label="声で書く">'+MICSVG+'<small class="bn">声</small></button></div>'+
 '<div class="memo-btns">'+(ex?'<button class="delbtn" id="mDel">削除</button>':'')+
 '<button class="aibtn" id="mAi">📋 AIまとめコピー</button></div></div>';
 p.classList.add('open');
@@ -6542,7 +6582,7 @@ function mvElText(m){if(m<60)return m+'分';return Math.floor(m/60)+'時間'+(m%
 function mvOpenRow(o){const a=(o&&Array.isArray(o.en.acts))?o.en.acts:[];for(let i=a.length-1;i>=0;i--){const x=a[i];if(x&&x.s&&!x.e&&x.mvp)return {i,x};}return null;}
 function mvPauseHtml(o){const r=mvOpenRow(o);if(r){const k=kindOf(r.x.k)||{ic:'☕',lb:'休憩'};const n=new Date();const m=durMin(r.x.s,pad(n.getHours())+':'+pad(n.getMinutes()),0);
 return '<button class="chip mvb pz on" id="wrPzEnd">'+esc(k.ic)+' <b>⏱'+esc(mvElText(m))+'</b><span class="mvl"> ▶出る</span></button>';}
-return '<button class="chip mvb pz" data-pz="rest" aria-label="休憩">☕</button><button class="chip mvb pz" data-pz="meal" aria-label="食事">🍚</button><button class="chip mvb pz" data-pz="nap" aria-label="仮眠">😴</button>';}
+return '<button class="chip mvb pz ic2" data-pz="rest" aria-label="休憩">☕<small>休憩</small></button><button class="chip mvb pz ic2" data-pz="meal" aria-label="食事">🍚<small>食事</small></button><button class="chip mvb pz ic2" data-pz="nap" aria-label="仮眠">😴<small>仮眠</small></button>';}
 function mvPauseStart(k){const o=openMove();if(!o)return;if(mvOpenRow(o)){toast('先に ▶出る を押す');return;}const kk=kindOf(k);const nd=new Date(),s=pad(nd.getHours())+':'+pad(nd.getMinutes());
 mutate(()=>{const en=state.entries[o.d][o.k];en.acts=Array.isArray(en.acts)?en.acts:[];en.acts.push({t:kk?kk.lb:k,k,s,e:'',m:0,mvp:1});en.ts=Date.now();});toast((kk?kk.ic+' '+kk.lb:'')+' '+s+'〜（走り出す時に ▶出る）');}
 function mvPauseEnd(at){const o=openMove();if(!o)return;const r=mvOpenRow(o);if(!r)return;const nd=new Date(),e=at||(pad(nd.getHours())+':'+pad(nd.getMinutes()));
@@ -6578,7 +6618,7 @@ const paint=(keep)=>{if($('srD')){dd=$('srD').value||dd;tt=$('srT').value||tt;}o
 '<div class="sr-k">'+Object.keys(SR_K).map(x=>'<button data-sk="'+x+'"'+(k===x?' class="on"':'')+'>'+SR_K[x][0]+'<span>'+SR_K[x][1]+'</span></button>').join('')+'</div>'+
 (k==='muda'?'<div class="sr-r">'+SR_R.map(x=>'<button class="chip'+(r===x[0]?' sel':'')+'" data-srr="'+x[0]+'">'+x[1]+' '+x[2]+'</button>').join('')+'</div>':'')+
 '<div class="sr-dt"><span>🕐 いつ</span><input type="date" id="srD" value="'+esc(dd)+'"><input type="time" id="srT" step="60" value="'+esc(tt)+'"></div>'+
-'<div class="sr-m"><textarea id="srTa" rows="2" placeholder="💬 一言（例：困り事はビジネスの種）">'+esc(keep!=null?keep:(ex?ex.m||'':''))+'</textarea><button class="fr-mic" id="srMic" aria-label="音声で書く">'+MICSVG+'</button></div>'+
+'<div class="sr-m"><textarea id="srTa" rows="2" placeholder="💬 一言（例：困り事はビジネスの種）">'+esc(keep!=null?keep:(ex?ex.m||'':''))+'</textarea><button class="fr-mic lbl" id="srMic" aria-label="音声で書く">'+MICSVG+'<small class="bn">声</small></button></div>'+
 '<div class="sh-btns">'+(ex?'<button class="delbtn" id="srDel">消す</button>':'<button class="delbtn" id="srNo">やめる</button>')+'<button class="savebtn" id="srOk">'+(ex?'直す':'残す')+'</button></div>',null);
 const s=$('sheet2');
 s.querySelectorAll('[data-sk]').forEach(b=>b.onclick=()=>{const v=$('srTa').value;k=b.dataset.sk;if(k!=='muda')r='';paint(v);});
@@ -6614,8 +6654,8 @@ const TEL_KS=['call','bizcall','famcall','errand','chat'];
 function openTel(){return openKindRec(TEL_KS);}
 function srMudaHtml(){return '<button class="chip mvb sr ic2" id="wrSr" aria-label="ムダ・ストレスを申告">🕳️<small>ムダ</small></button>';}
 function srBtnHtml(){const sp=openSp(),tl=openTel();
-return (sp?'<button class="chip mvb spE" id="wrSpE">📲<b>⏱'+esc(mvElText(mvElapsed(sp)))+'</b>⏹</button>':'<button class="chip mvb sp ic2" id="wrSp" aria-label="スマホ操作を計る">📲<small>スマホ</small></button>')+
-(tl?'<button class="chip mvb telE" id="wrTelE">📞<b>⏱'+esc(mvElText(mvElapsed(tl)))+'</b>⏹</button>':'<button class="chip mvb tel ic2" id="wrTel" aria-label="電話を計る">📞<small>電話</small></button>');}
+return (sp?'<button class="chip mvb spE" id="wrSpE" aria-label="スマホを止める">📲<b>⏱'+esc(mvElText(mvElapsed(sp)))+'</b>⏹止める</button>':'<button class="chip mvb sp ic2" id="wrSp" aria-label="スマホ操作を計る">📲<small>スマホ</small></button>')+
+(tl?'<button class="chip mvb telE" id="wrTelE" aria-label="電話を止める">📞<b>⏱'+esc(mvElText(mvElapsed(tl)))+'</b>⏹止める</button>':'<button class="chip mvb tel ic2" id="wrTel" aria-label="電話を計る">📞<small>電話</small></button>');}
 function quickKindStart(k,ic,lb,tx,ub){const d=todayStr(),s=nowMin(),p=placeBefore(d,s),pf=pfAuto(d,s),key='e'+Date.now()+Math.floor(Math.random()*1e4);
 mutate(()=>{state.entries[d]=state.entries[d]||{};const ne={k,s,p:p||'',t:tx||'',ph:[],ts:Date.now()};if(pf)ne.pf=pf;state.entries[d][key]=ne;});if(ub)undoBar('✓ '+ic+' '+lb+' '+s+'（終わったら⏹）',ubDel(d,key),{d,k:key});else toast(ic+' '+lb+' '+s+'（終わったら⏹）');return key;}
 function quickKindEnd(o){const e=nowMin(),s=o.en.s,ed=(o.d!==todayStr()||e<s)?1:0;mutate(()=>{const en=state.entries[o.d][o.k];en.e=e;if(ed)en.ed=ed;else delete en.ed;en.ts=Date.now();});return durMin(s,e,ed);}
@@ -6754,7 +6794,7 @@ function dlgList(){return beList('dlg',DLG0).map(x=>{const o=(state.dlg||{})[x.i
 const AIP0=[['new','🆕','新規開発'],['add','➕','機能追加'],['fix','🔧','修正'],['bizwall','💼','ビジネス壁打ち'],['wall','💬','壁打ち（ビジネス以外）'],['idea','💡','アイデア出し'],['prod','📦','商品開発'],['write','✍️','文章・図の作成'],['research','🔎','調べ物・リサーチ'],['learn','📚','勉強'],['data','📊','データ分析・集計'],['mail','✉️','メール・返信文']];
 function aipList(){return beList('aip',AIP0);}
 function aipOf(id){return aipList().find(x=>x.id===id)||((()=>{const o=(state.aip||{})[id],b=AIP0.find(y=>y[0]===id);return o&&o.lb?{id,ic:o.ic||'🧠',lb:o.lb}:b?{id,ic:b[1],lb:b[2]}:null;})());}
-function aipChips(on,attr,fd,open){return '<div class="ac-ai ac-aip'+(fd?' ac-fdw':'')+'"><span>🧠 AIで何をした</span>'+aipList().map(z=>'<button class="chip'+(on.indexOf(z.id)>=0?' sel':'')+'" '+attr+'="'+esc(z.id)+'">'+esc(z.ic)+' '+esc(z.lb)+'</button>').join('')+(fd?'<button type="button" class="ac-fd" data-fd="ap" aria-label="全部出す">'+(open?'▾':'▸')+'</button>':'')+'</div>';}
+function aipChips(on,attr,fd,open){return '<div class="ac-ai ac-aip'+(fd?' ac-fdw':'')+'"><span>🧠 AIで何をした</span>'+aipList().map(z=>'<button class="chip'+(on.indexOf(z.id)>=0?' sel':'')+'" '+attr+'="'+esc(z.id)+'">'+esc(z.ic)+' '+esc(z.lb)+'</button>').join('')+(fd?'<button type="button" class="ac-fd" data-fd="ap" aria-label="全部出す">'+(open?'▾ たたむ':'▸ 開く')+'</button>':'')+'</div>';}
 const BE_CFG={aip:{t:'🧠 AIで何をした',base:()=>AIP0,pre:'ap'},dlg:{t:'🤖 任せる先（AI・人）',base:()=>DLG0,pre:'dl',url:1},dgoal:{t:'🎯 任せる時のゴール',base:()=>DGOAL0,pre:'dg'},trs:{t:'🚗 移動手段',base:()=>TRS0.map(x=>{const s=String(x[1]),i=s.indexOf(' ');return [x[0],i>0?s.slice(0,i):s,i>0?s.slice(i+1):s];}),pre:'tr'},
 srr:{t:'🕳️ ムダの理由',base:()=>SR_R0,pre:'sr'},tdq:{t:'🗑 やる事をやめる理由',base:()=>TD_Q0,pre:'tq'},
 tools:{t:'🧰 道具（何を使って）',base:()=>TOOL_BASE,pre:'tl',tools:1}};
@@ -6785,11 +6825,11 @@ const kindsOf=g=>KIND_BASE.map(b=>b[0]).concat(kindOwnIds()).map(kindOf).filter(
 const paint=()=>{btnRefresh();const G=KIND_GRP.slice();
 let s='<div class="sh-time"><span>✎ 何をした（ボタンとカテゴリー）</span></div><div class="sh-note" style="text-align:left">ボタンを押すと 絵・名前・カテゴリー・🕳️ムダ・消す。カテゴリーの✎で 名前・並び・消す。消しても前の記録は残る</div>';
 G.forEach((g,gi)=>{const ks=kindsOf(g[0]);
-s+='<div class="pe-g"><div class="pe-h"><b>'+esc(g[1])+' '+esc(g[2])+'</b><span class="pe-gb"><button class="chip" data-bgc="'+esc(g[0])+'">✎</button></span></div>';
+s+='<div class="pe-g"><div class="pe-h"><b>'+esc(g[1])+' '+esc(g[2])+'</b><span class="pe-gb"><button class="chip" data-bgc="'+esc(g[0])+'">✎ 編集</button></span></div>';
 if(gsel===g[0])s+='<div class="pe-op"><div class="pe-nm"><input type="text" id="bgIc" class="ks-ic" maxlength="4" value="'+esc(g[1])+'" style="flex:0 0 3.2em;text-align:center"><input type="text" id="bgLb" maxlength="16" value="'+esc(g[2])+'"><button class="chip" id="bgSave">直す</button></div>'+
 '<div class="sr-r"><button class="chip" id="bgUp"'+(gi<=0?' disabled':'')+'>⬆ 前へ</button><button class="chip" id="bgDn"'+(gi>=G.length-1?' disabled':'')+'>⬇ 後ろへ</button>'+(g[0]==='X'?'':'<button class="chip pe-del" id="bgDel">'+(arm==='g'+g[0]?'🗑 本当に消す？':'🗑 消す')+'</button>')+'</div>'+(g[0]==='X'?'':'<div class="sh-note" style="text-align:left;margin:4px 0 0">消すと中のボタンは📍その他へ</div>')+'</div>';
 const chip=k=>'<button class="chip'+(k.id===sel?' sel':'')+'" data-bk="'+esc(k.id)+'">'+esc(k.ic)+' '+esc(k.lb)+(k.muda?' 🕳️':'')+'</button>';
-subList(g[0]).forEach(sb=>{s+='<div class="pe-sub"><b>'+esc(sb.ic)+' '+esc(sb.lb)+'</b><button class="chip" data-bsc="'+esc(sb.id)+'">✎</button></div>';
+subList(g[0]).forEach(sb=>{s+='<div class="pe-sub"><b>'+esc(sb.ic)+' '+esc(sb.lb)+'</b><button class="chip" data-bsc="'+esc(sb.id)+'">✎ 編集</button></div>';
 if(ssel===sb.id)s+='<div class="pe-op"><div class="pe-nm"><input type="text" id="bsIc" class="ks-ic" maxlength="4" value="'+esc(sb.ic)+'" style="flex:0 0 3.2em;text-align:center"><input type="text" id="bsLb" maxlength="16" value="'+esc(sb.lb)+'"><button class="chip" id="bsSave">直す</button></div><div class="sr-r"><button class="chip pe-del" id="bsDel">'+(arm==='s'+sb.id?'🗑 本当に消す？':'🗑 小分けを消す')+'</button></div><div class="sh-note" style="text-align:left;margin:4px 0 0">消すと中のボタンは小分け無しへ（カテゴリーはそのまま）</div></div>';
 s+='<div class="sr-r">'+ks.filter(k=>k.sg===sb.id).map(chip).join('')+'</div>';});
 s+='<div class="sr-r">'+ks.filter(k=>!k.sg).map(chip).join('')+'<button class="chip pe-add" data-bka="'+esc(g[0])+'">＋ 新しいボタン</button><button class="chip pe-add" data-bsa="'+esc(g[0])+'">＋ 小分け</button></div>';
@@ -6936,10 +6976,10 @@ SRQ.ks.forEach(k=>{const q=kindOf(k);if(q)AC.push(['ks',k,esc(q.ic)+' '+esc(q.lb
 SRQ.ai.forEach(id=>{const z=aiTool(id);if(z)AC.push(['ai',id,'🤖 '+esc(z.lb)]);});
 SRQ.ap.forEach(id=>{const z=aipOf(id);if(z)AC.push(['ap',id,esc(z.ic)+' '+esc(z.lb)]);});
 if(SRQ.md)AC.push(['md','','🕳️ ムダだけ']);if(SRQ.ph)AC.push(['ph','','📷 写真あり']);
-const dx=(id,v,tp)=>'<span class="sr-dx"><input type="'+tp+'" id="'+id+'"'+(tp==='time'?' step="300" lang="ja-JP"':'')+' value="'+esc(v)+'"><button class="sr-x" data-srclr="'+id+'" aria-label="消す">✕</button></span>';
+const dx=(id,v,tp)=>'<span class="sr-dx"><input type="'+tp+'" id="'+id+'"'+(tp==='time'?' step="300" lang="ja-JP"':'')+' value="'+esc(v)+'"><button class="sr-x lbl" data-srclr="'+id+'" aria-label="消す">✕<small class="bn">消す</small></button></span>';
 const RES=SRQ.view==='res';
 p.innerHTML='<div class="page-head"><button class="bk" id="pgBk">‹ 戻る</button><span class="tt">🔍 検索</span>'+(AC.length?'<button class="chip" id="srClr">全部クリア</button>':'<span style="width:36px"></span>')+'</div><div class="page-body sr-page">'+(RES?'':
-'<div class="sr-qw"><input type="search" id="srQ" class="sr-q" enterkeyhint="search" placeholder="言葉で探す（場所・一言・行・文章）" value="'+esc(SRQ.q)+'">'+(SRQ.q?'<button class="sr-x" data-srclr="srQ" aria-label="消す">✕</button>':'')+'</div>'+
+'<div class="sr-qw"><input type="search" id="srQ" class="sr-q" enterkeyhint="search" placeholder="言葉で探す（場所・一言・行・文章）" value="'+esc(SRQ.q)+'">'+(SRQ.q?'<button class="sr-x lbl" data-srclr="srQ" aria-label="消す">✕<small class="bn">消す</small></button>':'')+'</div>'+
 '<div class="sr-sec"><span class="sr-h">📅 いつ</span>'+[['today','今日'],['7','7日'],['30','30日'],['year','今年'],['all','全部'],['pick','📅 選ぶ']].map(x=>chip(SRQ.per===x[0],'data-srper',x[0],x[1])).join('')+
 (SRQ.per==='pick'?'<div class="sr-dates">'+dx('srD1',SRQ.d1,'date')+'<span>〜</span>'+dx('srD2',SRQ.d2,'date')+'</div>':'')+'</div>'+
 '<div class="sr-sec"><span class="sr-h">🕐 時間帯</span>'+SR_TB.map(x=>chip(SRQ.tb.indexOf(x[0])>=0,'data-srtb',x[0],x[1]+' '+x[2])).join('')+iosSw('',!!SRQ.tp,'🕐 時間を指定','data-srtp="1"','sm row')+
@@ -6992,15 +7032,15 @@ p.querySelectorAll('[data-srd]').forEach(b=>b.onclick=()=>{const d=b.dataset.srd
 function openPlanPage(){closeSheet();renderPlanPage();}
 let planRulesOpen=false;
 function renderPlanPage(){pageMode='plan';const p=$('page'),t=todayStr(),o=planOrder(),an=planAnchors(),nx=planNext(),R=planRules();
-const item=(x,i)=>'<div class="pl-it'+(nx&&nx.id===x.id?' nx':'')+'"><span class="pl-n">'+(i+1)+'</span><button class="pl-b" data-ple="'+esc(x.id)+'"><b>'+esc(x.t)+'</b><small>'+planWhy(x)+'</small></button><span class="pl-ac"><button data-plc="'+esc(x.id)+'">✅</button><button data-pll="'+esc(x.id)+'">⏭</button></span></div>';
+const item=(x,i)=>'<div class="pl-it'+(nx&&nx.id===x.id?' nx':'')+'"><span class="pl-n">'+(i+1)+'</span><button class="pl-b" data-ple="'+esc(x.id)+'"><b>'+esc(x.t)+'</b><small>'+planWhy(x)+'</small></button><span class="pl-ac"><button class="lbl" data-plc="'+esc(x.id)+'" aria-label="完了">✅<small class="bn">完了</small></button><button class="lbl" data-pll="'+esc(x.id)+'" aria-label="明日へ">⏭<small class="bn">明日へ</small></button></span></div>';
 p.innerHTML='<div class="page-head"><button class="bk" id="pgBk">‹ 戻る</button><span class="tt">⚡ 段取り</span><span style="width:36px"></span></div><div class="page-body"><div class="pl-sub">やる事の並び順</div>'+
 '<div class="pl-top"><button class="chip" id="plIr">⚡ 割り込み</button><button class="chip" id="plAsk">🤖 段取りを相談</button></div>'+
 '<div class="sh-note" style="text-align:left">決まった順番で自動で並べている。上から1つずつやるだけ。'+(condToday()==='bad'?'😵 しんどい日：🙌🤖を前に':condToday()==='good'?'💪 元気な日：🧠を前に':'')+'</div>'+
-(an.length?'<div class="sh-label">🕐 時間が決まっている</div>'+an.map(x=>'<div class="pl-it an'+(nx&&nx.id===x.id?' nx':'')+'"><span class="pl-n">🕐</span><button class="pl-b" data-ple="'+esc(x.id)+'"><b>'+esc(x.s)+(x.e?'–'+esc(x.e):'')+'　'+esc(x.t)+'</b><small>'+planWhy(x)+'</small></button><span class="pl-ac"><button data-plc="'+esc(x.id)+'">✅</button></span></div>').join(''):'')+
+(an.length?'<div class="sh-label">🕐 時間が決まっている</div>'+an.map(x=>'<div class="pl-it an'+(nx&&nx.id===x.id?' nx':'')+'"><span class="pl-n">🕐</span><button class="pl-b" data-ple="'+esc(x.id)+'"><b>'+esc(x.s)+(x.e?'–'+esc(x.e):'')+'　'+esc(x.t)+'</b><small>'+planWhy(x)+'</small></button><span class="pl-ac"><button class="lbl" data-plc="'+esc(x.id)+'" aria-label="完了">✅<small class="bn">完了</small></button></span></div>').join(''):'')+
 '<div class="sh-label">▶ この順番でやる</div>'+(o.length?o.map(item).join(''):'<div class="an-empty">まだ無い。下で足す</div>')+
 '<div class="td-add"><input type="text" id="plIn" maxlength="60" placeholder="＋ やる事を1行で（Enterで足す）"><button class="chip" id="plGo">足す</button></div>'+
 '<div class="sh-note" style="text-align:left">やる事を押すと、📅💰🙋🔥⏱の印・📍場所・🧠🙌🤖を付けられる。印で順番が決まる（💰かつ🔥 ＞ 💰 ＞ 🔥 ＞ その他。同じ段は期限が近い順）</div>'+
-'<details class="pl-rules"'+(planRulesOpen?' open':'')+'><summary>⚙️ 並び順の決まり（上から優先）</summary>'+R.map((r,i)=>{const d=PLAN_R0.find(z=>z[0]===r);return '<div class="pl-r"><span>'+(i+1)+'. '+d[1]+' '+esc(d[2])+'</span><button data-pru="'+r+'"'+(i===0?' disabled':'')+'>⬆</button><button data-prd="'+r+'"'+(i===R.length-1?' disabled':'')+'>⬇</button></div>';}).join('')+
+'<details class="pl-rules"'+(planRulesOpen?' open':'')+'><summary>⚙️ 並び順の決まり（上から優先）</summary>'+R.map((r,i)=>{const d=PLAN_R0.find(z=>z[0]===r);return '<div class="pl-r"><span>'+(i+1)+'. '+d[1]+' '+esc(d[2])+'</span><button data-pru="'+r+'"'+(i===0?' disabled':'')+'>⬆ 上へ</button><button data-prd="'+r+'"'+(i===R.length-1?' disabled':'')+'>⬇ 下へ</button></div>';}).join('')+
 '<div class="sh-note" style="text-align:left">並べた後：同じ場所の物はまとめる・体調で🧠と🙌🤖を入れ替える（自動）</div></details></div>';
 p.classList.add('open');
 const re=()=>renderPlanPage();
@@ -7154,12 +7194,12 @@ const dnA=tdAll().filter(x=>tdDone(x)&&!tdHib(x)&&tdDnOf(x)>=d7).sort((a,b)=>{co
 const rowsWip=stList().filter(x=>x.a.st==='wip'&&!x.a.td),rowsDone=stList().filter(x=>x.a.st==='done'&&!x.a.td&&(x.a.dn||x.d)===t);
 const tagC=x=>{const n=tdDays(x);return n<=0?'':n===1?'c1':n<6?'c2':'c3';};
 const meta=x=>(x.dlg&&x.dlg.to?'<em class="td-dlg">🤖→'+esc(x.dlg.to)+'</em>':'')+(tdTag(x)?'<em class="'+tagC(x)+'">'+esc(tdTag(x))+'</em>':'')+(x.s?'<i>🕐 '+esc((x.sd&&x.sd!==t?x.sd.slice(5).replace('-','/')+' ':'')+x.s+'–'+(x.e||''))+'</i>':'')+(x.c?'<small>'+esc(x.c.slice(0,60))+'</small>':'');
-const item=(x,m)=>'<div class="td-it'+(m==='pin'?' tdpin':'')+'"><button class="td-ck" data-tdc="'+esc(x.id)+'" aria-label="完了">◻️</button><button class="td-b" data-tde="'+esc(x.id)+'"><b>'+(x.tg&&TD_TG[x.tg]?TD_TG[x.tg][0]+' ':'')+esc(x.t)+'</b>'+meta(x)+'</button>'+
-(m==='stock'?'<button class="td-pn" data-tdp="'+esc(x.id)+'" aria-label="今日の3つに入れる">🎯</button>':m==='dlg'?'<button class="td-pn" data-tdg="'+esc(x.id)+'" aria-label="指示文を出す">📋</button>':'')+'</div>';
+const item=(x,m)=>'<div class="td-it'+(m==='pin'?' tdpin':'')+'"><button class="td-ck lbl" data-tdc="'+esc(x.id)+'" aria-label="完了">◻️<small class="bn">完了</small></button><button class="td-b" data-tde="'+esc(x.id)+'"><b>'+(x.tg&&TD_TG[x.tg]?TD_TG[x.tg][0]+' ':'')+esc(x.t)+'</b>'+meta(x)+'</button>'+
+(m==='stock'?'<button class="td-pn lbl" data-tdp="'+esc(x.id)+'" aria-label="今日の3つに入れる">🎯<small class="bn">3つへ</small></button>':m==='dlg'?'<button class="td-pn lbl" data-tdg="'+esc(x.id)+'" aria-label="指示文を出す">📋<small class="bn">指示文</small></button>':'')+'</div>';
 const shown=tdMore?stock:stock.slice(0,5);
 const days={};dnA.forEach(x=>{const d=tdDnOf(x);(days[d]=days[d]||[]).push(x);});
 p.innerHTML='<div class="page-head"><button class="bk" id="pgBk">‹ 戻る</button><span class="tt">📋 今日のやる事</span><span style="width:36px"></span></div><div class="page-body">'+
-'<div class="td-add"><input type="text" id="tdIn" maxlength="60" placeholder="＋ やる事を1行で（Enterで足す→📦ストック）"><button class="fr-mic" id="tdMic" aria-label="音声で書く">'+MICSVG+'</button><button class="chip" id="tdGo">足す</button></div>'+
+'<div class="td-add"><input type="text" id="tdIn" maxlength="60" placeholder="＋ やる事を1行で（Enterで足す→📦ストック）"><button class="fr-mic lbl" id="tdMic" aria-label="音声で書く">'+MICSVG+'<small class="bn">声</small></button><button class="chip" id="tdGo">足す</button></div>'+
 '<div class="td-sec">🎯 今日の3つ<small>'+pins.length+'/3</small></div>'+pins.map(x=>item(x,'pin')).join('')+
 (pins.length<3?'<div class="td-slot">'+(st0.length?'📦 ストックの 🎯 を押すと、ここに入る':'空き')+'</div>':'')+
 '<div class="td-sec">📦 ストック<small>'+st0.length+'</small></div>'+
@@ -7172,7 +7212,7 @@ rowsDone.map(x=>'<div class="td-dn"><span>✅</span><b>'+esc(x.a.t)+'</b></div>'
 (later.length?'<details class="td-sd"><summary>📅 明日以降 '+later.length+'</summary>'+later.map(x=>'<div class="td-it"><button class="td-b" data-tde="'+esc(x.id)+'"><b>'+(x.pin?'🎯 ':'')+esc(x.t)+'</b><i>'+esc(x.sd.slice(5).replace('-','/')+' '+(x.s||''))+'</i></button></div>').join('')+'</details>':'')+
 (sd.length?'<details class="td-sd"><summary>⏳ いつか '+sd.length+'</summary>'+sd.map(x=>'<div class="td-dn"><span>⏳</span><b>'+esc(x.t)+'</b><button data-tdr="'+esc(x.id)+'">ストックへ戻す</button><button class="td-x" data-tdx="'+esc(x.id)+'" aria-label="完全に消す">✕ 完全に消す</button></div>').join('')+'</details>':'')+
 (qt.length?'<details class="td-sd"'+(tdQMore?' open':'')+'><summary>🗑 やめた '+qt.length+'</summary>'+qs.map(x=>'<div class="td-dn"><span>🗑</span><b>'+esc(x.t)+'</b><i class="td-qd">'+esc(String(x.quit.at||'').slice(5).replace('-','/'))+'</i><button data-tdr="'+esc(x.id)+'">ストックへ戻す</button><button class="td-x" data-tdx="'+esc(x.id)+'" aria-label="完全に消す">✕ 完全に消す</button></div>').join('')+(qt.length>10?'<button class="an-more" id="tdQMoreB">'+(tdQMore?'▲ たたむ':'▼ もっと（あと'+(qt.length-10)+'件）')+'</button>':'')+'</details>':'')+
-(rowsWip.length?'<details class="td-sd"><summary>⏸ 日記で途中 '+rowsWip.length+'</summary>'+rowsWip.map((x,j)=>'<div class="td-it"><button class="td-ck" data-rwc="'+j+'">◻️</button><button class="td-b" data-rwo="'+j+'"><b>'+esc(x.a.t)+'</b><i>'+esc(x.d.slice(5).replace('-','/'))+(x.en.p?' 📍'+esc(x.en.p):'')+'</i></button></div>').join('')+'</details>':'')+
+(rowsWip.length?'<details class="td-sd"><summary>⏸ 日記で途中 '+rowsWip.length+'</summary>'+rowsWip.map((x,j)=>'<div class="td-it"><button class="td-ck lbl" data-rwc="'+j+'" aria-label="完了">◻️<small class="bn">完了</small></button><button class="td-b" data-rwo="'+j+'"><b>'+esc(x.a.t)+'</b><i>'+esc(x.d.slice(5).replace('-','/'))+(x.en.p?' 📍'+esc(x.en.p):'')+'</i></button></div>').join('')+'</details>':'')+
 '</div>';
 p.classList.add('open');$('pgBk').onclick=closePage;const re=()=>renderTodoPage();
 const add=()=>{const v=$('tdIn').value;if(!v.trim())return;tdNew(v,tdHibOn?{fl:{hib:1}}:null);re();setTimeout(()=>{try{$('tdIn').focus();}catch(e){}},50);};
@@ -7285,7 +7325,7 @@ setTimeout(()=>{if(armId===id&&Date.now()-armAt>=2900)armClear();},3000);}
 function armClear(){armId='';if(armEl){try{armEl.remove();}catch(e){}armEl=null;}document.querySelectorAll('.armed').forEach(x=>x.classList.remove('armed'));}
 function openInCar(){for(const d of [todayStr(),addDays(todayStr(),-1)]){const eo=state.entries[d]||{};let b=null;
 for(const k in eo){const en=eo[k];if(en&&en.k==='incar'&&recOpenOk(d,en)&&(!b||en.s>b.en.s))b={d,k,en};}if(b)return b;}return null;}
-function carBtnHtml(){const o=openInCar();return o?'<button class="chip mvb arr" id="wrCarE">🚙 <b>⏱'+esc(mvElText(mvElapsed(o)))+'</b><span class="mvl"> ⏹</span></button>':'<button class="chip mvb car" id="wrCar">🚙<span class="mvl"> 車内</span></button>';}
+function carBtnHtml(){const o=openInCar();return o?'<button class="chip mvb arr" id="wrCarE" aria-label="車内を止める">🚙 <b>⏱'+esc(mvElText(mvElapsed(o)))+'</b>⏹止める</button>':'<button class="chip mvb car" id="wrCar">🚙<span class="mvl"> 車内</span></button>';}
 function quickCarStart(){if(openInCar()){toast('もう車内滞在中。終わったら🚙⏹を押す');return;}
 const d=todayStr(),s=nowHM(),p=placeBefore(d,s),pf=pfAuto(d,s),key='e'+Date.now()+Math.floor(Math.random()*1e4);
 mutate(()=>{state.entries[d]=state.entries[d]||{};const ne={k:'incar',s,p:p||'',t:'',ph:[],ts:Date.now()};if(pf)ne.pf=pf;state.entries[d][key]=ne;});
@@ -7337,7 +7377,7 @@ toast('🅿 '+n+'件を直した');closeSub();};
 const paint=()=>{const S0=$('sheet2'),keep=S0?S0.scrollTop:0,N=on.reduce((a,v)=>a+(v?1:0),0);
 openSub('<div class="sh-time"><span>🅿 路駐の記録を直す</span></div><div class="sh-note" style="text-align:left">✓の行だけ直す。文は消えない。種類は🚙車内（寝た記録は😴のまま）</div>'+
 (L.length?'<div class="rf-bar"><button class="chip" id="rfAll">全部✓</button><button class="chip" id="rfNone">全部✕</button></div><div class="rf-list">'+L.map((x,i)=>{const en=x.en,p=String(en.p==null?'':en.p),nk=(!en.k||RJ_K4[en.k])?'incar':en.k;
-return '<div class="rf-it'+(on[i]?'':' off')+'"><button class="chip rf-ck'+(on[i]?' sel':'')+'" data-rfk="'+i+'">'+(on[i]?'✓':'✕')+'</button><div class="rf-b">'+
+return '<div class="rf-it'+(on[i]?'':' off')+'"><button class="chip rf-ck lbl'+(on[i]?' sel':'')+'" data-rfk="'+i+'" aria-label="'+(on[i]?'直す':'直さない')+'">'+(on[i]?'✓<small class="bn">直す</small>':'✕<small class="bn">直さない</small>')+'</button><div class="rf-b">'+
 '<div class="rf-h">'+esc((dt(x)+' '+tm(en)).trim())+'　'+ic(en.k)+'　<b>'+esc(p||'（場所なし）')+'</b></div>'+
 (tx(en)?'<div class="rf-t">'+esc(tx(en))+'</div>':'')+
 '<div class="rf-to">→ '+ic(nk)+' '+esc(rojuName(rojuBase(p)))+'</div></div></div>';}).join('')+'</div>':'<div class="an-empty">残りなし</div>')+
@@ -7479,7 +7519,7 @@ bar.className='slpbar '+info.cls;
 const sig=info.k+'|'+info.txt;
 if(bar.dataset.sig!==sig){
 bar.dataset.sig=sig;
-bar.innerHTML='<button class="sb-t">'+esc(info.txt)+'</button><button class="sb-x" aria-label="今日は消す">✕</button>';
+bar.innerHTML='<button class="sb-t">'+esc(info.txt)+'</button><button class="sb-x lbl" aria-label="今日は消す">✕<small class="bn">消す</small></button>';
 bar.querySelector('.sb-t').onclick=()=>{if(info.act==='sleep')quickSleepStart();else openSleepPage();};
 bar.querySelector('.sb-x').onclick=()=>{try{localStorage.setItem('nippo10-slpbar',info.k);}catch(e){}bar.remove();};
  }
@@ -7894,7 +7934,7 @@ p.innerHTML='<div class="page-head"><button class="bk" id="pgBk">‹ 戻る</but
 '<button class="an-pjb" id="anPj">📌 案件で見る（MINI・USS九州 など）</button>'+
 '<button class="an-pjb sr" id="anSr">🕳️😤 困り事の一覧（自分で押した申告）</button>'+
 '<div class="an-tabs">'+[['day','日'],['week','週'],['month','月'],['year','年']].map(u=>'<button data-au="'+u[0]+'"'+(anaUnit===u[0]?' class="on"':'')+'>'+u[1]+'</button>').join('')+'</div>'+
-'<div class="an-nav"><button id="anPrev">‹</button><b>'+esc(anaLabel(anaUnit,r))+'</b><button id="anNext"'+(isCur?' disabled':'')+'>›</button></div>'+
+'<div class="an-nav"><button id="anPrev" class="lbl" aria-label="前へ">‹<small class="bn">前へ</small></button><b>'+esc(anaLabel(anaUnit,r))+'</b><button id="anNext" class="lbl" aria-label="次へ"'+(isCur?' disabled':'')+'>›<small class="bn">次へ</small></button></div>'+
 (cur.total?(card+anaStreakHtml()+bar+(cur.multi?'<div class="an-multi">⚡ 同時にやった時間 <b>'+hh(cur.multi)+'</b><small>重なった分は、どの事にも丸ごと数える（合計は24時間を超えてよい）</small></div>':'')+
 sec('grp','📦 分野（AI・中古車・自分…）',grpBody)+(Object.keys(cur.bzUse||{}).length?sec('mkbz','🏷 集客（事業ごと）',(()=>{const u=cur.bzUse,pu=prev.bzUse||{},ks=Object.keys(u).sort((a,b)=>u[b]-u[a]),mx=Math.max(1,...ks.map(k=>u[k]));return '<div class="an-list">'+ks.map(k=>'<div class="an-row"><span class="an-ic">🏷</span><span class="an-nm">'+esc(k)+'</span><span class="an-mb"><i style="width:'+Math.max(2,Math.round(u[k]/mx*100))+'%;background:#db2777"></i></span><span class="an-h">'+hh(u[k])+'</span>'+gd(u[k],pu[k]||0)+'</div>').join('')+'</div>';})()):'')+(Object.keys(cur.mpUse||{}).length?sec('mkpr','📣 集客（目的ごと）',(()=>{const u=cur.mpUse,pu=prev.mpUse||{},ks=MP0.map(z=>z[0]).filter(k=>u[k]),mx=Math.max(1,...ks.map(k=>u[k]));
 return '<div class="an-note">前に進んだ時間 <b>'+hh(u._fw||0)+'</b>　／　なんとなく <b>'+hh(u.idle||0)+'</b></div><div class="an-list">'+ks.map(k=>{const z=MP0.find(y=>y[0]===k);return '<div class="an-row"><span class="an-ic">'+z[1]+'</span><span class="an-nm">'+z[2]+'</span><span class="an-mb"><i style="width:'+Math.max(2,Math.round(u[k]/mx*100))+'%;background:'+(k==='idle'?'#9aa3b5':'#db2777')+'"></i></span><span class="an-h">'+hh(u[k])+'</span>'+gd(u[k],pu[k]||0)+'</div>';}).join('')+'</div>';})()):'')+(Object.keys(cur.apUse||{}).length?sec('aipr','🧠 AIで何をした',(()=>{const u=cur.apUse,pu=prev.apUse||{},ks=Object.keys(u).sort((a,b)=>u[b]-u[a]),mx=Math.max(1,...ks.map(k=>u[k]));return '<div class="an-list">'+ks.map(k=>{const z=aipOf(k)||{ic:'🧠',lb:k};return '<div class="an-row"><span class="an-ic">'+esc(z.ic)+'</span><span class="an-nm">'+esc(z.lb)+'</span><span class="an-mb"><i style="width:'+Math.max(2,Math.round(u[k]/mx*100))+'%;background:#7a6ef3"></i></span><span class="an-h">'+hh(u[k])+'</span>'+gd(u[k],pu[k]||0)+'</div>';}).join('')+'</div>';})()):'')+(Object.keys(cur.aiUse||{}).length?sec('aitl','🤖 使ったAI',(()=>{const u=cur.aiUse,pu=prev.aiUse||{},ks=Object.keys(u).sort((a,b)=>u[b]-u[a]),mx=Math.max(1,...ks.map(k=>u[k]));return '<div class="an-list">'+ks.map(k=>{const z=aiTool(k)||{lb:k,co:'#7a6ef3'};return '<div class="an-row"><span class="an-ic" style="color:'+z.co+'">●</span><span class="an-nm">'+esc(z.lb)+'</span><span class="an-mb"><i style="width:'+Math.max(2,Math.round(u[k]/mx*100))+'%;background:'+z.co+'"></i></span><span class="an-h">'+hh(u[k])+'</span>'+gd(u[k],pu[k]||0)+'</div>';}).join('')+'</div><div class="an-empty">同時に使った分は、どのAIにも丸ごと数える</div>';})()):'')+sec('kind','何をした',kindBody)+sec('mv','🚗 移動の中身',mvBody)+sec('tool','🛠 何を使って',toolBody)+(()=>{
@@ -7953,7 +7993,7 @@ return '<div class="rt-card'+(today.length?' done':'')+'">'+
 '<button class="rt-add" data-ra="'+esc(r.id)+'">＋ 記録する</button>'+
 (past.length?'<div class="rt-past">'+past.map(li).join('')+'</div>':'')+
 '</div>';};
-p.innerHTML='<div class="page-head"><button class="bk" id="pgBk">‹ 戻る</button><span class="tt">📚 ルーティン</span><button class="padd" id="rtNew">＋</button></div>'+
+p.innerHTML='<div class="page-head"><button class="bk" id="pgBk">‹ 戻る</button><span class="tt">📚 ルーティン</span><button class="padd tx" id="rtNew">＋ 足す</button></div>'+
 '<div class="page-body">'+
 '<div class="rt-sum"><div><small>今日</small><b>'+(todayTot?esc(durText(todayTot)):'0分')+'</b></div><div><small>直近7日</small><b>'+(weekTot?esc(durText(weekTot)):'0分')+'</b></div></div>'+
 (rs.length?rs.map(card).join(''):'<div class="empty-hint">まだ無い。右上の＋で、毎日やる事（勉強など）を足す</div>')+
@@ -8277,7 +8317,7 @@ quit.map(d=>'<button class="am-row" data-rev="'+esc(d.id)+'" style="opacity:.6">
  }
  }
 p.innerHTML='<div class="page-head"><button class="bk" id="pgBk">‹ 戻る</button><span class="tt">🎯 今日の1個</span>'+
-'<button class="padd" id="amDream" style="background:var(--lemon);color:var(--amber);box-shadow:none;font-size:16px">⭐</button></div>'+
+'<button class="padd tx" id="amDream" style="background:var(--lemon);color:var(--amber);box-shadow:none">⭐ 夢を足す</button></div>'+
 '<div class="page-body">'+body+'</div>';
 p.classList.add('open');
 payReopenMark();
@@ -8333,7 +8373,7 @@ const ex=sid?(state.steps||{})[sid]:null;
 $('sheet').innerHTML='<div class="grab"></div><div class="sh-time"><span>'+(ex?'✏️ 手順を直す':'＋ 手順を足す')+'</span></div>'+
 '<div style="font-weight:800;font-size:14px;text-align:center;word-break:break-word">'+esc(d.t)+'</div>'+
 '<div><div class="sh-label">1行だけ（5分で始められる大きさで・話してもOK）</div><div class="sh-ta-wrap"><input type="text" id="seT" maxlength="60" style="padding-right:46px" placeholder="例：○○に電話する">'+
-'<button class="sh-mic" id="seMic" style="top:5px;bottom:auto">'+MICSVG+'</button></div></div>'+
+'<button class="sh-mic lbl" id="seMic" style="top:5px;bottom:auto" aria-label="声で書く">'+MICSVG+'<small class="bn">声</small></button></div></div>'+
 '<div class="sh-btns">'+(ex?'<button class="delbtn" id="seDel">削除</button>':'')+
 ((ex&&ex.d)?'<button class="delbtn" id="seUndo" style="background:#f1f3f8;color:#4a4f5e">まだに戻す</button>':'')+
 '<button class="savebtn" id="seSave">決　定</button></div>';
@@ -8381,7 +8421,7 @@ let draft=null;
 $('sheet').innerHTML='<div class="grab"></div><div class="sh-time"><span>🤖 手順を作る</span></div>'+
 '<div style="font-weight:800;font-size:14px;text-align:center;word-break:break-word">'+esc(d.t)+(dreamDue(d)?'　<span style="color:#8a90a0;font-size:12px">'+esc(dLeft(d))+'</span>':'')+'</div>'+
 '<div><div class="sh-label">いまの状況を1行（書かなくてもOK・話してもOK）</div><div class="sh-ta-wrap"><input type="text" id="sgCx" maxlength="120" style="padding-right:46px" placeholder="例：1人でやる・まだ何も決めていない">'+
-'<button class="sh-mic" id="sgMic" style="top:5px;bottom:auto">'+MICSVG+'</button></div></div>'+
+'<button class="sh-mic lbl" id="sgMic" style="top:5px;bottom:auto" aria-label="声で書く">'+MICSVG+'<small class="bn">声</small></button></div></div>'+
 '<div id="sgOut"></div>'+
 '<div class="sh-btns" id="sgBtns"></div>'+
 '<div class="sh-note" style="text-align:left">AIが5〜15分の手順に分ける。日付は付けない。'+
@@ -8463,7 +8503,7 @@ const spN=f=>{try{const v=Number(f());return v>0?String(v):'';}catch(e){return '
 const spCount=(o,f)=>{try{return Object.keys(o||{}).filter(k=>o[k]&&!o[k].del&&(!f||f(o[k],k))).length;}catch(e){return 0;}};
 function spRefresh(){try{const p=$('page');if(pageMode==='set'&&p&&p.classList.contains('open')&&!$('ovl').classList.contains('open')&&!$('ovl2').classList.contains('open')){renderSetPage();}}catch(e){}}
 function spArm(b,txt,fn){
-if(!b.classList.contains('arm')){const t0=b.textContent;b.classList.add('arm');b.textContent=txt;setTimeout(()=>{if(b.isConnected&&b.classList.contains('arm')){b.classList.remove('arm');b.textContent=t0;}},2500);return;}
+if(!b.classList.contains('arm')){const t0=b.innerHTML;b.classList.add('arm');b.textContent=txt;setTimeout(()=>{if(b.isConnected&&b.classList.contains('arm')){b.classList.remove('arm');b.innerHTML=t0;}},2500);return;}
 b.classList.remove('arm');fn();}
 function openSetPage(){closeSheet();SP_ROOM='';renderSetPage(true);}
 function spKind(w){openKindSheet(w,()=>{try{btnRefresh();}catch(e){}},true);}
@@ -8471,7 +8511,7 @@ function spVer(){try{return (typeof CL_APPVER!=='undefined')?String(CL_APPVER):'
 function openHibList(){let arm='';const paint=()=>{const L=tdSorted(tdOpen()).filter(tdHib);
 openSub('<div class="sh-time"><span>🛠 HIBIKIの直したい事</span></div><div class="sh-note">溜めるだけ。1日の終わりにAIがまとめて直す（商売のやる事とは別）</div>'+
 '<div style="display:flex;gap:6px;margin:6px 0"><input type="text" id="hbIn" maxlength="120" placeholder="気づいた事を1行で" style="flex:1;min-width:0;font:inherit;font-size:16px;padding:10px;border-radius:12px;border:1px solid var(--line)"><button class="chip" id="hbAdd">足す</button></div>'+
-(L.length?L.map(x=>'<div class="rc-it"><b>'+esc(x.t)+'</b><div class="sr-r"><button class="chip" data-hbd="'+esc(x.id)+'">✓ 済み</button><button class="chip'+(arm===x.id?' sel':'')+'" data-hbx="'+esc(x.id)+'">'+(arm===x.id?'もう一度で消す':'✕')+'</button></div></div>').join(''):'<div class="an-empty">今は無い</div>')+
+(L.length?L.map(x=>'<div class="rc-it"><b>'+esc(x.t)+'</b><div class="sr-r"><button class="chip" data-hbd="'+esc(x.id)+'">✓ 済み</button><button class="chip'+(arm===x.id?' sel':'')+'" data-hbx="'+esc(x.id)+'">'+(arm===x.id?'もう一度で消す':'✕ 消す')+'</button></div></div>').join(''):'<div class="an-empty">今は無い</div>')+
 '<div class="sh-btns"><button class="savebtn" id="hbOk">閉じる</button></div>',null);
 const S=$('sheet2'),add=()=>{const v=$('hbIn').value;if(!v.trim())return;tdNew(v,{fl:{hib:1}});toast('🛠 溜めた');paint();};
 $('hbAdd').onclick=add;$('hbIn').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();add();}};
@@ -8570,7 +8610,7 @@ openSub('<div class="sh-time"><span>⏱ 本番の箱</span></div><div class="sh-
 $('sheet2').querySelectorAll('[data-tbx]').forEach(b=>b.onclick=()=>{const id=b.dataset.tbx;if(arm!==id){arm=id;paint();return;}arm='';tbDel(id);paint();});$('tbLOk').onclick=closeSub;};paint();}
 function openRewList(){let arm=-1;const paint=()=>{const L=tbRew();
 openSub('<div class="sh-time"><span>🎰 ご褒美の候補</span></div><div class="sh-note">今日3箱クリアした時に、この中から1つ当たる</div><div style="display:flex;gap:6px;margin:6px 0"><input type="text" id="rwIn" maxlength="40" placeholder="1行で足す" style="flex:1;min-width:0;font:inherit;font-size:16px;padding:10px;border-radius:12px;border:1px solid var(--line)"><button class="chip" id="rwAdd">足す</button></div>'+
-(L.length?L.map((x,i)=>'<div class="rc-it"><b>'+esc(x)+'</b><div class="sr-r"><button class="chip'+(arm===i?' sel':'')+'" data-rwx="'+i+'">'+(arm===i?'もう一度で消す':'✕')+'</button></div></div>').join(''):'<div class="an-empty">候補が無い（当たりは出ない）</div>')+'<div class="sh-btns"><button class="savebtn" id="rwOk">閉じる</button></div>',null);
+(L.length?L.map((x,i)=>'<div class="rc-it"><b>'+esc(x)+'</b><div class="sr-r"><button class="chip'+(arm===i?' sel':'')+'" data-rwx="'+i+'">'+(arm===i?'もう一度で消す':'✕ 消す')+'</button></div></div>').join(''):'<div class="an-empty">候補が無い（当たりは出ない）</div>')+'<div class="sh-btns"><button class="savebtn" id="rwOk">閉じる</button></div>',null);
 const sv=l=>mutate(()=>{state.rew={list:l,ts:Date.now()};}),add=()=>{const v=($('rwIn').value||'').trim().slice(0,40);if(!v)return;sv(tbRew().concat([v]));paint();};
 $('rwAdd').onclick=add;$('rwIn').onkeydown=e=>{if(e.key==='Enter'&&!e.isComposing&&e.keyCode!==229){e.preventDefault();add();}};
 $('sheet2').querySelectorAll('[data-rwx]').forEach(b=>b.onclick=()=>{const i=Number(b.dataset.rwx);if(arm!==i){arm=i;paint();return;}arm=-1;sv(tbRew().filter((x,j)=>j!==i));paint();});$('rwOk').onclick=closeSub;};paint();}
@@ -8744,9 +8784,9 @@ if(editId===x.id)return '<div class="op-row edit">'+(C.plain?'':'<input type="te
 const kp=C.keep&&C.keep[x.id];
 return '<div class="op-row'+(x.off?' off':'')+'">'+(C.plain?'':'<b class="op-ic">'+esc(x.ic)+'</b>')+
 '<button class="op-nm" data-oe="'+esc(x.id)+'">'+esc(x.lb)+(x.url?' 🔗':'')+(C.grp&&gl(x.g)?'<small>'+esc(gl(x.g))+'</small>':'')+(x.off?'<small>隠している</small>':'')+'</button>'+
-(C.noord?'':'<button class="op-b" data-oo="'+esc(x.id)+'" data-d="-1"'+(i<=0?' disabled':'')+' aria-label="上へ">↑</button><button class="op-b" data-oo="'+esc(x.id)+'" data-d="1"'+(i>=live.length-1?' disabled':'')+' aria-label="下へ">↓</button>')+
+(C.noord?'':'<button class="op-b lbl" data-oo="'+esc(x.id)+'" data-d="-1"'+(i<=0?' disabled':'')+' aria-label="上へ">↑<small class="bn">上へ</small></button><button class="op-b lbl" data-oo="'+esc(x.id)+'" data-d="1"'+(i>=live.length-1?' disabled':'')+' aria-label="下へ">↓<small class="bn">下へ</small></button>')+
 ((!C.plain&&!kp)?iosSw('',!x.off,'👁️','data-oh="'+esc(x.id)+'" aria-label="表示"','sm'):'')+
-(((x.own||C.plain)&&!kp)?'<button class="op-b x" data-ox="'+esc(x.id)+'" aria-label="消す">✕</button>':'')+'</div>';};
+(((x.own||C.plain)&&!kp)?'<button class="op-b x lbl" data-ox="'+esc(x.id)+'" aria-label="消す">✕<small class="bn">消す</small></button>':'')+'</div>';};
 const add='<div class="op-add"><div class="op-add-t">＋ 足す</div><div class="pe-nm">'+(C.plain?'':'<input type="text" id="oaIc" class="ks-ic" maxlength="4" value="'+esc(draft.ic)+'" aria-label="絵">')+'<input type="text" id="oaLb" maxlength="20" placeholder="名前" value="'+esc(draft.lb)+'"><button class="chip" id="oaGo">足す</button></div>'+
 (C.url?'<div class="pe-nm"><input type="url" id="oaUrl" placeholder="開く画面のURL（任意）" value="'+esc(draft.url)+'"></div>':'')+
 (C.grp?'<div class="pe-nm"><select id="oaG">'+KIND_GRP.map(g=>'<option value="'+esc(g[0])+'">'+esc(g[1]+' '+g[2])+'</option>').join('')+'</select></div>':'')+'</div>';
@@ -8804,8 +8844,8 @@ const CAP=400;
 const paint=()=>{
 const S0=$('sheet2'),keep=S0?S0.scrollTop:0;
 const L=C.rows().sort((a,b)=>(b.ts-a.ts)||(a.k<b.k?-1:1));
-openSub('<div class="sh-time"><span>'+esc(title)+'</span></div><div class="sh-note" style="text-align:left">'+esc(C.note)+'。✕は2回押しで消す</div>'+
-'<div class="op-list">'+(L.length?L.slice(0,CAP).map((x,i)=>'<div class="op-row"><span class="op-nm">'+esc(x.k)+'</span>'+(x.v?'<span class="ml-v">'+esc(x.v)+'</span>':'')+'<button class="op-b x" data-mlx="'+i+'" aria-label="消す">✕</button></div>').join(''):'<div class="ks-none">まだ無い</div>')+'</div>'+
+openSub('<div class="sh-time"><span>'+esc(title)+'</span></div><div class="sh-note" style="text-align:left">'+esc(C.note)+'。✕消すは2回押しで消える</div>'+
+'<div class="op-list">'+(L.length?L.slice(0,CAP).map((x,i)=>'<div class="op-row"><span class="op-nm">'+esc(x.k)+'</span>'+(x.v?'<span class="ml-v">'+esc(x.v)+'</span>':'')+'<button class="op-b x lbl" data-mlx="'+i+'" aria-label="消す">✕<small class="bn">消す</small></button></div>').join(''):'<div class="ks-none">まだ無い</div>')+'</div>'+
 (L.length>CAP?'<div class="sh-note">ほか '+(L.length-CAP)+' 件（新しい順に'+CAP+'件まで出している）</div>':'')+
 '<button class="ks-close" id="mlClose" style="margin-top:10px">閉じる</button>',null);
 const S=$('sheet2');try{S.scrollTop=keep;}catch(e){}
@@ -8857,7 +8897,7 @@ const paint=()=>{
 const S0=$('sheet2'),keep=S0?S0.scrollTop:0,L=cashList();
 openSub('<div class="sh-time"><span>👛 手元現金</span></div><div class="sh-note" style="text-align:left">いちばん上（最新）の金額が、帯の「あと」から引かれる。消すと、その前の金額に戻る。✕は2回押しで消す</div>'+
 '<div class="cash-row"><span class="cash-l">＋ 足す（日付と金額）</span><input type="date" id="chD" lang="ja-JP" value="'+esc(todayStr())+'" style="flex:1.3"><input type="number" id="chAmt" inputmode="numeric" placeholder="円" min="0" step="1000"><button class="chip" id="chOk">入れる</button></div>'+
-'<div class="op-list" style="margin-top:8px">'+(L.length?L.map((x,i)=>'<div class="op-row"><span class="op-nm">'+esc(x.d.slice(5).replace('-','/'))+(i===0?'<small>いま帯に出ている</small>':'')+'</span><b style="font-size:14px">'+fmtYen(x.amt)+'円</b><button class="op-b x" data-chx="'+esc(x.id)+'" aria-label="消す">✕</button></div>').join(''):'<div class="ks-none">まだ無い</div>')+'</div>'+
+'<div class="op-list" style="margin-top:8px">'+(L.length?L.map((x,i)=>'<div class="op-row"><span class="op-nm">'+esc(x.d.slice(5).replace('-','/'))+(i===0?'<small>いま帯に出ている</small>':'')+'</span><b style="font-size:14px">'+fmtYen(x.amt)+'円</b><button class="op-b x lbl" data-chx="'+esc(x.id)+'" aria-label="消す">✕<small class="bn">消す</small></button></div>').join(''):'<div class="ks-none">まだ無い</div>')+'</div>'+
 '<button class="ks-close" id="chClose" style="margin-top:10px">閉じる</button>',null);
 const S=$('sheet2');try{S.scrollTop=keep;}catch(e){}
 $('chOk').onclick=()=>{const amt=Math.round(Number($('chAmt').value)||0),d=$('chD').value||todayStr();if(!(amt>0)){toast('金額を入れてくれ');return;}if(!/^\d{4}-\d{2}-\d{2}$/.test(d)){toast('日付が変');return;}
@@ -9195,7 +9235,7 @@ const GC=goalCfg(),dm=actTodayCnt(t).dm,rec=openKindRec(['sns_xd']),home=!!p.hom
 const dmRow='<div class="pk-dm'+(hit?' hit':'')+'"><span>'+(home?'先に：':'出発前：')+(hit?'✓ ':'')+'📣 DM <b>'+dm+'</b>/'+GC.dm+'</span>'+(hit?'':(rec?'<button type="button" class="chip" id="pqDmEnd">⏹ 終える</button>':'<button type="button" class="chip" id="pqDm">▶ 5分だけ</button>'))+'</div>';
 const PED='<button type="button" class="pk-ed" data-pedit aria-label="準備を直す">✎ 直す</button>',quit='<button type="button" class="pk-q" id="pqQ">今日はやめた</button>',foot='<span class="pk-min">最低：DM'+GC.dm+'通</span>'+quit;
 if(home){
-return '<div class="pcard" id="prepCard">'+PED+'<div class="pk-ho"><span class="pk-hl" data-pedit><b>🏠 家の日</b>'+(dos.length?'<em>1番：'+prepDosMark(p,0)+esc(dos[0])+'</em>':'')+'</span><button type="button" class="pk-ok" id="pqDone" aria-label="済み">✓</button></div>'+dmRow+foot+'</div>';
+return '<div class="pcard" id="prepCard">'+PED+'<div class="pk-ho"><span class="pk-hl" data-pedit><b>🏠 家の日</b>'+(dos.length?'<em>1番：'+prepDosMark(p,0)+esc(dos[0])+'</em>':'')+'</span><button type="button" class="pk-ok lbl" id="pqDone" aria-label="済み">✓<small class="bn">済み</small></button></div>'+dmRow+foot+'</div>';
  }
 const mv=openMove(),ai=prepArrInfo(p),arr=!!ai&&(!mv||!!ai.out),tri=TRICON[p.tr]||'🚗',map='<button type="button" class="pk-big map" id="pqMap">🗺 経路</button>';
 if(arr){
@@ -9210,7 +9250,7 @@ if(mv){
 return '<div class="pcard" id="prepCard">'+PED+'<div class="pk-t" data-pedit><b>'+tri+'</b><span class="pk-u">移動中</span><em>'+prepRoute(p)+'</em></div><div class="pk-btns"><button type="button" class="pk-big go" id="pqArr">🏁 着いた</button>'+map+'</div>'+foot+'</div>';
  }
 const ci=prepCdInfo(p);
-return '<div class="pcard'+((ci&&ci.late)?' late':'')+'" id="prepCard"><button type="button" class="pk-ed" id="pqMo" aria-label="ほかの操作">⋯</button><div class="pk-t" data-pedit><b>'+esc(p.dep||'--:--')+'</b><span class="pk-u">出発</span><em>'+prepRoute(p)+'</em></div>'+
+return '<div class="pcard'+((ci&&ci.late)?' late':'')+'" id="prepCard"><button type="button" class="pk-ed lbl" id="pqMo" aria-label="ほかの操作">⋯<small class="bn">ほか</small></button><div class="pk-t" data-pedit><b>'+esc(p.dep||'--:--')+'</b><span class="pk-u">出発</span><em>'+prepRoute(p)+'</em></div>'+
 '<div class="pk-cd" id="pqCd">'+esc(ci?ci.txt:'')+'</div>'+(prepLateMin(p)>=30?'<button type="button" class="pk-rcv" id="pqRcv">🔁 挽回する</button>':'')+((wk=>wk?'<div class="pk-went"><span>もう出発した？</span><button type="button" class="chip" id="pqWentY">はい</button><button type="button" class="chip" id="pqWentN" data-lk="'+esc(wk)+'">いいえ</button></div>':'')(prepWentAsk(p)))+dmRow+
 '<div class="pk-btns"><button type="button" class="pk-big go" id="pqGo">'+tri+' 出発</button></div><div class="pk-mx'+(pkMoOn?' on':'')+'" id="pqMx"><button type="button" id="pqMap">🗺 経路</button><button type="button" data-pedit>✎ 直す</button><button type="button" class="q" id="pqQ">今日はやめた</button></div><span class="pk-min">最低：DM'+GC.dm+'通</span></div>';}
 function prepBind(pane){
@@ -9316,10 +9356,10 @@ openSub('<div class="sh-time"><span>🌅 '+(date===td?'今日':'明日')+'の準
 '<div id="pqPBox"><div class="sh-label" id="pqPLab">📍 行き先</div>'+
 '<div id="pqSlotM">'+(S.more?'':'<div id="pqPts" class="pq-pts"></div>')+'</div><div class="pq-tok" id="pqToOk"></div></div>'+
 '<div><div class="pq-where" id="pqWhere"></div><div class="pfflt" id="pqFlt"></div><div class="sh-chips" id="pqChips" style="margin-top:6px"></div></div>'+
-'<div><div class="pq-dh"><button type="button" class="pq-fold" id="pqDosT"></button><span class="pq-flg" id="pqFlg"><button type="button" class="chip pq-fl m" id="pqFlM" aria-label="稼ぎに直結">💰</button><button type="button" class="chip pq-fl f" id="pqFlF" aria-label="放置で損">🔥</button></span></div>'+
+'<div><div class="pq-dh"><button type="button" class="pq-fold" id="pqDosT"></button><span class="pq-flg" id="pqFlg"><button type="button" class="chip pq-fl m lbl" id="pqFlM" aria-label="稼ぎに直結">💰<small class="bn">稼ぎ</small></button><button type="button" class="chip pq-fl f lbl" id="pqFlF" aria-label="放置で損">🔥<small class="bn">放置で損</small></button></span></div>'+
 '<div id="pqDosB"><div class="pq-help"><div>💰 稼ぎに直結（売上・入金・成約・買取・DM・出品）</div><div>🔥 放置で損（人間関係・訴訟・延滞・手付が流れる・期限）</div><div>迷ったら：必ずやらなければいけないものの中で、一番軽いものから順に！</div></div>'+
-'<div class="pq-d1"><input type="text" id="pqD0" maxlength="60" placeholder="1つ目（例：書類を渡す）" autocomplete="off"><button type="button" class="pq-dok" data-dok="0" aria-label="できた">✓</button></div>'+
-'<div class="pq-d1"><input type="text" id="pqD1" maxlength="60" placeholder="2つ目" autocomplete="off"><button type="button" class="pq-dok" data-dok="1" aria-label="できた">✓</button></div><div class="pq-d1"><input type="text" id="pqD2" maxlength="60" placeholder="3つ目" autocomplete="off"><button type="button" class="pq-dok" data-dok="2" aria-label="できた">✓</button></div><div class="pq-stk" id="pqStk"></div></div></div>'+
+'<div class="pq-d1"><input type="text" id="pqD0" maxlength="60" placeholder="1つ目（例：書類を渡す）" autocomplete="off"><button type="button" class="pq-dok" data-dok="0" aria-label="できた">✓ できた</button></div>'+
+'<div class="pq-d1"><input type="text" id="pqD1" maxlength="60" placeholder="2つ目" autocomplete="off"><button type="button" class="pq-dok" data-dok="1" aria-label="できた">✓ できた</button></div><div class="pq-d1"><input type="text" id="pqD2" maxlength="60" placeholder="3つ目" autocomplete="off"><button type="button" class="pq-dok" data-dok="2" aria-label="できた">✓ できた</button></div><div class="pq-stk" id="pqStk"></div></div></div>'+
 '<button type="button" class="pq-more" id="pqMore" aria-expanded="'+(S.more?'true':'false')+'">'+(S.more?'▾':'▸')+' もっと細かく</button>'+
 '<div class="pq-moreb" id="pqMoreB"'+(S.more?'':' style="display:none"')+'><div id="pqSlotX">'+(S.more?'<div id="pqPts" class="pq-pts"></div>':'')+'</div>'+
 '<div class="pq-calc" id="pqCalc"><div class="pq-ref" id="pqRef"></div><button type="button" class="pq-mint" id="pqMinT"></button><div id="pqMins"></div>'+
@@ -9332,7 +9372,7 @@ arrI.value=S.arr;if(!S.arrT)arrI.classList.add('auto');
 trS.value=S.tr;if(trS.value!==S.tr)S.tr=trS.value;
 dI.forEach((x,i)=>{x.value=S.dos[i]||'';x.oninput=()=>{S.dos[i]=x.value;upd();};});
 {const paintDok=()=>{const pp=(state.prep||{})[date],dd=(pp&&Array.isArray(pp.dd))?pp.dd:[],can=date===td&&!!(pp&&!pp.del&&!pp.skip);
-$('sheet2').querySelectorAll('[data-dok]').forEach(b=>{const i=Number(b.dataset.dok);b.style.display=(can&&String(S.dos[i]||'').trim())?'':'none';b.classList.toggle('on',!!dd[i]);b.textContent=dd[i]?'✓済':'✓';});};
+$('sheet2').querySelectorAll('[data-dok]').forEach(b=>{const i=Number(b.dataset.dok);b.style.display=(can&&String(S.dos[i]||'').trim())?'':'none';b.classList.toggle('on',!!dd[i]);b.textContent=dd[i]?'✓ 済み':'✓ できた';});};
 paintDok();$('sheet2').querySelectorAll('[data-dok]').forEach(b=>b.onclick=()=>{const i=Number(b.dataset.dok),pp=(state.prep||{})[date],dd=(pp&&Array.isArray(pp.dd))?pp.dd:[];if(dd[i]){prepDoSet(i,0);toast('戻した');paintDok();return;}
 const tx=String(S.dos[i]||'').trim();if(!tx)return;if(String(prepDos(pp)[i]||'')!==tx){mutate(()=>{const q=Object.assign({},state.prep[date]);const a=prepDos(q);a[i]=tx;q.dos=a;q.do=a[0]||'';q.ts=Date.now();state.prep[date]=q;});}
 prepDoSet(i,1);{const id=prepTdId((state.prep||{})[date],i),x=(state.todos||{})[id];if(id&&x&&!tdDone(x))tdComplete(id,true);}toast('✓ 済み');paintDok();});}
@@ -9361,8 +9401,8 @@ const paintPts=fi=>{const w=$('pqPts');if(!w)return;{const sl=$(S.more?'pqSlotX'
 if(S.cur[0]==='v'&&!(Number(S.cur.slice(1))<S.vias.length))S.cur='t';
 const inp=(f,val,ph,auto)=>'<input type="text" class="mvpi pqpi'+(S.cur===f?' pqcur':'')+(auto?' auto':'')+'" data-f="'+f+'" maxlength="80" value="'+esc(val)+'" placeholder="'+ph+'">';
 let h='';
-if(S.more){h+='<div class="mvpt"><span>🟢 出発</span>'+inp('f',S.from,'どこから',!!(S.fromA&&S.from))+'<button type="button" class="chip pq-sw" id="pqSw" aria-label="出発と到着を入れ替える">⇅</button></div>';
-S.vias.forEach((v,i)=>{h+='<div class="mvpt"><span>⋯ 経由</span>'+inp('v'+i,v,'どこを通る',false)+'<button type="button" class="mvpx" data-vx="'+i+'" aria-label="この行を消す">✕</button><button type="button" class="chip pq-vn" data-vn="'+i+'" aria-label="経由をもう1行足す">→</button></div>';});}
+if(S.more){h+='<div class="mvpt"><span>🟢 出発</span>'+inp('f',S.from,'どこから',!!(S.fromA&&S.from))+'<button type="button" class="chip pq-sw lbl" id="pqSw" aria-label="出発と到着を入れ替える">⇅<small class="bn">入替</small></button></div>';
+S.vias.forEach((v,i)=>{h+='<div class="mvpt"><span>⋯ 経由</span>'+inp('v'+i,v,'どこを通る',false)+'<button type="button" class="mvpx lbl" data-vx="'+i+'" aria-label="この行を消す">✕<small class="bn">消す</small></button><button type="button" class="chip pq-vn lbl" data-vn="'+i+'" aria-label="経由をもう1行足す">→<small class="bn">足す</small></button></div>';});}
 else h+='<div class="mvpt pq-fa"><span>🟢 出発</span><b class="pq-fv'+((S.fromA&&S.from)?' auto':'')+'">'+(S.from?esc(S.from):'—')+'</b></div>';
 h+='<div class="mvpt"><span>🏁 到着</span>'+inp('t',S.to,'どこへ',false)+(S.more?'<button type="button" class="chip pq-arr" id="pqArrB" aria-label="ここで区切る">✓ここまで</button>':'')+'</div>';
 if(S.more&&!S.vias.length)h+='<div class="pq-addv"><button type="button" class="chip" id="pqAddV">＋経由</button></div>';
@@ -9656,8 +9696,8 @@ S.toOk=1;S.cur='t';retr();paintPts();paintChips();upd();toast('🏁 到着：'+S
 const paintPts=fi=>{const w=$('dpPts');if(!w)return;
 if(S.cur[0]==='v'&&!(Number(S.cur.slice(1))<S.vias.length))S.cur='t';
 const inp=(f,val,ph,auto)=>'<input type="text" class="mvpi pqpi'+(S.cur===f?' pqcur':'')+(auto?' auto':'')+'" data-f="'+f+'" maxlength="80" value="'+esc(val)+'" placeholder="'+ph+'">';
-let h='<div class="mvpt"><span>🟢 出発</span>'+inp('f',S.from,'どこから',!!(S.fromA&&S.from))+'<button type="button" class="chip pq-sw" id="dpSw" aria-label="出発と到着を入れ替える">⇅</button></div>';
-S.vias.forEach((v,i)=>{h+='<div class="mvpt"><span>⋯ 経由</span>'+inp('v'+i,v,'どこを通る',false)+'<button type="button" class="mvpx" data-vx="'+i+'" aria-label="この行を消す">✕</button><button type="button" class="chip pq-vn" data-vn="'+i+'" aria-label="経由をもう1行足す">→</button></div>';});
+let h='<div class="mvpt"><span>🟢 出発</span>'+inp('f',S.from,'どこから',!!(S.fromA&&S.from))+'<button type="button" class="chip pq-sw lbl" id="dpSw" aria-label="出発と到着を入れ替える">⇅<small class="bn">入替</small></button></div>';
+S.vias.forEach((v,i)=>{h+='<div class="mvpt"><span>⋯ 経由</span>'+inp('v'+i,v,'どこを通る',false)+'<button type="button" class="mvpx lbl" data-vx="'+i+'" aria-label="この行を消す">✕<small class="bn">消す</small></button><button type="button" class="chip pq-vn lbl" data-vn="'+i+'" aria-label="経由をもう1行足す">→<small class="bn">足す</small></button></div>';});
 h+='<div class="mvpt"><span>🏁 到着</span>'+inp('t',S.to,'どこへ',false)+'<button type="button" class="chip pq-arr" id="dpArrB" aria-label="ここで区切る">✓ここまで</button></div>';
 if(!S.vias.length)h+='<div class="pq-addv"><button type="button" class="chip" id="dpAddV">＋経由</button></div>';
 w.innerHTML=h;paintToOk();paintWhere();
@@ -9885,7 +9925,7 @@ cells+='<button data-cd="'+ds+'" class="'+(ds===ui.date?'sel':'')+(ds===todayStr
 (has?'<i></i>':'')+(gc[ds]?'<i class="g"></i>':'')+'</button>';
  }
 $('sheet').innerHTML='<div class="grab"></div>'+
-'<div class="sh-time"><button id="cmPrev">‹</button><span><button id="cmYear" style="font-weight:800;font-size:19px">'+y+'年</button>'+m+'月</span><button id="cmNext">›</button></div>'+
+'<div class="sh-time"><button id="cmPrev" class="lbl" aria-label="前月">‹<small class="bn">前月</small></button><span><button id="cmYear" style="font-weight:800;font-size:19px">'+y+'年</button>'+m+'月</span><button id="cmNext" class="lbl" aria-label="次月">›<small class="bn">次月</small></button></div>'+
 '<div class="calgrid caldow">'+YOBI.map((w,i)=>'<span class="'+(i===0?'sun':i===6?'sat':'')+'">'+w+'</span>').join('')+'</div>'+
 '<div class="calgrid" id="calDays">'+cells+'</div>'+
 '<div class="sh-note" style="text-align:left">🟡 日記あり　🔵 Gカレ予定あり　「'+y+'年」タップで年間表示</div>'+
@@ -9906,7 +9946,7 @@ const ym=y+'-'+pad(i+1);
 return '<button data-ym="'+ym+'"'+(ym===curYm?' class="cur"':'')+'>'+(i+1)+'月</button>';
 }).join('');
 $('sheet').innerHTML='<div class="grab"></div>'+
-'<div class="sh-time"><button id="cyPrev">‹</button><span>'+y+'年</span><button id="cyNext">›</button></div>'+
+'<div class="sh-time"><button id="cyPrev" class="lbl" aria-label="前年">‹<small class="bn">前年</small></button><span>'+y+'年</span><button id="cyNext" class="lbl" aria-label="次年">›<small class="bn">次年</small></button></div>'+
 '<div class="yeargrid">'+rows+'</div>'+
 '<div class="sh-note">月をタップすると月間カレンダー（🟡日記・🔵Gカレつき）</div>';
 $('cyPrev').onclick=()=>{vm=(y-1)+vm.slice(4);drawYear();};
@@ -10860,7 +10900,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c23.5";
+const CL_APPVER="c23.6";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
