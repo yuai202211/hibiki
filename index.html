@@ -3250,7 +3250,7 @@ const KIND_BASE=[['ai','🤖','AI','#7a6ef3','A',0,'h'],['aibiz','💡','AIビ�
 ['bizcall','📞','仕事の連絡','#2f8fcf','C',0,'h'],['famcall','👪','家族との連絡','#f472b6','F',0,''],['errand','🧾','用事の連絡','#64748b','C',1,'h'],['chat','💬','雑談（私用）','#d946ef','S',1,''],['son','👦','息子','#f472b6','F',0,''],['family','🏡','家族の用事','#ec4899','F',0,''],['fam_play','🪆','家族と遊ぶ','#f472b6','F',0,''],
 ['work','💼','仕事','#1e3a8a','X',0,'h'],['think','🧠','企画・考える','#6b7280','X',0,'h'],['money','🧮','お金・事務','#4338ca','X',0,'h'],['doc','📄','資料確認','#5b7fa6','X',0,'h'],['call','📞','電話・連絡','#2f8fcf','X',1,'h'],['meet','🤝','商談・人と会う','#d9633b','X',0,'h'],
 ['study','🎓','勉強','#c2410c','X',0,'h'],['read','📖','読書','#8b5e3c','S',0,'h'],['audio','🔊','音声で学ぶ','#9333ea','X',0,'h'],['vstudy','🎬','動画で学ぶ','#0891b2','X',0,'h'],['write','✍️','書く・発信','#be123c','X',0,'h'],['reflect','📝','振り返り','#15803d','S',0,'h'],['diary','✏️','日記を書く','#15803d','S',0,'h'],
-['house','🧹','家事','#a3a3a3','X',0,'b'],['play','🪆','遊び','#f97316','S',0,''],['video','📺','動画・SNS','#d946ef','S',1,''],['stay','📍','滞在','#0bc167','X',0,'']];
+['house','🧹','家事','#a3a3a3','X',0,'b'],['play','🪆','遊び','#f97316','S',0,''],['video','📺','動画・SNS','#d946ef','S',1,''],['ytube','▶️','YouTube視聴','#e02424','S',1,''],['stay','📍','滞在','#0bc167','X',0,'']];
 function coLb(){try{const v=state&&state._cfg&&state._cfg.entAl;if(v)return String(v).slice(0,20);}catch(e){}return '屋号';}
 const KG_CO=['L','🏬','','#0f766e'];Object.defineProperty(KG_CO,2,{get:coLb});
 function setCoName(){const v=prompt('会社（屋号）の名前',coLb());if(v==null)return;const s=String(v).trim().slice(0,20);mutate(()=>{state._cfg=Object.assign({},state._cfg||{},{entAl:s,ts:Date.now()});});toast('🏬 '+(s||coLb()));}
@@ -4175,7 +4175,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c24.2）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c24.3）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -6765,7 +6765,7 @@ bath:'body',spa:'body',shower:'body',wc:'body',exer:'body',haircut:'body',beauty
 laundry:'wash',laundry_bl:'wash',dryer:'wash',fold:'wash',cleaning:'wash',move:'yoji',fuel:'yoji',shop:'yoji',spplay:'kibun',chat:'kibun',reflect:'kaku',diary:'kaku',
 c_aapick:'hakobu',c_in:'hakobu',c_out:'hakobu',c_kaiso:'hakobu',c_swap:'hakobu',c_park:'hakobu',c_deliv:'hakobu',repair:'seibi',c_oil:'seibi',c_fuel:'seibi',c_unload:'seibi',
 c_shop:'seibi',c_dmv:'tetsu',c_garage:'tetsu',c_kscan:'tetsu',mkt:'shiraberu',carsee:'shiraberu',c_snsc:'shiraberu',
-work:'ippan',think:'ippan',money:'ippan',doc:'ippan',call:'ippan',meet:'ippan',write:'ippan',study:'manabu',read:'kibun',audio:'manabu',vstudy:'manabu',play:'asobi',video:'asobi',house:'ie',stay:'ie',b_idea:'bz_think',b_res:'bz_think',b_make:'bz_do',b_sell:'bz_do',m_tr:'y_bank',m_io:'y_bank',m_atm:'y_bank',m_tax:'y_tetsu',gov:'y_tetsu'});
+work:'ippan',think:'ippan',money:'ippan',doc:'ippan',call:'ippan',meet:'ippan',write:'ippan',study:'manabu',read:'kibun',audio:'manabu',vstudy:'manabu',play:'asobi',video:'asobi',ytube:'asobi',house:'ie',stay:'ie',b_idea:'bz_think',b_res:'bz_think',b_make:'bz_do',b_sell:'bz_do',m_tr:'y_bank',m_io:'y_bank',m_atm:'y_bank',m_tax:'y_tetsu',gov:'y_tetsu'});
 let SUB_ON={};
 function subList(g){const st=state.ksub||{},out=[];KIND_SUB0.forEach((b,i)=>{const o=st[b[0]];if(o&&o.off)return;const gg=(o&&o.g)||b[1];if(gg!==g)return;out.push({id:b[0],g:gg,ic:(o&&o.ic)||b[2],lb:(o&&o.lb)||b[3],o:(o&&o.o!=null)?Number(o.o):i*10});});
 for(const id in st){const o=st[id];if(!o||!o.own||o.off||!o.lb||o.g!==g||KIND_SUB0.some(b=>b[0]===id))continue;out.push({id,g,ic:o.ic||'📂',lb:String(o.lb),o:Number(o.o)||9999});}return out.sort((a,b)=>a.o-b.o);}
@@ -10887,7 +10887,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c24.2";
+const CL_APPVER="c24.3";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
