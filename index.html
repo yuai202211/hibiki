@@ -1896,6 +1896,9 @@ body.cardvis .fab{display:none!important}
 .tmline .tmb small{font-size:10.5px;font-weight:700;color:#9aa1b0;margin-left:4px}
 .actrow.unit .ac-side>button:not(.ac-x):not(.ac-mo){display:flex}.actrow.unit .ac-side .ac-mo{display:none}
 #acRows .actrow.unit .ac-ait .chip,#acRows .actrow.unit .ac-fdw .chip{display:inline-block}#acRows .actrow.unit .ac-fd{display:none}
+
+.kic{font-style:normal}
+[data-o1="ytube"] .kic,[data-aq="ytube"] .kic,[data-lq="ytube"] .kic,[data-rk="ytube"] .kic,[data-ak="ytube"] .kic,[data-kaid="ytube"] .kic,[data-km="ytube"] .kic,.k-ytube .a-k{color:#ff0000;font-weight:900}
 </style>
 
 <div id="bootmsg" style="position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:24px;background:#faf9f5;color:#6a7080;font:800 15px -apple-system,BlinkMacSystemFont,sans-serif;text-align:center"><div style="font-size:34px">📔</div><div class="hb-logo" style="font-size:24px;color:#0a9a54"><b>HIBIKI</b><i>日々記</i></div><div id="bootmsgT">読み込み中…</div><div id="bootmsgS" style="font-size:12px;color:#9aa3b5;font-weight:700"></div></div>
@@ -3250,7 +3253,7 @@ const KIND_BASE=[['ai','🤖','AI','#7a6ef3','A',0,'h'],['aibiz','💡','AIビ�
 ['bizcall','📞','仕事の連絡','#2f8fcf','C',0,'h'],['famcall','👪','家族との連絡','#f472b6','F',0,''],['errand','🧾','用事の連絡','#64748b','C',1,'h'],['chat','💬','雑談（私用）','#d946ef','S',1,''],['son','👦','息子','#f472b6','F',0,''],['family','🏡','家族の用事','#ec4899','F',0,''],['fam_play','🪆','家族と遊ぶ','#f472b6','F',0,''],
 ['work','💼','仕事','#1e3a8a','X',0,'h'],['think','🧠','企画・考える','#6b7280','X',0,'h'],['money','🧮','お金・事務','#4338ca','X',0,'h'],['doc','📄','資料確認','#5b7fa6','X',0,'h'],['call','📞','電話・連絡','#2f8fcf','X',1,'h'],['meet','🤝','商談・人と会う','#d9633b','X',0,'h'],
 ['study','🎓','勉強','#c2410c','X',0,'h'],['read','📖','読書','#8b5e3c','S',0,'h'],['audio','🔊','音声で学ぶ','#9333ea','X',0,'h'],['vstudy','🎬','動画で学ぶ','#0891b2','X',0,'h'],['write','✍️','書く・発信','#be123c','X',0,'h'],['reflect','📝','振り返り','#15803d','S',0,'h'],['diary','✏️','日記を書く','#15803d','S',0,'h'],
-['house','🧹','家事','#a3a3a3','X',0,'b'],['play','🪆','遊び','#f97316','S',0,''],['video','📺','動画・SNS','#d946ef','S',1,''],['ytube','▶️','YouTube視聴','#e02424','S',1,''],['stay','📍','滞在','#0bc167','X',0,'']];
+['house','🧹','家事','#a3a3a3','X',0,'b'],['play','🪆','遊び','#f97316','S',0,''],['video','📺','動画・SNS','#d946ef','S',1,''],['ytube','▶︎','YouTube視聴','#e02424','S',1,''],['stay','📍','滞在','#0bc167','X',0,'']];
 function coLb(){try{const v=state&&state._cfg&&state._cfg.entAl;if(v)return String(v).slice(0,20);}catch(e){}return '屋号';}
 const KG_CO=['L','🏬','','#0f766e'];Object.defineProperty(KG_CO,2,{get:coLb});
 function setCoName(){const v=prompt('会社（屋号）の名前',coLb());if(v==null)return;const s=String(v).trim().slice(0,20);mutate(()=>{state._cfg=Object.assign({},state._cfg||{},{entAl:s,ts:Date.now()});});toast('🏬 '+(s||coLb()));}
@@ -3300,9 +3303,9 @@ function kCatHtml(k,path,d,dx,kx,dd){const P=String(path||'').split('/').filter(
 KIND_TREE.forEach(t=>(t.ch||[]).forEach(c=>{if(typeof c==='string')leaves.add(c);else c.ch.forEach(x=>leaves.add(x));}));
 const etc=kindList().filter(x=>!leaves.has(x.id)).map(x=>x.id),devK=kDevK(k);
 const nb=(nd,pth,on)=>'<button class="ac-kc'+(on?' on':'')+'" data-akp="'+pth+'">'+nd.ic+'<span>'+esc(nd.lb)+'</span>'+(on?'<i>▴</i>':'')+'</button>';
-const kb=(id,t)=>{const x=kindOf(id);if(!x||(x.off&&id!==k))return '';return '<button data-ak="'+esc(id)+'" data-akd="'+(t.d||'')+'" style="--kc:'+esc(x.co)+'"'+((k===id||KX.indexOf(id)>=0)?' class="sel"':'')+'>'+esc(x.ic)+'<span>'+esc(x.lb)+'</span></button>';};
+const kb=(id,t)=>{const x=kindOf(id);if(!x||(x.off&&id!==k))return '';return '<button data-ak="'+esc(id)+'" data-akd="'+(t.d||'')+'" style="--kc:'+esc(x.co)+'"'+((k===id||KX.indexOf(id)>=0)?' class="sel"':'')+'>'+'<i class="kic">'+esc(x.ic)+'</i><span>'+esc(x.lb)+'</span></button>';};
 if(P[0]==='_tool'){const ls=toolList().filter(x=>!(devK&&(x.id==='pc'||x.id==='phone')));
-return '<button class="ac-kc on" data-akp="_tool">🛠<span>使った物</span><i>▴</i></button><div class="ac-kl">'+ls.map(x=>'<button data-ad="'+esc(x.id)+'"'+((d===x.id||DD.indexOf(x.id)>=0)?' class="sel"':'')+'>'+esc(x.ic)+'<span>'+esc(x.lb)+'</span></button>').join('')+
+return '<button class="ac-kc on" data-akp="_tool">🛠<span>使った物</span><i>▴</i></button><div class="ac-kl">'+ls.map(x=>'<button data-ad="'+esc(x.id)+'"'+((d===x.id||DD.indexOf(x.id)>=0)?' class="sel"':'')+'>'+'<i class="kic">'+esc(x.ic)+'</i><span>'+esc(x.lb)+'</span></button>').join('')+
 '<button data-ad="_other"'+((d==='_other'||DD.indexOf('_other')>=0)?' class="sel"':'')+'>✍️<span>その他</span></button><button class="ac-plus lbl" data-ad-add="1" aria-label="道具を足す">＋<small class="bn">足す</small></button>'+
 ((d==='_other'||DD.indexOf('_other')>=0)?'<input type="text" class="ac-dx" maxlength="20" placeholder="使った物を書く（この行だけ）" value="'+esc(dx||'')+'">':'')+'</div>';}
 const t=KIND_TREE.find(x=>x.id===P[0]);
@@ -4175,7 +4178,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c24.3）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c24.4）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -4491,7 +4494,7 @@ const wrap=(tE<=tS&&tEd===0),stay=(ex&&ex.noT&&!timeTouched&&eType!=='sleep')?0:
 el.style.display='';el.style.color=(stay&&sum>stay)?'#e0405a':'#8a90a0';
 el.textContent='やったことの合計 '+durText(sum)+(stay?('　／　ここに居た '+durText(stay)+(sum>stay?'（合計の方が長い）':(stay>sum?'（残り '+durText(stay-sum)+'）':''))):'');};
 const acKBtns=k=>{const ls=kindList();if(k&&!ls.some(x=>x.id===k))ls.unshift(kindOf(k)||{id:k,ic:'❓',lb:String(k).slice(0,4),co:'#9aa3b5'});
-return ls.map(x=>'<button data-ak="'+esc(x.id)+'" style="--kc:'+esc(x.co)+'"'+(k===x.id?' class="sel"':'')+'>'+esc(x.ic)+'<span>'+esc(x.lb)+'</span></button>').join('');};
+return ls.map(x=>'<button data-ak="'+esc(x.id)+'" style="--kc:'+esc(x.co)+'"'+(k===x.id?' class="sel"':'')+'>'+'<i class="kic">'+esc(x.ic)+'</i><span>'+esc(x.lb)+'</span></button>').join('');};
 const kDev=k=>{if(!k)return false;for(const t of KIND_TREE){if(!t.d||!t.ch)continue;for(const c of t.ch){if(c===k||(typeof c!=='string'&&c.ch.indexOf(k)>=0))return true;}}return false;};
 const acDBtns=(d,k)=>{let ls=toolList();if(kDev(k))ls=ls.filter(x=>x.id!=='pc'&&x.id!=='phone');if(d&&d!=='_other'&&!ls.some(x=>x.id===d)&&!(kDev(k)&&(d==='pc'||d==='phone')))ls.unshift(toolOf(d)||{id:d,ic:'❓',lb:String(d).slice(0,4)});
 return ls.map(x=>{const ab=(x.own&&x.ic==='📌')?'<em>'+esc(Array.from(x.lb).slice(0,2).join(''))+'</em>':'';
@@ -4650,7 +4653,7 @@ const q=acQL().q;
 const onW=id=>(isCar||isStay)&&acts.some(a=>a&&a.w&&a.k===id);
 const onR=id=>acts.some(a=>a&&!a.w&&a.k===id);
 const qFlat=(eType==='move'&&drv&&!qMore);
-const qh=qOrgHtml(q,'data-qg',(id,y)=>{const k=kindOf(id);if(!k||k.off)return '';const on=onW(id),on2=!on&&(isCar||isStay)&&onR(id);return y?'<button'+(on?' class="sel"':on2?' class="on2"':'')+' data-aq="'+id+'" style="--kc:'+k.co+'">'+esc(k.ic)+'<span>'+esc(k.lb)+'</span></button>':'<button class="chip ac-q'+(on?' sel':(on2?' on2':''))+'" data-aq="'+id+'" style="--kc:'+k.co+'">'+esc(k.ic)+' '+esc(k.lb)+'</button>';},acts.filter(a=>a&&a.k).map(a=>a.k),qFlat?'sec':false)+((eType==='move'&&drv&&(qFlat||!qgOn(q)))?'<button class="chip ac-qm" id="acQm">'+(qMore?'－ たたむ':'＋ ほか')+'</button>':'');
+const qh=qOrgHtml(q,'data-qg',(id,y)=>{const k=kindOf(id);if(!k||k.off)return '';const on=onW(id),on2=!on&&(isCar||isStay)&&onR(id);return y?'<button'+(on?' class="sel"':on2?' class="on2"':'')+' data-aq="'+id+'" style="--kc:'+k.co+'">'+'<i class="kic">'+esc(k.ic)+'</i><span>'+esc(k.lb)+'</span></button>':'<button class="chip ac-q'+(on?' sel':(on2?' on2':''))+'" data-aq="'+id+'" style="--kc:'+k.co+'">'+'<i class="kic">'+esc(k.ic)+'</i> '+esc(k.lb)+'</button>';},acts.filter(a=>a&&a.k).map(a=>a.k),qFlat?'sec':false)+((eType==='move'&&drv&&(qFlat||!qgOn(q)))?'<button class="chip ac-qm" id="acQm">'+(qMore?'－ たたむ':'＋ ほか')+'</button>':'');
 if(qe){qe.innerHTML=(isCar||isStay||mv1)?'':qh;const w=$('acQw');(w||qe).style.display=(qh&&!isCar&&!isStay&&!mv1)?'':'none';}
 {const cs=$('cntSw');if(cs){cs.style.display=(isCar||isStay||eType==='move')?'':'none';cs.querySelectorAll('[data-cn]').forEach(b=>{b.classList.toggle('sel',(b.dataset.cn==='1')===!!sheetSt.one);b.onclick=()=>{
 if(b.dataset.cn==='1'){if(sheetSt.one)return;acRead();for(let i=frs.length-1;i>=0;i--)if(!String(frs[i]||'').trim())frs.splice(i,1);try{frSync&&frSync();}catch(e){}sheetSt.one=true;}
@@ -4659,7 +4662,7 @@ acPaint();cPaint();};});}}
 if((isCar||isStay||eType==='move')&&sheetSt.one){const rd=$('recDo');if(rd){acRead();const a0=acts.find(a=>a&&(String(a.t||'').trim()||a.k))||null;const k0=a0&&a0.k;const k0o=k0&&kindOf(k0);
 const wk=acts.filter(a=>a&&a.w&&a.k).map(a=>a.k);const mvMin=(eType==='move'&&drv&&!qMore),qgH=x=>mvMin?false:qgIn(x,q);const extra=wk.filter(x=>q.indexOf(x)<0&&!qgH(x));if(k0&&wk.indexOf(k0)<0&&q.indexOf(k0)<0&&!qgH(k0))extra.push(k0);
 const aA=acts.find(a=>a&&a.k&&AI_KINDS[a.k]&&(a.w||a===a0))||acts.find(a=>a&&a.w&&(a.kx||[]).some(x=>AI_KINDS[x]));
-const ch=qOrgHtml(q.concat(extra),'data-qg',(id,y)=>{const k=kindOf(id);if(!k||k.off)return '';const on=(wk.indexOf(id)>=0||(!wk.length&&k0===id));return y?'<button'+(on?' class="sel"':'')+' data-o1="'+esc(id)+'" style="--kc:'+k.co+'">'+esc(k.ic)+'<span>'+esc(k.lb)+'</span></button>':'<button class="chip ac-q'+(on?' sel':'')+'" data-o1="'+esc(id)+'" style="--kc:'+k.co+'">'+esc(k.ic)+' '+esc(k.lb)+'</button>';},wk.length?wk:(k0?[k0]:[]),mvMin?'sec':false);
+const ch=qOrgHtml(q.concat(extra),'data-qg',(id,y)=>{const k=kindOf(id);if(!k||k.off)return '';const on=(wk.indexOf(id)>=0||(!wk.length&&k0===id));return y?'<button'+(on?' class="sel"':'')+' data-o1="'+esc(id)+'" style="--kc:'+k.co+'">'+'<i class="kic">'+esc(k.ic)+'</i><span>'+esc(k.lb)+'</span></button>':'<button class="chip ac-q'+(on?' sel':'')+'" data-o1="'+esc(id)+'" style="--kc:'+k.co+'">'+'<i class="kic">'+esc(k.ic)+'</i> '+esc(k.lb)+'</button>';},wk.length?wk:(k0?[k0]:[]),mvMin?'sec':false);
 const tv=(a0&&a0.t&&!(k0o&&a0.t===k0o.lb))?a0.t:'';
 const aiH=aA?'<div class="ac-ai"><span>🤖 使ったAI</span>'+AI_TOOLS.map(z=>{const on=(Array.isArray(aA.ai)?aA.ai:aiGuess(aA.t)).indexOf(z[0])>=0;return '<button class="chip'+(on?' sel':'')+'" data-o1ai="'+z[0]+'" style="--ac:'+z[2]+'">'+esc(z[1])+'</button>';}).join('')+'</div>'+aipChips(Array.isArray(aA.ap)?aA.ap:[],'data-o1ap'):'';
 const more=acts.filter(a=>a&&(String(a.t||'').trim()||a.k)).length-1+frs.filter(x=>String(x||'').trim()).length;
@@ -4688,7 +4691,7 @@ rd.querySelectorAll('[data-o1mp]').forEach(b=>b.onclick=()=>{acRead();const a=ac
 rd.querySelectorAll('[data-o1ap]').forEach(b=>b.onclick=()=>{acRead();const a=acts.find(x=>x&&x.k&&AI_KINDS[x.k])||acts.find(x=>x&&(x.kx||[]).some(y=>AI_KINDS[y]));if(!a)return;const cur=Array.isArray(a.ap)?a.ap.slice():[];const id=b.dataset.o1ap,j=cur.indexOf(id);if(j>=0)cur.splice(j,1);else cur.push(id);a.ap=cur;acPaint();});
 rd.querySelectorAll('[data-o1ai]').forEach(b=>b.onclick=()=>{acRead();const a=acts.find(x=>x&&x.k&&AI_KINDS[x.k]);if(!a)return;const cur=Array.isArray(a.ai)?a.ai.slice():aiGuess(a.t);const id=b.dataset.o1ai,j=cur.indexOf(id);if(j>=0)cur.splice(j,1);else cur.push(id);a.ai=cur;acPaint();});}}
 else{const rd=$('recDo');if(rd){if(isCar||isStay){const extra=acts.filter(a=>a&&a.k&&q.indexOf(a.k)<0&&!qgIn(a.k,q)).map(a=>a.k).filter((x,i,arr)=>arr.indexOf(x)===i);
-const xh=extra.map(id=>{const k=kindOf(id);return k?'<button class="chip ac-q'+(onW(id)?' sel':' on2')+'" data-aq="'+esc(id)+'" style="--kc:'+k.co+'">'+esc(k.ic)+' '+esc(k.lb)+'</button>':'';}).join('');
+const xh=extra.map(id=>{const k=kindOf(id);return k?'<button class="chip ac-q'+(onW(id)?' sel':' on2')+'" data-aq="'+esc(id)+'" style="--kc:'+k.co+'">'+'<i class="kic">'+esc(k.ic)+'</i> '+esc(k.lb)+'</button>':'';}).join('');
 rd.style.display='';rd.innerHTML='<div class="sh-label">🏷️ '+(isCar?'車内で':'ここで')+'何をした<small>1つなら押すだけ（ずっと）・複数なら下の1行ずつ。どちらで付けても同じ</small></div><div class="sh-chips">'+qh+(qgOn(q)?'':xh+'<button class="chip ac-qall" id="acQall">🏷️ ほか（全部）</button>')+'</div>';}else{rd.style.display='none';rd.innerHTML='';}}}
 {const h2=$('hitoH2');if(h2)h2.style.display=(((isCar||isStay||eType==='move')&&sheetSt.one)||acU())?'none':'';}
 if(acU()){const rd=$('recDo');if(rd){rd.style.display='none';rd.innerHTML='';}const w=$('acQw');if(w)w.style.display='none';}
@@ -4796,14 +4799,14 @@ const lqSegs=()=>{if(!lqs||lqs.length<2)return [];const D=durMin(tS,tE,(tE<=tS&&
 const st=lqs.map((id,i)=>i===0?tS:(lqSt[i]||hm2(a0+Math.round(i*D/N/5)*5)));
 return lqs.map((id,i)=>({id,s:st[i],e:i<N-1?st[i+1]:tE}));};
 const paint=()=>{const all=acts.map((a,i)=>ch[i]!==undefined?ch[i]:a.k).filter(Boolean),es=canE?recTypeOf(all):'';if(eSel===null||!canE)eSel=es||eType;
-const chip=(i,id,on)=>{const k=kindOf(id);return k?'<button class="chip'+(on?' sel':'')+'" data-si="'+i+'" data-sk="'+esc(id)+'">'+esc(k.ic)+' '+esc(k.lb)+'</button>':'';};
+const chip=(i,id,on)=>{const k=kindOf(id);return k?'<button class="chip'+(on?' sel':'')+'" data-si="'+i+'" data-sk="'+esc(id)+'">'+'<i class="kic">'+esc(k.ic)+'</i> '+esc(k.lb)+'</button>':'';};
 $('sheet2').innerHTML='<div class="grab"></div><div class="sh-time"><span>🏷️ 仕分け</span></div><div class="sh-note" style="text-align:left;margin:-4px 0 4px">当たっていれば［これで保存］。違う物だけ押して直す</div>'+
 items.map(x=>'<div class="so-row"><div class="so-t">'+esc(x.a.t)+((x.a.s&&x.a.e)?'<small class="so-tm">'+esc(x.a.s)+' – '+esc(x.a.e)+'</small>':(Number(x.a.m)>0?'<small class="so-tm">'+esc(durText(Number(x.a.m)))+'</small>':''))+'</div><div class="so-c">'+sug[x.i].map(id=>chip(x.i,id,ch[x.i]===id)).join('')+
 '<button class="chip so-more" data-sm="'+x.i+'">ほか…</button><button class="chip'+(!ch[x.i]?' sel':'')+'" data-si="'+x.i+'" data-sk="">なし</button></div>'+
 ((AI_KINDS[ch[x.i]]&&acts[x.i])?'<div class="so-d so-ai"><span>使ったAI</span>'+AI_TOOLS.map(z=>{const on=(Array.isArray(acts[x.i].ai)?acts[x.i].ai:aiGuess(acts[x.i].t)).indexOf(z[0])>=0;return '<button class="chip'+(on?' sel':'')+'" data-soai="'+x.i+'" data-ait="'+z[0]+'" style="--ac:'+z[2]+'">'+esc(z[1])+'</button>';}).join('')+'</div>':'')+
 (x.a.d==='_other'?'':'<div class="so-d"><span>使った物</span>'+dsg[x.i].map(d=>{const t=toolOf(d);return '<button class="chip'+(dch[x.i]===d?' sel':'')+'" data-di="'+x.i+'" data-dk="'+esc(d)+'">'+esc(t.ic)+' '+esc(t.lb)+'</button>';}).join('')+'<button class="chip'+(!dch[x.i]?' sel':'')+'" data-di="'+x.i+'" data-dk="">なし</button></div>')+'</div>').join('')+
-(lqs!==null?'<div class="so-row"><div class="so-t">'+(eType==='incar'?'🚙 車内で':'📍 ここで')+'何をしていた？（'+esc(durText(durMin(tS,tE,(tE<=tS&&tEd===0)?1:tEd)))+'）</div><div class="so-c">'+qOrgHtml(['sleep','nap','ai','work','pcwork','spplay','rest'],'data-lqg',(id,y)=>{const k=kindOf(id);if(!k||k.off)return '';const on=lqs.indexOf(id)>=0;return y?'<button'+(on?' class="sel"':'')+' data-lq="'+id+'" style="--kc:'+k.co+'">'+esc(k.ic)+'<span>'+esc(k.lb)+'</span></button>':'<button class="chip'+(on?' sel':'')+'" data-lq="'+id+'">'+esc(k.ic)+' '+esc(k.lb)+'</button>';},lqs)+(qgOn([])?'':'<button class="chip'+(!lqs.length?' sel':'')+'" data-lq="">なし</button>')+'</div>'+
-(lqs.length>=2?'<div class="so-seg">'+lqSegs().map((g,i)=>{const k=kindOf(g.id);return '<div class="so-sg"><span>'+esc(k.ic)+' '+esc(k.lb)+'</span>'+(i===0?'<b>'+esc(g.s)+'</b>':'<input type="time" step="300" lang="ja-JP" data-lqs="'+i+'" value="'+esc(g.s)+'">')+'<i>→ '+esc(g.e)+'</i></div>';}).join('')+'<div class="sh-note" style="margin:2px 0 0">順に時間を分けた。開始の時刻は直せる</div></div>':'')+'</div>':'')+
+(lqs!==null?'<div class="so-row"><div class="so-t">'+(eType==='incar'?'🚙 車内で':'📍 ここで')+'何をしていた？（'+esc(durText(durMin(tS,tE,(tE<=tS&&tEd===0)?1:tEd)))+'）</div><div class="so-c">'+qOrgHtml(['sleep','nap','ai','work','pcwork','spplay','rest'],'data-lqg',(id,y)=>{const k=kindOf(id);if(!k||k.off)return '';const on=lqs.indexOf(id)>=0;return y?'<button'+(on?' class="sel"':'')+' data-lq="'+id+'" style="--kc:'+k.co+'">'+'<i class="kic">'+esc(k.ic)+'</i><span>'+esc(k.lb)+'</span></button>':'<button class="chip'+(on?' sel':'')+'" data-lq="'+id+'">'+'<i class="kic">'+esc(k.ic)+'</i> '+esc(k.lb)+'</button>';},lqs)+(qgOn([])?'':'<button class="chip'+(!lqs.length?' sel':'')+'" data-lq="">なし</button>')+'</div>'+
+(lqs.length>=2?'<div class="so-seg">'+lqSegs().map((g,i)=>{const k=kindOf(g.id);return '<div class="so-sg"><span>'+'<i class="kic">'+esc(k.ic)+'</i> '+esc(k.lb)+'</span>'+(i===0?'<b>'+esc(g.s)+'</b>':'<input type="time" step="300" lang="ja-JP" data-lqs="'+i+'" value="'+esc(g.s)+'">')+'<i>→ '+esc(g.e)+'</i></div>';}).join('')+'<div class="sh-note" style="margin:2px 0 0">順に時間を分けた。開始の時刻は直せる</div></div>':'')+'</div>':'')+
 (canE&&es&&es!==eType?'<div class="so-row"><div class="so-t">記録の種類</div><div class="so-c"><button class="chip'+(eSel===es?' sel':'')+'" data-se="'+es+'">'+ETL[es]+'</button><button class="chip'+(eSel===eType?' sel':'')+'" data-se="'+eType+'">'+ETL[eType]+'</button></div></div>':'')+
 '<div class="sh-btns"><button class="delbtn" id="soAs" style="flex:0 0 auto">そのまま保存</button><button class="savebtn" id="soOk">これで保存</button></div>';
 const s=$('sheet2');
@@ -6841,7 +6844,7 @@ G.forEach((g,gi)=>{const ks=kindsOf(g[0]);
 s+='<div class="pe-g"><div class="pe-h"><b>'+esc(g[1])+' '+esc(g[2])+'</b><span class="pe-gb"><button class="chip" data-bgc="'+esc(g[0])+'">✎ 編集</button></span></div>';
 if(gsel===g[0])s+='<div class="pe-op"><div class="pe-nm"><input type="text" id="bgIc" class="ks-ic" maxlength="4" value="'+esc(g[1])+'" style="flex:0 0 3.2em;text-align:center"><input type="text" id="bgLb" maxlength="16" value="'+esc(g[2])+'"><button class="chip" id="bgSave">直す</button></div>'+
 '<div class="sr-r"><button class="chip" id="bgUp"'+(gi<=0?' disabled':'')+'>⬆ 前へ</button><button class="chip" id="bgDn"'+(gi>=G.length-1?' disabled':'')+'>⬇ 後ろへ</button>'+(g[0]==='X'?'':'<button class="chip pe-del" id="bgDel">'+(arm==='g'+g[0]?'🗑 本当に消す？':'🗑 消す')+'</button>')+'</div>'+(g[0]==='X'?'':'<div class="sh-note" style="text-align:left;margin:4px 0 0">消すと中のボタンは📍その他へ</div>')+'</div>';
-const chip=k=>'<button class="chip'+(k.id===sel?' sel':'')+'" data-bk="'+esc(k.id)+'">'+esc(k.ic)+' '+esc(k.lb)+(k.muda?' 🕳️':'')+'</button>';
+const chip=k=>'<button class="chip'+(k.id===sel?' sel':'')+'" data-bk="'+esc(k.id)+'">'+'<i class="kic">'+esc(k.ic)+'</i> '+esc(k.lb)+(k.muda?' 🕳️':'')+'</button>';
 subList(g[0]).forEach(sb=>{s+='<div class="pe-sub"><b>'+esc(sb.ic)+' '+esc(sb.lb)+'</b><button class="chip" data-bsc="'+esc(sb.id)+'">✎ 編集</button></div>';
 if(ssel===sb.id)s+='<div class="pe-op"><div class="pe-nm"><input type="text" id="bsIc" class="ks-ic" maxlength="4" value="'+esc(sb.ic)+'" style="flex:0 0 3.2em;text-align:center"><input type="text" id="bsLb" maxlength="16" value="'+esc(sb.lb)+'"><button class="chip" id="bsSave">直す</button></div><div class="sr-r"><button class="chip pe-del" id="bsDel">'+(arm==='s'+sb.id?'🗑 本当に消す？':'🗑 小分けを消す')+'</button></div><div class="sh-note" style="text-align:left;margin:4px 0 0">消すと中のボタンは小分け無しへ（カテゴリーはそのまま）</div></div>';
 s+='<div class="sr-r">'+ks.filter(k=>k.sg===sb.id).map(chip).join('')+'</div>';});
@@ -7302,7 +7305,7 @@ function openKindAll(cb0,ttl,note){const cb=(id,d)=>id==='meal'?mealAsk(v=>cb0(v
 const etc=kindList().filter(x=>!leaves.has(x.id)).map(x=>x.id);
 let og='';
 const paint=()=>{
-const kb=(id,t)=>{const x=kindOf(id);if(!x||x.off)return '';return '<button data-kaid="'+esc(id)+'" data-kad="'+(t.d||'')+'" style="--kc:'+esc(x.co)+'">'+esc(x.ic)+'<span>'+esc(x.lb)+'</span></button>';};
+const kb=(id,t)=>{const x=kindOf(id);if(!x||x.off)return '';return '<button data-kaid="'+esc(id)+'" data-kad="'+(t.d||'')+'" style="--kc:'+esc(x.co)+'">'+'<i class="kic">'+esc(x.ic)+'</i><span>'+esc(x.lb)+'</span></button>';};
 openSub('<div class="sh-time"><span>'+esc(ttl||'🏷️ ここで何をした？（ずっと）')+'</span></div><div class="sh-note" style="text-align:left">'+esc(note||'分野を押すと中身が出る。1つ選ぶと滞在の間ずっとに数える')+'</div>'+
 (og?'':'<div class="ka-cats">'+kSecHtml(t=>t.dir?'<button data-kaid="'+esc(t.dir)+'" data-kad=""><b>'+t.ic+'</b><span>'+esc(t.lb)+'</span></button>':'<button data-kaf="'+t.id+'"><b>'+t.ic+'</b><span>'+esc(t.lb)+'</span></button>')+'</div>')+
 '<div class="ac-kall ka-all">'+
@@ -10887,7 +10890,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c24.3";
+const CL_APPVER="c24.4";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
