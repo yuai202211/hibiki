@@ -1,7 +1,7 @@
 /* HIBIKI Service Worker：オフラインでも開けるようにする。
    index.html は「まずネット、だめならキャッシュ」（新しい版をすぐ拾う）。アイコン類は「キャッシュ優先」。
    データ（Supabase の API）と写真はここでは触らない（アプリが自分で端末に控える）。 */
-const VER='hibiki-c23.7';
+const VER='hibiki-c23.8';
 const CORE=['./','./index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png','./icon-512-maskable.png','./apple-touch-icon.png'];
 self.addEventListener('install',e=>{
   e.waitUntil(caches.open(VER).then(c=>c.addAll(CORE).catch(()=>{})).then(()=>self.skipWaiting()));
@@ -39,8 +39,19 @@ self.addEventListener('push',e=>{
   const title=String(d.title||'HIBIKI').slice(0,120),tag=String(d.tag||'').replace(/^tb\|play\|.*$/,'tb|play');   /* 遊び枠は日付入りで積む（毎日別の行）→ 画面の通知は アプリ内の 'tb|play' と同じ tag で置き換える */
   const opt={body:String(d.body||'').slice(0,300),icon:'icon-192.png',badge:'icon-192.png',data:{url:String(d.url||'./')}};
   if(tag)opt.tag=tag;
-  e.waitUntil(Promise.resolve().then(()=>self.registration.showNotification(title,opt)).catch(()=>self.registration.showNotification('HIBIKI')));
+  /* c23.8：📳 バイブの ON/OFF。読めない・1秒過ぎた時はオン。どの経路でも必ず showNotification を出す（バイブ付きで断られたらバイブ無しで出し直す） */
+  e.waitUntil(swVib().catch(()=>1).then(v=>{opt.vibrate=v?[200,100,200]:[];return self.registration.showNotification(title,opt);})
+    .catch(()=>{delete opt.vibrate;return self.registration.showNotification(title,opt);})
+    .catch(()=>self.registration.showNotification('HIBIKI')));
 });
+/* c23.8：ページが IndexedDB 'hibiki-sw' の 'cfg' に 'vib'＝0/1 を書く（無ければ1）。例外・1秒のタイムアウトでも必ず1か0で終わる */
+function swVib(){return new Promise(ok=>{let done=false;const fin=v=>{if(!done){done=true;ok(v);}};setTimeout(()=>fin(1),1000);
+  try{const rq=indexedDB.open('hibiki-sw',1);
+    rq.onupgradeneeded=()=>{try{const db=rq.result;if(!db.objectStoreNames.contains('cfg'))db.createObjectStore('cfg');}catch(x){}};
+    rq.onerror=()=>fin(1);
+    rq.onsuccess=()=>{let db=null;try{db=rq.result;const g=db.transaction('cfg','readonly').objectStore('cfg').get('vib');
+      g.onsuccess=()=>{fin(g.result===0?0:1);try{db.close();}catch(x){}};g.onerror=()=>{fin(1);try{db.close();}catch(x){}};}catch(x){fin(1);try{db&&db.close();}catch(y){}}};
+  }catch(x){fin(1);}});}
 /* c17.9：🚩 出発予定の通知を押したら、アプリを前面に出す（開いていなければ開く）。c20.6：通知の data.url があればそこを開く（同じ場所の相対だけ・無ければ './'） */
 self.addEventListener('notificationclick',e=>{e.notification.close();
   let u='./';try{const w=e.notification.data&&e.notification.data.url;if(w){const x=new URL(w,self.registration.scope);if(x.origin===self.location.origin)u=x.href;}}catch(z){}
