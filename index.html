@@ -1899,6 +1899,10 @@ body.cardvis .fab{display:none!important}
 
 .kic{font-style:normal}
 [data-o1="ytube"] .kic,[data-aq="ytube"] .kic,[data-lq="ytube"] .kic,[data-rk="ytube"] .kic,[data-ak="ytube"] .kic,[data-kaid="ytube"] .kic,[data-km="ytube"] .kic,.k-ytube .a-k{color:#ff0000;font-weight:900}
+
+.tagrow{display:grid;width:100%;min-width:0}.tagrow::after{content:attr(data-v) " ";visibility:hidden;white-space:pre-wrap;word-break:break-word;grid-area:1/1/2/2;font:var(--tf);line-height:var(--tlh);padding:var(--tp);border:var(--tb) solid transparent;letter-spacing:var(--tls);box-sizing:border-box;min-width:0}.tagrow>textarea{grid-area:1/1/2/2;resize:none;overflow:hidden;height:auto!important;min-height:0;width:100%;box-sizing:border-box}.hbox .tagrow{flex:1;min-width:0}
+
+.kbsp{display:none;flex:none;height:55vh}#scr>.kbsp{height:45vh}.kb>.kbsp{display:block}
 </style>
 
 <div id="bootmsg" style="position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:24px;background:#faf9f5;color:#6a7080;font:800 15px -apple-system,BlinkMacSystemFont,sans-serif;text-align:center"><div style="font-size:34px">📔</div><div class="hb-logo" style="font-size:24px;color:#0a9a54"><b>HIBIKI</b><i>日々記</i></div><div id="bootmsgT">読み込み中…</div><div id="bootmsgS" style="font-size:12px;color:#9aa3b5;font-weight:700"></div></div>
@@ -1999,6 +2003,18 @@ const r=document.createElement('button');r.textContent='再読み込み';r.style
 try{document.documentElement.lang='ja';}catch(e){}
 const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function taGrow(ta){if(!ta||ta._grow||ta.tagName!=='TEXTAREA')return;ta._grow=1;const w=document.createElement('div');w.className='tagrow';const cs=getComputedStyle(ta);w.style.setProperty('--tf',cs.font);w.style.setProperty('--tlh',cs.lineHeight);w.style.setProperty('--tp',cs.padding);w.style.setProperty('--tb',cs.borderWidth);w.style.setProperty('--tls',cs.letterSpacing);if(ta.style.margin){w.style.margin=ta.style.margin;ta.style.margin='0';}
+ta.parentNode.insertBefore(w,ta);w.appendChild(ta);const s=()=>{w.dataset.v=ta.value;};s();ta.addEventListener('input',s);ta.addEventListener('change',s);}
+function kbOn(host){if(!host)return;try{if(!host.querySelector(':scope>.kbsp')){const sp=document.createElement('div');sp.className='kbsp';const ft=[...host.children].find(k=>{const c=getComputedStyle(k);return c.position==='sticky'&&c.bottom!=='auto';});if(ft)host.insertBefore(sp,ft);else host.appendChild(sp);}}catch(e){}host.classList.add('kb');}
+const kvTxt=el=>{if(!el||!el.matches)return false;if(el.tagName==='TEXTAREA')return !el.readOnly;if(el.tagName!=='INPUT'||el.readOnly)return false;return /^(text|search|tel|number|url|email)$/.test(el.type);};
+let kvRaf=0;function keepVisible(el){if(!kvTxt(el))return;if(kvRaf)clearTimeout(kvRaf);kvRaf=setTimeout(()=>{kvRaf=0;try{const vv=window.visualViewport,top=vv?vv.offsetTop:0;let bot=(vv?vv.offsetTop+vv.height:window.innerHeight)-10;const r=el.getBoundingClientRect();try{document.querySelectorAll('#sheet .sh-btns.main,#sheet2 .sh-btns,#nowBar').forEach(f=>{if(!f.offsetParent)return;const fr=f.getBoundingClientRect();if(fr.top<bot&&fr.bottom>=bot-1&&fr.top>top+80)bot=fr.top-6;});}catch(e){}let sc=el.parentElement;while(sc&&sc!==document.body){const o=getComputedStyle(sc).overflowY;if((o==='auto'||o==='scroll')&&sc.scrollHeight>sc.clientHeight+2)break;sc=sc.parentElement;}
+if(!sc||sc===document.body){if(r.bottom>bot||r.top<top+10)el.scrollIntoView({block:'nearest'});return;}
+let y0=r.top,y1=r.bottom;if(el.tagName==='TEXTAREA'&&r.height>bot-top-24){try{const cs=getComputedStyle(el),m=document.createElement('div');m.style.cssText='position:absolute;left:0;top:0;visibility:hidden;white-space:pre-wrap;word-break:break-word;pointer-events:none;';m.style.font=cs.font;m.style.lineHeight=cs.lineHeight;m.style.padding=cs.padding;m.style.letterSpacing=cs.letterSpacing;m.style.boxSizing='border-box';m.style.width=r.width+'px';m.style.border=cs.borderWidth+' solid transparent';m.textContent=el.value.slice(0,el.selectionEnd||0);const s=document.createElement('span');s.textContent='\u200b';m.appendChild(s);document.body.appendChild(m);const lh=parseFloat(cs.lineHeight)||22,cy=s.offsetTop;m.remove();y0=r.top+cy;y1=y0+lh+4;}catch(e){}}
+if(y1>bot)sc.scrollTop+=Math.ceil(y1-bot);else if(y0<top+10)sc.scrollTop-=Math.ceil(top+10-y0);}catch(e){}},0);}
+document.addEventListener('focusin',ev=>{const t=ev.target;if(!kvTxt(t))return;if(t.tagName==='TEXTAREA')taGrow(t);kbOn(t.closest('#sheet,#sheet2,#scr'));keepVisible(t);setTimeout(()=>keepVisible(t),350);});
+document.addEventListener('focusout',ev=>{setTimeout(()=>{const a=document.activeElement;if(kvTxt(a))return;document.querySelectorAll('.kb').forEach(x=>x.classList.remove('kb'));},250);});
+document.addEventListener('input',ev=>{const t=ev.target;if(!kvTxt(t))return;kbOn(t.closest('#sheet,#sheet2,#scr'));keepVisible(t);});
+if(window.visualViewport){window.visualViewport.addEventListener('resize',()=>keepVisible(document.activeElement));}
 function iosSw(id,on,lb,attrs,cls){return '<button type="button" class="ios'+(cls?' '+cls:'')+(on?' on':'')+'" role="switch" aria-checked="'+(on?'true':'false')+'"'+(id?' id="'+id+'"':'')+' '+(attrs||'')+'>'+(lb?'<span class="tl">'+lb+'</span>':'')+'<span class="trk"></span></button>';}
 function iosSet(el,on){if(!el)return;el.classList.toggle('on',!!on);el.setAttribute('aria-checked',on?'true':'false');}
 const YOBI=['日','月','火','水','木','金','土'];
@@ -4178,7 +4194,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c24.4）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c24.5）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -4682,7 +4698,7 @@ if(id==='meal'&&w2.indexOf('mealto')>=0){setOne('mealto','');return;}if(id==='me
 if(!w2.length&&k0===id){acRead();const t1=($('o1t').value||'').trim();acts=[{t:t1,m:0,s:'',e:''}];acPaint();return;}setOne(id,'');});
 rd.querySelectorAll('[data-o1]').forEach(b=>b.addEventListener('click',()=>{if(hitoMust())hitoFocus($('o1t'));}));
 {const qm=$('o1Qm');if(qm)qm.onclick=()=>{acRead();qMore=!qMore;acPaint();};}if($('o1all'))$('o1all').onclick=()=>openKindAll((id,d)=>setOne(id,d),'🏷️ ここで何をした？','分野を押すと中身が出る。押した物を足す（もう一度で外す）');
-{const ta=$('o1t'),fit=()=>{ta.style.height='auto';ta.style.height=ta.scrollHeight+'px';};fit();setTimeout(fit,0);ta.addEventListener('input',fit);}
+taGrow($('o1t'));
 $('o1t').oninput=()=>{const v=$('o1t').value;const r=$('acRows').querySelector('.actrow .ac-t');const k=k0o;if(r){r.value=(v.trim()||(k?k.lb:''));r.dataset.full=v.trim()||(k?k.lb:'');}};{const s=$('hitoSw1');if(s)s.onclick=hitoToggle;}
 rd.querySelectorAll('[data-o1bd]').forEach(b=>b.onclick=()=>{acRead();const v=Number(b.dataset.o1bd);acts.filter(a=>a&&a.w&&[a.k].concat(a.kx||[]).some(y=>y==='sleep'||y==='nap')).forEach(a=>a.bd=v);acPaint();});
 {const bi=rd.querySelector('[data-o1bz]');if(bi)bi.oninput=()=>{const a=acts.find(x=>x&&x.w&&isMkRow(x));if(!a)return;a.bz=bi.value.trim();const rows=$('acRows').querySelectorAll('.actrow');const ix=acts.indexOf(a);if(rows[ix])rows[ix].dataset.bz=a.bz;};}
@@ -10890,7 +10906,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c24.4";
+const CL_APPVER="c24.5";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
