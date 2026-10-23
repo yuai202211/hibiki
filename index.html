@@ -1776,6 +1776,7 @@ body.cardvis .fab{display:none!important}
 .foldbar{display:none;width:100%;margin:0;padding:4px 10px;background:#1f2430;color:#fff;font-size:12px;font-weight:800;text-align:center;border:0;letter-spacing:.04em}
 .app.fold .foldbar{display:block}
 #scr>#gstrip,#scr>#ftk,#scr>.dreamrow,#scr>#pinRow,#scr>#nowCard{flex:none}
+#kakuTop{position:sticky;top:0;z-index:6;flex:none;padding:6px 10px 6px;background:var(--app,#f6f7fb)}#kakuTop>.hour.wr{position:static;margin:0}
 .chip.mvb.pln{background:#4d7dff;color:#fff;position:relative}.pln-bdg{position:absolute;top:-6px;right:-6px;background:#e24b4b;color:#fff;font-size:9px;font-weight:900;border-radius:8px;padding:1px 5px;font-style:normal;line-height:1.3}
 .pln-lab{font-size:12px;font-weight:900;color:#7a8296;margin:10px 0 4px}.pln-lab i{font-style:normal;color:var(--ink)}
 .pln-in{width:100%;border:1.5px solid var(--line);border-radius:14px;padding:11px 12px;font-size:16px;font-weight:800;background:var(--card);box-sizing:border-box;color:var(--ink)}.pln-in.big{font-size:18px;padding:13px 12px}
@@ -4213,7 +4214,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c24.9）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c25.0）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -9897,7 +9898,10 @@ $('dreamBar').onclick=()=>{dseg='clock';openDreamPage();};
 $('topSet2').onclick=openSetPage;
 {const sc=$('scr'),ap=$('app'),fb=$('foldBar');
 try{if(sc&&ap){ap.classList.remove('fold');const first=sc.firstChild;['gstrip','ftk'].forEach(id=>{const e=$(id);if(e&&e.parentElement===ap)sc.insertBefore(e,first);});ap.querySelectorAll(':scope>.dreamrow').forEach(e=>sc.insertBefore(e,first));['pinRow','nowCard'].forEach(id=>{const e=$(id);if(e&&e.parentElement===ap)sc.insertBefore(e,first);});}}catch(e){}
-if(fb){fb.style.display='none';fb.onclick=()=>{try{sc.scrollTo({top:0,behavior:'smooth'});}catch(e){sc.scrollTop=0;}};}}
+if(fb){fb.style.display='none';fb.onclick=()=>{try{sc.scrollTo({top:0,behavior:'smooth'});}catch(e){sc.scrollTop=0;}};}
+try{const pn=$('pane');if(sc&&pn){let host=$('kakuTop');if(!host){host=document.createElement('div');host.id='kakuTop';host.style.display='none';sc.insertBefore(host,sc.firstChild);}
+const kt=()=>{try{if(sc.firstChild!==host)sc.insertBefore(host,sc.firstChild);const nr=pn.querySelector('.hour.wr');if(nr){host.innerHTML='';host.appendChild(nr);}if(ui.tab!=='di')host.innerHTML='';host.style.display=host.firstChild?'':'none';}catch(e){}};
+if(typeof MutationObserver!=='undefined')new MutationObserver(kt).observe(pn,{childList:true});kt();}}catch(e){}}
 const navGo=fn=>{if($('page').classList.contains('open'))closePage();fn();};
 $('navHome').onclick=()=>{closePage();ui.date=todayStr();ui.tab='di';topView='top';render();try{$('scr').scrollTop=0;}catch(e){}};
 $('navDiary').onclick=()=>{closePage();ui.date=todayStr();ui.tab='di';topView='diary';render();scrollToNow();};
@@ -10987,7 +10991,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c24.9";
+const CL_APPVER="c25.0";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
