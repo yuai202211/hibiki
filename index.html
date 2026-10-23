@@ -4217,7 +4217,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c25.1）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c25.2）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -4589,7 +4589,8 @@ if(t.closest('[data-acundo]')){ev.preventDefault();ev.stopPropagation();acUndo()
 const b=t.closest('#recDo button,#acRows button');if(!b||b.closest('.ios'))return;
 try{acRead();}catch(e){}acHist.push({a:JSON.stringify(acts),qg:QG_OPEN,ri:sheetSt?sheetSt._qgRi:null});if(acHist.length>30)acHist.shift();
 const g=b.getAttribute('data-qg')||b.getAttribute('data-rqg');if(g!=null){const y=b.getBoundingClientRect().top;
-setTimeout(()=>{try{const p=sh.querySelector('.qsec [data-qg="'+g+'"],.qsec [data-rqg="'+g+'"]')||sh.querySelector('.qg-open');if(p)sh.scrollTop+=p.getBoundingClientRect().top-y;}catch(e){}},0);}};
+setTimeout(()=>{try{const op=sh.querySelector('.qg-open');if(op){const ty=Math.min(y,sh.getBoundingClientRect().top+sh.clientHeight*0.3);sh.scrollTop+=op.getBoundingClientRect().top-ty;}
+else{const p=sh.querySelector('.qsec [data-qg="'+g+'"],.qsec [data-rqg="'+g+'"]');if(p)sh.scrollTop+=p.getBoundingClientRect().top-y;}}catch(e){}},0);}};
 if(sh._acCap)sh.removeEventListener('click',sh._acCap,true);sh._acCap=cap;sh.addEventListener('click',cap,true);
 if(typeof MutationObserver!=='undefined'){const rd=$('recDo'),ar=$('acRows');
 if(rd)new MutationObserver(()=>nearSubs(rd,'data-o1')).observe(rd,{childList:true});
@@ -7360,6 +7361,7 @@ function qSec2(id){const k=kindOf(id);if(!k)return 'l';if(['spplay','video','pla
 function qOrgHtml(ids,attr,mk,onIds,flat){ids=(ids||[]).filter(id=>id&&id[0]!=='@');onIds=onIds||[];
 if(flat===true)return ids.map(id=>mk(id,false)).join('');
 const oG=(flat!=='sec'&&qgOn(ids))?QG_OPEN:'';
+if(oG)return qgOpenHtml(oG,attr,mk,ids);
 const cats=flat==='sec'?[]:qCats(),dirs=cats.filter(c=>c.dir).map(c=>c.dir);let put=false;
 const body=KSEC.map(s=>{const it=[];cats.filter(c=>kSec(c.t)===s[0]).forEach(c=>{it.push(c.dir?mk(c.dir,false):qgHtml(c.G,attr,onIds));});
 ids.filter((id,i,a)=>a.indexOf(id)===i&&dirs.indexOf(id)<0&&qSec2(id)===s[0]).forEach(id=>it.push(mk(id,false)));
@@ -11022,7 +11024,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c25.1";
+const CL_APPVER="c25.2";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
