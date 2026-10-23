@@ -11,3 +11,4 @@ photos-export/
 dev/build.js
 dev/make-baseline.js
 dev/push/
+dev/guard-inputs.js
