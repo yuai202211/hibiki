@@ -4221,7 +4221,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c25.8）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c25.9）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -4565,7 +4565,7 @@ const t=r.querySelector('.ac-t'),l1=r.querySelector('.ac-l1'),l2=r.querySelector
 [...r.children].forEach(c=>{if(c!==l1&&c!==l2&&c!==tq)tools.appendChild(c);});
 r.innerHTML=(n>1?'<button type="button" class="ix lbl" data-rx="'+i+'" aria-label="この組を消す">✕<small class="bn">消す</small></button>':'')+
 '<div class="sh-label" style="margin:0 0 4px">🏷️ ここで何をした'+(i>0?' <span class="nth">'+(i+1)+'組目</span>':'')+'<small>押すだけ。いくつでも押せる（もう一度で外す）</small></div>'+
-'<div class="sh-chips">'+ch+(opn?'':'<div class="qsec">'+((eType==='move'&&L.drv)?'<button type="button" class="chip ac-qm" data-rqm="1">'+(qMore?'－ たたむ':'＋ ほか')+'</button>':'')+'<button type="button" class="chip ac-qall" data-rall="'+i+'">🏷️ ほか（全部）</button></div>')+'</div>'+
+'<div class="sh-chips">'+ch+(opn?'':'<div class="qsec">'+''+'<button type="button" class="chip ac-qall" data-rall="'+i+'">🏷️ ほか（全部）</button></div>')+'</div>'+
 (i===0?'<div class="lblrow"><div class="sh-label" style="margin:0">💬 一言</div>'+iosSw('hitoSw2u',hitoMust(),'必ず','data-hito="1"','sm')+'</div>':'<div class="sh-label" style="margin:8px 0 4px">💬 一言</div>')+
 '<div class="hbox"><span class="pre'+(pk?'':' nok')+'">'+esc(pk||'🏷️ 上から選ぶ')+'</span><span class="bar"></span><i class="hslot"></i></div>'+bdPair(a,'data-rbd')+
 '<div class="tmline open"><span class="tmb">🕐 時間'+((a.s||a.e)?'':'<small>（空＝記録と同じ）</small>')+'</span><div class="tmw"></div></div>';
@@ -4728,7 +4728,7 @@ const aiH=aA?'<div class="ac-ai"><span>🤖 使ったAI</span>'+AI_TOOLS.map(z=>
 const more=acts.filter(a=>a&&(String(a.t||'').trim()||a.k)).length-1+frs.filter(x=>String(x||'').trim()).length;
 const pk=(wk.length?wk:(k0?[k0]:[])).map(id=>{const z=kindOf(id);return z?z.ic+z.lb:'';}).filter(Boolean).join('・');
 const hitoBox='<div class="lblrow"><div class="sh-label" style="margin:0">💬 一言</div>'+iosSw('hitoSw1',hitoMust(),'必ず','data-hito="1"','sm')+'</div><div class="hbox" id="hbox">'+(pk?'<span class="pre">'+esc(pk)+'</span><span class="bar"></span>':'')+'<textarea id="o1t" maxlength="400" rows="1" placeholder="一言を書く…（例：いい流れ！今日は冴えてる）" style="resize:none;overflow:hidden;line-height:1.5;min-height:0">'+esc(tv)+'</textarea></div>';
-rd.style.display='';rd.innerHTML='<div class="sh-label">🏷️ '+(isCar?'車内で':eType==='move'?'移動中に':'ここで')+'何をした<small>押すだけ。いくつでも押せる（もう一度で外す）。時間を分けて書く時は上の ✌️'+(more>0?'<br>ほかに '+more+'件 書いてある（消えていない・✌️で見られる）':'')+'</small></div><div class="sh-chips">'+ch+((!mvMin&&qgOn(q))?'':'<div class="qsec">'+((eType==='move'&&drv)?'<button class="chip ac-qm" id="o1Qm">'+(qMore?'－ たたむ':'＋ ほか')+'</button>':'')+'<button class="chip ac-qall" id="o1all">🏷️ ほか（全部）</button></div>')+'</div>'+hitoBox+aiH+(()=>{const mA=acts.find(a=>a&&a.w&&isMkRow(a));return mA?mpChips(Array.isArray(mA.mp)?mA.mp:[],'data-o1mp')+bzBox(mA.bz,'data-o1bz'):'';})()+
+rd.style.display='';rd.innerHTML='<div class="sh-label">🏷️ '+(isCar?'車内で':eType==='move'?'移動中に':'ここで')+'何をした<small>押すだけ。いくつでも押せる（もう一度で外す）。時間を分けて書く時は上の ✌️'+(more>0?'<br>ほかに '+more+'件 書いてある（消えていない・✌️で見られる）':'')+'</small></div><div class="sh-chips">'+ch+((!mvMin&&qgOn(q))?'':'<div class="qsec">'+''+'<button class="chip ac-qall" id="o1all">🏷️ ほか（全部）</button></div>')+'</div>'+hitoBox+aiH+(()=>{const mA=acts.find(a=>a&&a.w&&isMkRow(a));return mA?mpChips(Array.isArray(mA.mp)?mA.mp:[],'data-o1mp')+bzBox(mA.bz,'data-o1bz'):'';})()+
 ''+(()=>{const sr=acts.filter(a=>a&&a.w&&[a.k].concat(a.kx||[]).some(x=>x==='sleep'||x==='nap'));if(!sr.length)return '';return '<div style="margin-top:6px">'+bdPair(sr[0],'data-o1bd')+'</div>';})();
 const setOne=(id,d)=>{acRead();const k=kindOf(id);if(!k)return;const t1=($('o1t').value||'').trim();
 const W=acts.filter(a=>a&&a.w&&a.k),O=acts.filter(a=>a&&!(a.w&&a.k)&&(a.k||a.s||a.e||a.c||(a.ph&&a.ph.length)));
@@ -7393,8 +7393,7 @@ cand.forEach(x=>{if(!seen.has(x.k)&&isOn(x)){seen.add(x.k);top.push(x);}});
 const rest=cand.filter(x=>!seen.has(x.k)&&!x.it&&!(x.k[0]!=='@'&&cand.some(y=>y!==x&&y.k===x.k&&seen.has(y.k))));
 const tg=rest.length?'<button type="button" class="chip ac-qmore" data-qmore="1">'+(QMORE?'▴ たたむ（よく押す'+top.length+'個だけにする）':'▾ ほか '+rest.length+'個（あまり押さない物）')+'</button>':'';
 top.sort((a,b)=>a.o-b.o);
-let out='<div class="qsec qtop"><span class="qsec-h">⭐ よく押す<small>'+(()=>{const s=qTopStart();return Number(s.slice(5,7))+'月'+(Number(s.slice(5,7))!==Number(todayStr().slice(5,7))?'から':'')+'の上位';})()+QTOP_N+'個</small></span>'+top.map(x=>x.h).join('')+(QMORE?'':tg)+'</div>';
-if(QMORE)out+=KSEC.map(s=>{const r=rest.filter(x=>x.s===s[0]);return r.length?'<div class="qsec"><span class="qsec-h">'+s[1]+'</span>'+r.map(x=>x.h).join('')+'</div>':'';}).join('')+(tg?'<div class="qsec">'+tg+'</div>':'');
+let out='<div class="qsec qtop"><span class="qsec-h">⭐ よく押す<small>'+(()=>{const s=qTopStart();return Number(s.slice(5,7))+'月'+(Number(s.slice(5,7))!==Number(todayStr().slice(5,7))?'から':'')+'の上位';})()+QTOP_N+'個</small></span>'+top.map(x=>x.h).join('')+'</div>';
 return out;}catch(e){return '';}}
 const KUSEN={};
 function kUseDays(n){const t=todayStr(),u=state.updatedAt||0,m=KUSEN[n];if(m&&m.t===t&&m.u===u)return m.c;const c={};
@@ -11058,7 +11057,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c25.8";
+const CL_APPVER="c25.9";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
