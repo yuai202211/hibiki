@@ -1777,6 +1777,7 @@ body.cardvis .fab{display:none!important}
 .app.fold .foldbar{display:block}
 #scr>#gstrip,#scr>#ftk,#scr>.dreamrow,#scr>#pinRow,#scr>#nowCard{flex:none}
 .ac-kgr{display:flex;gap:6px;align-items:center}.ac-kgr .ac-kgh{flex:1;min-width:0;width:auto}.ac-undo{flex:none;border-radius:12px;padding:7px 10px;font-weight:900;font-size:12.5px;background:#fff;border:1.5px solid #d5dae6;color:#1f2430;white-space:nowrap}
+.kfavw{display:contents}.kfavw>button{position:relative;box-shadow:inset 0 0 0 1.5px #f0c75e}.kfavw>button::after{content:'⭐';position:absolute;top:-7px;right:-5px;font-size:11px;line-height:1}
 .ka-fav{background:#fff8e1;border-radius:12px;padding:4px 6px 6px}.ka-favnone{font-size:12px;font-weight:700;color:#b9a06a;padding:2px 4px}.ka-fav .ka-sub{color:#a8790a}.ka-fav .ka-sub small{margin-left:6px;font-weight:700;color:#b9a06a}
 .nearw{flex:1 0 100%;width:100%;display:flex;flex-direction:column;gap:6px;margin:2px 0 6px;padding:6px 8px;border-left:3px solid #7a6ef3;background:rgba(122,110,243,.07);border-radius:10px;box-sizing:border-box}.nearw>*{margin:0!important}
 #kakuTop{position:sticky;top:0;z-index:6;flex:none;padding:6px 10px 6px;background:var(--app,#f6f7fb)}#kakuTop>.hour.wr{position:static;margin:0}
@@ -4219,7 +4220,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c25.5）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c25.6）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -7368,7 +7369,9 @@ if(flat===true)return ids.map(id=>mk(id,false)).join('');
 const oG=(flat!=='sec'&&qgOn(ids))?QG_OPEN:'';
 if(oG)return qgOpenHtml(oG,attr,mk,ids);
 const cats=flat==='sec'?[]:qCats(),dirs=cats.filter(c=>c.dir).map(c=>c.dir);let put=false;
-const body=KSEC.map(s=>{const it=[];cats.filter(c=>kSec(c.t)===s[0]).forEach(c=>{it.push(c.dir?mk(c.dir,false):qgHtml(c.G,attr,onIds));});
+const shown=new Set(ids);
+const favTop=G=>{if(flat==='sec')return [];try{const t=qgNode(G),L=t?kLeaves(t.ch||kindList().filter(k=>k.g===G).map(k=>k.id)):kindList().filter(k=>k.g===G).map(k=>k.id),c=kUse30();return kFavOf(L,[...shown]).filter(id=>(c[id]||0)>=2).slice(0,4);}catch(e){return [];}};
+const body=KSEC.map(s=>{const it=[];cats.filter(c=>kSec(c.t)===s[0]).forEach(c=>{it.push(c.dir?mk(c.dir,false):qgHtml(c.G,attr,onIds));if(!c.dir){const fv=favTop(c.G).filter(id=>!shown.has(id));if(fv.length){fv.forEach(id=>shown.add(id));it.push('<span class="kfavw">'+fv.map(id=>mk(id,false)).join('')+'</span>');}}});
 ids.filter((id,i,a)=>a.indexOf(id)===i&&dirs.indexOf(id)<0&&qSec2(id)===s[0]).forEach(id=>it.push(mk(id,false)));
 const h=it.filter(Boolean);let o=h.length?'<div class="qsec"><span class="qsec-h">'+s[1]+'</span>'+h.join('')+'</div>':'';
 if(oG&&!put&&cats.some(c=>c.G===oG&&kSec(c.t)===s[0])){o+=qgOpenHtml(oG,attr,mk,ids);put=true;}return o;}).join('');
@@ -11031,7 +11034,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c25.5";
+const CL_APPVER="c25.6";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
