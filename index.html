@@ -4217,7 +4217,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c25.2）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c25.3）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -7370,13 +7370,13 @@ if(oG&&!put&&cats.some(c=>c.G===oG&&kSec(c.t)===s[0])){o+=qgOpenHtml(oG,attr,mk,
 return (oG&&!put?qgOpenHtml(oG,attr,mk,ids):'')+body;}
 let KUSE=null;
 function kUse30(){const t=todayStr(),u=state.updatedAt||0;if(KUSE&&KUSE.t===t&&KUSE.u===u)return KUSE.c;const c={};
-for(let i=0;i<31;i++){const eo=(state.entries||{})[addDays(t,-i)]||{};for(const k in eo){const en=eo[k];if(!en||en.del)continue;const s=new Set();if(en.k)s.add(en.k);(en.acts||[]).forEach(a=>{if(!a)return;if(a.k)s.add(a.k);(a.kx||[]).forEach(x=>s.add(x));});s.forEach(id=>{c[id]=(c[id]||0)+1;});}}
+for(let i=0;i<7;i++){const eo=(state.entries||{})[addDays(t,-i)]||{};for(const k in eo){const en=eo[k];if(!en||en.del)continue;const s=new Set();if(en.k)s.add(en.k);(en.acts||[]).forEach(a=>{if(!a)return;if(a.k)s.add(a.k);(a.kx||[]).forEach(x=>s.add(x));});s.forEach(id=>{c[id]=(c[id]||0)+1;});}}
 KUSE={t,u,c};return c;}
 function kFav(G,top){try{const c=kUse30(),tp=new Set(top||[]),all=kindList().filter(k=>k.g===G&&!tp.has(k.id));if(all.length<7)return [];
-return all.filter(k=>(c[k.id]||0)>=2).sort((a,b)=>c[b.id]-c[a.id]).slice(0,6).map(k=>k.id);}catch(e){return [];}}
+return all.filter(k=>(c[k.id]||0)>=1).sort((a,b)=>c[b.id]-c[a.id]).slice(0,6).map(k=>k.id);}catch(e){return [];}}
 function qgOpenHtml(G,attr,mk,top){const t=qgNode(G),g=KIND_GRP.find(x=>x[0]===G);if(!t||!g)return '';
 const ch=t.ch||kindList().filter(k=>k.g===G).map(k=>k.id);
-const fav=kFav(G,top),favH=fav.length?'<div class="ka-subw ka-fav"><div class="ka-sub">⭐ よく使う<small>直近30日で多い順</small></div>'+fav.map(x=>mk(x,true)).join('')+'</div>':'';
+const fav=kFav(G,top),favH=fav.length?'<div class="ka-subw ka-fav"><div class="ka-sub">⭐ よく使う<small>直近1週間で多い順</small></div>'+fav.map(x=>mk(x,true)).join('')+'</div>':'';
 const lv=ch.map(c=>typeof c==='string'?mk(c,true):('<div class="ka-subw"><div class="ka-sub">'+c.ic+' '+esc(c.lb)+'</div>'+(c.ch||[]).map(x=>mk(x,true)).join('')+'</div>')).join('');
 const un=(attr==='data-qg'||attr==='data-rqg')?'<button type="button" class="ac-undo" data-acundo="1">↩ 1つ前に戻る</button>':'';
 return '<div class="ac-kgp qg-open"><div class="ac-kgr"><button class="ac-kgh" '+attr+'="'+G+'">'+esc(g[1])+'<span>'+esc(g[2])+'</span><i>‹ 分野へ戻る</i></button>'+un+'</div><div class="ac-kl">'+favH+lv+'</div></div>';}
@@ -11024,7 +11024,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c25.2";
+const CL_APPVER="c25.3";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
