@@ -1281,7 +1281,7 @@ background:#f6f8ff;border:1.5px solid #dbe4ff;color:#3b63d9;font-weight:800;font
 .pyent button.sel[data-en=me]{background:#ff8a3d;color:#fff}
 .pyent button.sel[data-en=al]{background:#0bc167;color:#fff}
 .pyent button.sel[data-en=corp]{background:#1e3a8a;color:#fff}
-.pent{display:flex;gap:5px;margin:8px 0 0;overflow-x:auto;scrollbar-width:none}
+.pent{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0 0;overflow-x:visible}
 .pent::-webkit-scrollbar{display:none}
 .pent button{flex:0 0 auto;padding:6px 11px;border-radius:999px;background:#f1f3f8;color:#6a7080;font-weight:800;font-size:12px;white-space:nowrap}
 .pent button.on{background:var(--ink);color:#fff}
@@ -1532,6 +1532,12 @@ button.sp-row:active{background:#f1f3f8}
 .hour.wr .wr-r .chip.mvb.lrn,.hour.wr .wr-r .chip.mvb.lrnE{width:36px;padding:0;justify-content:center;background:#dff3f8;color:#0891b2}
 .hour.wr .wr-r .chip.mvb.lrnE{background:#0891b2;color:#fff}
 @media (max-width:380px){
+.datebar{gap:4px}
+.datebar .chev{padding:2px 4px}
+.datebar .d{font-size:20px}
+.datebar .topset{width:30px;height:30px;margin-left:0}
+ }
+@media (min-width:500px){
 .datebar{gap:4px}
 .datebar .chev{padding:2px 4px}
 .datebar .d{font-size:20px}
@@ -4224,7 +4230,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c26.1）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c26.2）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -11068,7 +11074,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c26.1";
+const CL_APPVER="c26.2";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
