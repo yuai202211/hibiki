@@ -1777,7 +1777,7 @@ body.cardvis .fab{display:none!important}
 .app.fold .foldbar{display:block}
 #scr>#gstrip,#scr>#ftk,#scr>.dreamrow,#scr>#pinRow,#scr>#nowCard{flex:none}
 .ac-kgr{display:flex;gap:6px;align-items:center}.ac-kgr .ac-kgh{flex:1;min-width:0;width:auto}.ac-undo{flex:none;border-radius:12px;padding:7px 10px;font-weight:900;font-size:12.5px;background:#fff;border:1.5px solid #d5dae6;color:#1f2430;white-space:nowrap}
-.ka-fav{background:#fff8e1;border-radius:12px;padding:4px 6px 6px}.ka-fav .ka-sub{color:#a8790a}.ka-fav .ka-sub small{margin-left:6px;font-weight:700;color:#b9a06a}
+.ka-fav{background:#fff8e1;border-radius:12px;padding:4px 6px 6px}.ka-favnone{font-size:12px;font-weight:700;color:#b9a06a;padding:2px 4px}.ka-fav .ka-sub{color:#a8790a}.ka-fav .ka-sub small{margin-left:6px;font-weight:700;color:#b9a06a}
 .nearw{flex:1 0 100%;width:100%;display:flex;flex-direction:column;gap:6px;margin:2px 0 6px;padding:6px 8px;border-left:3px solid #7a6ef3;background:rgba(122,110,243,.07);border-radius:10px;box-sizing:border-box}.nearw>*{margin:0!important}
 #kakuTop{position:sticky;top:0;z-index:6;flex:none;padding:6px 10px 6px;background:var(--app,#f6f7fb)}#kakuTop>.hour.wr{position:static;margin:0}
 .chip.mvb.pln{background:#4d7dff;color:#fff;position:relative}.pln-bdg{position:absolute;top:-6px;right:-6px;background:#e24b4b;color:#fff;font-size:9px;font-weight:900;border-radius:8px;padding:1px 5px;font-style:normal;line-height:1.3}
@@ -4217,7 +4217,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c25.3）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c25.4）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -7372,11 +7372,13 @@ let KUSE=null;
 function kUse30(){const t=todayStr(),u=state.updatedAt||0;if(KUSE&&KUSE.t===t&&KUSE.u===u)return KUSE.c;const c={};
 for(let i=0;i<7;i++){const eo=(state.entries||{})[addDays(t,-i)]||{};for(const k in eo){const en=eo[k];if(!en||en.del)continue;const s=new Set();if(en.k)s.add(en.k);(en.acts||[]).forEach(a=>{if(!a)return;if(a.k)s.add(a.k);(a.kx||[]).forEach(x=>s.add(x));});s.forEach(id=>{c[id]=(c[id]||0)+1;});}}
 KUSE={t,u,c};return c;}
-function kFav(G,top){try{const c=kUse30(),tp=new Set(top||[]),all=kindList().filter(k=>k.g===G&&!tp.has(k.id));if(all.length<7)return [];
-return all.filter(k=>(c[k.id]||0)>=1).sort((a,b)=>c[b.id]-c[a.id]).slice(0,6).map(k=>k.id);}catch(e){return [];}}
+function kFavOf(ids,top){try{const c=kUse30(),tp=new Set(top||[]),seen=new Set(),L=[];(ids||[]).forEach(id=>{if(!id||seen.has(id)||tp.has(id))return;seen.add(id);const k=kindOf(id);if(k&&!k.off)L.push(id);});
+return L.filter(id=>(c[id]||0)>=1).sort((a,b)=>c[b]-c[a]).slice(0,6);}catch(e){return [];}}
+function kLeaves(ch){const o=[];(ch||[]).forEach(c=>{if(typeof c==='string')o.push(c);else if(c&&c.ch)c.ch.forEach(x=>o.push(x));});return o;}
+function kFavHtml(fav,btn){return '<div class="ka-subw ka-fav"><div class="ka-sub">⭐ よく使う<small>直近1週間で多い順</small></div>'+(fav.length?fav.map(btn).join(''):'<span class="ka-favnone">この1週間はまだ押していない。押すとここに並ぶ</span>')+'</div>';}
 function qgOpenHtml(G,attr,mk,top){const t=qgNode(G),g=KIND_GRP.find(x=>x[0]===G);if(!t||!g)return '';
 const ch=t.ch||kindList().filter(k=>k.g===G).map(k=>k.id);
-const fav=kFav(G,top),favH=fav.length?'<div class="ka-subw ka-fav"><div class="ka-sub">⭐ よく使う<small>直近1週間で多い順</small></div>'+fav.map(x=>mk(x,true)).join('')+'</div>':'';
+const favH=kFavHtml(kFavOf(kLeaves(ch),top),x=>mk(x,true));
 const lv=ch.map(c=>typeof c==='string'?mk(c,true):('<div class="ka-subw"><div class="ka-sub">'+c.ic+' '+esc(c.lb)+'</div>'+(c.ch||[]).map(x=>mk(x,true)).join('')+'</div>')).join('');
 const un=(attr==='data-qg'||attr==='data-rqg')?'<button type="button" class="ac-undo" data-acundo="1">↩ 1つ前に戻る</button>':'';
 return '<div class="ac-kgp qg-open"><div class="ac-kgr"><button class="ac-kgh" '+attr+'="'+G+'">'+esc(g[1])+'<span>'+esc(g[2])+'</span><i>‹ 分野へ戻る</i></button>'+un+'</div><div class="ac-kl">'+favH+lv+'</div></div>';}
@@ -7442,7 +7444,7 @@ const kb=(id,t)=>{const x=kindOf(id);if(!x||x.off)return '';return '<button data
 openSub('<div class="sh-time"><span>'+esc(ttl||'🏷️ ここで何をした？（ずっと）')+'</span></div><div class="sh-note" style="text-align:left">'+esc(note||'分野を押すと中身が出る。1つ選ぶと滞在の間ずっとに数える')+'</div>'+
 (og?'':'<div class="ka-cats">'+kSecHtml(t=>t.dir?'<button data-kaid="'+esc(t.dir)+'" data-kad=""><b>'+t.ic+'</b><span>'+esc(t.lb)+'</span></button>':'<button data-kaf="'+t.id+'"><b>'+t.ic+'</b><span>'+esc(t.lb)+'</span></button>')+'</div>')+
 '<div class="ac-kall ka-all">'+
-KIND_TREE.filter(t=>t.id===og).map(t=>{const fo=false;const lv=t.ch?t.ch.map(c=>typeof c==='string'?kb(c,t):('<div class="ka-subw"><div class="ka-sub">'+c.ic+' '+esc(c.lb)+'</div>'+c.ch.map(x=>kb(x,t)).join('')+'</div>')).join(''):etc.map(id=>kb(id,t)).join('');
+KIND_TREE.filter(t=>t.id===og).map(t=>{const fo=false;const favH=kFavHtml(kFavOf(t.ch?kLeaves(t.ch):etc,[]),x=>kb(x,t));const lv=favH+(t.ch?t.ch.map(c=>typeof c==='string'?kb(c,t):('<div class="ka-subw"><div class="ka-sub">'+c.ic+' '+esc(c.lb)+'</div>'+c.ch.map(x=>kb(x,t)).join('')+'</div>')).join(''):etc.map(id=>kb(id,t)).join(''));
 return '<div class="ac-kgp"><button class="ac-kgh'+(fo?' f':'')+'" data-kaf="'+t.id+'">'+t.ic+'<span>'+esc(t.lb)+'</span><i>‹ 分野へ戻る</i></button>'+(t.id==='al'?'<button class="chip" id="kaCoNm" style="margin:6px 0 2px">✎ 会社の名前を変える</button>':'')+'<button style="display:none"></button>'+(fo?'':'<div class="ac-kl">'+lv+'</div>')+'</div>';}).join('')+'</div>'+
 '<div class="sh-btns"><button class="delbtn" id="kaNo" style="flex:1">閉じる</button></div>',null);
 const s=$('sheet2');s.querySelectorAll('[data-kaf]').forEach(b=>b.onclick=()=>{og=(og===b.dataset.kaf)?'':b.dataset.kaf;paint();});
@@ -11024,7 +11026,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c25.3";
+const CL_APPVER="c25.4";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
