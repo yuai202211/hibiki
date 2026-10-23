@@ -1777,6 +1777,7 @@ body.cardvis .fab{display:none!important}
 .app.fold .foldbar{display:block}
 #scr>#gstrip,#scr>#ftk,#scr>.dreamrow,#scr>#pinRow,#scr>#nowCard{flex:none}
 .ac-kgr{display:flex;gap:6px;align-items:center}.ac-kgr .ac-kgh{flex:1;min-width:0;width:auto}.ac-undo{flex:none;border-radius:12px;padding:7px 10px;font-weight:900;font-size:12.5px;background:#fff;border:1.5px solid #d5dae6;color:#1f2430;white-space:nowrap}
+.qtop .qsec-h small{margin-left:6px;font-weight:700;color:#b9a06a}.ac-qmore{background:#fff!important;border:1.5px dashed #c3cad8!important;color:#4a5263!important;font-weight:900!important}
 .kfavw{display:contents}.kfavw>button{position:relative;box-shadow:inset 0 0 0 1.5px #f0c75e}.kfavw>button::after{content:'⭐';position:absolute;top:-7px;right:-5px;font-size:11px;line-height:1}
 .ka-fav{background:#fff8e1;border-radius:12px;padding:4px 6px 6px}.ka-favnone{font-size:12px;font-weight:700;color:#b9a06a;padding:2px 4px}.ka-fav .ka-sub{color:#a8790a}.ka-fav .ka-sub small{margin-left:6px;font-weight:700;color:#b9a06a}
 .nearw{flex:1 0 100%;width:100%;display:flex;flex-direction:column;gap:6px;margin:2px 0 6px;padding:6px 8px;border-left:3px solid #7a6ef3;background:rgba(122,110,243,.07);border-radius:10px;box-sizing:border-box}.nearw>*{margin:0!important}
@@ -4220,7 +4221,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c25.6）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c25.7）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -4589,12 +4590,14 @@ acts=JSON.parse(s.a);QG_OPEN=s.qg;if(sheetSt)sheetSt._qgRi=s.ri;acPaint();
 try{const o2=$('o1t');if(o2&&t1!=null)o2.value=t1;const nt=[...$('acRows').querySelectorAll('.ac-t')];if(nt.length===rt.length)nt.forEach((x,i)=>{x.value=rt[i];});}catch(e){}toast('↩ 1つ前に戻した');};
 {const sh=$('sheet');const cap=ev=>{const t=ev.target;if(!t||!t.closest)return;
 if(t.closest('[data-acundo]')){ev.preventDefault();ev.stopPropagation();acUndo();return;}
+{const qm=t.closest('[data-qmore]');if(qm){ev.preventDefault();ev.stopPropagation();const y=qm.getBoundingClientRect().top,was=QMORE;try{acRead();}catch(e){}QMORE=!QMORE;acPaint();
+setTimeout(()=>{try{if(was){const n=sh.querySelector('[data-qmore]');if(n)sh.scrollTop+=n.getBoundingClientRect().top-y;}}catch(e){}},0);return;}}
 const b=t.closest('#recDo button,#acRows button');if(!b||b.closest('.ios'))return;
 try{acRead();}catch(e){}acHist.push({a:JSON.stringify(acts),qg:QG_OPEN,ri:sheetSt?sheetSt._qgRi:null});if(acHist.length>30)acHist.shift();
 const g=b.getAttribute('data-qg')||b.getAttribute('data-rqg');if(g!=null){const y=b.getBoundingClientRect().top;
 setTimeout(()=>{try{const op=sh.querySelector('.qg-open');if(op){const ty=Math.min(y,sh.getBoundingClientRect().top+sh.clientHeight*0.3);sh.scrollTop+=op.getBoundingClientRect().top-ty;}
 else{const p=sh.querySelector('.qsec [data-qg="'+g+'"],.qsec [data-rqg="'+g+'"]');if(p)sh.scrollTop+=p.getBoundingClientRect().top-y;}}catch(e){}},0);}};
-if(sh._acCap)sh.removeEventListener('click',sh._acCap,true);sh._acCap=cap;sh.addEventListener('click',cap,true);
+if(sh._acCap)sh.removeEventListener('click',sh._acCap,true);sh._acCap=cap;sh.addEventListener('click',cap,true);QMORE=false;
 if(typeof MutationObserver!=='undefined'){const rd=$('recDo'),ar=$('acRows');
 if(rd)new MutationObserver(()=>nearSubs(rd,'data-o1')).observe(rd,{childList:true});
 if(ar)new MutationObserver(()=>{ar.querySelectorAll('.actrow.unit').forEach(r=>nearSubs(r,'data-rk'));}).observe(ar,{childList:true});}}
@@ -7354,7 +7357,7 @@ p.querySelectorAll('[data-tdr]').forEach(b=>b.onclick=()=>{tdSet(b.dataset.tdr,{
 p.querySelectorAll('[data-tdx]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();const id=b.dataset.tdx;armTap(b,'tdx'+id,'完全に消す（戻せない）',()=>{mutate(()=>{tdUnplace(id);state.todos[id]={del:1,ts:Date.now()};});toast('✕ 完全に消した');re();});});
 p.querySelectorAll('[data-rwc]').forEach(b=>b.onclick=()=>{const x=rowsWip[+b.dataset.rwc];mutate(()=>{const en=state.entries[x.d][x.k];const a=en.acts[x.i];if(a){a.st='done';a.dn=t;delete a.due;en.ts=Date.now();}});celebrate('🎉 完了！','途中だった「'+x.a.t+'」');re();});
 p.querySelectorAll('[data-rwo]').forEach(b=>b.onclick=()=>{const x=rowsWip[+b.dataset.rwo];closePage();ui.date=x.d;ui.tab='di';render();openEntrySheet(x.d,{key:x.k});});}
-let QG_OPEN='';
+let QG_OPEN='';let QMORE=false;const QTOP_N=8;
 
 function qgNode(G){if(!G||G==='A'||G==='D')return null;return KIND_TREE.find(x=>x.id===(KT_ID[G]||('g_'+G)))||null;}
 function qgKids(G){const g0=G||QG_OPEN,t=qgNode(g0),o=[];(t?(t.ch||kindList().filter(k=>k.g===g0).map(k=>k.id)):[]).forEach(c=>{if(typeof c==='string')o.push(c);else (c.ch||[]).forEach(x=>o.push(x));});return o.filter(id=>{const k=kindOf(id);return k&&!k.off;});}
@@ -7369,13 +7372,33 @@ if(flat===true)return ids.map(id=>mk(id,false)).join('');
 const oG=(flat!=='sec'&&qgOn(ids))?QG_OPEN:'';
 if(oG)return qgOpenHtml(oG,attr,mk,ids);
 const cats=flat==='sec'?[]:qCats(),dirs=cats.filter(c=>c.dir).map(c=>c.dir);let put=false;
+if((attr==='data-qg'||attr==='data-rqg')&&flat!=='sec'){const th=qTopHtml(ids,attr,mk,onIds,cats,dirs);if(th)return th;}
 const shown=new Set(ids);
 const favTop=G=>{if(flat==='sec')return [];try{const t=qgNode(G),L=t?kLeaves(t.ch||kindList().filter(k=>k.g===G).map(k=>k.id)):kindList().filter(k=>k.g===G).map(k=>k.id),c=kUse30();return kFavOf(L,[...shown]).filter(id=>(c[id]||0)>=2).slice(0,4);}catch(e){return [];}};
-const body=KSEC.map(s=>{const it=[];cats.filter(c=>kSec(c.t)===s[0]).forEach(c=>{it.push(c.dir?mk(c.dir,false):qgHtml(c.G,attr,onIds));if(!c.dir){const fv=favTop(c.G).filter(id=>!shown.has(id));if(fv.length){fv.forEach(id=>shown.add(id));it.push('<span class="kfavw">'+fv.map(id=>mk(id,false)).join('')+'</span>');}}});
+const body=KSEC.map(s=>{const it=[];cats.filter(c=>kSec(c.t)===s[0]).forEach(c=>{it.push(c.dir?mk(c.dir,false):qgHtml(c.G,attr,onIds));});
 ids.filter((id,i,a)=>a.indexOf(id)===i&&dirs.indexOf(id)<0&&qSec2(id)===s[0]).forEach(id=>it.push(mk(id,false)));
 const h=it.filter(Boolean);let o=h.length?'<div class="qsec"><span class="qsec-h">'+s[1]+'</span>'+h.join('')+'</div>':'';
 if(oG&&!put&&cats.some(c=>c.G===oG&&kSec(c.t)===s[0])){o+=qgOpenHtml(oG,attr,mk,ids);put=true;}return o;}).join('');
 return (oG&&!put?qgOpenHtml(oG,attr,mk,ids):'')+body;}
+function qTopHtml(ids,attr,mk,onIds,cats,dirs){try{const c=kUseDays(31),cand=[];let o=0;
+KSEC.forEach(s=>{cats.filter(x=>kSec(x.t)===s[0]).forEach(x=>{if(x.dir){cand.push({k:x.dir,s:s[0],n:c[x.dir]||0,o:o++,h:mk(x.dir,false)});return;}
+const t=qgNode(x.G),L=t?kLeaves(t.ch||[]):kindList().filter(k=>k.g===x.G).map(k=>k.id);
+cand.push({k:'@'+x.G,G:x.G,s:s[0],n:L.reduce((a,id)=>a+(c[id]||0),0),o:o++,h:qgHtml(x.G,attr,onIds)});});
+ids.filter((id,i,a)=>a.indexOf(id)===i&&dirs.indexOf(id)<0&&qSec2(id)===s[0]).forEach(id=>{const kk=kindOf(id);if(kk&&!kk.off)cand.push({k:id,s:s[0],n:c[id]||0,o:o++,h:mk(id,false)});});});
+const on=new Set(onIds||[]),isOn=x=>x.G?qgKids(x.G).some(id=>on.has(id)):on.has(x.k),seen=new Set(),top=[];
+cand.filter(x=>x.n>0).sort((a,b)=>b.n-a.n||a.o-b.o).forEach(x=>{if(top.length<QTOP_N&&!seen.has(x.k)){seen.add(x.k);top.push(x);}});
+if(!top.length)return '';
+cand.forEach(x=>{if(!seen.has(x.k)&&isOn(x)){seen.add(x.k);top.push(x);}});
+const rest=cand.filter(x=>!seen.has(x.k)&&!x.it&&!(x.k[0]!=='@'&&cand.some(y=>y!==x&&y.k===x.k&&seen.has(y.k))));
+const tg=rest.length?'<button type="button" class="chip ac-qmore" data-qmore="1">'+(QMORE?'▴ たたむ（よく押す'+top.length+'個だけにする）':'▾ ほか '+rest.length+'個（あまり押さない物）')+'</button>':'';
+top.sort((a,b)=>a.o-b.o);
+let out='<div class="qsec qtop"><span class="qsec-h">⭐ よく押す<small>直近1か月の上位'+QTOP_N+'個</small></span>'+top.map(x=>x.h).join('')+(QMORE?'':tg)+'</div>';
+if(QMORE)out+=KSEC.map(s=>{const r=rest.filter(x=>x.s===s[0]);return r.length?'<div class="qsec"><span class="qsec-h">'+s[1]+'</span>'+r.map(x=>x.h).join('')+'</div>':'';}).join('')+(tg?'<div class="qsec">'+tg+'</div>':'');
+return out;}catch(e){return '';}}
+const KUSEN={};
+function kUseDays(n){const t=todayStr(),u=state.updatedAt||0,m=KUSEN[n];if(m&&m.t===t&&m.u===u)return m.c;const c={};
+for(let i=0;i<n;i++){const eo=(state.entries||{})[addDays(t,-i)]||{};for(const k in eo){const en=eo[k];if(!en||en.del)continue;const s=new Set();if(en.k)s.add(en.k);(en.acts||[]).forEach(a=>{if(!a)return;if(a.k)s.add(a.k);(a.kx||[]).forEach(x=>s.add(x));});s.forEach(id=>{c[id]=(c[id]||0)+1;});}}
+KUSEN[n]={t,u,c};return c;}
 let KUSE=null;
 function kUse30(){const t=todayStr(),u=state.updatedAt||0;if(KUSE&&KUSE.t===t&&KUSE.u===u)return KUSE.c;const c={};
 for(let i=0;i<7;i++){const eo=(state.entries||{})[addDays(t,-i)]||{};for(const k in eo){const en=eo[k];if(!en||en.del)continue;const s=new Set();if(en.k)s.add(en.k);(en.acts||[]).forEach(a=>{if(!a)return;if(a.k)s.add(a.k);(a.kx||[]).forEach(x=>s.add(x));});s.forEach(id=>{c[id]=(c[id]||0)+1;});}}
@@ -11034,7 +11057,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c25.6";
+const CL_APPVER="c25.7";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
