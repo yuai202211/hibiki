@@ -1862,6 +1862,7 @@ body.cardvis .fab{display:none!important}
 .hour.filled{position:relative}
 .hour.filled:has(>.body>.hcm) .body{padding-right:34px}
 .hcm{position:absolute;right:8px;top:8px;width:30px;height:30px;border-radius:999px;background:#eef2ff;display:flex;align-items:center;justify-content:center;font-size:14px}
+.hcm.hdft::before{content:"下書き";position:absolute;top:-8px;left:-12px;background:#e24b4b;color:#fff;font-size:9px;font-weight:900;border-radius:7px;padding:0 4px;line-height:1.45;white-space:nowrap;z-index:1}
 .hcm.need::after{content:"";position:absolute;top:1px;right:1px;width:9px;height:9px;border-radius:50%;background:#e0405a;border:2px solid #fff}
 .hinl{display:flex;align-items:center;gap:6px;border:2px solid #3b63d9;border-radius:12px;padding:6px 8px;background:#fff;margin:4px 0 6px 46px}
 .hinl textarea{resize:none;overflow:hidden;line-height:1.45;font-family:inherit;color:inherit;padding:4px 0;min-height:0}.hinl input,.hinl textarea{flex:1;min-width:0;border:0;background:none;font-size:16px;font-weight:700}
@@ -3595,21 +3596,24 @@ function nowBarPaint(){const w=$('nowBar');if(!w)return;if(!(ui.tab==='di'&&topV
 if(!$('nowHito')){
 w.innerHTML='<div class="to"></div><div class="line">'+iosSw('hitoSw3',hitoMust(),'必ず','data-hito="1"','sm')+'<textarea id="nowHito" rows="1" placeholder="いまコメント…" enterkeyhint="send" autocomplete="off"></textarea><button type="button" class="ok" id="nowHitoOk">送る</button></div>';
 $('hitoSw3').onclick=hitoToggle;
-const go=()=>{const ip=$('nowHito'),v=String(ip.value||'').trim();if(!v){try{ip.focus();}catch(e){}return;}const t=nowTarget();ip.value='';
+{const ip0=$('nowHito');try{const v0=localStorage.getItem('hibiki-now-draft');if(v0){ip0.value=v0;setTimeout(()=>{try{taGrow(ip0);}catch(e){}},0);}}catch(e){}
+ip0.addEventListener('input',()=>{try{const v=ip0.value;if(v.trim())localStorage.setItem('hibiki-now-draft',v);else localStorage.removeItem('hibiki-now-draft');}catch(e){}});}
+const go=()=>{const ip=$('nowHito'),v=String(ip.value||'').trim();if(!v){try{ip.focus();}catch(e){}return;}const t=nowTarget();ip.value='';try{localStorage.removeItem('hibiki-now-draft');}catch(e){}
 if(t){ui._jump=(t.d===ui.date)?t.k:'last';hitoAdd(t.d,t.k,v);diJumpKick();}
 else{const d=todayStr(),s=nowHM(),key='e'+Date.now()+Math.floor(Math.random()*1e4);mutate(()=>{state.entries[d]=state.entries[d]||{};state.entries[d][key]={s,p:placeBefore(d,s)||'',t:v,ph:[],ts:Date.now()};});ui._jump=key;toast('✓ '+s+' の📝に入れた');render();}};
 $('nowHitoOk').onclick=go;$('nowHito').onkeydown=ev=>{if(ev.key==='Enter'&&!ev.isComposing){ev.preventDefault();go();}};}
 const o=nowTarget();w.querySelector('.to').textContent='→ '+(o?'いま続いている記録：'+nowTgLb(o):'今の時刻の📝として入る');iosSet($('hitoSw3'),hitoMust());{const a=$('app');if(a&&w.offsetHeight)a.style.setProperty('--nbh',w.offsetHeight+'px');}}
 let HCM=null;
+function hcmDft(d,k,v){let M={};try{M=JSON.parse(localStorage.getItem('hibiki-hcm-draft')||'{}')||{};}catch(e){M={};}const id=d+'|'+k;if(v===undefined)return M[id]||'';if(String(v).trim())M[id]=v;else delete M[id];try{localStorage.setItem('hibiki-hcm-draft',JSON.stringify(M));}catch(e){}return v;}
 function hcmOpen(pane,k,re){document.querySelectorAll('.hinl').forEach(x=>x.remove());
 if(!re&&HCM&&HCM.k===k&&HCM.d===ui.date){HCM=null;return;}
 if(re&&(!HCM||HCM.d!==ui.date)){HCM=null;return;}
 const row=[...pane.querySelectorAll('.hour[data-k]')].find(x=>x.dataset.k===k);if(!row){HCM=null;return;}
-const keep=re?HCM:null;HCM={d:ui.date,k,v:keep?keep.v:'',f:keep?keep.f:true};const d=HCM.d;
+const keep=re?HCM:null;HCM={d:ui.date,k,v:keep?keep.v:hcmDft(ui.date,k),f:keep?keep.f:true};const d=HCM.d;
 row.insertAdjacentHTML('afterend','<div class="hinl"><textarea rows="1" placeholder="コメント…" enterkeyhint="done" autocomplete="off"></textarea><button type="button" class="ok" aria-label="入れる">✓ 入れる</button></div>');
 const box=row.nextElementSibling,ip=box.querySelector('textarea');ip.value=HCM.v;box.addEventListener('click',ev=>ev.stopPropagation());
-ip.oninput=()=>{if(HCM)HCM.v=ip.value;};ip.onfocus=()=>{if(HCM)HCM.f=true;};ip.onblur=()=>{if(HCM&&ip.isConnected)HCM.f=false;};
-const go=()=>{const v=ip.value.trim();HCM=null;box.remove();if(v)hitoAdd(d,k,v);};
+ip.oninput=()=>{if(HCM)HCM.v=ip.value;hcmDft(d,k,ip.value);const hb=row.querySelector('.hcm');if(hb)hb.classList.toggle('hdft',!!ip.value.trim());};if(ip.value)setTimeout(()=>{try{taGrow(ip);}catch(e){}},0);ip.onfocus=()=>{if(HCM)HCM.f=true;};ip.onblur=()=>{if(HCM&&ip.isConnected)HCM.f=false;};
+const go=()=>{const v=ip.value.trim();HCM=null;box.remove();hcmDft(d,k,'');{const hb=row.querySelector('.hcm');if(hb)hb.classList.remove('hdft');}if(v)hitoAdd(d,k,v);};
 box.querySelector('.ok').onclick=go;ip.onkeydown=ev=>{if(ev.key==='Enter'&&!ev.isComposing){ev.preventDefault();go();}else if(ev.key==='Escape'){HCM=null;box.remove();}};
 if(HCM.f)try{ip.focus({preventScroll:!!re});}catch(e){}}
 function ubDel(d,k,sel){return ()=>{try{if(sel){const s=$('sheet2');if(s&&s.querySelector(sel))closeSub();}mutate(()=>{state.entries[d]=state.entries[d]||{};state.entries[d][k]={del:1,ts:Date.now()};});toast('↩ 取り消した');}catch(e){}};}
@@ -3822,7 +3826,7 @@ recHead(en,kHead(en)).g+pill+(en.md?'<span class="dpill mdp">🕳️ ムダ</spa
 (en.t?'<div class="txt">'+hitoHtml(en.t)+'</div>':'')+
 (en.ph&&en.ph.length?'<span class="phrow">'+en.ph.slice(0,4).map(id=>'<img class="phth" src="'+esc(phUrl(id))+'" alt="" onerror="this.style.visibility=\'hidden\'">').join('')+(en.ph.length>4?'<span class="phmore">+'+(en.ph.length-4)+'</span>':'')+'</span>':'')+
 (isToday&&h===nowH&&idx===0?'<span class="nowmark">いま</span>':'')+
-'<span class="hcm lbl'+((hitoMust()&&!hitoHas(en)&&!en.mv)?' need':'')+'" data-hcm="'+esc(it.k)+'" role="button" aria-label="コメント">'+(hitoHas(en)?'✎':'💬')+'<small class="bn">コメント</small></span>'+
+'<span class="hcm lbl'+((hitoMust()&&!hitoHas(en)&&!en.mv)?' need':'')+(hcmDft(ui.date,it.k)?' hdft':'')+'" data-hcm="'+esc(it.k)+'" role="button" aria-label="コメント">'+(hitoHas(en)?'✎':'💬')+'<small class="bn">コメント</small></span>'+
 '</div></button>';
 });
 }else{
@@ -4188,7 +4192,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c27.3）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c27.4）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -11039,7 +11043,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c27.3";
+const CL_APPVER="c27.4";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
