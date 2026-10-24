@@ -4247,7 +4247,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c26.6）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c26.7）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -5034,7 +5034,7 @@ function plnLink(d,k,ek){const x=((state.plans||{})[d]||{})[k],en=((state.entrie
 mutate(()=>{x.done=true;x.rk=ek;x.lk=1;x.ts=Date.now();en.plk=k;if(!en.p&&x.pl&&!en.mv)en.p=x.pl;en.ts=Date.now();});plnAfter();
 undoBar('📅 予定『'+x.t+'』を日記の '+(en.s||'')+' に紐づけた',()=>{mutate(()=>{x.done=o.done;if(o.rk)x.rk=o.rk;else delete x.rk;if(o.lk)x.lk=o.lk;else delete x.lk;x.ts=Date.now();if(ok0)en.plk=ok0;else delete en.plk;en.p=op||'';en.ts=Date.now();});plnAfter();});}
 function plnUndo(d,k){const P=((state.plans||{})[d]||{}),x=P[k];if(!x||!x.done)return;const E=((state.entries||{})[d]||{}),ek=x.rk,en=ek?E[ek]:null,o=JSON.parse(JSON.stringify(x)),oe=en?JSON.parse(JSON.stringify(en)):null;
-const plain=en&&en.pln&&!x.lk&&!(en.acts&&en.acts.length)&&!(en.ph&&en.ph.length)&&!en.e&&(!en.t||en.t===x.t||en.t===x.t+(x.mo?'\n'+x.mo:''));
+const plain=en&&en.pln&&!x.lk&&!(en.acts&&en.acts.length)&&!(en.ph&&en.ph.length)&&(!en.t||en.t===x.t||en.t===x.t+(x.mo?'\n'+x.mo:''));
 mutate(()=>{x.done=false;delete x.rk;delete x.lk;x.ts=Date.now();if(en){if(plain)E[ek]={del:1,ts:Date.now()};else{if(en.plk===k)delete en.plk;en.ts=Date.now();}}});plnAfter();
 try{if(ui.tab==='di')render();}catch(e){}
 undoBar('↩ 予定『'+o.t+'』を未完了に戻した'+(plain?'（予定から作った記録も消した）':(en?'（日記の記録は残した）':'')),()=>{mutate(()=>{P[k]=Object.assign({},o,{ts:Date.now()});if(ek&&oe)E[ek]=Object.assign({},oe,{ts:Date.now()});});plnAfter();try{if(ui.tab==='di')render();}catch(e){}});}
@@ -11140,7 +11140,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c26.6";
+const CL_APPVER="c26.7";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
