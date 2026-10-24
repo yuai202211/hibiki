@@ -1806,7 +1806,7 @@ body.cardvis .fab{display:none!important}
 .pln-wrap{display:flex;flex-direction:column;gap:6px;margin:0 0 14px}.pln-sec{display:flex;align-items:center;justify-content:space-between;font-weight:900;font-size:15px}.pln-add{background:#4d7dff!important;color:#fff!important;position:relative}
 .pln-h{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:900;color:#4d7dff;margin-top:6px}.pln-h small{color:#7a8296;font-weight:800}.pln-h.red{color:#e24b4b}
 .pln-day{font-size:12px;font-weight:900;color:#7a8296;margin-top:4px}
-.pln-row{display:grid;grid-template-columns:54px 1fr;gap:4px 10px;background:#e9efff;border-radius:14px;padding:10px 12px;color:#1d2230}.pln-row.done{opacity:.55}.pln-row.done .pln-tt{text-decoration:line-through}.pln-row.late{background:#fdeaea}
+.pln-row{display:grid;grid-template-columns:54px 1fr;gap:4px 10px;background:#e9efff;border-radius:14px;padding:10px 12px;color:#1d2230}.pln-row.done{opacity:.72}.pln-lki{font-size:12px;font-weight:800;color:#4d7dff;margin-top:2px;word-break:break-word}.pln-row.done .pln-tt{text-decoration:line-through}.pln-row.late{background:#fdeaea}
 .pln-tm{font-weight:900;font-size:15px;color:#4d7dff;font-variant-numeric:tabular-nums;line-height:1.15}.pln-tm small{display:block;font-size:10.5px;color:#7a8296}.pln-row.late .pln-tm{color:#e24b4b}
 .pln-bd{min-width:0}.pln-tt{font-weight:900;font-size:15px;word-break:break-word}.pln-pl{font-size:12px;color:#7a8296;font-weight:800}.pln-fl{font-size:11px;font-weight:900;color:#7a8296}.pln-fl.red{color:#e24b4b}
 .pln-ac{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}.pln-ac .chip{font-size:12.5px;font-weight:900}.pln-ac .pln-ok{background:#4d7dff;color:#fff}.pln-ac .pln-del{color:#e24b4b}
@@ -4247,7 +4247,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c26.8）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c26.9）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -5012,17 +5012,22 @@ function plnBadgeSync(){try{const on=!!plnDraft();['wrPlan','plnAdd'].forEach(id
 function plnBtnHtml(){return '<button class="chip mvb pln ic2" id="wrPlan">📅<small>予定</small>'+(plnDraft()?'<i class="pln-bdg">下書き</i>':'')+'</button>';}
 function plnChipHtml(){try{const T=todayStr(),n=plnNext(),late=plnLate().length,op=plnOpen(T).length;if(n)return '<button class="gs pln" data-gs="pln">📅 次 <b>'+esc(n.x.hh)+'</b> '+esc(Array.from(String(n.x.t)).slice(0,10).join(''))+'</button>';if(late)return '<button class="gs ov pln" data-gs="pln">📅 できなかった <b>'+late+'</b>件</button>';if(op)return '<button class="gs pln" data-gs="pln">📅 時間未定 <b>'+op+'</b>件</button>';return '';}catch(e){return '';}}
 function plnAfter(){try{const pg=$('page');if(pg&&pg.classList.contains('open')&&pageMode==='todo')renderTodoPage();}catch(e){}try{gstripPaint();}catch(e){}try{ntfKick();}catch(e){}}
+function plnMd(s){return Number(String(s).slice(5,7))+'/'+Number(String(s).slice(8,10));}
+function plnMvTxt(d,x){const h=(x.mh||[]).filter(Boolean);if(!h.length)return '↻ '+x.mv+'回ずらした';return '↻ '+x.mv+'回（'+(h.length<x.mv?'…→':'')+h.concat(d).map(plnMd).join('→')+'）';}
+function plnLinkInfo(d,x){if(!x.rk)return '✓ 済み';const en=((state.entries||{})[d]||{})[x.rk];if(!en||en.del)return '✓ 済み（日記の記録は消えている）';const tm=(en.s||'')+(en.e?'–'+en.e:'〜');return x.lk?('🔗 日記の '+tm+' に紐づけ'):('📝 予定から日記の記録を作った（'+tm+'）');}
+function plnDoneRowHtml(o){const d=o.d,x=o.x;return '<div class="pln-row done" data-plnk="'+esc(o.k)+'" data-plndd="'+esc(d)+'"><div class="pln-tm">'+(x.hh?esc(x.hh):'--:--')+'</div><div class="pln-bd"><div class="pln-tt">'+esc(x.t)+'</div><div class="pln-lki">'+esc(plnLinkInfo(d,x))+(x.pl?'　📍 '+esc(x.pl):'')+(x.mv?'　'+esc(plnMvTxt(d,x)):'')+'</div><div class="pln-ac"><button class="chip" data-plnundo="1">↩ 未完了に戻す</button></div></div></div>';}
 function plnRowHtml(o,opt){const d=o.d,x=o.x,T=todayStr(),late=!x.done&&d===T&&x.hh&&x.hh<plnNow();
 return '<div class="pln-row'+(x.done?' done':'')+(late?' late':'')+'" data-plnk="'+esc(o.k)+'" data-plndd="'+esc(d)+'">'+
 '<div class="pln-tm">'+(x.hh?esc(x.hh)+'<small>'+(x.e?'–'+esc(x.e):(x.mm?'–'+esc(hmAdd(x.hh,x.mm)):'〜'))+'</small>':'--:--<small>時間未定</small>')+'</div>'+
-'<div class="pln-bd"><div class="pln-tt">'+esc(x.t)+(x.done?' <span class="pln-fl">✓ 記録済み</span>':'')+(late?' <span class="pln-fl red">⏰ 時刻を過ぎた</span>':'')+(x.mv?' <span class="pln-fl red">↻ '+x.mv+'回ずらした</span>':'')+'</div>'+(x.pl?'<div class="pln-pl">📍 '+esc(x.pl)+'</div>':'')+((x.ad||x.tel||x.who)?'<div class="pln-ct">'+(x.ad?'<a href="https://www.google.com/maps/search/?api=1&amp;query='+encodeURIComponent(x.ad)+'" target="_blank" rel="noopener">🏠 '+esc(x.ad)+'</a>':'')+(x.tel?'<a href="tel:'+esc(String(x.tel).replace(/[^0-9+]/g,''))+'">📞 '+esc(x.tel)+'</a>':'')+(x.who?'<span>👤 '+esc(x.who)+'</span>':'')+'</div>':'')+(x.mo?'<div class="pln-mo">'+hitoHtml(x.mo)+'</div>':'')+(opt&&opt.day?'<div class="pln-pl">'+esc(plnDayLb(d))+'</div>':'')+
+'<div class="pln-bd"><div class="pln-tt">'+esc(x.t)+(x.done?' <span class="pln-fl">✓ 記録済み</span>':'')+(late?' <span class="pln-fl red">⏰ 時刻を過ぎた</span>':'')+(x.mv?' <span class="pln-fl red">'+esc(plnMvTxt(d,x))+'</span>':'')+'</div>'+(x.pl?'<div class="pln-pl">📍 '+esc(x.pl)+'</div>':'')+((x.ad||x.tel||x.who)?'<div class="pln-ct">'+(x.ad?'<a href="https://www.google.com/maps/search/?api=1&amp;query='+encodeURIComponent(x.ad)+'" target="_blank" rel="noopener">🏠 '+esc(x.ad)+'</a>':'')+(x.tel?'<a href="tel:'+esc(String(x.tel).replace(/[^0-9+]/g,''))+'">📞 '+esc(x.tel)+'</a>':'')+(x.who?'<span>👤 '+esc(x.who)+'</span>':'')+'</div>':'')+(x.mo?'<div class="pln-mo">'+hitoHtml(x.mo)+'</div>':'')+(opt&&opt.day?'<div class="pln-pl">'+esc(plnDayLb(d))+'</div>':'')+
 (x.done?'<div class="pln-ac"><button class="chip" data-plnundo="1">↩ 未完了に戻す</button></div>':'<div class="pln-ac">'+(d<=T?'<button class="chip pln-ok" data-plngo="1">'+((late||d<T)?'✓ やった（記録にする）':'✓ 始まった（記録にする）')+'</button>':'')+(d<T?'<button class="chip pln-ok" data-plnmv="today">→ 今日へ</button>':'')+'<button class="chip" data-plnmv="1">'+(d<=T?'→ 明日へ':'→ 1日ずらす')+'</button><button class="chip" data-plned="1">✎ 編集</button><button class="chip pln-del" data-plnrm="1">🗑 削除</button></div>')+'</div></div>';}
 function plnSectionHtml(){const T=todayStr(),late=plnLate(),td=plnItems(T),op=td.filter(o=>!o.x.done),dn=td.filter(o=>o.x.done);let fu=[];for(let i=1;i<=60;i++)plnOpen(addDays(T,i)).forEach(o=>fu.push(o));
 let h='<div class="pln-sec"><span>📅 予定</span><button class="chip pln-add" id="plnAdd">📅 予定を入れる'+(plnDraft()?'<i class="pln-bdg">下書きあり</i>':'')+'</button></div>';
 if(late.length)h+='<div class="pln-h red">⚠ できなかった '+late.length+'件<small>勝手に消えない。ずらすか消すか決める</small></div>'+late.map(o=>plnRowHtml(o,{day:1})).join('');
-h+='<div class="pln-h">今日<small>'+op.length+'件</small></div>'+(op.length?op.map(o=>plnRowHtml(o)).join(''):'<div class="an-empty">今日の予定は'+(dn.length?'全部すんだ':'まだ無い')+'</div>');
-if(dn.length)h+='<button class="an-more" id="plnDnTg">✓ 済み '+dn.length+'件 '+(plnShowDone?'▲ たたむ':'▼ 見る')+'（本体は日記に記録として残る）</button>'+(plnShowDone?dn.map(o=>plnRowHtml(o)).join(''):'');
+h+='<div class="pln-h">今日<small>'+op.length+'件'+(dn.length?'（✓ 済み '+dn.length+'件は一番下）':'')+'</small></div>'+(op.length?op.map(o=>plnRowHtml(o)).join(''):'<div class="an-empty">今日の予定は'+(dn.length?'全部すんだ':'まだ無い')+'</div>');
 h+='<div class="pln-h">この先<small>'+fu.length+'件</small></div>';let last='';fu.forEach(o=>{if(o.d!==last){last=o.d;h+='<div class="pln-day">'+esc(plnDayLb(o.d))+'</div>';}h+=plnRowHtml(o);});if(!fu.length)h+='<div class="an-empty">この先は空いている</div>';
+let dl=[];for(let i=0;i<=30;i++){const dd=addDays(T,-i);plnItems(dd).filter(o=>o.x.done).forEach(o=>dl.push(o));}
+h+='<div class="pln-h">✓ 済みの予定（直近30日）<small>'+dl.length+'件・本体は日記に残る</small></div>';last='';dl.forEach(o=>{if(o.d!==last){last=o.d;h+='<div class="pln-day">'+esc(plnDayLb(o.d))+'</div>';}h+=plnDoneRowHtml(o);});if(!dl.length)h+='<div class="an-empty">まだ無い</div>';
 return '<div class="pln-wrap">'+h+'</div>';}
 function plnSamePl(a,b){const n=s=>String(s||'').replace(/[\s　・,，、()（）]/g,'').toLowerCase();a=n(a);b=n(b);if(!a||!b)return false;return a===b||a.includes(b)||b.includes(a);}
 function plnRecAt(d,x){const eo=entriesOf(d),L=[];for(const k in eo){const en=eo[k];if(!en||en.del||en.noT||!en.s)continue;L.push({k,en,s:hmMin(en.s),e:en.e?hmMin(en.e)+(en.ed?1440*en.ed:0):null});}
@@ -5039,8 +5044,9 @@ mutate(()=>{x.done=false;delete x.rk;delete x.lk;x.ts=Date.now();if(en){if(plain
 try{if(ui.tab==='di')render();}catch(e){}
 undoBar('↩ 予定『'+o.t+'』を未完了に戻した'+(plain?'（予定から作った記録も消した）':(en?'（日記の記録は残した）':'')),()=>{mutate(()=>{P[k]=Object.assign({},o,{ts:Date.now()});if(ek&&oe)E[ek]=Object.assign({},oe,{ts:Date.now()});});plnAfter();try{if(ui.tab==='di')render();}catch(e){}});}
 function plnNewRec(d,k){const x=((state.plans||{})[d]||{})[k];if(!x||x.done)return;const T=todayStr(),s=x.hh||(d===T?plnNow():'12:00'),ek='e'+Date.now()+Math.floor(Math.random()*1e4);
-mutate(()=>{state.entries[d]=state.entries[d]||{};state.entries[d][ek]={p:x.pl||'',t:'',ph:[],s,ts:Date.now(),mn:1,mt:'s',pln:1,plk:k};x.done=true;x.rk=ek;x.ts=Date.now();});plnAfter();
-undoBar('✓ '+s+' に日記の記録を作った（終わりは後で）',()=>{mutate(()=>{const en=(state.entries[d]||{})[ek];if(en)en.del=1;x.done=false;delete x.rk;x.ts=Date.now();});plnAfter();},{d,k:ek});}
+let e=x.e||((x.hh&&x.mm)?hmAdd(x.hh,x.mm):null);if(e&&!(hmMin(e)>hmMin(s)&&(d<T||hmMin(e)<=hmMin(plnNow()))))e=null;
+mutate(()=>{state.entries[d]=state.entries[d]||{};const ne={p:x.pl||'',t:'',ph:[],s,ts:Date.now(),mn:1,mt:'s',pln:1,plk:k};if(e)ne.e=e;state.entries[d][ek]=ne;x.done=true;x.rk=ek;x.ts=Date.now();});plnAfter();
+undoBar(e?('✓ '+s+'–'+e+' に日記の記録を作った'):('✓ '+s+' に日記の記録を作った（終わりは後で）'),()=>{mutate(()=>{const en=(state.entries[d]||{})[ek];if(en)en.del=1;x.done=false;delete x.rk;x.ts=Date.now();});plnAfter();},{d,k:ek});}
 function plnRecLabel(en){return en.mv?('🚗 移動中（'+String(en.rt||'')+'）'):('📍 '+(en.p||((kindOf(en.k)||{}).lb)||'場所なし'));}
 function plnAskHtml(d,k,x,r,inSheet){const tt=(x.hh?esc(x.hh)+' の':'')+'予定『'+esc(x.t)+'』';let kind,msg;
 if(!r){kind='q';msg='📅 '+tt+'、やった？（この時間の日記の記録は無い）';}
@@ -5051,7 +5057,7 @@ else{kind='warn';msg='⚠️ '+tt+'（📍'+esc(x.pl)+'）の時間、日記で�
 const okLb=kind==='same'?'紐づける':kind==='warn'?'予定どおりだった（紐づける）':(r?'やった（紐づける）':'やった（記録を作る）');
 const okA=r?'data-plnlk="'+esc(d+'|'+k+'|'+r.k)+'"':'data-plnnew="'+esc(d+'|'+k)+'"',noK='pl|'+d+'|'+k+'|'+(r?r.k:'none');
 return '<div class="plnlk'+(kind==='warn'?' warn':'')+'"><div class="plnlk-m">'+msg+'</div><div class="plnlk-ac"><button type="button" class="ok" '+okA+'>✓ '+okLb+'</button>'+
-(inSheet?(r?'<button type="button" data-plnnew="'+esc(d+'|'+k)+'">＋ 別の記録にする</button>':''):((kind==='same'?'':'<button type="button" data-plnmv2="'+esc(d+'|'+k)+'">→ 明日へずらす</button>')+'<button type="button" data-plnno="'+esc(noK)+'">✕ '+(kind==='same'?'別の事':'やらなかった')+'</button>'))+'</div></div>';}
+(inSheet?(r?'<button type="button" data-plnno="'+esc(noK)+'">✕ 別の事をしていた</button>':''):((kind==='same'?'':'<button type="button" data-plnmv2="'+esc(d+'|'+k)+'">→ 明日へずらす</button>')+'<button type="button" data-plnno="'+esc(noK)+'">✕ '+(r?'別の事をしていた':'やらなかった')+'</button>'))+'</div></div>';}
 function plnDecorate(pane){try{if(!pane||ui.tab!=='di')return;const d=ui.date,T=todayStr(),now=plnNow(),eo=entriesOf(d),rowOf=k=>pane.querySelector('.hour[data-k="'+(window.CSS&&CSS.escape?CSS.escape(k):k)+'"]');
 for(const k in eo){const en=eo[k];if(en&&en.plk){const r=rowOf(k);if(r&&!r.querySelector('.plntag')){const b=r.querySelector('.body');if(b)b.insertAdjacentHTML('beforeend','<span class="plntag">📅 予定</span>');}}}
 for(const k in eo){const en=eo[k];if(!en||!en.pln||en.del||!en.s||(en.acts&&en.acts.length)||(en.ph&&en.ph.length))continue;const sk='pldup|'+d+'|'+k;if(sugNo(sk))continue;
@@ -5062,7 +5068,7 @@ let row=r?rowOf(r.k):null,pos='afterend';if(!row){const t=hmMin(x.hh);const rows
 if(!row)return;row.insertAdjacentHTML(pos,plnAskHtml(d,o.k,x,r,false));});
 pane.querySelectorAll('[data-plnnew]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();const [d1,k1]=b.dataset.plnnew.split('|');plnNewRec(d1,k1);});
 pane.querySelectorAll('[data-plnlk]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();const [d1,k1,e1]=b.dataset.plnlk.split('|');plnLink(d1,k1,e1);});
-pane.querySelectorAll('[data-plnno]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();sugSet(b.dataset.plnno);toast('このままにした');});
+pane.querySelectorAll('[data-plnno]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();sugSet(b.dataset.plnno);toast(/^pl\|/.test(b.dataset.plnno)?'予定は未完了のまま残した（ずらす・消すは予定の画面で）':'このままにした');});
 pane.querySelectorAll('[data-plnmv2]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();const [d1,k1]=b.dataset.plnmv2.split('|');plnMove(d1,k1,'1');});
 pane.querySelectorAll('[data-plndup]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();const [d1,dk,tk]=b.dataset.plndup.split('|');const E=(state.entries||{})[d1]||{},dup=E[dk],tw=E[tk];if(!dup||!tw)return;const pk=dup.plk||Object.keys((state.plans||{})[d1]||{}).find(id=>(((state.plans||{})[d1]||{})[id]||{}).rk===dk);const old=JSON.parse(JSON.stringify(dup));
 mutate(()=>{E[dk]={del:1,ts:Date.now()};if(pk){const x=((state.plans||{})[d1]||{})[pk];if(x){x.rk=tk;x.lk=1;x.done=true;x.ts=Date.now();}tw.plk=pk;}if(!tw.p&&old.p)tw.p=old.p;tw.ts=Date.now();});plnAfter();
@@ -5071,13 +5077,13 @@ undoBar('🔁 まとめた（予定から作った記録を消した）',()=>{mu
 function plnGo(d,k){const x0=((state.plans||{})[d]||{})[k];if(!x0||x0.done)return;const r0=plnRecAt(d,x0);
 if(r0){openSub('<div class="sh-time"><span>📅 予定が済んだ</span></div>'+plnAskHtml(d,k,x0,r0,true)+'<div class="sh-btns"><button class="delbtn" id="plnAskNo" style="flex:1">やめる</button></div>',null);const s2=$('sheet2');
 s2.querySelectorAll('[data-plnlk]').forEach(b=>b.onclick=()=>{const [d1,k1,e1]=b.dataset.plnlk.split('|');closeSub();plnLink(d1,k1,e1);});
-s2.querySelectorAll('[data-plnnew]').forEach(b=>b.onclick=()=>{closeSub();plnNewRec(d,k);});$('plnAskNo').onclick=closeSub;return;}
+s2.querySelectorAll('[data-plnno]').forEach(b=>b.onclick=()=>{closeSub();sugSet(b.dataset.plnno);plnAfter();try{if(ui.tab==='di')render();}catch(e){}toast('予定は未完了のまま残した（ずらす・消すは予定の画面で）');});$('plnAskNo').onclick=closeSub;return;}
 plnNewRec(d,k);}
 function plnGoOld(d,k){const x=((state.plans||{})[d]||{})[k];if(!x||x.done)return;const T=todayStr(),s=x.hh||(d===T?plnNow():'12:00'),ek='e'+Date.now()+Math.floor(Math.random()*1e4);
 mutate(()=>{state.entries[d]=state.entries[d]||{};state.entries[d][ek]={p:x.pl||'',t:x.t+(x.mo?'\n'+x.mo:''),ph:[],s,ts:Date.now(),mn:1,mt:'s',pln:1};x.done=true;x.rk=ek;x.ts=Date.now();});plnAfter();
 undoBar('✓ '+s+' '+x.t+' を記録にした（終わりは後で）',()=>{mutate(()=>{const en=(state.entries[d]||{})[ek];if(en)en.del=1;x.done=false;delete x.rk;x.ts=Date.now();});plnAfter();},{d,k:ek});}
 function plnMove(d,k,how){const x=((state.plans||{})[d]||{})[k];if(!x)return;const T=todayStr(),nd=how==='today'?T:addDays(d<T?T:d,Number(how)||1);if(nd===d)return;const nk=String(Date.now())+Math.floor(Math.random()*1e4),old=JSON.parse(JSON.stringify(x));
-mutate(()=>{state.plans[d][k]={del:1,ts:Date.now()};state.plans[nd]=state.plans[nd]||{};state.plans[nd][nk]=Object.assign({},old,{mv:(old.mv||0)+1,ts:Date.now()});});plnAfter();
+mutate(()=>{state.plans[d][k]={del:1,ts:Date.now()};state.plans[nd]=state.plans[nd]||{};state.plans[nd][nk]=Object.assign({},old,{mv:(old.mv||0)+1,mh:(old.mh||[]).concat(d),ts:Date.now()});});plnAfter();
 undoBar('→ '+plnDayLb(nd)+' へずらした：'+old.t,()=>{mutate(()=>{state.plans[nd][nk]={del:1,ts:Date.now()};state.plans[d][k]=Object.assign({},old,{ts:Date.now()});});plnAfter();});}
 function plnRemove(d,k){const x=((state.plans||{})[d]||{})[k];if(!x)return;const old=JSON.parse(JSON.stringify(x));mutate(()=>{state.plans[d][k]={del:1,ts:Date.now()};});plnAfter();undoBar('🗑 '+old.t+' を削除した',()=>{mutate(()=>{state.plans[d][k]=Object.assign({},old,{ts:Date.now()});});plnAfter();});}
 function plnBind(root){if(!root)return;const q=root.querySelector('#plnAdd');if(q)q.onclick=()=>openPlanQuick(todayStr());const tg=root.querySelector('#plnDnTg');if(tg)tg.onclick=()=>{plnShowDone=!plnShowDone;plnAfter();};
@@ -5108,8 +5114,8 @@ planAutoSave=()=>{keep();};
 if($('plnCl'))$('plnCl').onclick=()=>{keep();planAutoSave=null;closeSheet();if(plnDraft())toast('下書きを残して閉じた');};
 if($('plnDel'))$('plnDel').onclick=()=>{planAutoSave=null;closeSheet();plnRemove(d0,id);};
 $('plnSv').onclick=()=>{const c=cur();if(!c.t){toast('②「何」だけは入れてくれ');$('plnT').focus();return;}planAutoSave=null;
-const nu={t:c.t,hh:c.s||null,pl:c.p,mm:(c.s&&c.e)?(durMin(c.s,c.e,0)||null):null,e:c.e||null,done:!!(ex&&ex.done),ts:Date.now()};if(ex&&ex.mv)nu.mv=ex.mv;if(ex&&ex.rk)nu.rk=ex.rk;['ad','tel','who','mo'].forEach(f=>{if(c[f])nu[f]=c[f];});
-if(ex){if(c.d===d0)mutate(()=>{state.plans[d0][id]=nu;});else{if(c.d>d0)nu.mv=(ex.mv||0)+1;const nk=String(Date.now())+Math.floor(Math.random()*1e4);mutate(()=>{state.plans[d0][id]={del:1,ts:Date.now()};state.plans[c.d]=state.plans[c.d]||{};state.plans[c.d][nk]=nu;});}closeSheet();plnAfter();toast(c.d>d0?('→ '+plnDayLb(c.d)+' へずらした（↻'+nu.mv+'回）'):'💾 なおした');}
+const nu={t:c.t,hh:c.s||null,pl:c.p,mm:(c.s&&c.e)?(durMin(c.s,c.e,0)||null):null,e:c.e||null,done:!!(ex&&ex.done),ts:Date.now()};if(ex&&ex.mv)nu.mv=ex.mv;if(ex&&ex.mh)nu.mh=ex.mh;if(ex&&ex.rk)nu.rk=ex.rk;if(ex&&ex.lk)nu.lk=ex.lk;['ad','tel','who','mo'].forEach(f=>{if(c[f])nu[f]=c[f];});
+if(ex){if(c.d===d0)mutate(()=>{state.plans[d0][id]=nu;});else{if(c.d>d0){nu.mv=(ex.mv||0)+1;nu.mh=(ex.mh||[]).concat(d0);}const nk=String(Date.now())+Math.floor(Math.random()*1e4);mutate(()=>{state.plans[d0][id]={del:1,ts:Date.now()};state.plans[c.d]=state.plans[c.d]||{};state.plans[c.d][nk]=nu;});}closeSheet();plnAfter();toast(c.d>d0?('→ '+plnDayLb(c.d)+' へずらした（↻'+nu.mv+'回）'):'💾 なおした');}
 else{const nk=String(Date.now())+Math.floor(Math.random()*1e4);mutate(()=>{state.plans[c.d]=state.plans[c.d]||{};state.plans[c.d][nk]=nu;});plnDraft(null);closeSheet();plnAfter();undoBar('📅 '+plnDayLb(c.d)+' '+(c.s||'時間未定')+' '+c.t+' を入れた',()=>{mutate(()=>{state.plans[c.d][nk]={del:1,ts:Date.now()};});plnAfter();});}};
 setTimeout(()=>{try{$('plnT').focus();}catch(e){}},60);}
 function openPlanSheet(d,id){
@@ -11140,7 +11146,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c26.8";
+const CL_APPVER="c26.9";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
