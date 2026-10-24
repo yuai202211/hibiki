@@ -2923,6 +2923,7 @@ state.updatedAt=Date.now();
  }
 try{await idbOpen();await idbLoadAll(state);}catch(e){}
 attachPhotos(state);
+try{const M=state.msx||{},lim=addDays(todayStr(),-400),lim2=Date.now()-60*864e5;let n=0;for(const k in M){const a=k.split('|');if((/^\d{4}-\d\d-\d\d$/.test(a[1]||'')&&a[1]<lim)||(M[k]&&M[k].del&&(M[k].ts||0)<lim2)){delete M[k];n++;}}if(n){state.updatedAt=Date.now();saveLocal(false);}}catch(e){}
 try{
 const escRaw=sessionStorage.getItem('nippo10-esc');
 if(escRaw){
@@ -3774,58 +3775,71 @@ actsHtml(en)+
  }
  }
 let gEnd=0,gCarry=null;{const td=ui.date;for(let back=1;back<=7;back++){const pe=entriesOf(addDays(td,-back));for(const k in pe){const en=pe[k];if(en&&en.ed&&en.ed>=back&&en.e&&!en.noT){const v=en.ed>back?1440:hmMin(en.e);if(v>gEnd||(v===gEnd&&!gCarry)){gCarry=en.ed===back?en:null;}gEnd=Math.max(gEnd,v);}}}}
-const nowM=isToday?(new Date().getHours()*60+new Date().getMinutes()):1440;
+const nowM=isToday?(new Date().getHours()*60+new Date().getMinutes()):(ui.date>todayStr()?-1:1440);
 const sgW=s=>s?'<b hidden data-sg="1"></b>'+s+'<b hidden data-sg="0"></b>':'';
-const gapRow=(a,b,P,N)=>{if(b-a<30)return '';const hm=m=>pad(Math.floor(m/60)%24)+':'+pad(m%60),s=hm(a),e=hm(Math.min(b,1439)),ge=(b>=1440?'23:59':hm(b)),gk='gp|'+ui.date+'|'+s+'|'+ge;if(sugNo(gk))return '';
+const gapRow=(a,b,P,N,live)=>{if(b-a<30)return '';const hm=m=>pad(Math.floor(m/60)%24)+':'+pad(m%60),s=hm(a),e=hm(Math.min(b,1439)),ge=(b>=1440?'23:59':hm(b)),gk='gp|'+ui.date+'|'+s+'|'+(live?'now':ge);if(sugNo(gk))return '';
+try{if(ui.date<=todayStr()&&plnOpen(ui.date).some(o=>{const x=o.x;if(!x.hh)return false;if(ui.date===todayStr()&&x.hh>plnNow())return false;const t=hmMin(x.hh);return t>=a&&t<b&&!sugNo('pl|'+ui.date+'|'+o.k+'|none');}))return '';}catch(e){}
 const fr=(P&&!P.mv&&P.p)?P.p:'',to=N?(N.mv?String(N.rt||'').split('→')[0].trim():(N.p||'')):'',mv=!!(fr&&to&&placeKey(fr)!==placeKey(to));
-return '<div class="hour gap mvsug gpsug"><span class="hh">⬜</span><div class="body"><span class="gp-l">'+s+'–'+(b>=1440?'24:00':hm(b))+'（'+esc(durText(b-a))+'）、何してた？</span>'+(mv?'<span class="ms-rt">'+esc(fr||'？')+' → '+esc(to||'？')+'</span>':'')+
-'<span class="ms-ac">'+(mv?'<button class="ms-ok" data-mss="'+s+'" data-mse="'+ge+'" data-msf="'+esc(fr)+'" data-mst="'+esc(to)+'" data-mspf0="'+esc(String((P&&P.pf)||''))+'" data-mspf="'+esc(String((N&&(N.mv?N.pf0:N.pf))||''))+'">🚗 移動した</button>':'')+'<button class="ms-no" data-gs="'+s+'" data-ge="'+ge+'">✎ ほかの事</button><button class="ms-no" data-msno="'+esc(gk)+'">✕ 何もしてない</button></span></div></div>';};
+return sgW('<div class="hour gap mvsug gpsug"><span class="hh">⬜</span><div class="body"><span class="gp-l">'+s+'–'+(b>=1440?'24:00':hm(b))+'（'+esc(durText(b-a))+'）、何してた？</span>'+(mv?'<span class="ms-rt">'+esc(fr||'？')+' → '+esc(to||'？')+'</span>':'')+
+'<span class="ms-ac">'+(mv?'<button class="ms-ok" data-mss="'+s+'" data-mse="'+ge+'" data-msf="'+esc(fr)+'" data-mst="'+esc(to)+'" data-mspf0="'+esc(String((P&&P.pf)||''))+'" data-mspf="'+esc(String((N&&(N.mv?N.pf0:N.pf))||''))+'">🚗 移動した</button>':'')+'<button class="ms-no" data-gs="'+s+'" data-ge="'+ge+'">✎ ほかの事</button><button class="ms-no" data-msno="'+esc(gk)+'">✕ 何もしてない</button></span></div></div>');};
 const mvSugKey=(s,e,P,N)=>'mv|'+ui.date+'|'+s+'|'+e+'|'+P.p+'|'+N.p;
 const arRow=(M,mk,N)=>{const k='ar|'+ui.date+'|'+mk+'|'+N.s;if(sugNo(k))return '';
 return '<div class="hour gap mvsug arsug"><span class="hh">🏁</span><div class="body"><span class="gp-l">到着していた？ '+esc(M.s)+'–'+esc(N.s)+'（'+esc(durText(durMin(M.s,N.s,N.s<M.s?1:0)))+'）</span><span class="ms-rt">'+esc(N.p||'次の記録')+' に着いた</span><span class="ms-ac"><button class="ms-ok ar-ok" data-ark="'+esc(mk)+'" data-ars="'+esc(N.s)+'" data-arp="'+esc(N.p||'')+'">✓ 入れる</button><button class="ms-no" data-msno="'+esc(k)+'">✕ 入れない</button></span></div></div>';};
 const mvHasDest=rt=>{const p=String(rt||'').split('→').map(x=>x.trim());return p.length>=2&&!!p[p.length-1];};
 const dsRow=(M,mk,N)=>{const k='ds|'+ui.date+'|'+mk;if(sugNo(k))return '';
 return '<div class="hour gap mvsug arsug"><span class="hh">🏁</span><div class="body"><span class="gp-l">行き先は ここ？ '+esc(M.s)+'–'+esc(M.e)+'</span><span class="ms-rt">'+esc(M.rt||'移動')+' → <b>'+esc(N.p)+'</b></span><span class="ms-ac"><button class="ms-ok ds-ok" data-dsk="'+esc(mk)+'" data-dsp="'+esc(N.p)+'" data-dspf="'+esc(String(N.pf||''))+'">✓ 入れる</button><button class="ms-no" data-msno="'+esc(k)+'">✕ 入れない</button></span></div></div>';};
-const mvSugRow=(a,b,P,N,X)=>{const hm=m=>pad(Math.floor(m/60)%24)+':'+pad(m%60);let pre='',how='';
+const mvSugRow=(a,b,P,N,X)=>{const hm=m=>pad(Math.floor(m/60)%24)+':'+pad(m%60),a0=a;let pre='',how='';
 {const L=mvLearn(),pm=L.pair(P.p,N.p),g=X?X.dur:(b-a);if(pm?g>pm+30:g>60)return askRow(a,b,P,N,X,g,pm,L);}
 if(!X){const L=mvLearn(),pm=L.pair(P.p,N.p),g=b-a;let m=0;if(pm&&pm<g){m=pm;how='いつも約'+durText(pm);}else if(!pm&&g>90){m=L.all;how='時間は目安';}
 if(m>0&&m<g){pre=gapRow(a,b-m);a=b-m;}}
 const s=X?X.s:hm(a),e=X?X.e:hm(b),tr=mvGuessTr(X?X.d:ui.date,s),dur=X?X.dur:(b-a),xd=X?' data-msd="'+esc(X.d)+'" data-msed="1"':'',fk=(!X&&!P.e&&P._k)?' data-msfk="'+esc(P._k)+'"':'';
 return pre+sgW('<div class="hour gap mvsug"><span class="hh">🚗</span><div class="body"><span class="gp-l">移動していた？ '+s+'–'+e+'（'+esc(durText(dur))+(how?'・'+how:'')+'）</span><span class="ms-rt">'+esc(P.p)+' → '+esc(N.p)+'</span><span class="ms-ac"><select class="ms-tr" aria-label="移動手段">'+TRS.map(x=>'<option value="'+esc(x[0])+'"'+(x[0]===tr?' selected':'')+'>'+esc(x[1])+'</option>').join('')+'</select>'+
-'<button class="ms-ok"'+xd+fk+' data-mss="'+s+'" data-mse="'+e+'" data-msf="'+esc(P.p)+'" data-mst="'+esc(N.p)+'" data-mspf0="'+esc(String(P.pf||''))+'" data-mspf="'+esc(String(N.pf||''))+'">✓ 入れる</button><button class="ms-no" data-msno="'+esc(mvSugKey(s,e,P,N))+'">✕ 入れない</button>'+(dur>=30&&!X?'<button class="gp-q" data-gs="'+s+'" data-ge="'+e+'">何してた？ ＋</button>':'')+'</span></div></div>');};
-const askRow=(a,b,P,N,X,g,pm,L)=>{const hm=m=>pad(Math.floor(((m%1440)+1440)%1440/60))+':'+pad(((m%1440)+1440)%1440%60),D0=X?X.d:ui.date,t0=X?hmMin(X.s):a,t1=X?1440+hmMin(X.e):b;
+'<button class="ms-ok"'+xd+fk+' data-mss="'+s+'" data-mse="'+e+'" data-msf="'+esc(P.p)+'" data-mst="'+esc(N.p)+'" data-mspf0="'+esc(String(P.pf||''))+'" data-mspf="'+esc(String(N.pf||''))+'">✓ 入れる</button><button class="ms-no" data-msno="'+esc(mvSugKey(X?X.s:hm(a0),e,P,N))+'">✕ 入れない</button>'+(dur>=30&&!X?'<button class="gp-q" data-gs="'+s+'" data-ge="'+e+'">何してた？ ＋</button>':'')+'</span></div></div>');};
+const askRow=(a,b,P,N,X,g,pm,L,rtp)=>{const hm=m=>pad(Math.floor(((m%1440)+1440)%1440/60))+':'+pad(((m%1440)+1440)%1440%60),D0=X?X.d:ui.date,t0=X?hmMin(X.s):a,t1=X?1440+hmMin(X.e):b;
 const m=Math.max(1,Math.min(g,pm||L.all)),ms=t1-m,dOf=t=>t>=1440?addDays(D0,1):D0,sd=dOf(ms),s=X?X.s:hm(a),e=X?X.e:hm(b),sk=mvSugKey(s,e,P,N),tr=mvGuessTr(D0,s),fk=(!X&&!P.e&&P._k)?' data-msfk="'+esc(P._k)+'"':'';
 const A=askSt[sk];
-return sgW('<div class="hour gap mvsug asksug" data-ak="'+esc(sk)+'" data-akd0="'+esc(D0)+'" data-akt0="'+t0+'" data-akt1="'+t1+'" data-akp="'+esc(P.p)+'" data-akn="'+esc(N.p)+'" data-akpf0="'+esc(String(P.pf||''))+'" data-akpf="'+esc(String(N.pf||''))+'"'+(fk?' data-akpk="'+esc(P._k)+'"':'')+'><span class="hh">🚗</span><div class="body"><span class="gp-l">この間どうしてた？ '+s+' → '+(X?'翌':'')+e+'（'+esc(durText(g))+'）</span><span class="ms-rt">'+esc(P.p)+' → '+esc(N.p)+'</span>'+
+return sgW('<div class="hour gap mvsug asksug" data-ak="'+esc(sk)+'" data-akd0="'+esc(D0)+'" data-akt0="'+t0+'" data-akt1="'+t1+'" data-akp="'+esc(P.p)+'" data-akn="'+esc(N.p)+'" data-akpf0="'+esc(String(P.pf||''))+'" data-akpf="'+esc(String(N.pf||''))+'"'+(fk?' data-akpk="'+esc(P._k)+'"':'')+'><span class="hh">🚗</span><div class="body"><span class="gp-l">'+(rtp?'出かけていた？ ':'この間どうしてた？ ')+s+' → '+(X?'翌':'')+e+'（'+esc(durText(g))+'）</span><span class="ms-rt">'+esc(P.p)+' → '+esc(N.p)+'</span>'+
 '<span class="ms-ac"><select class="ms-tr" aria-label="移動手段">'+TRS.map(x=>'<option value="'+esc(x[0])+'"'+(x[0]===tr?' selected':'')+'>'+esc(x[1])+'</option>').join('')+'</select></span>'+
-'<span class="ms-ac ak-btns"><button class="ms-ok" data-msd="'+esc(sd)+'"'+(sd!==dOf(t1)?' data-msed="1"':'')+fk+' data-mss="'+hm(ms)+'" data-mse="'+hm(t1)+'" data-msf="'+esc(P.p)+'" data-mst="'+esc(N.p)+'" data-mspf0="'+esc(String(P.pf||''))+'" data-mspf="'+esc(String(N.pf||''))+'">🚗 まっすぐ移動<small>'+(pm?'いつも約':'目安 ')+esc(durText(m))+'</small></button><button class="ak-yori'+(A&&A.open?' on':'')+'">📍 寄り道した</button><button class="ms-no" data-msno="'+esc(sk)+'">✕ 入れない</button></span>'+
+'<span class="ms-ac ak-btns">'+(rtp?'':'<button class="ms-ok" data-msd="'+esc(sd)+'"'+(sd!==dOf(t1)?' data-msed="1"':'')+fk+' data-mss="'+hm(ms)+'" data-mse="'+hm(t1)+'" data-msf="'+esc(P.p)+'" data-mst="'+esc(N.p)+'" data-mspf0="'+esc(String(P.pf||''))+'" data-mspf="'+esc(String(N.pf||''))+'">🚗 まっすぐ移動<small>'+(pm?'いつも約':'目安 ')+esc(durText(m))+'</small></button>')+'<button class="ak-yori'+(A&&A.open?' on':'')+'">📍 寄り道した</button><button class="ms-no" data-msno="'+esc(sk)+'">✕ 入れない</button></span>'+
 '<div class="ak-edw"></div></div></div>');};
-const gPl=x=>!!(x&&!x.mv&&x.p&&!x.noT&&x.s);let gPrev=(gCarry&&gPl(gCarry))?gCarry:null,gOE=[];
+const gPl=x=>!!(x&&!x.mv&&x.p&&!x.noT&&x.s);let gPrev=(gCarry&&gPl(gCarry))?gCarry:null,gOE=[],gMv=null;
 const dayS=(()=>{const eo=entriesOf(ui.date),o=[];for(const k in eo){const x=eo[k];if(x&&!x.del&&!x.noT&&x.s){o.push(hmMin(x.s));if(!x.e&&!x._k)try{Object.defineProperty(x,'_k',{value:k,enumerable:false,configurable:true});}catch(e){}}}return o;})();
-let xPrev=null,xPrevK=null;try{const pe=entriesOf(addDays(ui.date,-1));let best=null,bestK=null;for(const k in pe){const en=pe[k];if(gPl(en)&&en.e&&!en.ed&&en.e>en.s&&(!best||en.e>best.e)){best=en;bestK=k;}}if(best){for(const k in pe){const en=pe[k];if(en&&!en.del&&!en.noT&&en.s&&(en.s>best.e||(en.ed&&en.s>=best.e))){best=null;break;}}}xPrev=best;xPrevK=best?bestK:null;}catch(e){}
-let xDone=false,xoDone=false,xOpen=null;try{const pd=addDays(ui.date,-1),pe=entriesOf(pd);let lk=null;for(const k in pe){const x=pe[k];if(x&&!x.del&&!x.noT&&x.s&&(!lk||x.s>pe[lk].s||(x.s===pe[lk].s&&!x.e&&!x.mv&&pe[lk].e)))lk=k;}if(lk&&!pe[lk].e&&!pe[lk].mv)xOpen={d:pd,k:lk,x:pe[lk]};}catch(e){}
+let xPrev=null,xPrevK=null;try{const pe=entriesOf(addDays(ui.date,-1));let best=null,bestK=null;for(const k in pe){const en=pe[k];if(gPl(en)&&en.e&&!en.ed&&en.e>en.s&&(!best||en.e>best.e)){best=en;bestK=k;}}if(best){for(const k in pe){const en=pe[k];if(k!==bestK&&en&&!en.del&&!en.noT&&en.s&&(en.s>=best.e||en.ed||(en.e&&en.e>best.e))){best=null;break;}}}xPrev=best;xPrevK=best?bestK:null;
+if(!best){let m=null,mk=null;for(const k in pe){const x=pe[k];if(x&&!x.del&&x.mv&&x.e&&!x.ed&&!x.noT&&x.s&&mvHasDest(x.rt)&&(!m||x.e>m.e)){m=x;mk=k;}}if(m&&!Object.values(pe).some(x=>x&&x!==m&&!x.del&&!x.noT&&x.s&&(x.s>=m.e||x.ed))){xPrev={p:String(m.rt).split('→').pop().trim(),pf:m.pf,s:m.e,e:m.e};xPrevK=null;}}}catch(e){}
+let xDone=false,xoDone=false,xOpen=null;try{const pd=addDays(ui.date,-1),pe=entriesOf(pd);let lk=null;for(const k in pe){const x=pe[k];if(x&&!x.del&&!x.noT&&x.s&&(!lk||x.s>pe[lk].s||(x.s===pe[lk].s&&!x.e&&!x.mv&&pe[lk].e)))lk=k;}if(lk&&!pe[lk].e&&ui.date<=todayStr())xOpen={d:pd,k:lk,x:pe[lk]};}catch(e){}
 const oeMid=(s,e)=>{const a=hmMin(s),b=e?hmMin(e):a+60;let m=Math.round(((a+Math.max(10,Math.min(b-a,600)/2))%1440)/10)*10;if(e&&m>b)m=b;return pad(Math.floor(m/60)%24)+':'+pad(m%60);};
-const oePick=(k,s,nx,d)=>'<span class="ms-ac oe-pick"><input type="time" class="oe-tm" step="300" lang="ja-JP" value="'+esc(oeMid(s,nx))+'" aria-label="終わった時刻"><button class="ms-no oe-tok" data-oek="'+esc(k)+'"'+(nx?' data-oen="'+esc(nx)+'"':'')+(d?' data-oed="'+esc(d)+'"':'')+'>✓ この時刻で終わり</button></span>';
-const oeRow=(P,N)=>{const ic=(kindOf(P.k)||{}).ic||'📍',nm=P.p||((kindOf(P.k)||{}).lb)||'記録';
-return '<div class="hour gap mvsug oesug"><span class="hh">⚠️</span><div class="body"><span class="gp-l">'+esc(ic)+' '+esc(nm)+'（'+esc(P.s)+'〜）、何時に終わった？</span><span class="ms-rt">次は '+esc(N.s)+' '+esc(N.p||((kindOf(N.k)||{}).lb)||'')+'</span><span class="ms-ac"><button class="ms-ok oe-ok" data-oek="'+esc(P._k)+'" data-oee="'+esc(N.s)+'">✓ '+esc(N.s)+' まで居た</button></span>'+oePick(P._k,P.s,N.s)+'</div></div>';};
-const gapBefore=en=>{if(!en||en.noT||!en.s)return;let oeHit=false;if(!xoDone&&xOpen){xoDone=true;oeHit=true;const L=xOpen.x,ic=(kindOf(L.k)||{}).ic||'📍',nm=L.p||((kindOf(L.k)||{}).lb)||'記録';html+=sgW('<div class="hour gap mvsug oesug"><span class="hh">⚠️</span><div class="body"><span class="gp-l">前の日の終わりが入っていない</span><span class="ms-rt">'+esc(ic)+' '+esc(nm)+' 前日 '+esc(L.s)+'〜 ？ → 今日は '+esc(en.s)+' から記録あり</span><span class="ms-ac"><button class="ms-ok oe-ed" data-oed="'+esc(xOpen.d)+'" data-oek="'+esc(xOpen.k)+'">✎ 終わりの時刻を入れる</button></span></div></div>');}if(gOE.length){const oeN=gOE.filter(P=>en.s>P.s);if(oeN.length){oeHit=true;oeN.forEach(P=>{html+=sgW(oeRow(P,en));});gOE=gOE.filter(P=>!(en.s>P.s));}}const a=hmMin(en.s),arC=!!(gPrev&&gPrev.mv&&!gPrev.e&&gPrev.s&&!gPrev.noT&&(en.p||en.k==='incar')&&!en.mv&&TEL_KS.indexOf(en.k)<0&&en.k!=='spplay'&&a>hmMin(gPrev.s));
-if(!gPrev&&!xDone&&xPrev&&xPrevK&&a<=nowM){const org=en.mv?String(en.rt||'').split('→')[0].trim():(gPl(en)?en.p:'');const g=(1440-hmMin(xPrev.e))+a;
+const oePick=(k,s,nx,d,dv,nxd)=>'<span class="ms-ac oe-pick"><input type="time" class="oe-tm" step="300" lang="ja-JP" value="'+esc(dv||oeMid(s,nx))+'" aria-label="終わった時刻"><button class="ms-no oe-tok" data-oek="'+esc(k)+'"'+(nx?' data-oen="'+esc(nx)+'"':'')+(d?' data-oed="'+esc(d)+'"':'')+(nxd?' data-oenx="'+esc(nxd)+'"':'')+'>✓ この時刻で終わり</button></span>';
+const oeRow=(P,N)=>{const ic=(kindOf(P.k)||{}).ic||'📍',nm=P.p||((kindOf(P.k)||{}).lb)||'記録',hm=x=>pad(Math.floor(x/60)%24)+':'+pad(x%60);
+const nP=N.mv?String(N.rt||'').split('→')[0].trim():(gPl(N)?N.p:''),dif=!!(gPl(P)&&nP&&placeKey(P.p)!==placeKey(nP));let ok,dv='';
+if(dif){const L=mvLearn(),pm=L.pair(P.p,nP)||L.all||15,sp=hmMin(N.s)-hmMin(P.s),m=Math.max(3,Math.min(pm,sp-5)),st=hmMin(N.s)-m;dv=hm(st);
+ok='<button class="ms-ok" data-msfk="'+esc(P._k)+'" data-mss="'+dv+'" data-mse="'+esc(N.s)+'" data-msf="'+esc(P.p)+'" data-mst="'+esc(nP)+'" data-mspf0="'+esc(String(P.pf||''))+'" data-mspf="'+esc(String((N.mv?N.pf0:N.pf)||''))+'" data-mstr="'+esc(mvGuessTr(ui.date,dv))+'">🚗 '+dv+' に出て移動した<small>'+(L.pair(P.p,nP)?'いつも約':'目安 ')+esc(durText(m))+'</small></button>';}
+else ok='<button class="ms-ok oe-ok" data-oek="'+esc(P._k)+'" data-oee="'+esc(N.s)+'">✓ '+esc(N.s)+' まで居た</button>';
+return '<div class="hour gap mvsug oesug"><span class="hh">⚠️</span><div class="body"><span class="gp-l">'+esc(ic)+' '+esc(nm)+'（'+esc(P.s)+'〜）、何時に終わった？</span><span class="ms-rt">次は '+esc(N.s)+' '+esc(N.mv?('🚗 '+String(N.rt||'')):(N.p||((kindOf(N.k)||{}).lb)||''))+'</span><span class="ms-ac">'+ok+'</span>'+oePick(P._k,P.s,N.s,'',dv)+'</div></div>';};
+const gapBefore=en=>{if(!en||en.noT||!en.s)return;let oeHit=false;if(!xoDone&&xOpen){xoDone=true;oeHit=true;const L=xOpen.x,ic=(kindOf(L.k)||{}).ic||'📍',nm=L.p||((kindOf(L.k)||{}).lb)||'記録';html+=sgW('<div class="hour gap mvsug oesug"><span class="hh">'+(L.mv?'🏁':'⚠️')+'</span><div class="body"><span class="gp-l">'+(L.mv?(esc(TRICON[L.tr]||'🚗')+' '+esc(L.rt||'移動')+'（前日 '+esc(L.s)+'〜）、何時に着いた？'):(esc(ic)+' '+esc(nm)+'（前日 '+esc(L.s)+'〜）、何時に終わった？'))+'</span><span class="ms-rt">前の日の最後の記録。今日は '+esc(en.s)+' から記録あり</span>'+oePick(xOpen.k,L.s,'',xOpen.d,'',en.s)+'<span class="ms-ac"><button class="ms-no oe-ed" data-oed="'+esc(xOpen.d)+'" data-oek="'+esc(xOpen.k)+'">✎ 記録を開く</button></span></div></div>');}
+const a=hmMin(en.s),nest=!!(en.rl||(!en.mv&&en.k!=='sleep'&&en.k!=='incar'&&(TEL_KS.indexOf(en.k)>=0||en.k==='spplay'||en.k==='spwork'||!en.p)));
+if(gOE.length){const oeN=gOE.filter(P=>en.s>P.s);if(oeN.length){oeHit=true;const nst=nest||oeN.some(P=>!en.mv&&en.p&&P.p&&placeKey(en.p)===placeKey(P.p));if(!nst){oeN.forEach(P=>{html+=sgW(oeRow(P,en));});gOE=gOE.filter(P=>!(en.s>P.s));}}}
+const M=(gPrev&&gPrev.mv&&!gPrev.e&&gPrev.s&&!gPrev.noT)?gPrev:gMv,arC=!!(M&&!nest&&(en.p||en.k==='incar')&&!en.mv&&a>hmMin(M.s));
+if(!gPrev&&!xDone&&!oeHit&&xPrev&&xPrevK&&a<=nowM){const org=en.mv?String(en.rt||'').split('→')[0].trim():(gPl(en)?en.p:'');const g=(1440-hmMin(xPrev.e))+a;
 if(org&&placeKey(org)===placeKey(xPrev.p)&&g>=3){const pd=addDays(ui.date,-1),sk='st|'+ui.date+'|'+xPrev.e+'|'+en.s+'|'+xPrev.p;if(!sugNo(sk)){html+=sgW('<div class="hour gap mvsug stsug"><span class="hh">🌙</span><div class="body"><span class="gp-l">まだ '+esc(xPrev.p)+' にいた？ 前日'+esc(xPrev.e)+' → '+esc(en.s)+'（'+esc(durText(g))+'）</span><span class="ms-rt">'+esc(xPrev.p)+'（前の日の最後）→ '+esc(en.mv?('🚗 '+String(en.rt||'')):('📍 '+(en.p||'')))+'</span><span class="ms-ac"><button class="ms-ok st-ok" data-std="'+esc(pd)+'" data-stk="'+esc(xPrevK)+'" data-ste="'+esc(en.s)+'">✓ いた（終わりを '+esc(en.s)+' に）</button><button class="ms-no" data-msno="'+esc(sk)+'">✕ 入れない</button></span></div></div>');xDone=true;}}
 else if(en.mv&&org&&g>=3){const N2={p:org,pf:en.pf0,s:en.s},hm0=m=>pad(Math.floor(m/60)%24)+':'+pad(m%60);if(!sugNo(mvSugKey(xPrev.e,hm0(a),xPrev,N2))){html+=mvSugRow(0,a,xPrev,N2,{s:xPrev.e,e:hm0(a),dur:g,d:addDays(ui.date,-1)});xDone=true;}}}
-if(!gPrev&&!xDone&&xPrev&&gPl(en)&&placeKey(xPrev.p)!==placeKey(en.p)&&a<=nowM){const g=(1440-hmMin(xPrev.e))+a,hm0=m=>pad(Math.floor(m/60)%24)+':'+pad(m%60);if(g>=3&&!sugNo(mvSugKey(xPrev.e,hm0(a),xPrev,en))){html+=mvSugRow(0,a,xPrev,en,{s:xPrev.e,e:hm0(a),dur:g,d:addDays(ui.date,-1)});xDone=true;}}
-if(a>gEnd&&a<=nowM&&!arC&&!oeHit&&!(xDone&&!gPrev)){const g=a-gEnd,hm=m=>pad(Math.floor(m/60)%24)+':'+pad(m%60);const mvC=gPl(gPrev)&&gPl(en)&&placeKey(gPrev.p)!==placeKey(en.p)&&g>=3&&gEnd<1440,mvNo=mvC&&sugNo(mvSugKey(hm(gEnd),hm(a),gPrev,en));if(mvC&&!mvNo)html+=mvSugRow(gEnd,a,gPrev,en);else html+=mvNo?gapRow(gEnd,a):gapRow(gEnd,a,gPrev,en);}
-if(arC){const eo=entriesOf(ui.date),mk=Object.keys(eo).find(k=>eo[k]===gPrev);if(mk)html+=sgW(arRow(gPrev,mk,en));}
-{const dsC=!!(gPrev&&gPrev.mv&&gPrev.e&&!gPrev.noT&&gPrev.s&&!mvHasDest(gPrev.rt)&&en.p&&!en.mv&&TEL_KS.indexOf(en.k)<0&&en.k!=='spplay');if(dsC){const eo=entriesOf(ui.date),mk=Object.keys(eo).find(k=>eo[k]===gPrev);if(mk)html+=sgW(dsRow(gPrev,mk,en));}}
-gPrev=en;if(!en.mv&&!en.e&&en.s&&!en.noT&&en._k)gOE.push(en);const e=en.e?(en.ed?1440:hmMin(en.e)):((isToday&&!en.pe&&!dayS.some(m=>m>a))?nowM:a);gEnd=Math.max(gEnd,e<a?1440:e);};
+if(!gPrev&&!xDone&&!oeHit&&xPrev&&gPl(en)&&placeKey(xPrev.p)!==placeKey(en.p)&&a<=nowM){const g=(1440-hmMin(xPrev.e))+a,hm0=m=>pad(Math.floor(m/60)%24)+':'+pad(m%60);if(g>=3&&!sugNo(mvSugKey(xPrev.e,hm0(a),xPrev,en))){html+=mvSugRow(0,a,xPrev,en,{s:xPrev.e,e:hm0(a),dur:g,d:addDays(ui.date,-1)});xDone=true;}}
+{const dsC=!!(gPrev&&gPrev.mv&&gPrev.e&&!gPrev.noT&&gPrev.s&&!mvHasDest(gPrev.rt)&&en.p&&!en.mv&&!nest);if(dsC){const eo=entriesOf(ui.date),mk=Object.keys(eo).find(k=>eo[k]===gPrev);if(mk)html+=sgW(dsRow(gPrev,mk,en));}}
+if(a>gEnd&&a<=nowM&&!arC&&!oeHit&&!(nest&&M)&&!(xDone&&!gPrev)){const g=a-gEnd,hm=m=>pad(Math.floor(m/60)%24)+':'+pad(m%60);
+const Pv=gPl(gPrev)?gPrev:((gPrev&&gPrev.mv&&gPrev.e&&!gPrev.noT&&mvHasDest(gPrev.rt))?{p:String(gPrev.rt).split('→').pop().trim(),pf:gPrev.pf,s:gPrev.s,e:gPrev.e}:gPrev);
+const NN=en.mv?((o=>o?{p:o,pf:en.pf0,s:en.s}:null)(String(en.rt||'').split('→')[0].trim())):en;
+const mvC=gPl(Pv)&&NN&&gPl(NN)&&placeKey(Pv.p)!==placeKey(NN.p)&&g>=3&&gEnd<1440,mvNo=mvC&&sugNo(mvSugKey(hm(gEnd),hm(a),Pv,NN)),same=!mvC&&gPl(Pv)&&NN&&gPl(NN)&&placeKey(Pv.p)===placeKey(NN.p)&&g>=60&&gEnd<1440&&!sugNo(mvSugKey(hm(gEnd),hm(a),Pv,NN));
+if(mvC&&!mvNo)html+=mvSugRow(gEnd,a,Pv,NN);else if(same)html+=askRow(gEnd,a,Pv,NN,null,g,0,mvLearn(),1);else html+=mvNo?gapRow(gEnd,a):gapRow(gEnd,a,Pv,en);}
+if(arC){const eo=entriesOf(ui.date),mk=Object.keys(eo).find(k=>eo[k]===M);if(mk)html+=sgW(arRow(M,mk,en));}
+if(en.mv)gMv=en.e?null:en;else if(arC)gMv=null;if(!nest)gPrev=en;if(!en.mv&&!en.e&&en.s&&!en.noT&&en._k)gOE.push(en);const e=en.e?(en.ed?1440:hmMin(en.e)):((isToday&&!en.pe&&!dayS.some(m=>m>a))?nowM:a);gEnd=Math.max(gEnd,e<a?1440:e);};
 const flushRun=()=>{run=[];};
 const SGM={};try{const byT={};list.forEach(z=>{const x=z.en;if(!z.k||z.rl||!x||x.del||x.noT||!x.s)return;const t=String(x.sg||x.ts||'');if(!t)return;(byT[t]=byT[t]||[]).push(z);});
-for(const t in byT){const L=byT[t].sort((a,b)=>a.en.s<b.en.s?-1:a.en.s>b.en.s?1:0);if(L.length<3||!L[0].en.mv||!L[L.length-1].en.mv)continue;const mid=L.slice(1,-1);if(!mid.every(z=>!z.en.mv&&z.en.k==='incar'&&!z.en.p))continue;
+for(const t in byT){const L=byT[t].sort((a,b)=>a.en.s<b.en.s?-1:a.en.s>b.en.s?1:0);if(L.length<3||!L[0].en.mv||!L[L.length-1].en.mv)continue;const mid=L.slice(1,-1);if(!mid.every((z,i)=>i%2===0?(!z.en.mv&&z.en.k==='incar'&&!z.en.p):!!z.en.mv))continue;
 let ok=true;for(let i=0;i+1<L.length;i++){if(!L[i].en.e||L[i].en.e!==L[i+1].en.s){ok=false;break;}}if(!ok)continue;
 const A=L.map(z=>z.en),h0=A[0],ls=A[A.length-1],hp=String(h0.rt||'').split('→').map(x=>x.trim()).filter(Boolean),dst=(String(ls.rt||'').split('→')[1]||'').trim();
-const tt=A.map(x=>String(x.t||'').trim()).filter(Boolean).join('\n'),ph=[].concat(...A.map(x=>x.ph||[])),seen={},acts=[];[h0,ls].forEach(x=>(x.acts||[]).forEach(a=>{const j=JSON.stringify(a);if(!seen[j]){seen[j]=1;acts.push(a);}}));
+const tt=[h0,ls].map(x=>String(x.t||'').trim()).filter(Boolean).join('\n'),ph=[].concat(h0.ph||[],ls.ph||[]),seen={},acts=[];[h0,ls].forEach(x=>(x.acts||[]).forEach(a=>{const j=JSON.stringify(a);if(!seen[j]){seen[j]=1;acts.push(a);}}));
 const v=Object.assign({},h0,{e:ls.e||'',ed:ls.ed,rt:(hp.length?hp.join(' → '):'？')+(dst?' → '+dst:' → ？'),tr:ls.tr||h0.tr,t:tt,ph,acts,pf:ls.pf||h0.pf});if(!v.ed)delete v.ed;if(A.some(x=>x.md))v.md=1;
-SGM[L[0].k]={v,mid:mid.map(z=>({k:z.k,en:z.en})),rk:ls.e?L[0].k:L[L.length-1].k,hs:L.map(z=>Number(String(z.en.s).slice(0,2)))};L.slice(1).forEach(z=>{SGM[z.k]='skip';});
-if(L.some(z=>!z.en.sg)){const D=ui.date,ks=L.map(z=>z.k);setTimeout(()=>{try{mutate(()=>{const E=(state.entries||{})[D]||{};ks.forEach(k=>{const x=E[k];if(x&&!x.del&&!x.sg){x.sg=ks[0];x.ts=Date.now();}});});}catch(e){}},0);}}}catch(e){}
+SGM[L[0].k]={v,mid:mid.filter(z=>!z.en.mv).map(z=>({k:z.k,en:z.en})),rk:ls.e?L[0].k:L[L.length-1].k,hs:L.map(z=>Number(String(z.en.s).slice(0,2)))};L.slice(1).forEach(z=>{SGM[z.k]='skip';});
+if(L.some(z=>!z.en.sg)){const D=ui.date,ks=L.map(z=>z.k);setTimeout(()=>{try{mutate(()=>{const E=(state.entries||{})[D]||{};ks.forEach(k=>{const x=E[k];if(x&&!x.del&&!x.sg){x.sg=ks[0];x.ts=(Number(x.ts)||0)+1;}});});}catch(e){}},0);}}}catch(e){}
 const tlRI=[];let nmAny=false;
 const tlL0=html.length,tlRS=[],tlOpen=[],tlRR=[];
 for(let h=0;h<24;h++){
@@ -3835,7 +3849,7 @@ flushRun();
 its.forEach((it,idx)=>{
 if(!it.rl&&SGM[it.k]==='skip'){gapBefore(it.en);return;}
 tlRS.push(html.length);
-gapBefore(it.rl?{s:it.rl.s,e:it.rl.e}:it.en);
+gapBefore(it.rl?{s:it.rl.s,e:it.rl.e,rl:1}:it.en);
 tlRR.push(html.length);
 if(it.rl){const x=it.rl,m=Number(x.m)||0;
 html+='<button class="hour filled rlrow" data-rlk="'+esc(x.id)+'"><span class="hh"><b>'+esc(x.s)+'</b>'+(x.e?'<small>'+esc(x.e)+'</small>':'')+'</span><div class="body">'+
@@ -3848,7 +3862,7 @@ const pill=dm?'<span class="dpill">⏱ '+esc(durText(dm))+'</span>':'';
 html+='<button class="hour filled" data-k="'+esc(rowK)+'"><span class="hh">'+(en.noT?'<b style="color:#c3c8d4">—</b>':('<b>'+esc(en.s||(pad(h)+':00'))+'</b>'+(en.e?'<small>'+(en.ed?(en.ed===1?'翌':'+'+en.ed+'日'):'')+esc(en.e)+'</small>':'')))+'</span><div class="body">'+
 pfTag(en)+((ek=>en.mv?'<span class="loc big" style="color:#4d7dff">'+(TRICON[en.tr]||'🚗')+' '+esc(en.rt||'移動')+(mvOpenOk(ui.date,en)?'　（移動中…🏁到着を押す）':'')+'</span>'
 :recHead(en,ek).t)(kHead(en)))+
-((!en.mv&&en.k!=='sleep'&&recOpenOk(ui.date,en)&&!list.some(z=>z.en&&z.en!==en&&!z.en.del&&!z.en.noT&&z.en.s&&z.en.s>en.s))?'<span class="loc" style="color:#e0603c;font-weight:800">⏳ 途中（押して終わりを入れる）</span>':'')+((!en.mv&&en.s&&!en.e&&!en.noT&&en.pe&&ui.date===todayStr()&&!list.some(z=>z.en&&z.en!==en&&!z.en.del&&!z.en.noT&&z.en.s&&z.en.s>en.s))?'<span class="loc" style="color:#e0603c;font-weight:800">⚠️ 終わりが入っていない（押して入れる）</span>':'')+
+((!en.mv&&en.k!=='sleep'&&recOpenOk(ui.date,en)&&!list.some(z=>z.en&&z.en!==en&&!z.en.del&&!z.en.noT&&z.en.s&&z.en.s>en.s))?'<span class="loc" style="color:#e0603c;font-weight:800">⏳ 途中（押して終わりを入れる）</span>':'')+
 recHead(en,kHead(en)).g+pill+(en.md?'<span class="dpill mdp">🕳️ ムダ</span>':'')+actsHtml(en)+(SG?SG.mid.map(m=>'<span class="sg-sub" role="button" data-sgk="'+esc(m.k)+'">🚙 車内 '+esc(m.en.s)+'–'+esc(m.en.e||'')+((m.en.acts&&m.en.acts.length)?'　'+esc(m.en.acts.map(a=>a&&a.t).filter(Boolean).join('・')):'')+(m.en.t?'　💬 '+esc(String(m.en.t).split('\n')[0]).slice(0,40):'')+((m.en.ph&&m.en.ph.length)?'　📷'+m.en.ph.length:'')+'</span>').join(''):'')+
 (en.t?'<div class="txt">'+hitoHtml(en.t)+'</div>':'')+
 (en.ph&&en.ph.length?'<span class="phrow">'+en.ph.slice(0,4).map(id=>'<img class="phth" src="'+esc(phUrl(id))+'" alt="" onerror="this.style.visibility=\'hidden\'">').join('')+(en.ph.length>4?'<span class="phmore">+'+(en.ph.length-4)+'</span>':'')+'</span>':'')+
@@ -3863,17 +3877,20 @@ run.push(h);
 flushRun();
 const tvL=html.length;
 {let xn=null,lastOE=false;try{const nd=addDays(ui.date,1),eo=entriesOf(ui.date);let P=null;for(const k in eo){const x=eo[k];if(x&&!x.del&&!x.noT&&x.s&&x.e&&!x.ed&&x.e>x.s&&(!P||x.e>P.e))P=x;}
-if(P){for(const k in eo){const x=eo[k];if(x&&!x.del&&!x.noT&&x.s&&(x.s>P.e||(x.ed&&x.s>=P.e))){P=null;break;}}}
+if(P){for(const k in eo){const x=eo[k];if(x&&x!==P&&!x.del&&!x.noT&&x.s&&(x.s>=P.e||x.ed)){P=null;break;}}}
 if(P){const ne=entriesOf(nd);let N=null;for(const k in ne){const x=ne[k];if(x&&!x.del&&!x.noT&&x.s&&(!N||x.s<N.s))N=x;}
 xn={P,N:N||null,nd,g:N?(1440-hmMin(P.e))+hmMin(N.s):0};}}catch(e){}
-if(!isToday&&ui.date>='2026-08-25'){try{const eo=entriesOf(ui.date);let lk=null;for(const k in eo){const x=eo[k];if(x&&!x.del&&!x.noT&&x.s&&(!lk||x.s>eo[lk].s||(x.s===eo[lk].s&&!x.e&&!x.mv&&eo[lk].e)))lk=k;}const L=lk&&eo[lk];
+if(!isToday&&ui.date<todayStr()&&ui.date>='2026-08-25'){try{const eo=entriesOf(ui.date);let lk=null;for(const k in eo){const x=eo[k];if(x&&!x.del&&!x.noT&&x.s&&(!lk||x.s>eo[lk].s||(x.s===eo[lk].s&&!x.e&&!x.mv&&eo[lk].e)))lk=k;}const L=lk&&eo[lk];
 const live=!(L&&L.pe)&&ui.date===addDays(todayStr(),-1)&&!Object.values(entriesOf(todayStr())).some(x=>x&&!x.del&&!x.noT&&x.s);
-if(L&&!L.e&&!L.mv&&!live){const ic=(kindOf(L.k)||{}).ic||'📍',nm=L.p||((kindOf(L.k)||{}).lb)||'記録';html+=sgW('<div class="hour gap mvsug oesug"><span class="hh">⚠️</span><div class="body"><span class="gp-l">終わりが入っていない</span><span class="ms-rt">'+esc(ic)+' '+esc(nm)+' '+esc(L.s)+'〜 ？（この日の最後の記録）</span>'+oePick(lk,L.s,'')+'</div></div>');lastOE=true;}}catch(e){}}
-if(list.length&&ui.date>='2026-08-25'&&nowM>gEnd){if(xn&&gEnd<1440)html+=sgW('<button class="hour gap mvsug xnsug" data-xnd="'+esc(xn.nd)+'"><span class="hh">🌙</span><div class="body"><span class="gp-l">'+esc(xn.P.e)+' → '+(xn.N?'翌'+esc(xn.N.s)+'（'+esc(durText(xn.g))+'）':'翌日へ')+'</span><span class="ms-rt">'+esc(xn.P.p||String(xn.P.rt||'')||((kindOf(xn.P.k)||{}).lb)||'')+(xn.N?' → '+esc(xn.N.mv?('🚗 '+String(xn.N.rt||'')):(xn.N.p||((kindOf(xn.N.k)||{}).lb)||'')):'')+'</span><span class="gp-q">続きは翌日 ›</span></div></button>');else if(!lastOE)html+=gapRow(gEnd,nowM);}}
+const n1=(()=>{try{return Object.values(entriesOf(addDays(ui.date,1))).filter(x=>x&&!x.del&&!x.noT&&x.s).map(x=>x.s).sort()[0]||'';}catch(e){return '';}})();
+if(L&&!L.e&&!L.mv&&!live){const ic=(kindOf(L.k)||{}).ic||'📍',nm=L.p||((kindOf(L.k)||{}).lb)||'記録';html+=sgW('<div class="hour gap mvsug oesug"><span class="hh">⚠️</span><div class="body"><span class="gp-l">'+esc(ic)+' '+esc(nm)+'（'+esc(L.s)+'〜）、何時に終わった？</span><span class="ms-rt">この日の最後の記録</span>'+oePick(lk,L.s,'','','',n1)+'</div></div>');lastOE=true;}
+else if(L&&!L.e&&L.mv&&!live){html+=sgW('<div class="hour gap mvsug oesug"><span class="hh">🏁</span><div class="body"><span class="gp-l">'+esc(TRICON[L.tr]||'🚗')+' '+esc(L.rt||'移動')+'（'+esc(L.s)+'〜）、何時に着いた？</span><span class="ms-rt">この日の最後の記録（🏁を押していない）</span>'+oePick(lk,L.s,'','','',n1)+'</div></div>');lastOE=true;}}catch(e){}}
+if(isToday&&!lastOE){try{const eo=entriesOf(ui.date);let lk=null;for(const k in eo){const x=eo[k];if(x&&!x.del&&!x.noT&&x.s&&(!lk||x.s>eo[lk].s))lk=k;}const L=lk&&eo[lk];if(L&&!L.e&&!L.mv&&L.pe&&hmMin(L.s)<nowM){const ic=(kindOf(L.k)||{}).ic||'📍',nm=L.p||((kindOf(L.k)||{}).lb)||'記録';html+=sgW('<div class="hour gap mvsug oesug"><span class="hh">⚠️</span><div class="body"><span class="gp-l">'+esc(ic)+' '+esc(nm)+'（'+esc(L.s)+'〜）、何時に終わった？</span><span class="ms-rt">📅 予定から作った記録</span>'+oePick(lk,L.s,'')+'</div></div>');lastOE=true;}}catch(e){}}
+if(list.length&&ui.date>='2026-08-25'&&nowM>gEnd){if(xn&&!isToday&&gEnd<1440)html+=sgW('<button class="hour gap mvsug xnsug" data-xnd="'+esc(xn.nd)+'"><span class="hh">🌙</span><div class="body"><span class="gp-l">'+esc(xn.P.e)+' → '+(xn.N?'翌'+esc(xn.N.s)+'（'+esc(durText(xn.g))+'）':'翌日へ')+'</span><span class="ms-rt">'+esc(xn.P.p||String(xn.P.rt||'')||((kindOf(xn.P.k)||{}).lb)||'')+(xn.N?' → '+esc(xn.N.mv?('🚗 '+String(xn.N.rt||'')):(xn.N.p||((kindOf(xn.N.k)||{}).lb)||'')):'')+'</span><span class="gp-q">続きは翌日 ›</span></div></button>');else if(!lastOE)html+=gapRow(gEnd,nowM,null,null,isToday);}}
 {const P=tlCP.concat(tlRS),T=tlCT.concat(tlRI),tot=P.length;
 if(isToday&&tot>2&&topView!=='diary'){const keep=Math.min(tot-2,tlOpen.length?tlCP.length+tlOpen[0]:1e9);
 if(keep>0){const all=sugNo('tl|all'),st=P[0],cut=P[keep];
-if(!all){const mid=html.slice(st,cut),sgs=mid.match(/<b hidden data-sg="1"><\/b>[\s\S]*?<b hidden data-sg="0"><\/b>/g)||[],nG=(mid.match(/gaprow|gpsug/g)||[]).length,L=T[keep-1];
+if(!all){const mid=html.slice(st,cut),sgs=mid.match(/<b hidden data-sg="1"><\/b>[\s\S]*?<b hidden data-sg="0"><\/b>/g)||[],nG=(mid.match(/gaprow/g)||[]).length,L=T[keep-1];
 html=html.slice(0,st)+'<button class="hour gap tlfold" id="tlFold"><span class="hh">▸</span><div class="body"><span class="gp-l">前の記録 <b>'+keep+'</b>件　'+esc(T[0].sm)+'〜'+esc(L.e||L.sm)+'</span>'+(nG?'<span class="tlf-g">⬜ 空き '+nG+'</span>':'')+'<span class="gp-q">全部 ▾</span></div></button>'+sgs.join('')+html.slice(cut);}
 else html=html.slice(0,st)+'<button class="hour gap tlfold" id="tlFold"><span class="hh">▴</span><div class="body"><span class="gp-l">最新だけにする</span></div></button>'+html.slice(st);}}}
 const seedN=(ui.date<'2026-08-25'&&PHDATES&&PHDATES[ui.date])||0;
@@ -3905,7 +3922,7 @@ cvB=sugNo('tl|cvo')?('<button class="hour gap tlfold" id="cvFold"><span class="h
 :('<button class="hour gap tlfold" id="cvFold"><span class="hh">▸</span><div class="body"><span class="gp-l">前日から <b>'+cv.length+'</b>件　'+esc(String(T0.sm).replace('前日 ',''))+'〜'+esc(T1.e||'')+'</span><span class="gp-q">開く ▾</span></div></button>');}
 let fB='';
 if(!isToday&&R.length>2){const k=R.length-2;
-if(!sugNo('tl|pall')){const mid=R.slice(0,k).map(x=>x.g+x.r).join(''),sgs=mid.match(/<b hidden data-sg="1"><\/b>[\s\S]*?<b hidden data-sg="0"><\/b>/g)||[],nG=(mid.match(/gaprow|gpsug/g)||[]).length,L=tlRI[k-1]||list[k-1];
+if(!sugNo('tl|pall')){const mid=R.slice(0,k).map(x=>x.g+x.r).join(''),sgs=mid.match(/<b hidden data-sg="1"><\/b>[\s\S]*?<b hidden data-sg="0"><\/b>/g)||[],nG=(mid.match(/gaprow/g)||[]).length,L=tlRI[k-1]||list[k-1];
 fB='<button class="hour gap tlfold" id="pdFold"><span class="hh">▸</span><div class="body"><span class="gp-l">前の記録 <b>'+k+'</b>件　'+esc((tlRI[0]||list[0]).sm)+'〜'+esc(L.e||(L.en&&L.en.e)||L.sm)+'</span>'+(nG?'<span class="tlf-g">⬜ 空き '+nG+'</span>':'')+'<span class="gp-q">全部 ▾</span></div></button>'+sgs.join('');R=R.slice(k);}
 else fB='<button class="hour gap tlfold" id="pdFold"><span class="hh">▴</span><div class="body"><span class="gp-l">最新だけにする</span></div></button>';}
 const srB=srBarHtml();
@@ -3940,7 +3957,7 @@ wB('wrWake',quickWake);
 wB('bedPill',quickSleepStart);
 wB('wrSleep',quickSleepStart);wB('wrPlan',()=>openPlanQuick(ui.date));
 wB('wrSlp',openSleepPage);
-pane.querySelectorAll('.ms-ok').forEach(b=>b.onclick=ev=>{ev.stopPropagation();const row=b.closest('.mvsug'),tr=(row.querySelector('.ms-tr')||{}).value||'car',D=b.dataset,d=D.msd||ui.date;
+pane.querySelectorAll('.ms-ok').forEach(b=>b.onclick=ev=>{ev.stopPropagation();const row=b.closest('.mvsug'),D=b.dataset,tr=(row.querySelector('.ms-tr')||{}).value||D.mstr||'car',d=D.msd||ui.date;
 const nk='e'+Date.now()+Math.floor(Math.random()*1e4),fsn=D.msfk?ubSnap(d,D.msfk):null;
 mutate(()=>{state.entries[d]=state.entries[d]||{};const ne={p:'',t:'',ph:[],s:D.mss,e:D.mse,mv:1,rt:D.msf+' → '+D.mst,tr,ts:Date.now(),mn:1,mt:'m'};if(D.msed)ne.ed=1;if(Number(D.mspf0))ne.pf0=Number(D.mspf0);if(Number(D.mspf))ne.pf=Number(D.mspf);state.entries[d][nk]=ne;
 if(D.msfk){const pe=state.entries[d][D.msfk];if(pe&&!pe.del&&!pe.e&&pe.s&&pe.s<=D.mss){pe.e=D.mss;pe.ts=Date.now();}}});
@@ -3953,6 +3970,8 @@ const x0=(state.entries[d]||{})[k];if(x0&&x0.s&&hmMin(e)<=hmMin(x0.s)){toast('�
 const sn=ubSnap(d,k);mutate(()=>{const x=(state.entries[d]||{})[k];if(x&&!x.del&&!x.e){x.e=e;x.ts=Date.now();}});undoBar('✓ 終わりを '+e+' で入れた',ubBack(sn),{d,k});render();});
 pane.querySelectorAll('.oe-tok').forEach(b=>b.onclick=ev=>{ev.stopPropagation();const d=b.dataset.oed||ui.date,k=b.dataset.oek,ip=b.parentElement.querySelector('.oe-tm'),e=ip&&ip.value,x0=(state.entries[d]||{})[k];if(!x0||x0.del)return;
 if(!e){toast('時刻を選んでくれ');return;}const ovn=!!(x0.s&&hmMin(e)<=hmMin(x0.s));if(ovn&&b.dataset.oen){toast('始まり（'+x0.s+'）より後、次の記録（'+b.dataset.oen+'）より前にしてくれ');return;}if(b.dataset.oen&&hmMin(e)>hmMin(b.dataset.oen)){toast('次の記録（'+b.dataset.oen+'）より前にしてくれ');return;}
+if(ovn){if(hmMin(e)===hmMin(x0.s)){toast('始まりと同じ時刻では終われない');return;}const nx=b.dataset.oenx||(()=>{try{return Object.values(entriesOf(addDays(d,1))).filter(z=>z&&!z.del&&!z.noT&&z.s).map(z=>z.s).sort()[0]||'';}catch(e2){return '';}})();if(nx&&hmMin(e)>hmMin(nx)){toast('翌日の最初の記録（'+nx+'）より前にしてくれ');return;}}
+if(x0.e){toast('もう終わりが入っていた');render();return;}
 const pe0=x0.pe;mutate(()=>{const x=(state.entries[d]||{})[k];if(x&&!x.del&&!x.e){x.e=e;if(ovn)x.ed=1;delete x.pe;x.ts=Date.now();}});undoBar('✓ 終わりを '+(ovn?'翌':'')+e+' で入れた',()=>{mutate(()=>{const x=(state.entries[d]||{})[k];if(!x||x.del)return;delete x.e;delete x.ed;if(pe0)x.pe=pe0;x.ts=Date.now();});toast('↩ 取り消した');},{d,k});render();});
 pane.querySelectorAll('.oe-pick').forEach(w=>w.addEventListener('click',ev=>ev.stopPropagation()));
 pane.querySelectorAll('[data-sgk]').forEach(s=>s.onclick=ev=>{ev.stopPropagation();openEntrySheet(ui.date,{key:s.dataset.sgk});});
@@ -3984,7 +4003,7 @@ delete askSt[sk];{const m='✓ 寄った場所 '+S.length+'件と移動 '+(S.len
 card.querySelector('.ak-yori').onclick=()=>{const a=A();a.open=!a.open;if(a.open&&!a.stops.length)a.stops.push({p:'',t:hm(r5((t0+t1)/2))});card.querySelector('.ak-yori').classList.toggle('on',a.open);paint();};
 paint();});
 pane.querySelectorAll('.oe-ed').forEach(b=>b.onclick=ev=>{ev.stopPropagation();openEntrySheet(b.dataset.oed||ui.date,{key:b.dataset.oek});});
-pane.querySelectorAll('[data-msno]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();sugSet(b.dataset.msno);toast('入れなかった（もう出さない）');});
+pane.querySelectorAll('[data-msno]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();const k=b.dataset.msno;sugSet(k);undoBar(/^mv\|/.test(k)?'移動じゃない → では、何してた？':'✕ 入れなかった（もう出さない）',()=>{mutate(()=>{state.msx=state.msx||{};state.msx[k]={del:1,ts:Date.now()};});toast('↩ 戻した');});});
 {const g=$('goalLine');if(g)g.onclick=ev=>{ev.stopPropagation();openIncSheet();};}
 pane.querySelectorAll('.ds-ok').forEach(b=>b.onclick=ev=>{ev.stopPropagation();const d=ui.date,k=b.dataset.dsk,p=b.dataset.dsp,pf=Number(b.dataset.dspf)||0;
 mutate(()=>{const mv=(state.entries[d]||{})[k];if(!mv)return;const pts=String(mv.rt||'').split('→').map(z=>z.trim()).filter(Boolean);mv.rt=(pts[0]?pts[0]+' ':'')+'→ '+p;if(pf&&!prefOf(mv.pf))mv.pf=pf;mv.ts=Date.now();});toast('🏁 行き先を入れた');});
@@ -4224,7 +4243,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c27.9）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c28.0）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -4952,6 +4971,7 @@ const CUTS=(isMv&&sheetSt.cuts)?sheetSt.cuts.slice():[];
 {const SPV=actsS.filter(a=>a.sp);if(SPV.length||CUTS.length){const S=hmMin(tS),te=tE?hmMin(tE)+1440*(tEd<0?1:(tEd||0)):null;
 const L=SPV.map(a=>[a.s,a.e]).concat(CUTS.map(c=>[c.s,c.e])).map(([s,e])=>{let a=hmMin(s);while(a<S)a+=1440;let b=hmMin(e);while(b<=a)b+=1440;return [a,b];}).sort((x,y)=>x[0]-y[0]);
 for(let i=0;i<L.length;i++){if(te!=null&&L[i][1]>te){toast('🔀 分ける行の終わりが、記録の終わりより後。直してくれ');return;}if(i&&L[i][0]<L[i-1][1]){toast('🔀 分ける所どうしの時間が重なっている');return;}}}}
+if(ex&&ex.sg&&tE&&!(tEd>0)){const E0=state.entries[sheetSt.date]||{},nx=Object.entries(E0).filter(([k,z])=>k!==sheetSt.key&&z&&!z.del&&z.sg===ex.sg&&z.s&&z.s>tS).map(([k,z])=>z.s).sort()[0];if(nx&&hmMin(tE)>hmMin(nx)){toast('🚙で分けた次の区間（'+nx+'〜）と重なる。終わりは最後の区間で直す');return;}}
 const d0=tEd<0?addDays(sheetSt.date,-1):sheetSt.date;
 const saveKey=(sheetSt.key!=null)?sheetSt.key:('e'+Date.now()+Math.floor(Math.random()*1e4));
 const prev=(state.entries[d0]||{})[saveKey];
@@ -4996,9 +5016,9 @@ const del=$('shDel');
 if(del)del.onclick=()=>{
 if(!del.classList.contains('arm')){del.classList.add('arm');del.textContent='本当に削除？';
 setTimeout(()=>{if(del.isConnected){del.classList.remove('arm');del.textContent='削除';}},2500);return;}
-const d0=sheetSt.date,k0=sheetSt.key;
-mutate(()=>{state.entries[d0][k0]={del:1,ts:Date.now()};});
-closeSheet();toast('削除した');
+const d0=sheetSt.date,k0=sheetSt.key,x0=(state.entries[d0]||{})[k0],sg0=x0&&x0.mv&&x0.sg,dk=[];
+mutate(()=>{const E=state.entries[d0]||{};if(sg0){for(const k in E){const x=E[k];if(x&&!x.del&&x.sg===sg0&&(x.mv||x.k==='incar')){dk.push([k,JSON.parse(JSON.stringify(x))]);E[k]={del:1,ts:Date.now()};}}}else{dk.push([k0,JSON.parse(JSON.stringify(E[k0]||{}))]);E[k0]={del:1,ts:Date.now()};}});
+closeSheet();undoBar(sg0&&dk.length>1?('🗑 まとめた移動（'+dk.length+'件）を削除した'):'🗑 削除した',()=>{mutate(()=>{const E=state.entries[d0]=state.entries[d0]||{};dk.forEach(([k,o])=>{E[k]=Object.assign({},o,{ts:Date.now()});});});toast('↩ 戻した');});
 };
 openOvl();
 }
@@ -5056,6 +5076,7 @@ try{if(ui.tab==='di')render();}catch(e){}
 undoBar('↩ 予定『'+o.t+'』を未完了に戻した'+(plain?'（予定から作った記録も消した）':(en?'（日記の記録は残した）':'')),()=>{mutate(()=>{P[k]=Object.assign({},o,{ts:Date.now()});if(ek&&oe)E[ek]=Object.assign({},oe,{ts:Date.now()});});plnAfter();try{if(ui.tab==='di')render();}catch(e){}});}
 function plnNewRec(d,k){const x=((state.plans||{})[d]||{})[k];if(!x||x.done)return;const T=todayStr(),s=x.hh||(d===T?plnNow():'12:00'),ek='e'+Date.now()+Math.floor(Math.random()*1e4);
 let e=x.e||((x.hh&&x.mm)?hmAdd(x.hh,x.mm):null);if(e&&!(hmMin(e)>hmMin(s)&&(d<T||hmMin(e)<=hmMin(plnNow()))))e=null;
+if(e){const nx=Object.values(entriesOf(d)).filter(z=>z&&!z.del&&!z.noT&&z.s&&hmMin(z.s)>hmMin(s)).map(z=>hmMin(z.s)).sort((p,q)=>p-q)[0];if(nx!=null&&hmMin(e)>nx)e=pad(Math.floor(nx/60))+':'+pad(nx%60);}
 const pEnd=x.e||((x.hh&&x.mm)?hmAdd(x.hh,x.mm):null),pEndFut=!!(pEnd&&d===T&&(hmMin(pEnd)>hmMin(plnNow())||hmMin(pEnd)<=hmMin(s)));
 const pe=!e&&!pEndFut&&(d<T||!!(x.hh&&x.hh<plnNow()));
 mutate(()=>{state.entries[d]=state.entries[d]||{};const ne={p:x.pl||'',t:'',ph:[],s,ts:Date.now(),mn:1,mt:'s',pln:1,plk:k};if(e){ne.e=e;ne.e0=e;}else ne.e0='';if(pe)ne.pe=1;state.entries[d][ek]=ne;x.done=true;x.rk=ek;x.ts=Date.now();});plnAfter();
@@ -5077,7 +5098,7 @@ for(const k in eo){const en=eo[k];if(en&&en.plk&&(()=>{const P0=((state.plans||{
 for(const k in eo){const en=eo[k];if(!en||!en.pln||en.del||!en.s||(en.acts&&en.acts.length)||(en.ph&&en.ph.length))continue;const sk='pldup|'+d+'|'+k;if(sugNo(sk))continue;
 let tw=null;for(const k2 in eo){if(k2===k)continue;const e2=eo[k2];if(!e2||e2.del||e2.pln||e2.mv||!e2.s)continue;if(plnSamePl(e2.p,en.p)&&Math.abs(hmMin(e2.s)-hmMin(en.s))<=20){tw=k2;break;}}
 if(!tw)continue;const r0=rowOf(k)||rowOf(tw),r=r0||pane.querySelector('.hour[data-k]');if(!r)continue;r.insertAdjacentHTML(r0?'afterend':'beforebegin','<div class="plnlk"><div class="plnlk-m">🔁 '+esc(en.s)+' に同じ記録が2つある（📅 予定から作った方と、'+esc(eo[tw].s)+' '+esc(eo[tw].p||'')+'）。まとめる？</div><div class="plnlk-ac"><button type="button" class="ok" data-plndup="'+esc(d+'|'+k+'|'+tw)+'">✓ まとめる</button><button type="button" data-plnno="'+esc(sk)+'">✕ そのまま</button></div></div>');}
-if(d<=T)plnOpen(d).forEach(o=>{const x=o.x;if(d===T&&x.hh&&x.hh>now)return;const r=plnRecAt(d,x);if(!r&&!x.hh)return;if(sugNo('pl|'+d+'|'+o.k+'|'+(r?r.k:'none')))return;
+if(d<=T)plnOpen(d).forEach(o=>{const x=o.x;if(d===T&&x.hh&&x.hh>now)return;const r=plnRecAt(d,x);if(!r&&!x.hh)return;if(r&&r.en&&!r.en.e&&!r.en.mv&&Object.values(eo).some(z=>z&&!z.del&&!z.noT&&z.s&&z.s>r.en.s))return;if(sugNo('pl|'+d+'|'+o.k+'|'+(r?r.k:'none')))return;
 let row=r?rowOf(r.k):null,pos='afterend';if(!row){const t=hmMin(x.hh);const rows=[...pane.querySelectorAll('.hour[data-k]')].filter(el=>{const e=eo[el.dataset.k];return e&&e.s&&hmMin(e.s)<=t;});row=rows[rows.length-1]||pane.querySelector('.hour[data-k]');if(row&&!rows.length)pos='beforebegin';}
 if(!row)return;row.insertAdjacentHTML(pos,plnAskHtml(d,o.k,x,r,false));});
 pane.querySelectorAll('[data-plnnew]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();const [d1,k1]=b.dataset.plnnew.split('|');plnNewRec(d1,k1);});
@@ -6804,7 +6825,8 @@ undoBar('✓ '+(TRICON[tr]||'🚗')+' 出発 '+s,ubDel(d,key),{d,k:key});
 function quickMoveArrive(){
 const o=openMove();
 if(!o){toast('移動中の記録がない');return;}
-const e=nowHM(),s=o.en.s,sn=ubSnap(o.d,o.k);if(mvOpenRow(o))mvPauseEnd(e);
+let e=nowHM();const s=o.en.s,sn=ubSnap(o.d,o.k);{const eo=state.entries[o.d]||{};let nx=null;for(const k in eo){const x=eo[k];if(x&&!x.del&&!x.noT&&x.s&&!x.mv&&(x.p||x.k==='incar')&&TEL_KS.indexOf(x.k)<0&&x.k!=='spplay'&&x.s>s&&(!nx||x.s<nx.s))nx=x;}if(nx&&(o.d!==todayStr()||nx.s<e))e=nx.s;}
+if(mvOpenRow(o))mvPauseEnd(e);
 const ed=(o.d!==todayStr()||e<s)?1:0;
 mutate(()=>{const en=state.entries[o.d][o.k];en.e=e;if(ed)en.ed=ed;else delete en.ed;en.ts=Date.now();});
 undoBar('✓ 🏁 到着 '+e+'（'+(durText(durMin(s,e,ed))||'10分未満')+'）',ubBack(sn),{d:o.d,k:o.k});
@@ -9038,6 +9060,7 @@ $('opClose').onclick=closeSub;
 paint();}
 
 function spMsxDesc(k){const a=String(k).split('|'),md=s=>String(s||'').slice(5).replace('-','/');
+if(a[0]==='gp')return '⬜ 何してた？（'+md(a[1])+' '+(a[2]||'')+'〜'+(a[3]==='now'?'今':(a[3]||''))+'）';if(a[0]==='st')return '🌙 まだいた？（'+md(a[1])+' '+(a[4]||'')+'）';if(a[0]==='pl')return '📅 予定の確認（'+md(a[1])+'）';if(a[0]==='pldup')return '🔁 二重の記録まとめ（'+md(a[1])+'）';
 if(a[0]==='ar')return '🏁 到着していた？の提案（'+md(a[1])+' '+(a[3]||'')+'）';
 if(a[0]==='ds')return '📍 行き先の提案（'+md(a[1])+'）';
 if(a[0]==='ct')return '↪ 続きの提案（'+md(a[1])+'）';
@@ -11119,7 +11142,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c27.9";
+const CL_APPVER="c28.0";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
