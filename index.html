@@ -1807,7 +1807,7 @@ body.cardvis .fab{display:none!important}
 .pln-wrap{display:flex;flex-direction:column;gap:6px;margin:0 0 14px}.pln-sec{display:flex;align-items:center;justify-content:space-between;font-weight:900;font-size:15px}.pln-add{background:#4d7dff!important;color:#fff!important;position:relative}
 .pln-h{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:900;color:#4d7dff;margin-top:6px}.pln-h small{color:#7a8296;font-weight:800}.pln-h.red{color:#e24b4b}
 .pln-day{font-size:12px;font-weight:900;color:#7a8296;margin-top:4px}
-.pln-row{display:grid;grid-template-columns:54px 1fr;gap:4px 10px;background:#e9efff;border-radius:14px;padding:10px 12px;color:#1d2230}.pln-row.done .pln-tm,.pln-row.done .pln-tt,.pln-row.done .pln-pl,.pln-row.done .pln-lki{opacity:.72}.pln-dm.red{color:#e24b4b}.pln-lki{font-size:12px;font-weight:800;color:#4d7dff;margin-top:2px;word-break:break-word}.pln-row.done .pln-tt{text-decoration:line-through}.pln-row.late{background:#fdeaea}
+.pln-row{display:grid;grid-template-columns:54px 1fr;gap:4px 10px;background:#e9efff;border-radius:14px;padding:10px 12px;color:#1d2230}.pln-row.done .pln-tm,.pln-row.done .pln-tt,.pln-row.done .pln-pl,.pln-row.done .pln-lki{opacity:.72}.pln-dm.red{color:#e24b4b}.pln-lki{font-size:12px;font-weight:800;color:#4d7dff;margin-top:2px;word-break:break-word}.pln-row.done .pln-tt{text-decoration:line-through}.pln-row.late{background:#fdeaea}.pln-row.notime{background:#fff4df;box-shadow:inset 5px 0 0 #f59e0b}.pln-row.notime .pln-tm{color:#d97706}.pln-row.notime .pln-tm small{color:#d97706;font-weight:900}
 .pln-tm{font-weight:900;font-size:15px;color:#4d7dff;font-variant-numeric:tabular-nums;line-height:1.15}.pln-tm small{display:block;font-size:10.5px;color:#7a8296}.pln-row.late .pln-tm{color:#e24b4b}
 .pln-bd{min-width:0}.pln-tt{font-weight:900;font-size:15px;word-break:break-word}.pln-pl{font-size:12px;color:#7a8296;font-weight:800}.pln-fl{font-size:11px;font-weight:900;color:#7a8296}.pln-fl.red{color:#e24b4b}
 .pln-ac{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}.pln-ac .chip{font-size:12.5px;font-weight:900}.pln-ac .pln-ok{background:#4d7dff;color:#fff}.pln-ac .pln-del{color:#e24b4b}
@@ -4243,7 +4243,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c28.1）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c28.2）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -5046,8 +5046,8 @@ function plnLinkShort(d,x){const en=x.rk?((state.entries||{})[d]||{})[x.rk]:null
 function plnDoneFold(inner,n){let op=false;try{op=localStorage.getItem('hibiki-pln-dn-open')==='1';}catch(e){}return '<details class="td-fold pln-dnf"'+(op?' open':'')+'><summary>✓ 済み<small>'+n+'件</small></summary>'+inner+'</details>';}
 function plnDoneRowHtml(o){const d=o.d,x=o.x;return '<div class="pln-row done" data-plnk="'+esc(o.k)+'" data-plndd="'+esc(d)+'"><div class="pln-tm">'+(x.hh?esc(x.hh):'--:--')+'</div><div class="pln-bd"><div class="pln-tt">'+esc(x.t)+'</div><div class="pln-lki">'+esc(plnLinkShort(d,x))+'</div><div class="pln-ac"><button class="chip" data-plnundo="1">↩ 未完了に戻す</button><button class="chip" data-plncp="1">📑 複製</button></div></div></div>';}
 function plnRowHtml(o,opt){const d=o.d,x=o.x,T=todayStr(),late=!x.done&&d===T&&x.hh&&x.hh<plnNow(),pEndR=x.e||((x.hh&&x.mm)?hmAdd(x.hh,x.mm):null),fut=!!(late&&pEndR&&(hmMin(pEndR)>hmMin(plnNow())||hmMin(pEndR)<=hmMin(x.hh)));
-return '<div class="pln-row'+(x.done?' done':'')+(late?' late':'')+'" data-plnk="'+esc(o.k)+'" data-plndd="'+esc(d)+'">'+
-'<div class="pln-tm">'+(x.hh?esc(x.hh)+'<small>'+(x.e?'–'+esc(x.e):(x.mm?'–'+esc(hmAdd(x.hh,x.mm)):'〜'))+'</small>':'--:--<small>時間未定</small>')+'</div>'+
+return '<div class="pln-row'+(x.done?' done':'')+(late?' late':'')+((!x.done&&!x.hh)?' notime':'')+'" data-plnk="'+esc(o.k)+'" data-plndd="'+esc(d)+'">'+
+'<div class="pln-tm">'+(x.hh?esc(x.hh)+'<small>'+(x.e?'–'+esc(x.e):(x.mm?'–'+esc(hmAdd(x.hh,x.mm)):'〜'))+'</small>':((!x.done)?'⏰<small>'+(d===T?'今日中に':'時間を決めてない')+'</small>':'--:--<small>時間未定</small>'))+'</div>'+
 '<div class="pln-bd"><div class="pln-tt">'+esc(x.t)+(x.done?' <span class="pln-fl">✓ 記録済み</span>':'')+(late?' <span class="pln-fl red">⏰ 時刻を過ぎた</span>':'')+(x.mv?' <span class="pln-fl red">'+esc(plnMvTxt(d,x))+'</span>':'')+'</div>'+(x.pl?'<div class="pln-pl">📍 '+esc(x.pl)+'</div>':'')+((x.ad||x.tel||x.who)?'<div class="pln-ct">'+(x.ad?'<a href="https://www.google.com/maps/search/?api=1&amp;query='+encodeURIComponent(x.ad)+'" target="_blank" rel="noopener">🏠 '+esc(x.ad)+'</a>':'')+(x.tel?'<a href="tel:'+esc(String(x.tel).replace(/[^0-9+]/g,''))+'">📞 '+esc(x.tel)+'</a>':'')+(x.who?'<span>👤 '+esc(x.who)+'</span>':'')+'</div>':'')+(x.mo?'<div class="pln-mo">'+hitoHtml(x.mo)+'</div>':'')+(opt&&opt.day?'<div class="pln-pl">'+esc(plnDayLb(d))+'</div>':'')+
 (x.done?'<div class="pln-ac"><button class="chip" data-plnundo="1">↩ 未完了に戻す</button><button class="chip" data-plncp="1">📑 複製</button></div>':'<div class="pln-ac">'+(d<=T?'<button class="chip pln-ok" data-plngo="1">'+(((late||d<T)&&!fut)?'✓ やった（記録にする）':'✓ 始まった（記録にする）')+'</button>':'')+(d<T?'<button class="chip pln-ok" data-plnmv="today">→ 今日へ</button>':'')+'<button class="chip" data-plnmv="1">'+(d<=T?'→ 明日へ':'→ 1日ずらす')+'</button><button class="chip" data-plned="1">✎ 編集</button><button class="chip pln-del" data-plnrm="1">🗑 削除</button><button class="chip" data-plncp="1">📑 複製</button></div>')+'</div></div>';}
 function plnSectionHtml(){const T=todayStr(),late=plnLate(),td=plnItems(T),op=td.filter(o=>!o.x.done),dn=td.filter(o=>o.x.done);let fu=[];Object.keys(state.plans||{}).filter(d=>d>T).sort().forEach(d=>plnOpen(d).forEach(o=>fu.push(o)));
@@ -11143,7 +11143,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c28.1";
+const CL_APPVER="c28.2";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
