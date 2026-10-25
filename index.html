@@ -922,7 +922,7 @@ display:flex;flex-direction:column;gap:11px;max-height:94%;overflow-y:auto;
 .td-b em{font-style:normal;font-size:11px;font-weight:800;border-radius:8px;padding:2px 7px}.td-b em.c1{background:#fff4e5;color:#b45309}.td-b em.c2{background:#ffe9d6;color:#c2410c}.td-b em.c3{background:#ffe1e6;color:#be123c}
 .td-ac{width:100%;display:flex;gap:6px;padding-left:36px}.td-ac button{padding:6px 10px;border-radius:10px;background:#f1f3f8;font-size:12px;font-weight:800;color:#3b4252}
 .td-done{margin-top:14px;padding:10px;border-radius:16px;background:#f2fbf6;border:1px solid #cdeedd}.td-dn{display:flex;align-items:center;gap:8px;padding:6px 2px;font-size:14px}.td-dn b{flex:1;font-weight:700}.td-dn button{font-size:11.5px;color:#8a93a6;background:none}.td-dn.ng b{color:#7c3aed}
-.td-fold{margin-top:12px}.pl-fold{margin-top:6px}.pl-fold>summary{padding:9px 12px;font-size:14px}.pl-fold .pfflt{margin-top:8px;padding-top:0;border-top:0;flex-wrap:wrap}.pl-fold .sh-chips{margin-top:6px}.td-fold>.td-add{margin-top:10px}.td-fold>summary{list-style:none;display:flex;align-items:center;gap:8px;padding:12px 14px;border-radius:14px;background:#eef2ff;font-weight:900;font-size:15px;color:#1d2230;cursor:pointer}.td-fold>summary::-webkit-details-marker{display:none}.td-fold>summary small{font-weight:800;color:#7a8296;font-size:12px}.td-fold>summary::after{content:'▾ 開く';margin-left:auto;font-size:12px;font-weight:900;color:#4d7dff;white-space:nowrap}.td-fold[open]>summary::after{content:'▴ 閉じる'}
+.td-fold{margin-top:12px}.pl-fold{margin-top:6px}.pl-fold>summary{padding:9px 12px;font-size:14px}.pl-fold .pfflt{margin-top:8px;padding-top:0;border-top:0;flex-wrap:wrap}.pl-fold .sh-chips{margin-top:6px}.pl-fold #plnP{margin-top:8px}.pl-fold>summary b{font-weight:900;color:#1d2230}.td-fold>.td-add{margin-top:10px}.td-fold>summary{list-style:none;display:flex;align-items:center;gap:8px;padding:12px 14px;border-radius:14px;background:#eef2ff;font-weight:900;font-size:15px;color:#1d2230;cursor:pointer}.td-fold>summary::-webkit-details-marker{display:none}.td-fold>summary small{font-weight:800;color:#7a8296;font-size:12px}.td-fold>summary::after{content:'▾ 開く';margin-left:auto;font-size:12px;font-weight:900;color:#4d7dff;white-space:nowrap}.td-fold[open]>summary::after{content:'▴ 閉じる'}
 .td-sd{margin-top:10px;font-weight:800;color:#5b6475}.td-sd summary{cursor:pointer;padding:6px 2px}
 .cele{position:fixed;inset:0;z-index:500;pointer-events:none;display:flex;align-items:center;justify-content:center}.cele-c{background:#1f2430;color:#fff;border-radius:20px;padding:16px 22px;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.3);animation:celeP .4s ease-out}.cele-c b{display:block;font-size:22px}.cele-c span{display:block;font-size:13px;color:#c9cdd6;margin-top:4px}
 .cele.big .cele-c{background:linear-gradient(135deg,#7c3aed,#f59e0b);font-size:1.1em}.cele.big .cele-c b{font-size:26px}
@@ -4243,7 +4243,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c28.3）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c28.4）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -5131,8 +5131,8 @@ $('sheet').innerHTML='<div class="grab"></div>'+
 '<div class="pln-lab">① いつ <i>（日）</i></div><div class="sh-chips pln-chips">'+chips.map(c=>'<button class="chip'+(v.d===c[0]?' on':'')+'" data-plnd="'+c[0]+'">'+c[1]+'</button>').join('')+'<input type="date" id="plnD" lang="ja-JP" value="'+esc(v.d)+'" aria-label="日付"></div>'+(ex?'':'<div class="pln-ghost" id="plnNoD"'+(v.d?' style="display:none"':'')+'>📦 日付なし＝やる事のストックに入る（「何」だけ）</div>')+
 '<div class="pln-lab">② 何 <i>（タイトル）</i></div><input type="text" id="plnT" class="pln-in big" placeholder="例：買取商談" value="'+esc(v.t)+'" autocomplete="off">'+(Rc.t.length?'<div class="sh-chips pln-chips">'+Rc.t.map(x=>'<button class="chip" data-plnt="'+esc(x)+'">'+esc(x)+'</button>').join('')+'</div>':'')+
 '<div class="pln-lab">③ 時刻 <i>（任意・なくてもOK）</i></div><div class="pln-trow"><input type="time" id="plnS" step="300" lang="ja-JP" value="'+esc(v.s)+'" aria-label="開始（任意）"><span>–</span><input type="time" id="plnE" step="300" lang="ja-JP" value="'+esc(v.e)+'" aria-label="終わり（任意）"><span class="pln-ghost">空なら「時間未定」</span></div>'+
-'<div class="pln-lab">④ どこ <i>（任意）</i></div><input type="text" id="plnP" class="pln-in" placeholder="場所の名前（Googleマップからコピペ）" value="'+esc(v.p)+'" autocomplete="off">'+
-'<details class="td-fold pl-fold" id="plnPlF"><summary>📍 場所を選ぶ<small>県・よく行く場所から</small></summary><div class="pfflt" id="plnPfl"></div><div class="sh-chips" id="plnPC"></div></details>'+
+'<div class="pln-lab">④ どこ <i>（任意）</i></div>'+
+'<details class="td-fold pl-fold" id="plnPlF"><summary><span id="plnPsum">'+(v.p?'📍 <b>'+esc(v.p)+'</b>':'📍 場所を選ぶ・書く')+'</span><small>'+(v.p?'押して変える':'県・よく行く場所から、または書く')+'</small></summary><div class="pfflt" id="plnPfl"></div><div class="sh-chips" id="plnPC"></div><input type="text" id="plnP" class="pln-in pln-sub" placeholder="ほかの場所を書く（Googleマップからコピペ）" value="'+esc(v.p)+'" autocomplete="off"></details>'+
 '<input type="text" id="plnAd" class="pln-in pln-sub" placeholder="🏠 住所（任意）" value="'+esc(v.ad)+'" autocomplete="off">'+
 '<div class="pln-two"><input type="tel" id="plnTel" class="pln-in pln-sub" placeholder="📞 電話（任意）" value="'+esc(v.tel)+'" autocomplete="off"><input type="text" id="plnWho" class="pln-in pln-sub" placeholder="👤 名前（任意）" value="'+esc(v.who)+'" autocomplete="off"></div>'+
 '<div class="pln-lab">📝 メモ <i>（任意・何行でも）</i></div><textarea id="plnMo" class="pln-in pln-ta" rows="2" placeholder="メモ（持ち物・話すこと・行き方など）">'+esc(v.mo)+'</textarea>'+
@@ -5150,9 +5150,12 @@ sh.querySelectorAll('[data-plnt]').forEach(b=>b.onclick=()=>{$('plnT').value=b.d
 {const fl=$('plnPfl'),pc=$('plnPC');if(fl&&pc){try{if(!plHas())mutate(plSeed);}catch(e){}let pfl=plgFor(placePf(($('plnP').value||'').trim())||(function(){try{return pfAuto(todayStr(),plnNow())||0;}catch(e){return 0;}})());
 const paintF=()=>{if(pfl!=='ot'&&!plGroups().some(x=>x.g===pfl))pfl='ot';fl.innerHTML=pflBtns(pfl);const L=placeReg(pfl),cur=($('plnP').value||'').trim();
 pc.innerHTML=L.length?L.map(p=>'<button type="button" class="chip'+(cur===p?' sel':'')+'" data-p="'+esc(p)+'">'+esc(p)+'</button>').join(''):'<span class="sh-note">'+(pfl==='ot'?'ほかの場所はまだ無い':'この県の場所はまだ無い')+'（✎ 編集で足せる）</span>';
-pc.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{const ip=$('plnP');ip.value=(ip.value.trim()===b.dataset.p)?'':b.dataset.p;keep();paintF();});
+pc.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{const ip=$('plnP');ip.value=(ip.value.trim()===b.dataset.p)?'':b.dataset.p;keep();paintF();psum();if(ip.value){const dd=$('plnPlF');if(dd)dd.open=false;}});
 fl.querySelectorAll('[data-pfl]').forEach(b=>b.onclick=()=>{if(b.dataset.pfl==='_ed'){plEdit(paintF);return;}pfl=b.dataset.pfl;paintF();});};
-paintF();$('plnP').addEventListener('input',()=>{const c=($('plnP').value||'').trim();pc.querySelectorAll('[data-p]').forEach(b=>b.classList.toggle('sel',b.dataset.p===c));});}}
+const psum=()=>{const s=$('plnPsum'),sm=s&&s.nextElementSibling,v=($('plnP').value||'').trim();if(!s)return;s.innerHTML=v?('📍 <b>'+esc(v)+'</b>'):'📍 場所を選ぶ・書く';if(sm)sm.textContent=v?'押して変える':'県・よく行く場所から、または書く';};
+paintF();$('plnP').addEventListener('input',()=>{const c=($('plnP').value||'').trim();pc.querySelectorAll('[data-p]').forEach(b=>b.classList.toggle('sel',b.dataset.p===c));psum();});
+$('plnP').addEventListener('keydown',ev=>{if(ev.key==='Enter'&&!ev.isComposing){ev.preventDefault();$('plnP').blur();const dd=$('plnPlF');if(dd&&$('plnP').value.trim())dd.open=false;}});
+$('plnPlF').addEventListener('toggle',()=>{if($('plnPlF').open&&!($('plnP').value||'').trim()&&!placeReg(pfl).length)setTimeout(()=>{try{$('plnP').focus({preventScroll:true});}catch(e){}},50);});}}
 planAutoSave=(ex||cp)?null:()=>{keep();};
 if($('plnCl'))$('plnCl').onclick=()=>{if(cp){planAutoSave=null;closeSheet();return;}keep();planAutoSave=null;closeSheet();if(plnDraft())toast('下書きを残して閉じた');};
 if($('plnDel'))$('plnDel').onclick=()=>{planAutoSave=null;closeSheet();plnRemove(d0,id);};
@@ -11153,7 +11156,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c28.3";
+const CL_APPVER="c28.4";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
