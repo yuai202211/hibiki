@@ -519,7 +519,7 @@ async function clPullStep(ep,sig,ms){
   if(changed){CL.pendingChanged=false;
     CL.quietSave=true;
     try{saveLocal(clDirtyCount()===0);}catch(e){clNote('save','端末保存で例外：'+e.message);}finally{CL.quietSave=false;}
-    try{render();}catch(e){clNote('render','描画で例外：'+e.message);}
+    try{(typeof renderSoon==='function'?renderSoon:render)();}catch(e){clNote('render','描画で例外：'+e.message);}   /* c28.8：入力中は描き直しを待つ */
   }else{try{renderSync();}catch(e){}}
   clPersistSoon();
   if(!CL.firstPull&&CL.shadowOk){CL.firstPull=true;try{afterCloudReady();}catch(e){clNote('ready','起動後の修復で例外：'+e.message);}}
@@ -534,7 +534,7 @@ function clPullFlush(){
   try{clRecomputeDirty(false);}catch(e){}
   CL.quietSave=true;
   try{saveLocal(clDirtyCount()===0);}catch(e){clNote('save','端末保存で例外：'+e.message);}finally{CL.quietSave=false;}
-  try{render();}catch(e){clNote('render','描画で例外：'+e.message);}
+  try{(typeof renderSoon==='function'?renderSoon:render)();}catch(e){clNote('render','描画で例外：'+e.message);}   /* c28.8：入力中は描き直しを待つ */
   clNote('pull','受信の途中で失敗。合流済みの分は画面と端末に保存した');
 }
 /* 前回の離脱時の keepalive が届いていたかを、起動後の最初の受信で確かめて記録に残す（iPhone 実機で効いているかの実測） */
@@ -755,7 +755,7 @@ async function cloudPhotoDrain(){
       if(PH.mem[id])continue;
       let du=null;try{du=await cloudPhotoFetch(assetId);}catch(e){}
       if(du){PH.mem[id]=du;try{if(IDB.ok)idbPut(id,du);}catch(e){}shown++;}
-      if(shown&&(CL.photoQ.length===0||shown%4===0)){try{render();}catch(e){}}
+      if(shown&&(CL.photoQ.length===0||shown%4===0)){try{(typeof renderSoon==='function'?renderSoon:render)();}catch(e){}}   /* c28.8 */
     }
   }finally{CL.photoBusy=false;}
 }
