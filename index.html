@@ -1812,7 +1812,7 @@ body.cardvis .fab{display:none!important}
 .pln-bd{min-width:0}.pln-tt{font-weight:900;font-size:15px;word-break:break-word}.pln-pl{font-size:12px;color:#7a8296;font-weight:800}.pln-fl{font-size:11px;font-weight:900;color:#7a8296}.pln-fl.red{color:#e24b4b}
 .pln-ac{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}.pln-ac .chip{font-size:12.5px;font-weight:900}.pln-ac .pln-ok{background:#4d7dff;color:#fff}.pln-ac .pln-del{color:#e24b4b}
 
-.hour.wr .wr-r{row-gap:4px}.wr-l{display:flex;width:100%;justify-content:flex-end;gap:4px}
+.hour.wr .wr-r{row-gap:4px}.wr-l{display:flex;flex-wrap:wrap;width:100%;justify-content:flex-end;gap:4px}.hour.wr .wr-r .wr-l>.wr-g{display:contents}
 
 .sh-chips .ac-kgp.qg-open,.so-c .ac-kgp.qg-open,#acQw .ac-kgp.qg-open{flex:1 0 100%;width:100%;border:2px solid #1f2430;padding:8px 8px 6px}
 .qg-open .ac-kl{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
@@ -4243,7 +4243,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c28.4）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c28.5）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -4701,7 +4701,12 @@ const da=st.querySelector('[data-ad-add]');if(da)da.onclick=()=>{acRead();openKi
 kBind();
 const emp=()=>{['.ac-s','.ac-e'].forEach(q=>{const el=r.querySelector(q);el.classList.toggle('emp',!el.value);});};emp();
 const upd=()=>{acRead();const a=acts[i];r.querySelector('.ac-d').textContent=(a&&a.m)?('⏱ '+durText(a.m)):'';{const tb=r.querySelector('.tmb');if(tb&&a)tb.textContent=acTmLb(a);}emp();acSum();};
-r.querySelector('.ac-s').onchange=()=>{upd();const so=actsSort(acts,tS);if(so.some((x,j)=>x!==acts[j])){acts=so;acPaint();}};r.querySelector('.ac-e').onchange=upd;
+{let pend=0;const tIn=r.querySelector('.ac-s'),tOut=r.querySelector('.ac-e');
+const apply=()=>{if(!sheetSt||!r.isConnected){pend=0;return;}const srt=pend===2;pend=0;upd();if(srt){const so=actsSort(acts,tS);if(so.some((x,j)=>x!==acts[j])){acts=so;acPaint();}}};
+const later=()=>{setTimeout(()=>{if(!pend)return;const a=document.activeElement;if(a&&r.contains(a)&&a.matches&&a.matches('.ac-s,.ac-e'))return;apply();},150);};
+tIn.onchange=()=>{pend=2;if(document.activeElement!==tIn)apply();};
+tOut.onchange=()=>{pend=Math.max(pend,1);if(document.activeElement!==tOut)apply();};
+tIn.addEventListener('focusout',later);tOut.addEventListener('focusout',later);}
 r.querySelectorAll('[data-tq]').forEach(b=>b.onclick=()=>{const si=r.querySelector('.ac-s'),ei=r.querySelector('.ac-e');if(b.dataset.tq==='rec'){si.value=tS||'';ei.value=tE||'';}else{let pv='';for(let j=i-1;j>=0;j--){if(acts[j]&&acts[j].e){pv=acts[j].e;break;}}if(!pv){toast('前の行に終わりの時刻が無い');return;}si.value=pv;}upd();const so=actsSort(acts,tS);if(so.some((x,j)=>x!==acts[j])){acts=so;acPaint();}});
 r.querySelector('.ac-t').onkeydown=ev=>{if(ev.key!=='Enter'||ev.isComposing||ev.keyCode===229||ev.target.tagName==='TEXTAREA')return;
 ev.preventDefault();acRead();if(!acts[i]||!acts[i].t.trim())return;acts.splice(i+1,0,{t:'',m:0,s:'',e:''});acPaint(i+1);};
@@ -11156,7 +11161,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c28.4";
+const CL_APPVER="c28.5";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
