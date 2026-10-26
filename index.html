@@ -1899,6 +1899,7 @@ body.cardvis .fab{display:none!important}
 .ck-d.ok .ck-pb i{background:linear-gradient(90deg,#3ccf7f,#0a9a54)}.ck-d.ok .nm{color:#0a9a54}
 .ck-d button{border:0;border-radius:12px;min-width:64px;height:44px;font-weight:900;font-size:15px;background:#ff6b1a;color:#fff;font-family:inherit}.ck-d.ok button{background:#0a9a54}
 .ck-d .auto{font-size:11px;font-weight:900;color:#6a8caf;background:#eff4f9;border-radius:8px;padding:4px 6px}
+.wish-ttl{border:0;background:none;padding:0;font:inherit;font-size:12px;font-weight:900;color:#7a8294;cursor:pointer}.wish-ttl small{font-size:10.5px;color:#6a8caf;margin-left:4px}
 .wish-row{display:flex;gap:8px;overflow-x:auto;margin:0 2px 8px;padding-bottom:4px;scroll-snap-type:x mandatory}
 .wish{flex:0 0 132px;scroll-snap-align:start;border:0;border-radius:16px;background:#fff;box-shadow:0 2px 8px rgba(11,22,51,.12);padding:0 0 8px;overflow:hidden;text-align:left;font-family:inherit;display:flex;flex-direction:column}
 .wish img,.wish .noimg{width:100%;height:110px;object-fit:cover;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#14275a,#2b4c9b);font-size:36px;color:#ffce54}
@@ -2405,6 +2406,7 @@ if(!cur||((nu.ts||0)>(cur.ts||0)))out.ai[d]=nu;}
 for(const d in (src.scr||{})){const nu=src.scr[d];if(!nu)continue;out.scr=out.scr||{};const cur=out.scr[d];if(!cur||((nu.ts||0)>(cur.ts||0)))out.scr[d]=nu;}
 for(const d in (src.prep||{})){const nu=src.prep[d];if(!nu)continue;out.prep=out.prep||{};const cur=out.prep[d];if(!cur||((nu.ts||0)>(cur.ts||0)))out.prep[d]=nu;}
 for(const d in (src.cond||{})){const nu=src.cond[d];if(!nu)continue;out.cond=out.cond||{};const cur=out.cond[d];if(!cur||((nu.ts||0)>(cur.ts||0)))out.cond[d]=nu;}
+if(src.wishcfg&&typeof src.wishcfg==='object'&&(!out.wishcfg||((src.wishcfg.ts||0)>(out.wishcfg.ts||0))))out.wishcfg=src.wishcfg;
 if(src.daily5&&typeof src.daily5==='object'&&(!out.daily5||((src.daily5.ts||0)>(out.daily5.ts||0))))out.daily5=src.daily5;
 for(const d in (src.ckcnt||{})){const nu=src.ckcnt[d];if(!nu)continue;out.ckcnt=out.ckcnt||{};const cur=out.ckcnt[d];if(!cur||((nu.ts||0)>(cur.ts||0)))out.ckcnt[d]=nu;}
 for(const d in (src.ckin||{})){const nu=src.ckin[d];if(!nu)continue;out.ckin=out.ckin||{};const cur=out.ckin[d];if(!cur){out.ckin[d]=nu;continue;}const m=Object.assign({},cur);for(const s in nu){if(s!=='ts'&&nu[s]&&!m[s])m[s]=nu[s];}m.ts=Math.max(nu.ts||0,cur.ts||0);out.ckin[d]=m;}
@@ -4371,7 +4373,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c31.2）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c31.3）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -7102,9 +7104,15 @@ h+='<div class="ck-sec">📒 全部見たら、ここで押す<i></i></div><div 
 return P.wr+h;}
 function wishList(){const W=state.wish||{};return Object.keys(W).filter(id=>W[id]&&!W[id].del).map(id=>Object.assign({id},W[id])).sort((a,b)=>(a.o||0)-(b.o||0)||(a.ts||0)-(b.ts||0));}
 function wishHtml(){const L=wishList(),cash=cashLatest();
-return '<div class="ck-sec">🎁 欲しい物・叶えたい物<i></i></div><div class="wish-row">'+L.map(w=>{const ph=(w.ph||[])[0],y=Number(w.yen)||0,gap=y?Math.max(0,y-cash):0;
+const ttl=(state.wishcfg&&String(state.wishcfg.t||'').trim())||'🎁 欲しい物・叶えたい物';
+return '<div class="ck-sec"><button type="button" class="wish-ttl" id="wishTtl">'+esc(ttl)+' <small>✎ 名前を変える</small></button><i></i></div><div class="wish-row">'+L.map(w=>{const ph=(w.ph||[])[0],y=Number(w.yen)||0,gap=y?Math.max(0,y-cash):0;
 return '<button type="button" class="wish" data-wish="'+esc(w.id)+'">'+(ph?'<img src="'+esc(phUrl(ph))+'" alt="" loading="lazy">':'<span class="noimg">🎁</span>')+'<b>'+esc(w.t||'')+'</b>'+(y?'<small>'+esc(manY(y))+(gap?'・あと '+esc(manY(gap)):'・🎉 手元で届く')+'</small>':'')+'</button>';}).join('')+
 '<button type="button" class="wish add" id="wishAdd"><span class="noimg">＋</span><b>写真を足す</b><small>欲しい物・行きたい所</small></button></div>';}
+function wishTtlEdit(){const cur=(state.wishcfg&&state.wishcfg.t)||'🎁 欲しい物・叶えたい物';
+openSub('<div class="mvq"><div class="sh-time" style="justify-content:center"><span>✎ 見出しの名前</span></div><input type="text" class="pin" id="wtT" value="'+esc(cur)+'" placeholder="例：🏆 手に入れる物"><div class="sh-btns" style="margin-top:12px"><button class="delbtn" id="wtRst" style="flex:1">元に戻す</button><button class="savebtn" id="wtOk" style="flex:1.4">保存</button></div></div>',null);
+const sv=t=>{mutate(()=>{state.wishcfg={t,ts:Date.now()};});closeSub();toast('✓ 見出しを変えた');};
+$('wtOk').onclick=()=>sv($('wtT').value.trim());$('wtRst').onclick=()=>sv('');
+$('wtT').onkeydown=ev=>{if(ev.key==='Enter'&&!ev.isComposing){ev.preventDefault();sv($('wtT').value.trim());}};}
 function wishPick(cb){let inp=$('wishIn');if(!inp){inp=document.createElement('input');inp.type='file';inp.accept='image/*';inp.id='wishIn';inp.style.display='none';document.body.appendChild(inp);}
 inp.value='';inp.onchange=async()=>{const f=inp.files;if(!f||!f.length)return;toast('写真を取り込み中…');const ids=await phAddFiles([f[0]]);if(ids.length)cb(ids[0]);};inp.click();}
 function wishEdit(id){const W=state.wish||{},w0=id&&W[id]&&!W[id].del?W[id]:null;let D={t:w0?w0.t:'',yen:w0&&Number(w0.yen)?String(Math.round(Number(w0.yen)/10000)):'',ph:w0&&w0.ph?w0.ph.slice():[]};
@@ -7142,7 +7150,7 @@ return '<div class="ck-sec">📈 今日の成績表（日記から自動）<i></
 function ckBind(pane){
 pane.querySelectorAll('details.ck-fd').forEach(d=>d.addEventListener('toggle',()=>{try{localStorage.setItem('hibiki-ckf-'+d.dataset.ckf,d.open?'1':'0');}catch(e){}}));
 {const b=pane.querySelector('#ckDream');if(b)b.onclick=()=>{dseg='clock';openDreamPage();};}
-pane.querySelectorAll('[data-wish]').forEach(b=>b.onclick=()=>wishEdit(b.dataset.wish));{const b=pane.querySelector('#wishAdd');if(b)b.onclick=()=>wishEdit(null);}
+pane.querySelectorAll('[data-wish]').forEach(b=>b.onclick=()=>wishEdit(b.dataset.wish));{const b=pane.querySelector('#wishAdd');if(b)b.onclick=()=>wishEdit(null);}{const b=pane.querySelector('#wishTtl');if(b)b.onclick=wishTtlEdit;}
 pane.querySelectorAll('[data-ckpin]').forEach(b=>b.onclick=()=>openAimPage(b.dataset.ckpin));
 pane.querySelectorAll('[data-ckok]').forEach(b=>b.onclick=ev=>{if(b.classList.contains('done'))return;ckBurst(ev.clientX,ev.clientY,'＋1手！');stepDone(b.dataset.ckok);});
 pane.querySelectorAll('[data-ckds]').forEach(b=>b.onclick=()=>openDreamSteps(b.dataset.ckds));
@@ -11571,7 +11579,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c31.2";
+const CL_APPVER="c31.3";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
