@@ -1899,6 +1899,12 @@ body.cardvis .fab{display:none!important}
 .ck-d.ok .ck-pb i{background:linear-gradient(90deg,#3ccf7f,#0a9a54)}.ck-d.ok .nm{color:#0a9a54}
 .ck-d button{border:0;border-radius:12px;min-width:64px;height:44px;font-weight:900;font-size:15px;background:#ff6b1a;color:#fff;font-family:inherit}.ck-d.ok button{background:#0a9a54}
 .ck-d .auto{font-size:11px;font-weight:900;color:#6a8caf;background:#eff4f9;border-radius:8px;padding:4px 6px}
+.wish-row{display:flex;gap:8px;overflow-x:auto;margin:0 2px 8px;padding-bottom:4px;scroll-snap-type:x mandatory}
+.wish{flex:0 0 132px;scroll-snap-align:start;border:0;border-radius:16px;background:#fff;box-shadow:0 2px 8px rgba(11,22,51,.12);padding:0 0 8px;overflow:hidden;text-align:left;font-family:inherit;display:flex;flex-direction:column}
+.wish img,.wish .noimg{width:100%;height:110px;object-fit:cover;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#14275a,#2b4c9b);font-size:36px;color:#ffce54}
+.wish b{display:block;font-size:13px;font-weight:900;margin:6px 8px 0;line-height:1.3;color:#14275a}.wish small{display:block;font-size:11px;font-weight:800;color:#b7791f;margin:2px 8px 0}
+.wish.add{box-shadow:inset 0 0 0 2px #ffce54;background:#fffaf0}.wish.add .noimg{background:#fff4d6;color:#b7791f}
+.wish-ph{display:block;width:100%;border:0;border-radius:16px;background:#f4f6fb;margin:8px 0 10px;padding:0;overflow:hidden;min-height:150px;font:inherit;font-weight:900;color:#14275a}.wish-ph img{width:100%;max-height:260px;object-fit:cover;display:block}.wish-ph span{display:flex;align-items:center;justify-content:center;height:150px;font-size:17px}
 .ck-edb{border:0;border-radius:999px;padding:4px 10px;font-weight:900;font-size:12px;background:#14275a;color:#ffce54;margin-left:6px;font-family:inherit}
 .ck-ed{border-radius:14px;padding:10px;margin-bottom:8px;background:#f6f7fb}.ck-ed:nth-child(4n+2){box-shadow:inset 5px 0 0 #2c5cc5}.ck-ed:nth-child(4n+3){box-shadow:inset 5px 0 0 #f08a24}.ck-ed:nth-child(4n+4){box-shadow:inset 5px 0 0 #0a9a54}.ck-ed:nth-child(4n+5){box-shadow:inset 5px 0 0 #7c3aed}
 .ck-ed .r1{display:flex;gap:6px;align-items:center}.ck-ed .r2,.ck-ed .r3{margin-top:6px;display:flex;gap:6px;align-items:center;font-weight:800;font-size:13px}
@@ -2431,7 +2437,7 @@ if(nu&&(!cur||((nu.ts||0)>(cur.ts||0))))out.moves[id]=nu;}
 for(const k in (src.payrep||{})){const nu=src.payrep[k];if(!nu)continue;
 out.payrep=out.payrep||{};const cur=out.payrep[k];
 if(!cur||((nu.ts||0)>(cur.ts||0)))out.payrep[k]=nu;}
-for(const k of ['rtn','rlog','payppl','kinds','tools','places','projects','marks','bedp','arp','todos','plreg','plgrp','kgrp','trs','srr','tdq','ksub','dlg','dgoal','aip','msx','inc','cash','rtm','dep','tbox'])for(const id in (src[k]||{})){const nu=src[k][id];if(!nu)continue;
+for(const k of ['rtn','rlog','payppl','kinds','tools','places','projects','marks','bedp','arp','todos','plreg','plgrp','kgrp','trs','srr','tdq','ksub','dlg','dgoal','aip','msx','inc','cash','rtm','dep','tbox','wish'])for(const id in (src[k]||{})){const nu=src[k][id];if(!nu)continue;
 out[k]=out[k]||{};const cur=out[k][id];if(!cur||((nu.ts||0)>(cur.ts||0)))out[k][id]=nu;}
 for(const id in (src.pins||{})){const nu=src.pins[id];if(!nu)continue;
 out.pins=out.pins||{};const cur=out.pins[id];
@@ -4365,7 +4371,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c31.1）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c31.2）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -7066,6 +7072,7 @@ function ckTopHtml(P){const t=todayStr(),GC=goalCfg(),got=incSum('in',GC.from,t)
 if(ckWant&&!ckDone())h+='<div class="ck-gatebar">📒 一番下まで見て「見た ✓」を押すと、そのまま書ける</div>';
 h+='<button type="button" class="ck-hero" id="ckDream"><div class="hk">⭐ 夢</div><div class="ht">'+esc(((state.dream&&state.dream.name)||'（夢を設定する）').split('\n')[0])+'</div>'+
 '<div class="ck-cd"><div><b>'+days+'</b><span>日</span><small>'+esc(GC.until.slice(5).replace('-','/'))+'まで</small></div><div><b>'+esc(ckMan(left))+'</b><span>万</span><small>あと</small></div><div><b>'+esc(ckMan(per))+'</b><span>万</span><small>今日の目標</small></div></div></button>';
+h+=wishHtml();
 try{const D=state.dreams||{},dd=(id,y0,u0)=>{const d=D[id];return (d&&!d.del)?{y:Number(d.yen)>0?Number(d.yen):y0,u:dreamDue(d)||u0}:{y:y0,u:u0};},c=dd('g12',1250000,'2027-03-31'),m=dd('g11',1000000,'2027-09-30');
 const tot=GC.yen+c.y+m.y,prog=GC.yen-left,md=u=>Number(u.slice(5,7))+'/'+Number(u.slice(8,10)),st=prog<GC.yen?1:prog<GC.yen+c.y?2:3,X=[0,26,52,77,96],seg=[[0,GC.yen],[GC.yen,GC.yen+c.y],[GC.yen+c.y,tot]],Pp=v=>{if(v>=tot)return X[3].toFixed(1);for(let i=0;i<3;i++){const s=seg[i];if(v<s[1])return (X[i]+(X[i+1]-X[i])*Math.max(0,(v-s[0]))/Math.max(1,s[1]-s[0])).toFixed(1);}return X[3].toFixed(1);};
 h+='<div class="ck-sec">🗺 道のり（今いるのは ステージ'+st+'）<i></i></div><div class="ck-card"><div class="ck-track"><div class="fill" style="width:'+Pp(prog)+'%"></div><div class="car" style="left:'+Pp(prog)+'%">🚗</div>'+
@@ -7093,6 +7100,25 @@ const dk=ckDayKey(),cd=ckDay(dk),now=ckSlotNow(),nd=CK_SL.filter(s=>cd[s[0]]).le
 h+='<div class="ck-sec">📒 全部見たら、ここで押す<i></i></div><div class="ck-card ck-ci"><div class="t">📒 手帳チェックイン<small>'+nd+' / 5</small></div><div class="row">'+CK_SL.map(s=>'<div class="slot'+(cd[s[0]]?' done':'')+(s[0]===now&&!cd[s[0]]?' now':'')+'">'+s[0]+'<b>'+esc(cd[s[0]]||'—')+'</b></div>').join('')+'</div>'+
 '<button type="button" class="go'+(cd[now]?' ok':'')+'" id="ckGo">'+(cd[now]?'✓ '+now+'のチェックイン済み':'📒 '+now+'のチェックイン：見た ✓'+(ckWant?' → 書く':''))+'</button></div>';
 return P.wr+h;}
+function wishList(){const W=state.wish||{};return Object.keys(W).filter(id=>W[id]&&!W[id].del).map(id=>Object.assign({id},W[id])).sort((a,b)=>(a.o||0)-(b.o||0)||(a.ts||0)-(b.ts||0));}
+function wishHtml(){const L=wishList(),cash=cashLatest();
+return '<div class="ck-sec">🎁 欲しい物・叶えたい物<i></i></div><div class="wish-row">'+L.map(w=>{const ph=(w.ph||[])[0],y=Number(w.yen)||0,gap=y?Math.max(0,y-cash):0;
+return '<button type="button" class="wish" data-wish="'+esc(w.id)+'">'+(ph?'<img src="'+esc(phUrl(ph))+'" alt="" loading="lazy">':'<span class="noimg">🎁</span>')+'<b>'+esc(w.t||'')+'</b>'+(y?'<small>'+esc(manY(y))+(gap?'・あと '+esc(manY(gap)):'・🎉 手元で届く')+'</small>':'')+'</button>';}).join('')+
+'<button type="button" class="wish add" id="wishAdd"><span class="noimg">＋</span><b>写真を足す</b><small>欲しい物・行きたい所</small></button></div>';}
+function wishPick(cb){let inp=$('wishIn');if(!inp){inp=document.createElement('input');inp.type='file';inp.accept='image/*';inp.id='wishIn';inp.style.display='none';document.body.appendChild(inp);}
+inp.value='';inp.onchange=async()=>{const f=inp.files;if(!f||!f.length)return;toast('写真を取り込み中…');const ids=await phAddFiles([f[0]]);if(ids.length)cb(ids[0]);};inp.click();}
+function wishEdit(id){const W=state.wish||{},w0=id&&W[id]&&!W[id].del?W[id]:null;let D={t:w0?w0.t:'',yen:w0&&Number(w0.yen)?String(Math.round(Number(w0.yen)/10000)):'',ph:w0&&w0.ph?w0.ph.slice():[]};
+const paint=()=>{const ph=D.ph[0];openSub('<div class="mvq"><div class="sh-time" style="justify-content:center"><span>🎁 '+(w0?'欲しい物を直す':'欲しい物を足す')+'</span></div>'+
+'<button type="button" class="wish-ph" id="wiPh">'+(ph?'<img src="'+esc(phUrl(ph))+'" alt="">':'<span>📷 写真を選ぶ</span>')+'</button>'+
+'<input type="text" class="pin" id="wiT" placeholder="名前（例：ポルシェ911・ハワイ旅行）" value="'+esc(D.t)+'"><div style="display:flex;align-items:center;gap:8px;font-weight:900"><input type="number" inputmode="decimal" class="pin" id="wiY" placeholder="値段（任意）" value="'+esc(D.yen)+'" style="flex:1;margin:0">万円</div>'+
+'<div class="sh-btns" style="margin-top:12px">'+(w0?'<button class="delbtn" id="wiDel" style="flex:0 0 auto">消す</button>':'')+'<button class="delbtn" id="wiNo" style="flex:1">閉じる</button><button class="savebtn" id="wiOk" style="flex:1.4">保存</button></div></div>',null);
+const rd=()=>{D.t=$('wiT').value.trim();D.yen=$('wiY').value.trim();};
+$('wiPh').onclick=()=>{rd();wishPick(pid=>{D.ph=[pid];paint();});};
+$('wiNo').onclick=closeSub;
+if($('wiDel'))$('wiDel').onclick=()=>{const bak=JSON.parse(JSON.stringify(W[id]));mutate(()=>{state.wish[id]=Object.assign({},state.wish[id],{del:1,ts:Date.now()});});closeSub();undoBar('🗑 「'+(bak.t||'欲しい物')+'」を消した',()=>{mutate(()=>{state.wish[id]=Object.assign({},bak,{ts:Date.now()});});toast('↩ 戻した');},null);};
+$('wiOk').onclick=()=>{rd();if(!D.t&&!D.ph.length){toast('写真か名前を入れてくれ');return;}const k=id||('w'+Date.now().toString(36));const y=Number(D.yen)>0?Math.round(Number(D.yen)*10000):0;
+mutate(()=>{D.ph.forEach(phKeep);state.wish=state.wish||{};state.wish[k]=Object.assign({},w0||{o:wishList().length},{t:D.t,yen:y,ph:D.ph,ts:Date.now()});delete state.wish[k].del;});closeSub();toast('🎁 保存した');};};
+paint();}
 function ckFoldOpen(id){try{return localStorage.getItem('hibiki-ckf-'+id)==='1';}catch(e){return false;}}
 function ckReportHtml(t,DL,done,per){try{const GC=goalCfg(),gp=incSum('gp',t,t),inn=incSum('in',t,t),ym=t.slice(0,7),gpM=incSum('gp',ym+'-01',ym+'-31'),inM=incSum('in',ym+'-01',ym+'-31'),gpA=incSum('gp',GC.from,t),inA=incSum('in',GC.from,t),cash=cashLatest();
 const dom=Number(t.slice(8,10)),dim=new Date(Number(t.slice(0,4)),Number(t.slice(5,7)),0).getDate(),plan=per*dom,lagG=plan-gpM,lagI=plan-inM,rest=Math.max(1,dim-dom+1);
@@ -7116,6 +7142,7 @@ return '<div class="ck-sec">📈 今日の成績表（日記から自動）<i></
 function ckBind(pane){
 pane.querySelectorAll('details.ck-fd').forEach(d=>d.addEventListener('toggle',()=>{try{localStorage.setItem('hibiki-ckf-'+d.dataset.ckf,d.open?'1':'0');}catch(e){}}));
 {const b=pane.querySelector('#ckDream');if(b)b.onclick=()=>{dseg='clock';openDreamPage();};}
+pane.querySelectorAll('[data-wish]').forEach(b=>b.onclick=()=>wishEdit(b.dataset.wish));{const b=pane.querySelector('#wishAdd');if(b)b.onclick=()=>wishEdit(null);}
 pane.querySelectorAll('[data-ckpin]').forEach(b=>b.onclick=()=>openAimPage(b.dataset.ckpin));
 pane.querySelectorAll('[data-ckok]').forEach(b=>b.onclick=ev=>{if(b.classList.contains('done'))return;ckBurst(ev.clientX,ev.clientY,'＋1手！');stepDone(b.dataset.ckok);});
 pane.querySelectorAll('[data-ckds]').forEach(b=>b.onclick=()=>openDreamSteps(b.dataset.ckds));
@@ -11027,7 +11054,7 @@ return r.text;
 async function clRpcJson(name,body,sig,ms){const t=await clRpcText(name,typeof body==='string'?body:JSON.stringify(body||{}),sig,ms);try{return t?JSON.parse(t):null;}catch(e){throw clErr('応答が読めない',0,'parse','server');}}
 async function clRpc(name,body){return clRpcJson(name,body);}
 
-const CL_ID=['dreams','memos','pays','aims','moves','pins','steps','payrep','rtn','rlog','payppl','pha','kinds','tools','places','projects','marks','bedp','arp','todos','plreg','plgrp','kgrp','trs','srr','tdq','ksub','dlg','dgoal','aip','msx','inc','cash','rtm','dep','tbox'];
+const CL_ID=['dreams','memos','pays','aims','moves','pins','steps','payrep','rtn','rlog','payppl','pha','kinds','tools','places','projects','marks','bedp','arp','todos','plreg','plgrp','kgrp','trs','srr','tdq','ksub','dlg','dgoal','aip','msx','inc','cash','rtm','dep','tbox','wish'];
 const CL_DAY=['ai','rules','scr','cond','prep','ckin','ckcnt'];
 const CL_DAY2=['entries','plans'];
 const CL_SKIP={updatedAt:1,photos:1};
@@ -11544,7 +11571,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c31.1";
+const CL_APPVER="c31.2";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
