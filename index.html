@@ -4396,7 +4396,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c31.6）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c31.7）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -7030,8 +7030,9 @@ function warnDecorate(pane){const eo=entriesOf(ui.date)||{},REST={rest:1,nap:1};
 pane.querySelectorAll('.hour.filled[data-k]').forEach(el=>{const x=eo[el.dataset.k];if(!x||x.del||x.noT||!x.s)return;const dur=(x.e?durMin(x.s,x.e,x.ed?1:0):0)||0;let rest=0,muda=0;
 const isM=k=>{const q=kindOf(k);return !!(q&&q.muda);};
 if(x.md)muda+=dur;else if(REST[x.k])rest+=dur;else if(x.k&&isM(x.k))muda+=dur;
-(Array.isArray(x.acts)?x.acts:[]).forEach(a=>{if(!a||!actRowOk(x,a))return;const ks=[a.k].concat(a.kx||[]).filter(Boolean);const m=(a.s&&a.e)?durMin(a.s,a.e,0):(a.w||!a.s?dur:0);
-if(a.md||(!a.nm&&!a.wk&&ks.some(isM))){if(!x.md&&!isM(x.k))muda+=m;}else if(ks.some(k=>REST[k])){if(!REST[x.k])rest+=m;}});
+const AL=(Array.isArray(x.acts)?x.acts:[]).filter(a=>a&&actRowOk(x,a)),wN=AL.filter(a=>!(a.s&&a.e)&&!(Number(a.m)>0)&&(a.w||!a.s)&&(a.k||a.md)).length,used=AL.reduce((s,a)=>s+((a.s&&a.e)?durMin(a.s,a.e,0):(Number(a.m)>0?Number(a.m):0)),0),wSh=wN?Math.max(0,Math.round((dur-used)/wN)):0;
+(Array.isArray(x.acts)?x.acts:[]).forEach(a=>{if(!a||!actRowOk(x,a))return;const ks=[a.k].concat(a.kx||[]).filter(Boolean);const m=(a.s&&a.e)?durMin(a.s,a.e,0):(a.w||!a.s?dur:0),mM=(a.s&&a.e)?m:(Number(a.m)>0?Number(a.m):((a.w||!a.s)?wSh:0));
+if(a.md||(!a.nm&&!a.wk&&ks.some(isM))){if(!x.md&&!isM(x.k))muda+=mM;}else if(ks.some(k=>REST[k])){if(!REST[x.k])rest+=m;}});
 if(!rest&&!muda&&!x.md&&!(x.k&&(REST[x.k]||isM(x.k))))return;
 el.classList.add('warn-rec');const b=el.querySelector('.body');if(b&&!b.querySelector('.warn-tag')){const t=[];if(rest||REST[x.k])t.push('☕ 休憩 '+(durText(rest)||'0分'));if(muda||x.md||isM(x.k))t.push('🕳️ ムダ '+(durText(muda)||'0分'));b.insertAdjacentHTML('beforeend','<span class="warn-tag">⚠️ '+t.join('・')+'</span>');}});}
 function tripDecorate(pane){let tn=0;const eo=entriesOf(ui.date)||{},rows=[...pane.querySelectorAll('.hour.filled[data-k]')],pk=s=>placeKey(String(s||'').trim()),near=(a,b)=>a&&b&&Math.abs(hmMin(a)-hmMin(b))<=5;
@@ -8444,7 +8445,7 @@ const v2=new Uint8Array(items.length);
 items.forEach((it,ix)=>{if(it.v2)v2[ix]=1;const a=Math.max(0,it.a),b=Math.min(NT,it.b);for(let m=a;m<b;m++){own[m]=ix;cat[m]=it.c;}});
 const nmM=new Uint8Array(NT);
 const mdMask=new Uint8Array(NT);
-items.forEach((it,ix)=>{for(const ac of it.acts){if(!ac||!ac.md)continue;let a,b;if(ac.s&&ac.e){a=it.off+hmMin(ac.s);b=it.off+hmMin(ac.e);if(a<it.a)a+=1440;if(b<=a)b+=1440;}else{a=it.a;b=it.b;}for(let m=Math.max(0,a);m<b&&m<NT;m++)if(own[m]===ix)mdMask[m]=1;}});
+items.forEach((it,ix)=>{for(const ac of it.acts){if(!ac||!ac.md)continue;let a,b;if(ac.s&&ac.e){a=it.off+hmMin(ac.s);b=it.off+hmMin(ac.e);if(a<it.a)a+=1440;if(b<=a)b+=1440;}else continue;for(let m=Math.max(0,a);m<b&&m<NT;m++)if(own[m]===ix)mdMask[m]=1;}});
 const toolX={};
 items.forEach((it,ix)=>{if(!it.acts.length)return;
 const NAPX=alarmCfg().nap,isNap=ki=>ki&&(ki===IX.nap||((it.car||it.mv)&&ki===IX.sleep));
@@ -11613,7 +11614,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c31.6";
+const CL_APPVER="c31.7";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
