@@ -1983,6 +1983,8 @@ details.ck-fd>.in{padding:0 8px 10px}details.ck-fd.r{box-shadow:inset 4px 0 0 #e
 .mvp .ks{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 .mvp .ks button{border:0;border-radius:999px;padding:9px 11px;font-weight:800;font-size:13.5px;background:#f1f3f8;color:#4a5568}
 .mvp .ks button.on{background:#2c5cc5;color:#fff}
+.app:has(#ovl.open) #slpbar,.app:has(#ovl2.open) #slpbar{display:none!important}
+input.pin,textarea.pin{color:#14181f!important;-webkit-text-fill-color:#14181f!important;background:#fff!important;background-image:none!important;box-shadow:none!important;cursor:text;caret-color:#14181f;opacity:1}input.pin::placeholder,textarea.pin::placeholder{color:#9aa3b5!important;-webkit-text-fill-color:#9aa3b5!important}
 .mvp .pin{width:100%;border:2px solid #1d2230;border-radius:12px;padding:10px;font-size:16px;font-weight:800;margin-top:6px;background:#fff}
 .mvq .tmrow{display:flex;align-items:center;justify-content:center;gap:6px;margin:8px 0 12px}.mvq .tmrow button{border:0;border-radius:16px;height:56px;width:80px;font-weight:900;font-size:28px;background:#1d2230;color:#fff}.mvq .tmrow{gap:14px}.mvq .tmrow .tmi{font-size:26px;font-weight:900;border:2px solid #1d2230;border-radius:14px;padding:8px 10px;width:130px;text-align:center;background:#fff;color:#1d2230}.mvq .tmrow b{font-size:26px;min-width:84px;text-align:center}
 .mvq .sh-btns button{height:54px;font-size:17px}
@@ -4417,7 +4419,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c31.9）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c32.0）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -7269,7 +7271,7 @@ if(p){state.entries[dA]=state.entries[dA]||{};const sk='e'+now+'3'+Math.floor(Ma
 {const J2=mvNormalize(o.d,o.k);if(J2){J.snap=J.snap.concat(J2.snap.filter(z=>!J.snap.some(q=>q.d===z.d&&q.k===z.k)));J.legs=J.legs.concat(J2.legs);}}
 undoBar('🏁 到着 '+at+(p?'　📍 '+p:'（場所はあとで）'),()=>mvJoinUndo(J),{d:o.d,k:o.k});render();}
 function paintMvp(){const el=$('mvp');if(!el)return;const show=ui.tab==='di'&&(typeof topView==='undefined'||topView==='diary')&&ui.date===todayStr();if(!show){el.style.display='none';return;}
-if(document.activeElement&&el.contains(document.activeElement))return;const o=openMove(),r=o&&mvOpenRow(o);let h='';
+{const ae=document.activeElement;if(ae&&el.contains(ae)&&ae.matches&&ae.matches('input,textarea,select'))return;}const o=openMove(),r=o&&mvOpenRow(o);let h='';
 let mn=false;try{mn=localStorage.getItem('hibiki-mvp-min')==='1';}catch(e){}
 const swH='<div class="mvsw">'+iosSw('mvpSw',!mn,'🚗 移動の画面','','sm')+'<span>'+(o?(r?'止まり中 '+esc(r.x.s)+'〜':'走行中 '+esc(o.en.s)+'〜'):'')+'</span></div>';
 if(mn){el.innerHTML='<div class="box mini">'+swH+'</div>';el.style.display='';const sw=$('mvpSw');if(sw)sw.onclick=()=>{try{localStorage.setItem('hibiki-mvp-min','0');}catch(e){}paintMvp();};requestAnimationFrame(()=>{try{const nb=$('nowBar');el.style.bottom=(nb&&nb.style.display!=='none'?nb.offsetHeight:0)+'px';}catch(e){}});return;}
@@ -11635,7 +11637,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c31.9";
+const CL_APPVER="c32.0";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
