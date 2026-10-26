@@ -4072,8 +4072,9 @@ prepBind(pane);
 {const c=pane.querySelector('#cvFold');if(c)c.onclick=ev=>{ev.stopPropagation();msxTog('tl|cvo');};const d=pane.querySelector('#pdFold');if(d)d.onclick=ev=>{ev.stopPropagation();msxTog('tl|pall');};}
 {const o=$('tlOrd');if(o){o.style.display=topView==='diary'?'':'none';const nf=sugNo('tl|new');o.innerHTML='⇅<span class="tlw"> '+(nf?'新しい順':'古い順')+'</span><span class="tlw2"> 並び</span>';o.setAttribute('aria-label',nf?'新しい順':'古い順');o.classList.toggle('on',nf);o.onclick=ev=>{ev.stopPropagation();msxTog('tl|new');};}}
 
-{const ab=pf.querySelector('#alarmBtn');if(ab)ab.onclick=ev=>{ev.stopPropagation();openAlarmSheet();};}
-{const lb=pf.querySelector('#appLogout');if(lb)lb.onclick=ev=>{ev.stopPropagation();
+const fb=ckOn?pane:pf;
+{const ab=fb.querySelector('#alarmBtn');if(ab)ab.onclick=ev=>{ev.stopPropagation();openAlarmSheet();};}
+{const lb=fb.querySelector('#appLogout');if(lb)lb.onclick=ev=>{ev.stopPropagation();
 openSub('<div class="sh-time" style="justify-content:center"><span>🚪 ログアウトしますか？</span></div><div class="sh-note">送っていない記録を送ってからログアウトして、最新の版を読み込む。入り直せば続きから使える</div>'+
 '<div class="sh-btns"><button class="delbtn" id="lgNo" style="flex:1">いいえ</button><button class="savebtn" id="lgYes">はい</button></div>',null);
 $('lgNo').onclick=()=>closeSub();$('lgYes').onclick=()=>{closeSub();appLogout();};};}
@@ -4377,7 +4378,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c31.4）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c31.5）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -11589,7 +11590,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c31.4";
+const CL_APPVER="c31.5";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
