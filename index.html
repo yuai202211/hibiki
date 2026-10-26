@@ -1781,6 +1781,7 @@ body.cardvis .fab{display:none!important}
 .topset{width:auto;min-width:34px;height:auto;padding:3px 6px 2px;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;border-radius:10px}.topset small{font-size:9px;font-weight:800;color:#5b6475;line-height:1}
 
 .app.fold #gstrip,.app.fold #ftk,.app.fold .dreamrow,.app.fold #pinRow,.app.fold #nowCard{display:none!important}
+.app.topck .dreamrow,.app.topck #pinRow,.app.topck #ftk,.app.topck #decade{display:none!important}
 .foldbar{display:none;width:100%;margin:0;padding:4px 10px;background:#1f2430;color:#fff;font-size:12px;font-weight:800;text-align:center;border:0;letter-spacing:.04em}
 .app.fold .foldbar{display:block}
 #scr>#gstrip,#scr>#ftk,#scr>.dreamrow,#scr>#pinRow,#scr>#nowCard{flex:none}
@@ -1862,6 +1863,71 @@ body.cardvis .fab{display:none!important}
 .actrow.err{box-shadow:0 0 0 2px #e0405a}
 @keyframes hshake{0%,100%{transform:translateX(0)}30%{transform:translateX(-4px)}60%{transform:translateX(4px)}}
 .hour.filled{position:relative}
+.ck-hero{margin:8px 2px;border-radius:20px;padding:16px 14px 14px;color:#fff;background:radial-gradient(120% 140% at 100% 0%,#2b4c9b 0%,#14275a 45%,#0b1633 100%);box-shadow:0 10px 28px rgba(11,22,51,.35);position:relative;overflow:hidden;text-align:left;width:calc(100% - 4px);border:0;font:inherit;display:block}
+.ck-hero::after{content:"";position:absolute;right:-40px;top:-40px;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,rgba(255,206,84,.45),rgba(255,206,84,0) 70%);animation:ckglow 3s ease-in-out infinite;pointer-events:none}
+@keyframes ckglow{50%{transform:scale(1.15);opacity:.7}}
+.ck-hero .hk{font-size:12px;font-weight:900;color:#ffce54}.ck-hero .ht{font-size:26px;font-weight:900;margin:2px 0;background:linear-gradient(90deg,#ffe29a,#ffce54 50%,#f5a623);-webkit-background-clip:text;background-clip:text;color:transparent;line-height:1.25}
+.ck-cd{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px;position:relative;z-index:1}
+.ck-cd div{background:rgba(255,255,255,.08);box-shadow:inset 0 0 0 1px rgba(255,206,84,.35);border-radius:14px;padding:8px 4px;text-align:center}.ck-cd b{font-size:26px;font-weight:900;line-height:1;color:#ffce54}.ck-cd span{font-size:12px;font-weight:900}.ck-cd small{display:block;font-size:10.5px;font-weight:800;opacity:.9}
+.ck-sec{margin:14px 4px 6px;font-size:12px;font-weight:900;display:flex;align-items:center;gap:6px;color:#7a8294}.ck-sec i{flex:1;height:2px;background:#e1e4ec;border-radius:2px}
+.ck-card{margin:0 2px 8px;border-radius:16px;padding:12px;background:#fff;box-shadow:0 1px 3px rgba(20,24,40,.06)}
+.ck-track{position:relative;height:100px;margin:0 8px}
+.ck-track::before{content:"";position:absolute;left:0;right:0;top:26px;height:12px;border-radius:8px;background:repeating-linear-gradient(90deg,#e7ebf1 0 14px,#dfe4ec 14px 28px)}
+.ck-track .fill{position:absolute;left:0;top:26px;height:12px;border-radius:8px;background:linear-gradient(90deg,#ffe29a,#f5a623)}
+.ck-track .car{position:absolute;top:2px;transform:translateX(-50%);font-size:26px;animation:ckbob 1.2s ease-in-out infinite;z-index:2}@keyframes ckbob{50%{transform:translateX(-50%) translateY(-3px)}}
+.ck-node{position:absolute;top:15px;transform:translateX(-50%);text-align:center}.ck-node b{display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;background:#fff;box-shadow:0 0 0 3px #dfe4ec;font-size:17px;margin:0 auto}
+.ck-node span{display:block;font-size:10px;font-weight:800;color:#7a8294;line-height:1.25;margin-top:4px;white-space:nowrap}
+.ck-node.on b{box-shadow:0 0 0 3px #f5a623,0 0 14px 4px rgba(245,166,35,.45);animation:ckpulse 1.6s infinite}.ck-node.on span{color:#b7791f;font-weight:900}@keyframes ckpulse{50%{box-shadow:0 0 0 3px #f5a623,0 0 22px 8px rgba(245,166,35,.25)}}
+.ck-node.goal b{background:linear-gradient(135deg,#ffe29a,#f5a623);box-shadow:0 0 0 3px #ffe29a}
+.ck-next{margin-top:4px;background:#f4f6fb;box-shadow:inset 4px 0 0 #14275a;border-radius:12px;padding:8px 10px;font-size:13px;font-weight:800}.ck-next b{color:#14275a;font-size:15px}
+.ck-two{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 2px 6px}
+.ck-gq{position:relative;border-radius:18px;padding:12px;color:#fff;overflow:hidden;background:linear-gradient(150deg,#1e3a8a,#0b1633)}.ck-gq.alt{background:linear-gradient(150deg,#0f766e,#064e46)}
+.ck-gq h4{margin:0;font-size:15px;padding-right:56px}.ck-gq .d{font-size:12px;font-weight:800}.ck-gq .d b{font-size:18px;color:#ffce54}.ck-gq .m{font-size:11.5px;font-weight:800;margin-top:2px;opacity:.95}
+.ck-ring{position:absolute;right:10px;top:10px;width:52px;height:52px;border-radius:50%;background:conic-gradient(#ffce54 calc(var(--p)*1%),rgba(255,255,255,.18) 0);display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ck-ring::before{content:"";position:absolute;inset:6px;border-radius:50%;background:rgba(0,0,0,.25)}.ck-ring b,.ck-ring small{position:relative;font-weight:900;line-height:1}.ck-ring b{font-size:13px}.ck-ring small{font-size:9px}
+.ck-gq .go{display:block;width:100%;margin-top:10px;border:0;border-radius:14px;padding:10px 8px;font-weight:900;font-size:15px;background:#ff6b1a;color:#fff;text-align:left;font-family:inherit}.ck-gq .go small{display:block;font-size:11px;font-weight:800;opacity:.92;margin-top:2px}
+.ck-gq .go.done{background:#0a9a54}.ck-gq .go.add{background:rgba(255,255,255,.18)}
+.ck-streak{margin:6px 2px 8px;text-align:center;font-weight:900;font-size:14px;color:#14275a}.ck-streak b{font-size:20px;color:#f5a623}
+.ck-formula{background:linear-gradient(180deg,#fff,#fff7f0);box-shadow:inset 0 0 0 2px #ffd2b0}
+.ck-fx{display:flex;align-items:center;justify-content:space-between;gap:4px}.ck-fx>span{font-size:20px;font-weight:900;color:#e8590c}
+.ck-fb{flex:1;text-align:center;background:#fff0e3;border-radius:12px;padding:6px 2px}.ck-fb b{display:block;font-size:19px;font-weight:900}.ck-fb small{font-size:10.5px;font-weight:800;color:#7a8294}
+.ck-fb.big{background:linear-gradient(135deg,#14275a,#2b4c9b);color:#fff}.ck-fb.big b{color:#ffce54;font-size:22px}.ck-fb.big small{color:#fff;opacity:.9}
+.ck-fw{text-align:center;font-size:13px;font-weight:900;color:#e8590c;margin:10px 0 6px}
+.ck-d{display:grid;grid-template-columns:30px 1fr auto;align-items:center;gap:8px;padding:8px 0;border-top:1px dashed #f0dccb}.ck-d:first-child{border:0}
+.ck-d .ic{font-size:22px;text-align:center}.ck-d .nm{font-weight:900;font-size:14px}.ck-d .nm small{display:block;font-size:11px;font-weight:800;color:#7a8294}
+.ck-pb{height:8px;background:#f1e3d6;border-radius:5px;overflow:hidden;margin-top:4px}.ck-pb i{display:block;height:100%;background:linear-gradient(90deg,#ffb36b,#ff6b1a)}
+.ck-d.ok .ck-pb i{background:linear-gradient(90deg,#3ccf7f,#0a9a54)}.ck-d.ok .nm{color:#0a9a54}
+.ck-d button{border:0;border-radius:12px;min-width:64px;height:44px;font-weight:900;font-size:15px;background:#ff6b1a;color:#fff;font-family:inherit}.ck-d.ok button{background:#0a9a54}
+.ck-d .auto{font-size:11px;font-weight:900;color:#6a8caf;background:#eff4f9;border-radius:8px;padding:4px 6px}
+.ck-dsum{margin-top:8px;text-align:center;font-weight:900;font-size:14px}.ck-dsum b{font-size:22px;color:#e8590c}.ck-dsum span{color:#e8590c}
+.ck-grade{display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,#0b1633,#1e3a8a);color:#fff;border-radius:14px;padding:10px 12px}
+.ck-grade .gl{text-align:center}.ck-grade .gl b{display:block;font-size:40px;line-height:1;font-weight:900;background:linear-gradient(135deg,#ffe29a,#f5a623);-webkit-background-clip:text;background-clip:text;color:transparent}.ck-grade .gl small{font-size:10px;font-weight:800;opacity:.8}.ck-grade .gm{font-weight:900;font-size:14px;line-height:1.4}
+.ck-rr{padding:10px 0 4px;border-top:1px dashed #e1e4ec;margin-top:10px}
+.ck-rh{display:flex;justify-content:space-between;align-items:center;font-weight:900;font-size:14px}.ck-rh span{font-weight:800;color:#7a8294;font-size:12.5px}
+.ck-rr small{display:block;font-size:11.5px;font-weight:800;color:#7a8294;margin-top:6px}.ck-rr small b{color:#1d2230}.ck-rr .neg{color:#e5484d}.ck-rr .pos{color:#0a9a54}
+.ck-dots{display:flex;gap:6px;margin-top:6px}.ck-dots i{flex:1;height:14px;border-radius:7px;background:#f1e3d6}.ck-dots i.on{background:linear-gradient(90deg,#3ccf7f,#0a9a54)}
+.ck-mrow{display:grid;grid-template-columns:96px 1fr;gap:8px;align-items:center;margin-top:8px}.ck-ml{font-weight:900;font-size:13.5px}.ck-ml small{display:block;font-size:10px;color:#7a8294;font-weight:800;margin:0}
+.ck-mv{font-weight:800;font-size:12px;color:#7a8294}.ck-mv b{font-size:19px;color:#e8590c}
+.ck-gbar{position:relative;height:14px;background:#f1e3d6;border-radius:8px;margin-top:4px;overflow:hidden}.ck-gbar i{display:block;height:100%;background:linear-gradient(90deg,#ffb36b,#ff6b1a)}.ck-gbar.cash i{background:linear-gradient(90deg,#7fb0e0,#3b7dd8)}
+.ck-mt{width:100%;border-collapse:collapse;margin-top:10px;font-size:12px;font-weight:800}.ck-mt th{color:#7a8294;font-size:10.5px;text-align:right;padding:3px 4px}.ck-mt td{text-align:right;padding:5px 4px;border-top:1px solid #eef0f4}.ck-mt td:first-child{text-align:left}
+.ck-inc{display:block;width:100%;margin-top:8px;border:2px dashed #ffd2b0;border-radius:12px;background:#fff;height:42px;font-weight:900;color:#e8590c;font-family:inherit;font-size:14px}
+.ck-tbar{display:flex;height:24px;border-radius:9px;overflow:hidden;margin-top:6px;font-size:10.5px;font-weight:900;color:#fff}.ck-tbar span{display:flex;align-items:center;justify-content:center;white-space:nowrap;overflow:hidden;min-width:0}
+.ck-kp{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px}.ck-kp div{background:#f6f7fb;border-radius:10px;padding:6px 2px;text-align:center}.ck-kp b{display:block;font-size:14px;font-weight:900}.ck-kp small{margin:0;font-size:10px}.ck-kp .bad{background:#fff1f0}.ck-kp .bad b{color:#e5484d}
+.ck-wk{display:flex;align-items:flex-end;gap:6px;height:72px;margin-top:6px}.ck-wk div{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;font-size:10px;font-weight:800;color:#7a8294}
+.ck-wk i{width:100%;border-radius:6px 6px 2px 2px;background:linear-gradient(180deg,#ffb36b,#ff6b1a);min-height:3px}.ck-wk div.t i{background:linear-gradient(180deg,#ffe29a,#f5a623);box-shadow:0 0 0 2px #f5a623}.ck-wk em{font-style:normal;color:#0a9a54;font-weight:900;font-size:9px;letter-spacing:-1px}
+details.ck-fd{margin:0 2px 6px;background:#fff;border-radius:14px;box-shadow:0 1px 3px rgba(20,24,40,.06)}
+details.ck-fd>summary{list-style:none;cursor:pointer;padding:11px 12px;display:flex;align-items:center;gap:8px;font-weight:900;font-size:14px}
+details.ck-fd>summary::-webkit-details-marker{display:none}
+details.ck-fd>summary .s{flex:1;min-width:0;font-weight:700;font-size:12px;color:#7a8294;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+details.ck-fd>summary::after{content:"▾ 開く";flex:none;font-size:11px;color:#6a8caf;font-weight:900}details.ck-fd[open]>summary::after{content:"▴ 閉じる"}
+details.ck-fd>.in{padding:0 8px 10px}details.ck-fd.r{box-shadow:inset 4px 0 0 #e5484d}details.ck-fd.r>summary{color:#e5484d}
+.ck-ci{background:#1d2230;color:#fff}.ck-ci .t{display:flex;justify-content:space-between;font-weight:900}.ck-ci .t small{color:#ffce54}
+.ck-ci .row{display:flex;gap:6px;margin:8px 0}.ck-ci .slot{flex:1;border-radius:12px;padding:6px 2px;text-align:center;font-size:11px;font-weight:800;background:#2c3242;color:#9aa3b5}.ck-ci .slot b{display:block;font-size:15px}
+.ck-ci .slot.done{background:#0a9a54;color:#fff}.ck-ci .slot.now{outline:2px solid #ffce54;color:#fff}
+.ck-ci .go{width:100%;border:0;border-radius:14px;height:56px;font-size:18px;font-weight:900;background:#ffce54;color:#1d2230;font-family:inherit}.ck-ci .go.ok{background:#2c3242;color:#9aa3b5}
+.ck-gatebar{margin:6px 2px 8px;background:#fff8d6;border-radius:12px;padding:8px 10px;font-weight:900;font-size:13px;color:#8a5a00;box-shadow:inset 4px 0 0 #ffce54}
+.ck-burst{position:fixed;pointer-events:none;font-size:22px;animation:ckfly 1s ease-out forwards;z-index:9999}@keyframes ckfly{to{transform:translate(var(--x),var(--y)) rotate(360deg);opacity:0}}
+.ck-plus{position:fixed;pointer-events:none;font-size:22px;font-weight:900;color:#e8590c;animation:ckup 1s ease-out forwards;z-index:9999}@keyframes ckup{to{transform:translateY(-50px);opacity:0}}
 .hour.filled.warn-rec{background:#fff1f0!important;outline:2px solid #f2a7a3;outline-offset:-2px}.hour.filled.warn-rec::after{content:"";position:absolute;top:0;bottom:0;right:0;width:6px;background:#e5484d;border-radius:0 12px 12px 0}.warn-tag{display:block;width:max-content;max-width:100%;margin-top:4px;background:#e5484d;color:#fff;font-size:12px;font-weight:900;border-radius:8px;padding:2px 8px}
 .hour.filled.trip{background:#f0f6f2;box-shadow:inset 6px 0 0 #6b9080}.hour.filled.trip.trip-s{border-top:2px solid #6b9080;border-top-left-radius:12px;border-top-right-radius:12px}.hour.filled.trip.trip-e{border-bottom:2px solid #6b9080;border-bottom-left-radius:12px;border-bottom-right-radius:12px;margin-bottom:6px}
 .hour.filled.trip-via{background:#f6faf7;box-shadow:inset 6px 0 0 #6b9080,inset 18px 0 0 #f6faf7}.hour.filled.trip-via .body{opacity:.9}
@@ -2328,6 +2394,7 @@ if(!cur||((nu.ts||0)>(cur.ts||0)))out.ai[d]=nu;}
 for(const d in (src.scr||{})){const nu=src.scr[d];if(!nu)continue;out.scr=out.scr||{};const cur=out.scr[d];if(!cur||((nu.ts||0)>(cur.ts||0)))out.scr[d]=nu;}
 for(const d in (src.prep||{})){const nu=src.prep[d];if(!nu)continue;out.prep=out.prep||{};const cur=out.prep[d];if(!cur||((nu.ts||0)>(cur.ts||0)))out.prep[d]=nu;}
 for(const d in (src.cond||{})){const nu=src.cond[d];if(!nu)continue;out.cond=out.cond||{};const cur=out.cond[d];if(!cur||((nu.ts||0)>(cur.ts||0)))out.cond[d]=nu;}
+for(const d in (src.ckin||{})){const nu=src.ckin[d];if(!nu)continue;out.ckin=out.ckin||{};const cur=out.ckin[d];if(!cur){out.ckin[d]=nu;continue;}const m=Object.assign({},cur);for(const s in nu){if(s!=='ts'&&nu[s]&&!m[s])m[s]=nu[s];}m.ts=Math.max(nu.ts||0,cur.ts||0);out.ckin[d]=m;}
 if(src.alarm&&typeof src.alarm==='object'&&(!out.alarm||((src.alarm.ts||0)>(out.alarm.ts||0))))out.alarm=src.alarm;
 if(src.goal&&typeof src.goal==='object'&&(!out.goal||((src.goal.ts||0)>(out.goal.ts||0))))out.goal=src.goal;
 if(src.rew&&typeof src.rew==='object'&&(!out.rew||((src.rew.ts||0)>(out.rew.ts||0))))out.rew=src.rew;
@@ -3967,12 +4034,16 @@ else fB='<button class="hour gap tlfold" id="pdFold"><span class="hh">▴</span>
 const srB=srBarHtml();
 const body=newF?(srB+tail+R.slice().reverse().map(x=>x.r+x.g).join('')+fB+cvB):(cvB+srB+fB+R.map(x=>x.g+x.r).join('')+tail);
 html=html.slice(0,tvA)+tbTopHtml()+depCardHtml()+html.slice(tvB,tvC)+tbDayHtml()+body;}
+else if(isToday)html=html.slice(0,tvA)+ckTopHtml({slp:html.slice(tvA,tvB),wr:html.slice(tvB,tvC),rest:html.slice(tvC,tvR0)});
 else html=html.slice(0,tvA)+tbTopHtml()+depCardHtml()+html.slice(tvA,tvR0)+html.slice(tvR1);
 let foot='';
 foot+='<div class="lgo"><button id="alarmBtn">⏰ 注意の時刻を変える</button><small>'+esc(alarmSummary())+'</small></div>';
 if(typeof clLogout==='function'&&typeof cloudLoggedIn==='function'&&cloudLoggedIn())foot+='<div class="lgo"><button id="appLogout">🚪 ログアウト（最新の版に入れ替える）</button><small>今の版 '+esc(String(typeof CL_APPVER!=='undefined'?CL_APPVER:''))+'。押すと、送っていない記録を送ってからログアウト→最新の版を読み込む。入り直せば続きから</small></div>';
+const ckOn=topView==='top'&&isToday;try{$('app').classList.toggle('topck',ckOn);}catch(e){}
+if(ckOn)html=html.replace('<!--ckfoot-->',foot);
 pane.innerHTML=html;
-const pf=$('pfoot')||pane;if(pf!==pane)pf.innerHTML=foot;else pane.insertAdjacentHTML('beforeend',foot);
+const pf=$('pfoot')||pane;if(ckOn){if(pf!==pane)pf.innerHTML='';}else if(pf!==pane)pf.innerHTML=foot;else pane.insertAdjacentHTML('beforeend',foot);
+if(ckOn)try{ckBind(pane);}catch(e){}
 {const b=pane.querySelector('#tlFold');if(b)b.onclick=ev=>{ev.stopPropagation();const on=sugNo('tl|all');mutate(()=>{state.msx=state.msx||{};state.msx['tl|all']=on?{del:1,ts:Date.now()}:{ts:Date.now()};});};}
 if(topView==='diary')slpBarBind(pane.querySelector('.hour.wr'));
 if(topView==='diary')dsrBind(pane);
@@ -3988,7 +4059,7 @@ openSub('<div class="sh-time" style="justify-content:center"><span>🚪 ログ�
 '<div class="sh-btns"><button class="delbtn" id="lgNo" style="flex:1">いいえ</button><button class="savebtn" id="lgYes">はい</button></div>',null);
 $('lgNo').onclick=()=>closeSub();$('lgYes').onclick=()=>{closeSub();appLogout();};};}
 pane.querySelectorAll('[data-h]').forEach(b=>{
-b.onclick=()=>openEntrySheet(ui.date,{hour:Number(b.dataset.h),pick:!b.classList.contains('wr'),wr:b.classList.contains('wr')});
+b.onclick=()=>{if(b.classList.contains('wr')&&ckGate())return;openEntrySheet(ui.date,{hour:Number(b.dataset.h),pick:!b.classList.contains('wr'),wr:b.classList.contains('wr')});};
 b.onkeydown=ev=>{if(ev.target!==b)return;if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();openEntrySheet(ui.date,{hour:Number(b.dataset.h),wr:b.classList.contains('wr')});}};
 });
 const wB=(id,fn)=>{const b=pane.querySelector('#'+id);if(b)b.onclick=ev=>{ev.stopPropagation();fn();};};
@@ -4287,7 +4358,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c30.0）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c31.0）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -6935,6 +7006,88 @@ tn++;T.forEach((o,n)=>{o.el.classList.add('trip');if(tn%2===0)o.el.classList.add
 {const b=a.el.querySelector('.body');if(b&&!b.querySelector('.trip-tag'))b.insertAdjacentHTML('afterbegin','<span class="trip-tag">'+esc(TRICON[a.x.tr]||'🚗')+' 出発 '+esc(a.x.s)+' → 🏁 '+(L.e?'到着 '+esc(L.e)+'（'+esc(durText(dur)||'0分')+(vias?'・経由'+vias:'')+'）':'走行中')+'</span>');}
 T.filter(o=>!o.x.mv).forEach(o=>{const b=o.el.querySelector('.body');if(b&&!b.querySelector('.trip-via-tag'))b.insertAdjacentHTML('afterbegin','<span class="trip-via-tag">⋯ 経由</span>');});
 i=j;}}
+const CK_SL=[['朝',5,10],['昼前',10,12],['昼',12,15],['夕',15,19],['夜',19,29]];
+function ckSlotNow(){let h=new Date().getHours();if(h<5)h+=24;const s=CK_SL.find(x=>h>=x[1]&&h<x[2]);return s?s[0]:'夜';}
+function ckDayKey(){const n=new Date();return n.getHours()<5?addDays(todayStr(),-1):todayStr();}
+function ckDay(d){const o=((state.ckin||{})[d])||{};return o.del?{}:o;}
+function ckDone(){return !!ckDay(ckDayKey())[ckSlotNow()];}
+function ckDo(){const d=ckDayKey(),sl=ckSlotNow();if(ckDay(d)[sl])return;mutate(()=>{state.ckin=state.ckin||{};state.ckin[d]=Object.assign({},ckDay(d),{[sl]:nowHM(),ts:Date.now()});});}
+let ckWant=false;
+function ckGate(){try{if(ui.date!==todayStr()||ckDone()||openMove()||entDraft(ui.date))return false;
+ckWant=true;if(topView!=='top'){topView='top';render();}setTimeout(()=>{try{const sc=$('scr');if(sc)sc.scrollTop=0;}catch(e){}},30);toast('📒 先にトップを一番下まで見て、チェックインしてから書く');return true;}catch(e){return false;}}
+function ckGoalExtra(){const g=(state.goal&&typeof state.goal==='object')?state.goal:{};const n=(v,d)=>{const x=Number(v);return isFinite(x)&&x>0?x:d;};return {biz:n(g.biz,360),car:n(g.car,1)};}
+function ckCarCnt(t){let c=0;const eo=(state.entries||{})[t]||{};for(const id in eo){const en=eo[id];if(!en||en.del||en.noT)continue;let hit=false;for(const a of actsExpand(en.acts)){if(!a)continue;if([a.k].concat(a.kx||[]).some(k=>{const q=kindOf(k);return q&&q.g==='V';})){hit=true;break;}}if(!hit&&en.k){const q=kindOf(en.k);if(q&&q.g==='V')hit=true;}if(hit)c++;}return c;}
+function ckDaily(t){const GC=goalCfg(),X=ckGoalExtra(),c=actTodayCnt(t);let lm=0,bm=0;try{lm=learnTodayMin(t);}catch(e){}try{bm=bizSplit(t).biz;}catch(e){}
+return [{k:'dm',ic:'📣',nm:'DMを送る',to:'商談 → 成約 → 粗利',v:c.dm,g:GC.dm,u:'通',btn:'＋1'},{k:'post',ic:'𝕏',nm:'Xに投稿',to:'集客 → 問い合わせ',v:c.post,g:GC.post,u:'本',btn:'＋1'},
+{k:'car',ic:'🚗',nm:'中古車の仕入れ・販売の行動',to:'1台の粗利＝今日の稼ぎ',v:ckCarCnt(t),g:X.car,u:'件',auto:1},{k:'learn',ic:'📚',nm:'学ぶ',to:'AIの会社の力',v:lm,g:GC.learn,u:'分',btn:'▶ 学ぶ'},
+{k:'biz',ic:'💼',nm:'商売の時間',to:'全部の土台',v:Math.round(bm/6)/10,g:Math.round(X.biz/6)/10,u:'h',auto:1}];}
+function ckAddCnt(kk){const t=todayStr(),eo=state.entries[t]||{},nm=kk==='sns_xd'?'DM':'X投稿';let key=Object.keys(eo).find(k=>{const x=eo[k];return x&&!x.del&&x.ckq===kk;});const sn=key?ubSnap(t,key):null,now=nowHM();
+mutate(()=>{state.entries[t]=state.entries[t]||{};if(key){const x=state.entries[t][key];const a=(x.acts||[])[0];if(a){a.n=(Number(a.n)||1)+1;}x.e=now;x.ts=Date.now();}
+else{key='e'+Date.now()+Math.floor(Math.random()*1e4);state.entries[t][key]={s:now,e:now,p:'',t:'',ph:[],mn:0,ckq:kk,acts:[{k:kk,t:(kindOf(kk)||{}).lb||nm,n:1,m:0,w:1}],ts:Date.now()};}});
+const n=actTodayCnt(t)[kk==='sns_xd'?'dm':'post'];undoBar((kk==='sns_xd'?'📣 DM ':'𝕏 投稿 ')+n,sn?ubBack(sn):ubDel(t,key),null);}
+function ckBurst(x,y,txt){const E=['🎉','✨','⭐','🔥','💥'];for(let k=0;k<14;k++){const e=document.createElement('div');e.className='ck-burst';e.textContent=E[k%E.length];e.style.left=x+'px';e.style.top=y+'px';const a=Math.random()*Math.PI*2,r=60+Math.random()*90;e.style.setProperty('--x',Math.cos(a)*r+'px');e.style.setProperty('--y',Math.sin(a)*r-40+'px');document.body.appendChild(e);setTimeout(()=>e.remove(),1100);}
+const p=document.createElement('div');p.className='ck-plus';p.textContent=txt||'＋1！';p.style.left=(x-30)+'px';p.style.top=(y-30)+'px';document.body.appendChild(p);setTimeout(()=>p.remove(),1100);}
+function ckMan(n){return manY(n).replace('万','');}
+function ckTopHtml(P){const t=todayStr(),GC=goalCfg(),got=incSum('in',GC.from,t),cash=cashLatest(),left=Math.max(0,GC.yen-got-cash),days=goalDays(),per=days?Math.ceil(left/days):left;let h='';
+if(ckWant&&!ckDone())h+='<div class="ck-gatebar">📒 一番下まで見て「見た ✓」を押すと、そのまま書ける</div>';
+h+='<button type="button" class="ck-hero" id="ckDream"><div class="hk">⭐ 夢</div><div class="ht">'+esc(((state.dream&&state.dream.name)||'（夢を設定する）').split('\n')[0])+'</div>'+
+'<div class="ck-cd"><div><b>'+days+'</b><span>日</span><small>'+esc(GC.until.slice(5).replace('-','/'))+'まで</small></div><div><b>'+esc(ckMan(left))+'</b><span>万</span><small>あと</small></div><div><b>'+esc(ckMan(per))+'</b><span>万</span><small>今日の目標</small></div></div></button>';
+try{const D=state.dreams||{},dd=(id,y0,u0)=>{const d=D[id];return (d&&!d.del)?{y:Number(d.yen)>0?Number(d.yen):y0,u:dreamDue(d)||u0}:{y:y0,u:u0};},c=dd('g12',1250000,'2027-03-31'),m=dd('g11',1000000,'2027-09-30');
+const tot=GC.yen+c.y+m.y,prog=GC.yen-left,md=u=>Number(u.slice(5,7))+'/'+Number(u.slice(8,10)),st=prog<GC.yen?1:prog<GC.yen+c.y?2:3,X=[0,26,52,77,96],seg=[[0,GC.yen],[GC.yen,GC.yen+c.y],[GC.yen+c.y,tot]],Pp=v=>{if(v>=tot)return X[3].toFixed(1);for(let i=0;i<3;i++){const s=seg[i];if(v<s[1])return (X[i]+(X[i+1]-X[i])*Math.max(0,(v-s[0]))/Math.max(1,s[1]-s[0])).toFixed(1);}return X[3].toFixed(1);};
+h+='<div class="ck-sec">🗺 道のり（今いるのは ステージ'+st+'）<i></i></div><div class="ck-card"><div class="ck-track"><div class="fill" style="width:'+Pp(prog)+'%"></div><div class="car" style="left:'+Pp(prog)+'%">🚗</div>'+
+'<div class="ck-node'+(st===1?' on':'')+'" style="left:'+X[1]+'%"><b>🧱</b><span>ステージ1<br>'+esc(manY(GC.yen))+'<br>'+md(GC.until)+'</span></div>'+
+'<div class="ck-node'+(st===2?' on':'')+'" style="left:'+X[2]+'%"><b>🏢</b><span>ステージ2<br>法人化<br>'+md(c.u)+'</span></div>'+
+'<div class="ck-node'+(st===3?' on':'')+'" style="left:'+X[3]+'%"><b>🏠</b><span>ステージ3<br>引っ越し<br>'+md(m.u)+'</span></div>'+
+'<div class="ck-node goal" style="left:'+X[4]+'%"><b>⭐</b><span>ゴール<br>夢</span></div></div>'+
+'<div class="ck-next">🔥 次のゴール：<b>'+esc(manY(GC.yen))+'</b>まで あと <b>'+esc(manY(left))+'</b>・<b>'+days+'日</b><br>今日 <b>'+esc(manY(per))+'</b>で予定どおり</div></div>';}catch(e){}
+try{const arr=pinnedDreams();if(arr.length){h+='<div class="ck-two">'+arr.slice(0,2).map((d,i)=>{const s=stepStat(d),n=s.n,hit=dreamHit(d.id),nl=needList(d),ok=nl.filter(x=>x.ok).length,p=s.tot?Math.round(s.dn/s.tot*100):0;
+return '<div class="ck-gq'+(i?' alt':'')+'"><div class="ck-ring" style="--p:'+p+'"><b>'+s.dn+'/'+(s.tot||0)+'</b><small>手</small></div><h4 data-ckpin="'+esc(d.id)+'">'+pinIcon(d.t)+' '+esc(d.t)+'</h4><div class="d">'+(n===null?'期限なし':n<0?'⚠ '+(-n)+'日超過':'あと <b>'+n+'</b>日')+(dreamDue(d)?'・'+esc(dreamDue(d).slice(5).replace('-','/')):'')+'</div>'+
+'<div class="m">'+(Number(d.yen)>0?'💰 '+esc(manY(Number(d.yen)))+'　':'')+(nl.length?'📦 '+ok+'/'+nl.length:'')+'</div>'+
+(s.next?'<button type="button" class="go'+(hit?' done':'')+'" data-ckok="'+esc(s.next.id)+'">'+(hit?'✓ 今日は進めた':'✓ 今日の1手')+'<small>'+esc(s.next.t)+'</small></button>':'<button type="button" class="go add" data-ckds="'+esc(d.id)+'">＋ 次の1手を書く</button>')+'</div>';}).join('')+'</div>';
+const hc=arr.filter(d=>dreamHit(d.id)).length;h+='<div class="ck-streak">🔥 夢に近づいた手：今日 <b>'+hc+'</b></div>';}}catch(e){}
+const DL=ckDaily(t),done=DL.filter(x=>x.v>=x.g).length;
+h+='<div class="ck-sec">🧱 毎日の積み重ね＝夢までの最短ルート<i></i></div><div class="ck-card ck-formula"><div class="ck-fx"><div class="ck-fb"><b>'+esc(manY(left))+'</b><small>あと</small></div><span>÷</span><div class="ck-fb"><b>'+days+'日</b><small>'+esc(GC.until.slice(5).replace('-','/'))+'まで</small></div><span>＝</span><div class="ck-fb big"><b>'+esc(manY(per))+'</b><small>1日に稼ぐ</small></div></div><div class="ck-fw">そのために 毎日これを積み重ねる ↓</div>'+
+DL.map(d=>{const ok=d.v>=d.g,p=d.g?Math.min(100,Math.round(d.v/d.g*100)):0;return '<div class="ck-d'+(ok?' ok':'')+'"><div class="ic">'+d.ic+'</div><div class="nm">'+esc(d.nm)+'　'+d.v+' / '+d.g+d.u+'<small>→ '+esc(d.to)+'</small><div class="ck-pb"><i style="width:'+p+'%"></i></div></div>'+(d.auto?'<span class="auto">日記から自動</span>':'<button type="button" data-ckd="'+d.k+'">'+(ok&&d.k!=='learn'?'✓ ＋1':d.btn)+'</button>')+'</div>';}).join('')+
+'<div class="ck-dsum">今日の積み重ね <b>'+done+'</b> / '+DL.length+'　<span>'+(done>=DL.length?'🎉 今日は全部達成！':done>=3?'あと少し！':done>=1?'いい流れ！続けよう':'まず1つ目から！')+'</span></div></div>';
+h+=ckReportHtml(t,DL,done,per);
+h+='<div class="ck-sec">▶ 今日やる事<i></i></div>'+tbTopHtml()+depCardHtml();
+const fd=(id,ttl,sum,inner,cls)=>inner?'<details class="ck-fd'+(cls?' '+cls:'')+'" data-ckf="'+id+'"'+(ckFoldOpen(id)?' open':'')+'><summary>'+ttl+'<span class="s">'+sum+'</span></summary><div class="in">'+inner+'</div></details>':'';
+const pay=payAlertHtml(),slp=P.slp,band=dayBandHtml(t),gl=goalLineHtml();
+const slpTx=(()=>{try{const d=document.createElement('div');d.innerHTML=slp;return d.textContent.replace(/\s+/g,' ').trim().slice(0,40);}catch(e){return '';}})(),payTx=(()=>{try{const d=document.createElement('div');d.innerHTML=pay;return d.textContent.replace(/\s+/g,' ').replace('💴 支払い','').trim().slice(0,40);}catch(e){return '';}})();
+h+='<div class="ck-sec">📂 ほか（押すと開く）<i></i></div>'+fd('pay','💴 支払い',esc(payTx),pay,/明日|今日|過ぎ/.test(payTx)?'r':'')+fd('slp','🌙 睡眠・注意',esc(slpTx),slp,/⚠|寝坊/.test(slpTx)?'r':'')+fd('band','📊 時間の使い方','24時間メーター・分析',band)+fd('money','💰 お金の記録','粗利・入金・手元を入れる・見る',gl)+P.rest.replace(band,'').replace(gl,'').replace(pay,'')+fd('set','⚙️ 設定','注意の時刻・ログアウト','<!--ckfoot-->');
+const dk=ckDayKey(),cd=ckDay(dk),now=ckSlotNow(),nd=CK_SL.filter(s=>cd[s[0]]).length;
+h+='<div class="ck-sec">📒 全部見たら、ここで押す<i></i></div><div class="ck-card ck-ci"><div class="t">📒 手帳チェックイン<small>'+nd+' / 5</small></div><div class="row">'+CK_SL.map(s=>'<div class="slot'+(cd[s[0]]?' done':'')+(s[0]===now&&!cd[s[0]]?' now':'')+'">'+s[0]+'<b>'+esc(cd[s[0]]||'—')+'</b></div>').join('')+'</div>'+
+'<button type="button" class="go'+(cd[now]?' ok':'')+'" id="ckGo">'+(cd[now]?'✓ '+now+'のチェックイン済み':'📒 '+now+'のチェックイン：見た ✓'+(ckWant?' → 書く':''))+'</button></div>';
+return P.wr+h;}
+function ckFoldOpen(id){try{return localStorage.getItem('hibiki-ckf-'+id)==='1';}catch(e){return false;}}
+function ckReportHtml(t,DL,done,per){try{const GC=goalCfg(),gp=incSum('gp',t,t),inn=incSum('in',t,t),ym=t.slice(0,7),gpM=incSum('gp',ym+'-01',ym+'-31'),inM=incSum('in',ym+'-01',ym+'-31'),gpA=incSum('gp',GC.from,t),inA=incSum('in',GC.from,t),cash=cashLatest();
+const dom=Number(t.slice(8,10)),dim=new Date(Number(t.slice(0,4)),Number(t.slice(5,7)),0).getDate(),plan=per*dom,lagG=plan-gpM,lagI=plan-inM,rest=Math.max(1,dim-dom+1);
+let c=null;try{c=anaCount(anaRange('day',t));}catch(e){}const tot=(c&&c.total)||0,none=(c&&c.sum1&&c.sum1._none)||(c&&c.sum&&c.sum._none)||0,rec=Math.max(0,tot-none),muda=(c&&c.muda&&c.muda.total)||0;let biz=0,ai=0;try{const b=bizSplit(t);biz=b.biz;}catch(e){}
+const hs=m=>m<60?m+'分':(Math.round(m/6)/10)+'h',wage=biz>0?Math.round(gp/(biz/60)):0,gw=Math.round(per/Math.max(1,ckGoalExtra().biz/60)),own=Math.max(0,rec-biz-muda);
+const pct=Math.min(100,Math.round(gp/Math.max(1,per)*100)),sc=done+(pct>=100?3:pct>=50?2:pct>=20?1:0),g=sc>=7?'S':sc>=5?'A':sc>=3?'B':'C';
+const msg=g==='S'?'🎉 最高の1日！この調子で夢に近づいてる':g==='A'?'いい流れ！あと少しで今日の目標':g==='B'?'半分きた。稼ぎにつながる1手を':(gp<=0?'稼ぎがまだ。DMから始めよう':'まず積み重ねの1つ目から');
+const W=[];for(let i=6;i>=0;i--){const d=addDays(t,-i),L=i?ckDaily(d):DL,dn=L.filter(x=>x.v>=x.g).length,gv=incSum('gp',d,d);W.push({d,dn,gv,lb:i?'日月火水木金土'[parseD(d).getDay()]:'今日'});}
+const mx=Math.max(per,...W.map(w=>w.gv),1);
+const lag=(v)=>v>0?'<b class="neg">'+esc(manY(v))+' 遅れ</b>':'<b class="pos">'+esc(manY(-v))+' 先</b>';
+return '<div class="ck-sec">📈 今日の成績表（日記から自動）<i></i></div><div class="ck-card"><div class="ck-grade"><div class="gl"><b>'+g+'</b><small>今日の評価</small></div><div class="gm">'+esc(msg)+'</div></div>'+
+'<div class="ck-rr"><div class="ck-rh">✅ 決めた事 <span>'+done+'/'+DL.length+'</span></div><div class="ck-dots">'+DL.map((d,i)=>'<i class="'+(i<done?'on':'')+'"></i>').join('')+'</div></div>'+
+'<div class="ck-rr"><div class="ck-rh">💰 お金（会社と同じ 2本立て）</div>'+
+'<div class="ck-mrow"><span class="ck-ml">📈 粗利<small>売れた時点</small></span><div class="ck-mv"><b>'+esc(ckMan(gp))+'</b>万 / '+esc(manY(per))+'<div class="ck-gbar"><i style="width:'+pct+'%"></i></div></div></div>'+
+'<div class="ck-mrow"><span class="ck-ml">💵 入金<small>お金が入った時点</small></span><div class="ck-mv"><b>'+esc(ckMan(inn))+'</b>万 / '+esc(manY(per))+'<div class="ck-gbar cash"><i style="width:'+Math.min(100,Math.round(inn/Math.max(1,per)*100))+'%"></i></div></div></div>'+
+'<table class="ck-mt"><tr><th></th><th>今日</th><th>'+Number(ym.slice(5))+'月</th><th>'+esc(GC.until.slice(5).replace('-','/'))+'まで</th></tr><tr><td>📈 粗利</td><td>'+esc(manY(gp))+'</td><td>'+esc(manY(gpM))+'</td><td>'+esc(manY(gpA))+'／'+esc(manY(GC.yen))+'</td></tr><tr><td>💵 入金</td><td>'+esc(manY(inn))+'</td><td>'+esc(manY(inM))+'</td><td>'+esc(manY(inA))+'／'+esc(manY(GC.yen))+'</td></tr><tr><td>💴 手元</td><td>—</td><td colspan="2">'+esc(manY(cash))+'</td></tr></table>'+
+'<small>'+Number(ym.slice(5))+'月のここまでの予定 '+esc(manY(plan))+' → 粗利 '+lag(lagG)+'・入金 '+lag(lagI)+(lagI>0?'（取り戻すには 1日 +'+esc(manY(Math.ceil(lagI/rest)))+'）':'')+'</small><button type="button" class="ck-inc" id="ckInc">＋ 粗利・入金を入れる</button></div>'+
+'<div class="ck-rr"><div class="ck-rh">⏱ 時間の使い方 <span>記録 '+esc(hs(rec))+'／24h</span></div><div class="ck-tbar">'+(biz?'<span style="flex:'+biz+';background:#ff6b1a">稼ぐ '+esc(hs(biz))+'</span>':'')+(own?'<span style="flex:'+own+';background:#6b9080">自分 '+esc(hs(own))+'</span>':'')+(muda?'<span style="flex:'+muda+';background:#e5484d">ムダ '+esc(hs(muda))+'</span>':'')+(none?'<span style="flex:'+none+';background:#e6e9ef;color:#7a8294">未記録</span>':'')+'</div>'+
+'<div class="ck-kp"><div><b>'+(wage?wage.toLocaleString()+'円':'—')+'</b><small>今日の時給</small></div><div><b>'+gw.toLocaleString()+'円</b><small>目標の時給</small></div><div class="'+(muda>120?'bad':'')+'"><b>'+esc(hs(muda))+'</b><small>ムダ（上限2h）</small></div><div><b>'+(rec?Math.round(biz/rec*100):0)+'%</b><small>稼ぐ時間の割合</small></div></div></div>'+
+'<div class="ck-rr"><div class="ck-rh">📅 直近7日</div><div class="ck-wk">'+W.map((w,i)=>'<div class="'+(i===6?'t':'')+'"><em>'+'●'.repeat(Math.min(w.dn,5))+'</em><i style="height:'+Math.max(3,Math.round(w.gv/mx*48))+'px"></i>'+w.lb+'</div>').join('')+'</div><small>棒＝粗利　●＝決めた事の達成数</small></div></div>';}catch(e){return '';}}
+function ckBind(pane){
+pane.querySelectorAll('details.ck-fd').forEach(d=>d.addEventListener('toggle',()=>{try{localStorage.setItem('hibiki-ckf-'+d.dataset.ckf,d.open?'1':'0');}catch(e){}}));
+{const b=pane.querySelector('#ckDream');if(b)b.onclick=()=>{dseg='clock';openDreamPage();};}
+pane.querySelectorAll('[data-ckpin]').forEach(b=>b.onclick=()=>openAimPage(b.dataset.ckpin));
+pane.querySelectorAll('[data-ckok]').forEach(b=>b.onclick=ev=>{if(b.classList.contains('done'))return;ckBurst(ev.clientX,ev.clientY,'＋1手！');stepDone(b.dataset.ckok);});
+pane.querySelectorAll('[data-ckds]').forEach(b=>b.onclick=()=>openDreamSteps(b.dataset.ckds));
+pane.querySelectorAll('[data-ckd]').forEach(b=>b.onclick=ev=>{const k=b.dataset.ckd;if(k==='learn'){quickLearnStart();return;}const L=ckDaily(todayStr()),d=L.find(x=>x.k===k),was=d&&d.v>=d.g;ckAddCnt(k==='dm'?'sns_xd':'sns_xp');if(d&&!was&&d.v+1>=d.g)ckBurst(ev.clientX,ev.clientY,'達成！');});
+{const b=pane.querySelector('#ckInc');if(b)b.onclick=()=>openIncSheet();}
+{const b=pane.querySelector('#ckGo');if(b)b.onclick=ev=>{if(ckDone()){if(ckWant){ckWant=false;openEntrySheet(ui.date,{hour:new Date().getHours(),wr:true});}return;}ckBurst(ev.clientX,ev.clientY,'📒 ✓');ckDo();if(ckWant){ckWant=false;setTimeout(()=>openEntrySheet(ui.date,{hour:new Date().getHours(),wr:true}),350);}};}}
 function mvNestedRec(x){return !!(x.rl||(!x.mv&&x.k!=='sleep'&&x.k!=='incar'&&(TEL_KS.indexOf(x.k)>=0||x.k==='spplay'||x.k==='spwork'||!x.p)));}
 function mvNormCore(d,k,J){const E=state.entries[d]||{},en=E[k];if(!en||en.del||!en.mv||!en.s||!en.e||en.noT)return false;const S=hmMin(en.s),EE=hmMin(en.e)+(en.ed?1440:0);if(EE<=S)return false;let touched=false;const now=Date.now();
 const keep=(dd,kk,x)=>{if(!J.snap.some(z=>z.d===dd&&z.k===kk))J.snap.push({d:dd,k:kk,v:JSON.parse(JSON.stringify(x))});};
@@ -10840,7 +10993,7 @@ async function clRpcJson(name,body,sig,ms){const t=await clRpcText(name,typeof b
 async function clRpc(name,body){return clRpcJson(name,body);}
 
 const CL_ID=['dreams','memos','pays','aims','moves','pins','steps','payrep','rtn','rlog','payppl','pha','kinds','tools','places','projects','marks','bedp','arp','todos','plreg','plgrp','kgrp','trs','srr','tdq','ksub','dlg','dgoal','aip','msx','inc','cash','rtm','dep','tbox'];
-const CL_DAY=['ai','rules','scr','cond','prep'];
+const CL_DAY=['ai','rules','scr','cond','prep','ckin'];
 const CL_DAY2=['entries','plans'];
 const CL_SKIP={updatedAt:1,photos:1};
 function clItems(st){
@@ -11356,7 +11509,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c30.0";
+const CL_APPVER="c31.0";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
