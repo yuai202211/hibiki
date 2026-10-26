@@ -1906,6 +1906,8 @@ body.cardvis .fab{display:none!important}
 .wish b{display:block;font-size:13px;font-weight:900;margin:6px 8px 0;line-height:1.3;color:#14275a}.wish small{display:block;font-size:11px;font-weight:800;color:#b7791f;margin:2px 8px 0}
 .wish.add{box-shadow:inset 0 0 0 2px #ffce54;background:#fffaf0}.wish.add .noimg{background:#fff4d6;color:#b7791f}
 .wish-ph{display:block;width:100%;border:0;border-radius:16px;background:#f4f6fb;margin:8px 0 10px;padding:0;overflow:hidden;min-height:150px;font:inherit;font-weight:900;color:#14275a}.wish-ph img{width:100%;max-height:260px;object-fit:cover;display:block}.wish-ph span{display:flex;align-items:center;justify-content:center;height:150px;font-size:17px}
+.ck3{box-shadow:inset 0 0 0 2px #ffd2b0}.ck3r{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px dashed #f0dccb;font-weight:800;font-size:14px}.ck3r:first-of-type{border-top:0;margin-top:6px}
+.ck3r button{flex:none;border:0;border-radius:12px;width:44px;height:44px;font-size:18px;font-weight:900;background:#fff0e3;color:#e8590c;box-shadow:inset 0 0 0 2px #ff6b1a;font-family:inherit}.ck3r.done button{background:#0a9a54;color:#fff;box-shadow:none}.ck3r.done span{text-decoration:line-through;color:#7a8294}
 .ck-edb{border:0;border-radius:999px;padding:4px 10px;font-weight:900;font-size:12px;background:#14275a;color:#ffce54;margin-left:6px;font-family:inherit}
 .ck-ed{border-radius:14px;padding:10px;margin-bottom:8px;background:#f6f7fb}.ck-ed:nth-child(4n+2){box-shadow:inset 5px 0 0 #2c5cc5}.ck-ed:nth-child(4n+3){box-shadow:inset 5px 0 0 #f08a24}.ck-ed:nth-child(4n+4){box-shadow:inset 5px 0 0 #0a9a54}.ck-ed:nth-child(4n+5){box-shadow:inset 5px 0 0 #7c3aed}
 .ck-ed .r1{display:flex;gap:6px;align-items:center}.ck-ed .r2,.ck-ed .r3{margin-top:6px;display:flex;gap:6px;align-items:center;font-weight:800;font-size:13px}
@@ -3828,6 +3830,8 @@ if(stay&&sum&&stay>sum&&a.every(x=>Number(x.m)))h+='<span class="act rest"><i cl
 return h+'</span>';
 }
 let topView='diary';
+try{if(/[?&]ck=1/.test(location.search))topView='top';}catch(e){}
+try{if(navigator.serviceWorker)navigator.serviceWorker.addEventListener('message',ev=>{try{if(ev.data&&ev.data.hibiki==='ck'){topView='top';ui.tab='di';ui.date=todayStr();if(typeof closePage==='function')closePage();render();const sc=$('scr');if(sc)sc.scrollTop=0;}}catch(e){}});}catch(e){}
 function renderTimeline(pane){
 const t=todayStr(),isToday=ui.date===t;
 const nowH=new Date().getHours();
@@ -4373,7 +4377,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c31.3）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c31.4）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -7093,7 +7097,7 @@ h+='<div class="ck-sec">🧱 毎日の積み重ね＝夢までの最短ルート
 DL.map(d=>{const ok=d.v>=d.g,p=d.g?Math.min(100,Math.round(d.v/d.g*100)):0;return '<div class="ck-d'+(ok?' ok':'')+'"><div class="ic">'+d.ic+'</div><div class="nm">'+esc(d.nm)+'　'+d.v+' / '+d.g+d.u+'<small>→ '+esc(d.to)+'</small><div class="ck-pb"><i style="width:'+p+'%"></i></div></div>'+(d.auto?'<span class="auto">日記から自動</span>':'<button type="button" data-ckd="'+esc(d.k)+'">'+(ok&&d.src!=='learn'?'✓ ＋1':d.btn)+'</button>')+'</div>';}).join('')+
 '<div class="ck-dsum">今日の積み重ね <b>'+done+'</b> / '+DL.length+'　<span>'+(done>=DL.length?'🎉 今日は全部達成！':done>=3?'あと少し！':done>=1?'いい流れ！続けよう':'まず1つ目から！')+'</span></div></div>';
 h+=ckReportHtml(t,DL,done,per);
-h+='<div class="ck-sec">▶ 今日やる事<i></i></div>'+tbTopHtml()+depCardHtml();
+h+='<div class="ck-sec">▶ 今日やる事<i></i></div>'+tbTopHtml()+ck3Html(t)+depCardHtml();
 const fd=(id,ttl,sum,inner,cls)=>inner?'<details class="ck-fd'+(cls?' '+cls:'')+'" data-ckf="'+id+'"'+(ckFoldOpen(id)?' open':'')+'><summary>'+ttl+'<span class="s">'+sum+'</span></summary><div class="in">'+inner+'</div></details>':'';
 const pay=payAlertHtml(),slp=P.slp,band=dayBandHtml(t),gl=goalLineHtml();
 const slpTx=(()=>{try{const d=document.createElement('div');d.innerHTML=slp;return d.textContent.replace(/\s+/g,' ').trim().slice(0,40);}catch(e){return '';}})(),payTx=(()=>{try{const d=document.createElement('div');d.innerHTML=pay;return d.textContent.replace(/\s+/g,' ').replace('💴 支払い','').trim().slice(0,40);}catch(e){return '';}})();
@@ -7127,6 +7131,9 @@ if($('wiDel'))$('wiDel').onclick=()=>{const bak=JSON.parse(JSON.stringify(W[id])
 $('wiOk').onclick=()=>{rd();if(!D.t&&!D.ph.length){toast('写真か名前を入れてくれ');return;}const k=id||('w'+Date.now().toString(36));const y=Number(D.yen)>0?Math.round(Number(D.yen)*10000):0;
 mutate(()=>{D.ph.forEach(phKeep);state.wish=state.wish||{};state.wish[k]=Object.assign({},w0||{o:wishList().length},{t:D.t,yen:y,ph:D.ph,ts:Date.now()});delete state.wish[k].del;});closeSub();toast('🎁 保存した');};};
 paint();}
+function ck3Html(t){try{const L=tdAll().filter(x=>!x.quit&&!tdHib(x)&&!x.dlg&&x.pin===t),dn=L.filter(x=>tdDone(x)).length;
+return '<div class="ck-card ck3"><div class="ck-rh">✅ 今日の行動3つ <span>'+dn+' / '+Math.max(3,L.length)+'</span></div>'+L.map(x=>{const d=tdDone(x);return '<div class="ck3r'+(d?' done':'')+'"><button type="button" data-ck3="'+esc(x.id)+'"'+(d?' disabled':'')+'>'+(d?'✓':'')+'</button><span>'+esc(x.t||'')+'</span></div>';}).join('')+
+(L.length<3?'<button type="button" class="ck-inc" id="ck3Add">＋ 今日の3つを決める（あと'+(3-L.length)+'つ）</button>':'')+'</div>';}catch(e){return '';}}
 function ckFoldOpen(id){try{return localStorage.getItem('hibiki-ckf-'+id)==='1';}catch(e){return false;}}
 function ckReportHtml(t,DL,done,per){try{const GC=goalCfg(),gp=incSum('gp',t,t),inn=incSum('in',t,t),ym=t.slice(0,7),gpM=incSum('gp',ym+'-01',ym+'-31'),inM=incSum('in',ym+'-01',ym+'-31'),gpA=incSum('gp',GC.from,t),inA=incSum('in',GC.from,t),cash=cashLatest();
 const dom=Number(t.slice(8,10)),dim=new Date(Number(t.slice(0,4)),Number(t.slice(5,7)),0).getDate(),plan=per*dom,lagG=plan-gpM,lagI=plan-inM,rest=Math.max(1,dim-dom+1);
@@ -7157,6 +7164,7 @@ pane.querySelectorAll('[data-ckds]').forEach(b=>b.onclick=()=>openDreamSteps(b.d
 pane.querySelectorAll('[data-ckd]').forEach(b=>b.onclick=ev=>{const k=b.dataset.ckd,L=ckDaily(todayStr()),d=L.find(x=>x.k===k);if(!d)return;if(d.src==='learn'){quickLearnStart();return;}const was=d.v>=d.g;if(d.src==='dm')ckAddCnt('sns_xd');else if(d.src==='post')ckAddCnt('sns_xp');else ckCntAdd(d.k);if(!was&&d.v+1>=d.g)ckBurst(ev.clientX,ev.clientY,'達成！');});
 {const b=pane.querySelector('#ckEdit');if(b)b.onclick=ckEdit;}
 {const b=pane.querySelector('#ckInc');if(b)b.onclick=()=>openIncSheet();}
+pane.querySelectorAll('[data-ck3]').forEach(b=>b.onclick=ev=>{ckBurst(ev.clientX,ev.clientY,'✓ 完了！');tdComplete(b.dataset.ck3);});{const b=pane.querySelector('#ck3Add');if(b)b.onclick=()=>openTodoPage();}
 {const b=pane.querySelector('#ckGo');if(b)b.onclick=ev=>{if(ckDone()){if(ckWant){ckWant=false;openEntrySheet(ui.date,{hour:new Date().getHours(),wr:true});}return;}ckBurst(ev.clientX,ev.clientY,'📒 ✓');ckDo();if(ckWant){ckWant=false;setTimeout(()=>openEntrySheet(ui.date,{hour:new Date().getHours(),wr:true}),350);}};}}
 function mvNestedRec(x){return !!(x.rl||(!x.mv&&x.k!=='sleep'&&x.k!=='incar'&&(TEL_KS.indexOf(x.k)>=0||x.k==='spplay'||x.k==='spwork'||!x.p)));}
 function mvNormCore(d,k,J){const E=state.entries[d]||{},en=E[k];if(!en||en.del||!en.mv||!en.s||!en.e||en.noT)return false;const S=hmMin(en.s),EE=hmMin(en.e)+(en.ed?1440:0);if(EE<=S)return false;let touched=false;const now=Date.now();
@@ -10630,7 +10638,7 @@ document.querySelectorAll('[data-ym]').forEach(b=>b.onclick=()=>{vm=b.dataset.ym
 draw();openOvl();
 }
 
-const NTF_LS='hibiki-push',NTF_SIG='hibiki-push-sig',NTF_D={x:1,num:1,sleep:1,meal:1,pay:1,dm:1,td3:1,prep:1,wake:1,tb:1,dep:1,gap:1,hito:1,pln:1};
+const NTF_LS='hibiki-push',NTF_SIG='hibiki-push-sig',NTF_D={x:1,num:1,sleep:1,meal:1,pay:1,dm:1,td3:1,prep:1,wake:1,tb:1,dep:1,gap:1,hito:1,pln:1,ck:1};
 const NTF_XN={sns_xv:'X',sns_iv:'インスタ',c_snsc:'SNS',spplay:'スマホ',video:'動画'};
 let NTF_REG=null,NTF_SUBD=null,NTF_KT=0,NTF_BUSY=0,NTF_AG=0,NTF_FAIL=0,NTF_N=0,NTF_KA=0,NTF_KS='';
 function ntfCfg(){const s=(typeof state!=='undefined'&&state&&state.ntf&&typeof state.ntf==='object')?state.ntf:{};const so=(s.on&&typeof s.on==='object')?s.on:{},st=(s.t&&typeof s.t==='object')?s.t:{};
@@ -10721,6 +10729,8 @@ if((b.st==='done'||b.st==='cut')&&Number(b.fz)>0)add('tb|'+b.id+'|break',Number(
 });}catch(e){}}
 if(on.hito&&hitoMust()){try{const eo=(state.entries||{})[t]||{};let n=0;for(const k in eo){const en=eo[k];if(!en||en.del||en.noT||en.mv||!en.s)continue;if(!hitoHas(en))n++;}
 if(n>0)add('hito|'+t,ntfAt(t,'22:00').getTime(),'💬 今日、文の無い記録が '+n+'件','コメントだけ。押すと赤い💬の行が並ぶ');}catch(e){}}
+if(on.ck){try{const W=alarmCfg().wake||'09:00',TM=[['朝',W],['昼前','10:30'],['昼','12:30'],['夕','15:30'],['夜','19:30']];
+for(const d of [t,d1]){const cd=ckDay(d);for(const s of TM){if(d===t&&cd[s[0]])continue;add('ck|'+d+'|'+s[0],ntfAt(d,s[1]),'📒 '+s[0]+'のチェックイン','トップで数字と目標を見て「見た ✓」。夢まで あと'+goalDays()+'日');}}}catch(e){}}
 if(on.pln){try{for(const d of [t,d1])plnOpen(d).forEach(o=>{const x=o.x;if(!x.hh)return;const P=ntfAt(d,x.hh).getTime();add('pln|'+d+'|'+o.k,P-15*60000,'📅 あと15分 '+Array.from(String(x.t)).slice(0,20).join(''),(x.pl?'📍 '+x.pl+'。':'')+'時刻が来たら ✓ 始まった');});}catch(e){}}
 if(on.gap){try{const t0=todayStr(),y0=addDays(t0,-1);let E=0,EP='';
 const scan=(d,off)=>{const eo=(state.entries||{})[d]||{};for(const k in eo){const en=eo[k];if(!en||en.del||en.noT||!en.s)continue;const sm=hmMin(en.s)+off,em=en.e?(hmMin(en.e)+(en.ed?1440:0)+off):null;
@@ -10736,7 +10746,7 @@ const hq=String(x.at).replace(':','');if(!(Number(x.cr)>m2))add(x.id+'|2h|'+hq,m
 add(x.id+'|pre|'+hq,D-15*60000,tt,'あと15分で出発');
 add(x.id+'|now|'+hq,D,tt,'出発の時間');});}catch(e){}}
 return [...M.values()].sort((a,b)=>a.fire_at-b.fire_at).slice(0,100);}
-function ntfRowsOf(rows){return rows.map(r=>({tag:r.tag,fire_at:r.fire_at.toISOString(),title:r.title,body:r.body,url:'./'}));}
+function ntfRowsOf(rows){return rows.map(r=>({tag:r.tag,fire_at:r.fire_at.toISOString(),title:r.title,body:r.body,url:String(r.tag).indexOf('ck|')===0?'./?ck=1':'./'}));}
 function ntfSigOf(rows){const uid=(typeof CL!=='undefined'&&CL.sess&&CL.sess.user&&CL.sess.user.id)||'';return uid+'\n'+rows.map(r=>r.tag+'|'+Math.floor(r.fire_at.getTime()/60000)+'|'+r.title+'|'+r.body).join('\n');}
 async function ntfReplan(force,fromHide){
 try{
@@ -10826,7 +10836,7 @@ row('dm','📣 DM',tin('ntDm',C.t.dm))+
 row('td3','🎯 今日の3つ',tin('ntTd3',C.t.td3))+
 row('prep','🌅 明日の準備',tin('ntPrep',C.t.prep))+
 row('wake','🌞 起きる',tin('ntWake',A.wake))+
-row('tb','⏱ 箱','<span class="ntf-v" id="ntTbv">'+C.t.tbPre+'分前</span>')+row('dep','🚩 出発予定','')+row('gap','⬜ 空き（何してた？）','30分後')+row('hito','💬 コメント（文の無い記録）','22:00')+row('pln','📅 予定','15分前')+
+row('tb','⏱ 箱','<span class="ntf-v" id="ntTbv">'+C.t.tbPre+'分前</span>')+row('dep','🚩 出発予定','')+row('gap','⬜ 空き（何してた？）','30分後')+row('hito','💬 コメント（文の無い記録）','22:00')+row('pln','📅 予定','15分前')+row('ck','📒 手帳チェックイン','朝・10:30・12:30・15:30・19:30')+
 '</div><details class="ntf-more"><summary>くわしく</summary>'+
 '<div class="ntf-mrow"><span>📱 X・スマホ</span><input type="number" id="ntXmin" min="5" max="180" inputmode="numeric" value="'+C.t.xmin+'"><small>分で</small></div>'+
 '<div class="ntf-mrow"><span>⏱ 箱</span><input type="number" id="ntTbPre" min="1" max="30" inputmode="numeric" value="'+C.t.tbPre+'"><small>分前</small></div>'+
@@ -11579,7 +11589,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c31.3";
+const CL_APPVER="c31.4";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
