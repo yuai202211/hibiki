@@ -1862,9 +1862,9 @@ body.cardvis .fab{display:none!important}
 .actrow.err{box-shadow:0 0 0 2px #e0405a}
 @keyframes hshake{0%,100%{transform:translateX(0)}30%{transform:translateX(-4px)}60%{transform:translateX(4px)}}
 .hour.filled{position:relative}
-.hour.filled.trip{background:#eaf1ff;box-shadow:inset 6px 0 0 #2c5cc5}.hour.filled.trip.trip-s{border-top:2px solid #2c5cc5;border-top-left-radius:12px;border-top-right-radius:12px}.hour.filled.trip.trip-e{border-bottom:2px solid #2c5cc5;border-bottom-left-radius:12px;border-bottom-right-radius:12px;margin-bottom:6px}
-.hour.filled.trip-via{background:#f4f7ff;box-shadow:inset 6px 0 0 #2c5cc5,inset 18px 0 0 #f4f7ff}.hour.filled.trip-via .body{opacity:.9}
-.trip-tag{display:block;width:max-content;max-width:100%;background:#2c5cc5;color:#fff;font-size:12px;font-weight:900;border-radius:8px;padding:2px 8px;margin-bottom:4px;white-space:normal}.trip-via-tag{display:block;width:max-content;font-size:11px;font-weight:900;color:#2c5cc5;margin-bottom:2px}
+.hour.filled.trip{background:#f2f5f9;box-shadow:inset 6px 0 0 #4f6d8f}.hour.filled.trip.trip-s{border-top:2px solid #4f6d8f;border-top-left-radius:12px;border-top-right-radius:12px}.hour.filled.trip.trip-e{border-bottom:2px solid #4f6d8f;border-bottom-left-radius:12px;border-bottom-right-radius:12px;margin-bottom:6px}
+.hour.filled.trip-via{background:#f7f9fb;box-shadow:inset 6px 0 0 #4f6d8f,inset 18px 0 0 #f7f9fb}.hour.filled.trip-via .body{opacity:.9}
+.trip-tag{display:block;width:max-content;max-width:100%;background:#4f6d8f;color:#fff;font-size:12px;font-weight:900;border-radius:8px;padding:2px 8px;margin-bottom:4px;white-space:normal}.trip-via-tag{display:block;width:max-content;font-size:11px;font-weight:900;color:#4f6d8f;margin-bottom:2px}
 .hour.filled:has(>.body>.hcm) .body{padding-right:34px}
 .hcm{position:absolute;right:8px;top:8px;width:30px;height:30px;border-radius:999px;background:#eef2ff;display:flex;align-items:center;justify-content:center;font-size:14px}
 .wr-dfts{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}.hour.wr .wr-dfto{font-size:11px;padding:3px 8px;background:#fff1f1;color:#e24b4b;font-weight:900}
@@ -1916,7 +1916,7 @@ body.cardvis .fab{display:none!important}
 #acRows .actrow.unit.um{background:var(--ub,#fff);border-left:7px solid var(--uc,#2c5cc5)}
 .mvpt.uc{border-left:5px solid var(--uc);padding-left:6px;border-radius:6px;background:var(--ub)}.mvpt.uc span{color:var(--uc)}
 .mvcut-on.uc .mvcut{border-left:5px solid var(--uc);background:var(--ub)}
-.hour.filled.trip.trip-alt{background:#fff4ea;box-shadow:inset 6px 0 0 #f08a24}.hour.filled.trip.trip-alt.trip-s{border-top-color:#f08a24}.hour.filled.trip.trip-alt.trip-e{border-bottom-color:#f08a24}.hour.filled.trip-via.trip-alt{background:#fff9f3;box-shadow:inset 6px 0 0 #f08a24,inset 18px 0 0 #fff9f3}.trip-alt .trip-tag{background:#f08a24}.trip-alt .trip-via-tag{color:#f08a24}
+.hour.filled.trip.trip-alt{background:#f7f4ee;box-shadow:inset 6px 0 0 #8a7a5c}.hour.filled.trip.trip-alt.trip-s{border-top-color:#8a7a5c}.hour.filled.trip.trip-alt.trip-e{border-bottom-color:#8a7a5c}.hour.filled.trip-via.trip-alt{background:#faf8f4;box-shadow:inset 6px 0 0 #8a7a5c,inset 18px 0 0 #faf8f4}.trip-alt .trip-tag{background:#8a7a5c}.trip-alt .trip-via-tag{color:#8a7a5c}
 .unit .hbox{align-items:center;margin-top:2px}.unit .hbox .pre{padding-top:0}.unit .hbox .pre.nok{color:#8a93a6;font-weight:800;font-size:12px}
 #acRows .unit .hbox .ac-t{flex:1;min-width:0;width:auto;height:auto;border:0;background:none;margin:0;padding:2px 0;font-size:16px;font-weight:700;box-shadow:none;outline:0}.hbox textarea.ac-t{resize:none;overflow:hidden;line-height:1.5;font-family:inherit;color:inherit;min-height:0}
 .unit .more{flex:0 0 auto;width:30px;height:30px;border-radius:999px;background:#f1f3f8;color:#8a93a6;font-weight:900;padding:0;border:0}.unit .more.on{background:#3b63d9;color:#fff}
@@ -4286,7 +4286,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c29.7）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c29.8）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -11347,7 +11347,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c29.7";
+const CL_APPVER="c29.8";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
