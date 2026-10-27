@@ -959,7 +959,10 @@ display:flex;flex-direction:column;gap:11px;max-height:94%;overflow-y:auto;
 .pf-btns{display:flex;gap:6px;flex-shrink:0}
 .pf-btns button{flex:1 1 0;min-width:0;padding:12px 6px;border-radius:14px;background:#f1f3f8;color:#5b6170;font-weight:800;font-size:14px;white-space:nowrap}
 .pf-btns button.pf-ok{flex:1.6 1 0;color:#fff}
-.hour .pftag{float:right;margin:2px 0 2px 6px;padding:1px 8px;border-radius:999px;color:#fff;font-size:11px;font-weight:800;line-height:1.5;white-space:nowrap}
+.hour .pftag{float:none;display:inline-flex;align-items:center;gap:4px;margin:0 0 4px;padding:3px 12px 3px 8px;border-radius:7px;background:#14275a;color:#ffd77a;font-size:12.5px;font-weight:900;letter-spacing:.4px;line-height:1.4;white-space:nowrap;position:relative;box-shadow:0 2px 5px rgba(20,39,90,.25)}
+.pftag::after{content:"";position:absolute;right:-5px;top:50%;width:10px;height:10px;margin-top:-5px;border-radius:50%;background:var(--pfbg,#fff)}
+.pftag i{font-style:normal;font-size:14px}.pftag b{font-weight:800;opacity:.75;margin:0 3px}
+.hour.filled.mvrec .pftag::after,.hour.filled[style*="background"] .pftag::after{background:transparent}
 .ks-close{width:100%;padding:12px;border-radius:14px;background:#f1f3f8;color:#5b6170;font-weight:800;font-size:14px;flex-shrink:0}
 .grab{width:38px;height:4px;border-radius:99px;background:#d5d9e3;margin:0 auto;flex-shrink:0}
 .sh-time{
@@ -3722,10 +3725,12 @@ const AREA_MAP={hok:'left:71%;top:0;width:28%;height:22%',toh:'left:71%;top:25%;
 function areaOf(id){const a=AREAS.find(x=>x[0]===id);return a?{id:a[0],name:a[1],co:a[2]}:null;}
 function prefOf(code){const c=Number(code),p=(c>=1&&c<=47)?PREFS[c-1]:null;if(!p||p[0]!==c)return null;const a=areaOf(p[2]);
 return {code:c,name:p[1],area:p[2],short:p[3],co:a?a.co:'#9aa3b5'};}
-function pfTag(en){const p=en&&prefOf(en.pf),p0=en&&en.mv?prefOf(en.pf0):null;
-if(p0&&p&&p0.code!==p.code)return '<span class="pftag" style="background:linear-gradient(90deg,'+p0.co+','+(p?p.co:p0.co)+')" title="'+esc(p0.name+' → '+(p?p.name:'？'))+'">'+esc(p0.short)+'→'+esc(p?p.short:'？')+'</span>';
-if(!p&&p0)return '<span class="pftag" style="background:'+p0.co+'" title="'+esc(p0.name)+'">'+esc(p0.short)+'</span>';
-return p?'<span class="pftag" style="background:'+p.co+'" title="'+esc(p.name)+'">'+esc(p.short)+'</span>':'';}
+const PF_SYM=['🐄','🍎','🐎','🎋','🐕','🍒','🐮','🍈','🍓','🥬','🌾','🥜','🗼','⛵','🍙','🦐','🦀','🦖','🍇','🏔️','🏯','🗻','🍤','🦞','🛶','⛩️','🐙','⚓','🦌','🐼','🐪','🦪','🍑','🍁','🐡','🌀','🍜','🍊','🐟','🌶️','🦑','⛪','🐻','♨️','🥭','🌋','🌺'];
+function pfSym(p){return (p&&PF_SYM[p.code-1])||'📍';}
+function pfTag(en){const p=en&&prefOf(en.pf),p0=en&&en.mv?prefOf(en.pf0):null,one=q=>'<i>'+pfSym(q)+'</i>'+esc(q.short);
+if(p0&&p&&p0.code!==p.code)return '<span class="pftag" title="'+esc(p0.name+' → '+p.name)+'">'+one(p0)+'<b>✈</b>'+one(p)+'</span>';
+if(!p&&p0)return '<span class="pftag" title="'+esc(p0.name)+'">'+one(p0)+'</span>';
+return p?'<span class="pftag" title="'+esc(p.name)+'">'+one(p)+'</span>':'';}
 function pfArrive(date,sm){const eo=state.entries[date]||{};let bs='',bv=0;for(const k in eo){const en=eo[k];if(!en||en.del||!en.s||en.noT)continue;if(sm&&en.s>sm)continue;if(en.s>=bs){bs=en.s;bv=(en.mv&&prefOf(en.pf))?Number(en.pf):0;}}return bv;}
 function pfAuto(date,sm){
 const pick=(d,lim)=>{const eo=state.entries[d]||{};let bm='',bv=0;
@@ -4453,7 +4458,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c33.3）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c33.4）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -11690,7 +11695,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c33.3";
+const CL_APPVER="c33.4";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
