@@ -3842,7 +3842,7 @@ function actSwHtml(en,x){try{if(!en||!Array.isArray(en.acts)||!actSwOk(x))return
 const s=(on,lb,k)=>'<span class="ios sm asw'+(on?' on':'')+'" role="switch" aria-checked="'+on+'" data-amd="'+k+'" data-ai="'+i+'"><span class="tl">'+lb+'</span><span class="trk"></span></span>';
 const sh=actShareMin(en,x),mm=Number(x.mdm)>0?Math.min(Number(x.mdm),sh||Number(x.mdm)):0,ht=v=>v>=60?(Math.floor(v/60)+'時間'+(v%60?v%60+'分':'')):v+'分';
 const mq=md?'<span class="a-mdm"><span class="mdb" role="button" data-amm="-" data-ai="'+i+'">－</span><span class="mdv" role="button" data-amm="v" data-ai="'+i+'">'+(mm?ht(mm):'全部'+(sh?'（'+ht(sh)+'）':''))+'</span><span class="mdb" role="button" data-amm="+" data-ai="'+i+'">＋</span><small>がムダ</small></span>':'';
-return '<span class="a-sw">'+s(md,'🕳️ この行','md')+s(wk,'💼 仕事','wk')+mq+'</span>';}catch(e){return '';}}
+return '<span class="a-sw">'+s(md,'🕳️ この行ムダ！','md')+s(wk,'💼 仕事','wk')+mq+'</span>';}catch(e){return '';}}
 document.addEventListener('click',ev=>{const q=ev.target&&ev.target.closest&&ev.target.closest('[data-amm]');if(!q)return;ev.stopPropagation();ev.preventDefault();
 const rec=q.closest('[data-k],[data-ck]');if(!rec)return;let d=ui.date,k=rec.dataset.k;if(!k&&rec.dataset.ck){const z=rec.dataset.ck.split('|');d=z[0];k=z[1];}
 const i=Number(q.dataset.ai),en=(state.entries[d]||{})[k],a=en&&Array.isArray(en.acts)?en.acts[i]:null;if(!a)return;const sh=actShareMin(en,a),cur=Number(a.mdm)>0?Math.min(Number(a.mdm),sh||1e9):sh;
@@ -4428,7 +4428,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c32.2）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c32.3）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -4627,7 +4627,7 @@ TRS.map(x=>'<button class="chip" data-tr="'+x[0]+'">'+x[1]+'</button>').join('')
 '</div></div>'+
 '<button class="fr-addbar" id="frAdd2">＋ 自由に書く</button>'+
 '<div id="secPh"'+((sheetSt.ph&&sheetSt.ph.length)?'':' style="display:none"')+'><div class="sh-label">📷 写真（前に付けた分）</div><div class="phrow" id="shPhotos"></div></div>'+
-'<div class="sh-btns main">'+(sheetSt.existing?'<button class="delbtn" id="shDel">削除</button>':'')+(sheetSt.fromDft?'<button class="delbtn" id="shDftDel">🗑 下書きを消す</button>':'')+'<button class="pjchip" id="pjChip">📌 案件</button>'+iosSw('mdChip',!!(ex&&ex.md),'🕳️ まるごと','aria-label="この日記の時間まるごとムダ"','sm mdall')+
+'<div class="sh-btns main">'+(sheetSt.existing?'<button class="delbtn" id="shDel">削除</button>':'')+(sheetSt.fromDft?'<button class="delbtn" id="shDftDel">🗑 下書きを消す</button>':'')+'<button class="pjchip" id="pjChip">📌 案件</button>'+iosSw('mdChip',!!(ex&&ex.md),'🕳️ まるごとムダ！','aria-label="この日記の時間まるごとムダ"','sm mdall')+
 '<button class="savebtn" id="shSave">記　録</button></div>';
 $('shTa').value=(ex&&ex.t)||'';
 const dft=ref&&ref.draft;let frs=String(((dft&&dft.text)?dft.text:(ex&&ex.t))||'').split(/\n\s*\n/).map(x=>x.trim()).filter(Boolean),frPaint=()=>{};if(dft&&dft.ax)frs.push('【やったこと】'+dft.ax);
@@ -4833,7 +4833,7 @@ $('acRows').innerHTML=acts.map(a=>{
 return '<div class="actrow'+(sxHas(a,'m')?' sxm':'')+(sxHas(a,'ai')?' sxai':'')+(sxHas(a,'ap')?' sxap':'')+'" data-sx="'+esc(a.sx||'')+'" data-m0="'+((a.s&&a.e)?0:(Number(a.m)||0))+'" data-k="'+esc(a.k||'')+'" data-d="'+esc(a.d||'')+'" data-dx="'+esc(a.dx||'')+'" data-nk="'+(a.nk?1:'')+'" data-w="'+(a.w?1:'')+'" data-bd="'+(a.bd===0?'0':a.bd===1?'1':'')+'" data-st="'+esc(a.st||'')+'" data-due="'+esc(a.due||'')+'" data-dn="'+esc(a.dn||'')+'" data-ai="'+esc(Array.isArray(a.ai)?a.ai.join(','):'')+'" data-ai0="'+(Array.isArray(a.ai)?1:'')+'" data-td="'+esc(a.td||'')+'" data-ph="'+esc((a.ph||[]).join(','))+'" data-md="'+(a.md?1:'')+'" data-nm="'+(a.nm?1:'')+'" data-wk="'+(a.wk?1:'')+'" data-mdm="'+(Number(a.mdm)>0?Number(a.mdm):'')+'" data-sp="'+esc(a.sp||'')+'" data-ap="'+esc((a.ap||[]).join(','))+'" data-mp="'+esc((a.mp||[]).join(','))+'" data-nn="'+(Number(a.n)>0?Number(a.n):'')+'" data-bz="'+esc(a.bz||'')+'" data-kx="'+esc((a.kx||[]).join(','))+'" data-dd="'+esc((a.dd||[]).join(','))+'">'+
 '<div class="ac-l1"><textarea class="ac-t" rows="1" placeholder="コメント…" data-full="'+esc(a.t)+'">'+esc(a.t)+'</textarea>'+
 '</div>'+
-'<div class="ac-side"><button class="ac-cb lbl'+(a.c?' on':'')+'" aria-label="詳細を書く">📝<small class="bn">詳細</small></button><button type="button" class="ac-md ios sm'+(a.md?' on':'')+'" role="switch" aria-checked="'+(a.md?'true':'false')+'" aria-label="この行の時間だけムダ"><span class="tl">🕳️ この行</span><span class="trk"></span></button><button class="ac-mo lbl'+((a.st||a.sp)?' on':'')+'" aria-label="ほかの操作">⋯<small class="bn">ほか</small>'+(a.st?'<i>'+(a.st==='done'?'✅':'⏸')+'</i>':'')+'</button><button class="ac-pb lbl'+((a.ph&&a.ph.length)?' on':'')+'" aria-label="この行に写真を付ける">📷<small class="bn">写真</small></button><button class="ac-sp lbl'+(a.sp?' on':'')+'" aria-label="この行を記録に分ける">'+(a.sp?(SPLIT_TY[a.sp]||['🔀'])[0]:'🔀')+'<small class="bn">分ける</small></button><button class="ac-dn lbl'+(a.st==='done'?' on':'')+'" aria-label="完了">✅<small class="bn">完了</small></button><button class="ac-wp lbl'+(a.st==='wip'?' on':'')+'" aria-label="'+(a.st==='wip'&&a.due?'途中（続きは'+esc(stDueLb(a.due))+'）':'途中')+'">⏸<small class="bn">途中</small></button><button class="ac-x lbl" aria-label="この行を消す">✕<small class="bn">消す</small></button></div>'+
+'<div class="ac-side"><button class="ac-cb lbl'+(a.c?' on':'')+'" aria-label="詳細を書く">📝<small class="bn">詳細</small></button><button type="button" class="ac-md ios sm'+(a.md?' on':'')+'" role="switch" aria-checked="'+(a.md?'true':'false')+'" aria-label="この行の時間だけムダ"><span class="tl">🕳️ この行ムダ！</span><span class="trk"></span></button><button class="ac-mo lbl'+((a.st||a.sp)?' on':'')+'" aria-label="ほかの操作">⋯<small class="bn">ほか</small>'+(a.st?'<i>'+(a.st==='done'?'✅':'⏸')+'</i>':'')+'</button><button class="ac-pb lbl'+((a.ph&&a.ph.length)?' on':'')+'" aria-label="この行に写真を付ける">📷<small class="bn">写真</small></button><button class="ac-sp lbl'+(a.sp?' on':'')+'" aria-label="この行を記録に分ける">'+(a.sp?(SPLIT_TY[a.sp]||['🔀'])[0]:'🔀')+'<small class="bn">分ける</small></button><button class="ac-dn lbl'+(a.st==='done'?' on':'')+'" aria-label="完了">✅<small class="bn">完了</small></button><button class="ac-wp lbl'+(a.st==='wip'?' on':'')+'" aria-label="'+(a.st==='wip'&&a.due?'途中（続きは'+esc(stDueLb(a.due))+'）':'途中')+'">⏸<small class="bn">途中</small></button><button class="ac-x lbl" aria-label="この行を消す">✕<small class="bn">消す</small></button></div>'+
 '<div class="ac-l2"><input type="time" class="ac-s" step="300" lang="ja-JP" aria-label="何時から" value="'+esc(a.s||'')+'"><span class="ac-ar">→</span>'+
 '<input type="time" class="ac-e" step="300" lang="ja-JP" aria-label="何時まで" value="'+esc(a.e||'')+'">'+
 '<span class="ac-d">'+(a.m?('⏱ '+esc(durText(a.m))):'')+'</span></div>'+
@@ -11646,7 +11646,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c32.2";
+const CL_APPVER="c32.3";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
