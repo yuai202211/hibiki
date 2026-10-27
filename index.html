@@ -1994,6 +1994,13 @@ details.ck-fd>.in{padding:0 8px 10px}details.ck-fd.r{box-shadow:inset 4px 0 0 #e
 .ct-back{display:block;margin-top:6px;padding:8px 10px;border-radius:12px;background:#eef3ff;font-size:12.5px;font-weight:800;color:#2c5cc5}.ct-b{display:flex;gap:8px;margin-top:6px}.ct-ok,.ct-no{padding:7px 12px;border-radius:999px;cursor:pointer;font-weight:900}.ct-ok{background:#2c5cc5;color:#fff}.ct-no{background:#fff;color:#5b6475;box-shadow:inset 0 0 0 1px #d0d6e2}
 .pln-row.done .pln-tt,.plan.done .pt,.plan2.done .p2c,.dn-it.ok .dn-t,.ds-it.done .dn-t,.ck3r.done span{text-decoration:line-through!important;text-decoration-color:#2c6be0!important;text-decoration-thickness:3px!important;text-decoration-skip-ink:none;color:#6b7280!important}
 .pln-row.done .pln-tt{opacity:1!important}
+.pln-row.done{background:#e8f2fd!important;box-shadow:inset 5px 0 0 #3b82d6!important}
+.pln-row.done .pln-tm{color:#2c6be0!important;opacity:1!important;display:flex;flex-direction:column;align-items:center;gap:2px;font-weight:900}
+.pln-chk{display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:#3b82d6;color:#fff;font-size:18px;font-weight:900;box-shadow:0 3px 8px rgba(59,130,214,.35)}
+.pln-row.done .pln-lki{color:#2c6be0!important;opacity:1!important;font-weight:800}
+.pln-dnf>summary{background:#e8f2fd!important;color:#1e4f9a!important}.pln-dnf>summary small b{font-size:15px;color:#2c6be0}
+.ck3r.done button{background:#3b82d6!important;color:#fff!important}.ck3r.done{background:#eef5fe;border-radius:10px}
+.dn-it.ok,.ds-it.done{background:#e8f2fd!important}
 .a-mdm{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:800;color:#e5484d}.a-mdm .mdb{display:inline-flex;align-items:center;justify-content:center;width:34px;height:30px;border-radius:10px;background:#fdecef;color:#e5484d;font-size:17px;font-weight:900;cursor:pointer}.a-mdm .mdv{min-width:54px;text-align:center;padding:5px 8px;border-radius:10px;background:#fff;box-shadow:inset 0 0 0 2px #f6c3cc;color:#c0303f;cursor:pointer}.a-mdm small{color:#8a93a6;font-size:11px}
 .a-sw{grid-column:2 / -1;display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;margin-top:5px}.a-sw .ios{cursor:pointer;font-size:12px;color:#5b6475}.a-sw .ios.on .tl{color:#14275a}
 .mvp .ks{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
@@ -4435,7 +4442,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c32.5）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c32.6）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -5246,8 +5253,8 @@ function plnMd(s){return Number(String(s).slice(5,7))+'/'+Number(String(s).slice
 function plnMvTxt(d,x){const h=(x.mh||[]).filter(Boolean);if(!h.length)return '↻ '+x.mv+'回ずらした';return '↻ '+x.mv+'回（'+(h.length<x.mv?'…→':'')+h.concat(d).map(plnMd).join('→')+'）';}
 function plnLinkInfo(d,x){if(!x.rk)return '✓ 済み';const en=((state.entries||{})[d]||{})[x.rk];if(!en||en.del)return '✓ 済み（日記の記録は消えている）';const tm=(en.s||'')+(en.e?'–'+en.e:'〜');return x.lk?('🔗 日記の '+tm+' に紐づけ'):('📝 予定から日記の記録を作った（'+tm+'）');}
 function plnLinkShort(d,x){const en=x.rk?((state.entries||{})[d]||{})[x.rk]:null;if(!en||en.del)return '✓ 済み';return '🔗 '+(en.s||'')+(en.e?'–'+en.e:'〜');}
-function plnDoneFold(inner,n){let op=false;try{op=localStorage.getItem('hibiki-pln-dn-open')==='1';}catch(e){}return '<details class="td-fold pln-dnf"'+(op?' open':'')+'><summary>✓ 済み<small>'+n+'件</small></summary>'+inner+'</details>';}
-function plnDoneRowHtml(o){const d=o.d,x=o.x;return '<div class="pln-row done" data-plnk="'+esc(o.k)+'" data-plndd="'+esc(d)+'"><div class="pln-tm">'+(x.hh?esc(x.hh):'--:--')+'</div><div class="pln-bd"><div class="pln-tt">'+esc(x.t)+'</div><div class="pln-lki">'+esc(plnLinkShort(d,x))+'</div><div class="pln-ac"><button class="chip" data-plnundo="1">↩ 未完了に戻す</button><button class="chip" data-plncp="1">📑 複製</button></div></div></div>';}
+function plnDoneFold(inner,n,tn){let op=false;try{op=localStorage.getItem('hibiki-pln-dn-open')==='1';}catch(e){}return '<details class="td-fold pln-dnf"'+(op?' open':'')+'><summary>🎉 できた<small>'+n+'件'+(tn?'・今日 <b>'+tn+'</b>件':'')+'</small></summary>'+inner+'</details>';}
+function plnDoneRowHtml(o){const d=o.d,x=o.x;return '<div class="pln-row done" data-plnk="'+esc(o.k)+'" data-plndd="'+esc(d)+'"><div class="pln-tm"><span class="pln-chk">✓</span>'+(x.hh?esc(x.hh):'')+'</div><div class="pln-bd"><div class="pln-tt">'+esc(x.t)+'</div><div class="pln-lki">'+esc(plnLinkShort(d,x))+'</div><div class="pln-ac"><button class="chip" data-plnundo="1">↩ 未完了に戻す</button><button class="chip" data-plncp="1">📑 複製</button></div></div></div>';}
 function plnRowHtml(o,opt){const d=o.d,x=o.x,T=todayStr(),late=!x.done&&d===T&&x.hh&&x.hh<plnNow(),pEndR=x.e||((x.hh&&x.mm)?hmAdd(x.hh,x.mm):null),fut=!!(late&&pEndR&&(hmMin(pEndR)>hmMin(plnNow())||hmMin(pEndR)<=hmMin(x.hh)));
 return '<div class="pln-row'+(x.done?' done':'')+(late?' late':'')+((!x.done&&!x.hh)?' notime':'')+'" data-plnk="'+esc(o.k)+'" data-plndd="'+esc(d)+'">'+
 '<div class="pln-tm">'+(x.hh?esc(x.hh)+'<small>'+(x.e?'–'+esc(x.e):(x.mm?'–'+esc(hmAdd(x.hh,x.mm)):'〜'))+'</small>':((!x.done)?'⏰<small>'+(d===T?'今日中に':'時間を決めてない')+'</small>':'--:--<small>時間未定</small>'))+'</div>'+
@@ -5259,7 +5266,7 @@ if(late.length)h+='<div class="pln-h red">⚠ できなかった</div>'+late.map
 let last='';op.concat(fu).forEach(o=>{if(o.d!==last){last=o.d;h+='<div class="pln-day">'+esc(plnDayLb(o.d))+'</div>';}h+=plnRowHtml(o);});
 if(!late.length&&!op.length&&!fu.length)h+='<div class="an-empty">予定なし</div>';
 let dl=[];for(let i=0;i<=30;i++){const dd=addDays(T,-i);plnItems(dd).filter(o=>o.x.done).forEach(o=>dl.push(o));}
-if(dl.length){let dh='';last='';dl.forEach(o=>{if(o.d!==last){last=o.d;dh+='<div class="pln-day">'+esc(plnDayLb(o.d))+'</div>';}dh+=plnDoneRowHtml(o);});h+=plnDoneFold(dh,dl.length);}
+if(dl.length){let dh='';last='';dl.forEach(o=>{if(o.d!==last){last=o.d;dh+='<div class="pln-day">'+esc(plnDayLb(o.d))+'</div>';}dh+=plnDoneRowHtml(o);});h+=plnDoneFold(dh,dl.length,dl.filter(o=>o.d===todayStr()).length);}
 return '<div class="pln-wrap">'+h+'</div>';}
 function plnSamePl(a,b){const n=s=>String(s||'').replace(/[\s　・,，、()（）]/g,'').toLowerCase();a=n(a);b=n(b);if(!a||!b)return false;return a===b||a.includes(b)||b.includes(a);}
 function plnRecAt(d,x){const eo=entriesOf(d),L=[];for(const k in eo){const en=eo[k];if(!en||en.del||en.noT||!en.s)continue;L.push({k,en,s:hmMin(en.s),e:en.e?hmMin(en.e)+(en.ed?1440*en.ed:0):null});}
@@ -11672,7 +11679,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c32.5";
+const CL_APPVER="c32.6";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
