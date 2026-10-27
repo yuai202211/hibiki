@@ -1881,6 +1881,18 @@ body.cardvis .fab{display:none!important}
 .rd-p p{margin:4px 0;font-size:14.5px;line-height:1.85;color:#1d2230}.rd-src{margin-top:8px;font-size:11px;color:#7a8294}.rd-src summary{cursor:pointer;font-weight:800}.rd-src div{word-break:break-all;margin:2px 0}
 .rd-end{display:flex;flex-direction:column;align-items:stretch;gap:10px;margin-top:14px;padding-top:12px;border-top:2px solid #e2d6bb}.rd-end .ios{justify-content:space-between;font-size:16px}
 .rd-go{border:0;border-radius:16px;height:56px;font-size:17px;font-weight:900;background:#ffce54;color:#3a2a00;font-family:inherit}.rd-go:disabled{background:#e6e8ee;color:#9aa3b5}
+.rd-goal{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:8px 0 2px}.rd-goal>div{background:#14275a;border-radius:12px;padding:7px 9px;color:#fff;display:flex;flex-direction:column;gap:1px;min-width:0}.rd-goal small{font-size:11.5px;font-weight:900;color:#ffd77a;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rd-goal b{font-size:13px;font-weight:900}.rd-goal b em{font-style:normal;font-size:22px;color:#ffd77a;margin:0 2px}.rd-goal i{font-style:normal;font-size:11px;color:#c9d3ea}
+.rd-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:4px 0 6px;padding:8px 0 6px}
+.rd-tab{position:relative;border:0;border-radius:14px;background:#eef1f6;padding:9px 4px 7px;font-family:inherit;color:#5b6475;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;box-shadow:0 2px 0 #d5dae5;min-height:64px}
+.rd-tab .ic{font-size:22px;line-height:1;display:flex;align-items:center;min-height:24px}.rd-tab b{font-size:13px;font-weight:900}
+.rd-tab.cur{background:#14275a;color:#ffd77a;box-shadow:0 2px 0 #0b1838}.rd-tab.sumi{background:#f3f7fd;color:#3b82d6}.rd-tab.sumi.cur{background:#14275a;color:#ffd77a}
+.rd-stamp{position:absolute;top:-7px;right:-4px;width:36px;height:36px;border-radius:50%;border:3px solid #d93025;color:#d93025;background:rgba(255,255,255,.9);font-size:18px;font-weight:900;display:flex;align-items:center;justify-content:center;transform:rotate(-14deg);font-family:'Yu Mincho','Hiragino Mincho ProN',serif}
+.rd-stamp.pop{animation:rdPop .55s cubic-bezier(.2,1.4,.4,1)}@keyframes rdPop{0%{transform:rotate(-14deg) scale(2.6);opacity:0}60%{transform:rotate(-14deg) scale(.88);opacity:1}100%{transform:rotate(-14deg) scale(1)}}
+.rd-one{border:0;border-radius:16px;min-height:56px;font-size:16px;font-weight:900;background:#2c6be0;color:#fff;font-family:inherit;margin-top:14px;width:100%;box-shadow:0 3px 0 #1d4fae;padding:6px 10px;display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap}.rd-one.done{background:#e8f0fc;color:#3b82d6;box-shadow:none}
+.rd-left{font-size:13px;font-weight:900;color:#8a5a00;text-align:center;margin-top:10px}
+.rd-icb{display:inline-flex;flex-direction:row;align-items:center;justify-content:center;gap:3px;border-radius:5px;padding:2px 4px;font-size:8.5px;line-height:1.05;font-weight:900;font-family:Georgia,serif;vertical-align:middle;min-height:22px}.rd-icb>span{display:block;text-align:center}.rd-icb.it{font-style:italic}.rd-icb.sans{font-family:"Arial Black","Helvetica Neue",Arial,sans-serif;letter-spacing:.3px}.rd-icb.big{font-size:14px;letter-spacing:.5px}.rd-icb>i{width:9px;height:9px;border-radius:50%;flex:0 0 auto}
+.rd-tab .ic .rd-icb{height:26px;min-width:58px;box-sizing:border-box}.rd-tab .ic{height:28px;min-height:28px}.rd-nm{display:flex;align-items:center;gap:8px;flex-wrap:wrap;line-height:1.35}.rd-nm .rd-icb{height:24px;min-width:52px;box-sizing:border-box;flex:0 0 auto}.rd-nm .rd-icb{font-size:8.5px}.rd-nm .rd-icb.big{font-size:13px}.rd-one .rd-icb{font-size:8px;min-height:20px}
+@media (max-width:767px){.rd-scroll{max-height:62vh;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;border-radius:12px;box-shadow:inset 0 -14px 12px -12px rgba(20,39,90,.18);padding:0 4px 12px}}
 .rd-again summary{cursor:pointer;font-weight:900;color:#2c6be0;font-size:13.5px}
 .ck-sec{margin:14px 4px 6px;font-size:12px;font-weight:900;display:flex;align-items:center;gap:6px;color:#7a8294}.ck-sec i{flex:1;height:2px;background:#e1e4ec;border-radius:2px}
 .ck-card{margin:0 2px 8px;border-radius:16px;padding:12px;background:#fff;box-shadow:0 1px 3px rgba(20,24,40,.06)}
@@ -4474,7 +4486,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c34.0）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c34.1）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -7153,13 +7165,24 @@ function rdItems(){const s=state.rdtxt;return (s&&Array.isArray(s.items))?s.item
 function rdDone(){return !rdItems().length||!!rdDay(rdDayKey())[rdSlotNow()];}
 let rdWant=false;
 function rdGate(){try{if(ui.date!==todayStr()||rdDone()||openMove()||entDraft(ui.date))return false;rdWant=true;if(topView!=='top'){topView='top';render();}
-setTimeout(()=>{try{const c=$('rdCard'),sc=$('scr');if(c&&sc)sc.scrollTop+=c.getBoundingClientRect().top-sc.getBoundingClientRect().top-8;}catch(e){}},60);toast('📖 先に創業者の話を最後まで読んで「全部読んだ！」');return true;}catch(e){return false;}}
+setTimeout(()=>{try{const c=$('rdCard'),sc=$('scr');if(c&&sc)sc.scrollTop+=c.getBoundingClientRect().top-sc.getBoundingClientRect().top-8;}catch(e){}},60);toast('📖 先に創業者の話を読んで「全部読んだ！」');return true;}catch(e){return false;}}
+let rdCur=null,rdPop=-1;
+function rdShort(nm){const m=String(nm||'').match(/^(\S+)\s+(\S{2})/);return m?{ic:m[1],n:m[2]}:{ic:'📖',n:String(nm||'')};}
+function rdIc(it){const b=it&&it.icb;if(b&&b.t)return '<span class="rd-icb'+(b.it?' it':'')+(b.sans?' sans':'')+(b.big?' big':'')+'" style="background:'+esc(b.bg||'#d7141a')+';color:'+esc(b.fg||'#fff')+(b.bd?';box-shadow:inset 0 0 0 1px '+esc(b.bd):'')+'">'+(b.dot?'<i style="background:'+esc(b.dot)+'"></i>':'')+'<span>'+String(b.t).split(/\s+/).map(esc).join('<br>')+'</span></span>';return esc(rdShort(it&&it.nm).ic);}
+function rdScrollCard(){setTimeout(()=>{try{const s=$('rdScr');if(s)s.scrollTop=0;const c=$('rdCard'),sc=$('scr');if(c&&sc)sc.scrollTop+=c.getBoundingClientRect().top-sc.getBoundingClientRect().top-8;}catch(e){}},60);}
 function rdHtml(){try{const L=rdItems();if(!L.length)return '';const d=rdDayKey(),sl=rdSlotNow(),D=rdDay(d),dn=!!D[sl],cnt=RD_SL.filter(x=>D[x[0]]).length,ttl=(state.rdtxt&&state.rdtxt.ttl)||'1日3回の読み物';
-const body=L.map(it=>'<div class="rd-p"><div class="rd-nm">'+esc(it.nm)+'</div>'+(it.secs||[]).map(s=>'<div class="rd-h">'+esc(s.h||'')+'</div>'+String(s.t||'').split(/\n+/).filter(Boolean).map(p=>'<p>'+esc(p)+'</p>').join('')).join('')+
-((it.src&&it.src.length)?'<details class="rd-src"><summary>出典 '+it.src.length+'件</summary>'+it.src.map(u=>'<div>'+esc(u)+'</div>').join('')+'</details>':'')+'</div>').join('');
-return '<div class="ck-sec">📖 '+esc(ttl)+'<i></i></div><div class="ck-card rd-card'+(dn?' done':'')+'" id="rdCard"><div class="rd-top"><b>📖 '+esc(sl)+'の読み物</b><span>'+cnt+' / 3</span></div><div class="rd-sl">'+RD_SL.map(x=>'<div class="'+(D[x[0]]?'ok':(x[0]===sl?'now':''))+'"><small>'+x[0]+'</small><b>'+(D[x[0]]?esc(D[x[0]]):'—')+'</b></div>').join('')+'</div>'+
-(dn?'<details class="rd-again"><summary>✓ '+esc(sl)+'は読んだ（'+esc(D[sl])+'）　もう一度読む ▾</summary>'+body+'</details>'
-:(rdWant?'<div class="ck-gatebar">📖 最後まで読んで「全部読んだ！」を押すと、そのまま書ける</div>':'')+body+'<div class="rd-end">'+iosSw('rdSw',false,'✓ 全部読んだ！','','')+'<button type="button" class="rd-go" id="rdGo" disabled>📖 '+esc(sl)+'の読み物：読んだ</button></div>')+'</div>';}catch(e){return '';}}
+const pd=i=>!!D[sl+'#'+i];if(rdCur==null||rdCur>=L.length){const f=L.findIndex((x,i)=>!pd(i));rdCur=f<0?0:f;}
+const it=L[rdCur],all=L.every((x,i)=>pd(i)),left=L.filter((x,i)=>!pd(i)).length,s0=rdShort(it.nm),nx=L.findIndex((x,i)=>i!==rdCur&&!pd(i));
+let goal='';try{const P=pinnedDreams().slice(0,2);if(P.length)goal='<div class="rd-goal">'+P.map(g=>{const n=stepStat(g).n,u=dreamDue(g);return '<div><small>'+pinIcon(g.t)+' '+esc(g.t)+'</small><b>'+(n===null?'期限なし':n<0?'⚠ '+(-n)+'日超過':'あと<em>'+n+'</em>日')+'</b>'+(u?'<i>'+esc(u.replace(/-/g,'/'))+' まで</i>':'')+'</div>';}).join('')+'</div>';}catch(e){}
+const tabs='<div class="rd-tabs">'+L.map((x,i)=>{const s=rdShort(x.nm),ok=pd(i);return '<button type="button" class="rd-tab'+(i===rdCur?' cur':'')+(ok?' sumi':'')+'" data-rdi="'+i+'"><span class="ic">'+rdIc(x)+'</span><b>'+esc(s.n)+'さん</b>'+(ok?'<span class="rd-stamp'+(rdPop===i?' pop':'')+'">済</span>':'')+'</button>';}).join('')+'</div>';
+const body='<div class="rd-p"><div class="rd-nm">'+rdIc(it)+' '+esc(String(it.nm).replace(/^\S+\s+/,''))+'</div>'+(it.secs||[]).map(s=>'<div class="rd-h">'+esc(s.h||'')+'</div>'+String(s.t||'').split(/\n+/).filter(Boolean).map(p=>'<p>'+esc(p)+'</p>').join('')).join('')+
+((it.src&&it.src.length)?'<details class="rd-src"><summary>出典 '+it.src.length+'件</summary>'+it.src.map(u=>'<div>'+esc(u)+'</div>').join('')+'</details>':'')+'</div>';
+const one=pd(rdCur)?'<button type="button" class="rd-one done" disabled>✓ '+esc(s0.n)+'さんは読んだ（'+esc(D[sl+'#'+rdCur])+'）</button>':'<button type="button" class="rd-one" id="rdOne">'+rdIc(it)+' '+esc(s0.n)+'さんを読んだ'+(nx>=0?'　→ 次は'+esc(rdShort(L[nx].nm).n)+'さん':'')+'</button>';
+const end=all?'<div class="rd-end">'+iosSw('rdSw',false,'✓ 全部読んだ！','','')+'<button type="button" class="rd-go" id="rdGo" disabled>📖 '+esc(sl)+'の読み物：読んだ</button></div>':'<div class="rd-left">あと '+left+'人。'+L.length+'人とも「済」になると「全部読んだ！」が出る</div>';
+rdPop=-1;
+return '<div class="ck-sec">📖 '+esc(ttl)+'<i></i></div><div class="ck-card rd-card'+(dn?' done':'')+'" id="rdCard"><div class="rd-top"><b>📖 '+esc(sl)+'の読み物</b><span>'+cnt+' / 3</span></div>'+goal+'<div class="rd-sl">'+RD_SL.map(x=>'<div class="'+(D[x[0]]?'ok':(x[0]===sl?'now':''))+'"><small>'+x[0]+'</small><b>'+(D[x[0]]?esc(D[x[0]]):'—')+'</b></div>').join('')+'</div>'+
+(dn?'<details class="rd-again"><summary>✓ '+esc(sl)+'は読んだ（'+esc(D[sl])+'）　もう一度読む ▾</summary>'+tabs+'<div class="rd-scroll">'+body+'</div></details>'
+:(rdWant?'<div class="ck-gatebar">📖 '+L.length+'人とも読んで「全部読んだ！」を押すと、そのまま書ける</div>':'')+tabs+'<div class="rd-scroll" id="rdScr">'+body+one+end+'</div>')+'</div>';}catch(e){return '';}}
 function ckGate(){try{if(ui.date!==todayStr()||ckDone()||openMove()||entDraft(ui.date))return false;
 ckWant=true;if(topView!=='top'){topView='top';render();}setTimeout(()=>{try{const sc=$('scr');if(sc)sc.scrollTop=0;}catch(e){}},30);toast('📒 先にトップを一番下まで見て、チェックインしてから書く');return true;}catch(e){return false;}}
 function ckGoalExtra(){const g=(state.goal&&typeof state.goal==='object')?state.goal:{};const n=(v,d)=>{const x=Number(v);return isFinite(x)&&x>0?x:d;};return {biz:n(g.biz,360),car:n(g.car,1)};}
@@ -7294,6 +7317,9 @@ pane.querySelectorAll('[data-ckd]').forEach(b=>b.onclick=ev=>{const k=b.dataset.
 {const b=pane.querySelector('#ckEdit');if(b)b.onclick=ckEdit;}
 {const b=pane.querySelector('#ckInc');if(b)b.onclick=()=>openIncSheet();}
 pane.querySelectorAll('[data-ck3]').forEach(b=>b.onclick=ev=>{ckBurst(ev.clientX,ev.clientY,'✓ 完了！');tdComplete(b.dataset.ck3);});{const b=pane.querySelector('#ck3Add');if(b)b.onclick=()=>openTodoPage();}
+pane.querySelectorAll('[data-rdi]').forEach(b=>b.onclick=()=>{rdCur=+b.dataset.rdi;render();rdScrollCard();});
+{const o=pane.querySelector('#rdOne');if(o)o.onclick=ev=>{const L=rdItems(),d=rdDayKey(),sl=rdSlotNow(),i=rdCur,s=rdShort((L[i]||{}).nm);ckBurst(ev.clientX,ev.clientY,'㊞ 済');rdPop=i;
+mutate(()=>{state.rdin=state.rdin||{};state.rdin[d]=Object.assign({},rdDay(d),{[sl+'#'+i]:nowHM(),ts:Date.now()});});const D=rdDay(d),nx=L.findIndex((x,k)=>!D[sl+'#'+k]);if(nx>=0)rdCur=nx;toast('㊞ '+s.n+'さん 済！');render();rdScrollCard();};}
 {const sw=pane.querySelector('#rdSw'),go=pane.querySelector('#rdGo');if(sw&&go){sw.onclick=()=>{const on=!sw.classList.contains('on');iosSet(sw,on);go.disabled=!on;};
 go.onclick=ev=>{if(go.disabled)return;const d=rdDayKey(),sl=rdSlotNow();ckBurst(ev.clientX,ev.clientY,'📖 ✓');mutate(()=>{state.rdin=state.rdin||{};state.rdin[d]=Object.assign({},rdDay(d),{[sl]:nowHM(),ts:Date.now()});});toast('📖 '+sl+'の読み物：読んだ');if(rdWant){rdWant=false;if(!ckGate())setTimeout(()=>openEntrySheet(ui.date,{hour:new Date().getHours(),wr:true}),350);}};}}
 {const b=pane.querySelector('#ckGo');if(b)b.onclick=ev=>{if(ckDone()){if(ckWant){ckWant=false;openEntrySheet(ui.date,{hour:new Date().getHours(),wr:true});}return;}ckBurst(ev.clientX,ev.clientY,'📒 ✓');ckDo();if(ckWant){ckWant=false;setTimeout(()=>openEntrySheet(ui.date,{hour:new Date().getHours(),wr:true}),350);}};}}
@@ -11744,7 +11770,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c34.0";
+const CL_APPVER="c34.1";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
