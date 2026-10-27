@@ -1994,7 +1994,7 @@ details.ck-fd>.in{padding:0 8px 10px}details.ck-fd.r{box-shadow:inset 4px 0 0 #e
 .ct-back{display:block;margin-top:6px;padding:8px 10px;border-radius:12px;background:#eef3ff;font-size:12.5px;font-weight:800;color:#2c5cc5}.ct-b{display:flex;gap:8px;margin-top:6px}.ct-ok,.ct-no{padding:7px 12px;border-radius:999px;cursor:pointer;font-weight:900}.ct-ok{background:#2c5cc5;color:#fff}.ct-no{background:#fff;color:#5b6475;box-shadow:inset 0 0 0 1px #d0d6e2}
 .pln-row.done .pln-tt,.plan.done .pt,.plan2.done .p2c,.dn-it.ok .dn-t,.ds-it.done .dn-t,.ck3r.done span{text-decoration:line-through!important;text-decoration-color:#2c6be0!important;text-decoration-thickness:3px!important;text-decoration-skip-ink:none;color:#6b7280!important}
 .pln-row.done .pln-tt{opacity:1!important}
-#acRows .ac-tq{display:none!important}
+#acRows .ac-tq{display:none!important}#acRows .ac-k:empty{display:none!important}#acRows .ac-kw:not(:has(.ac-k:not(:empty))):not(:has(button)){display:none!important}
 #nowBar .line{display:none!important}
 .pln-row.done{background:#e8f2fd!important;box-shadow:inset 5px 0 0 #3b82d6!important}
 .pln-row.done .pln-tm{color:#2c6be0!important;opacity:1!important;display:flex;flex-direction:column;align-items:center;gap:2px;font-weight:900}
@@ -3558,7 +3558,7 @@ return s;}
 const tb=devK?'':'<button class="ac-kc tl'+(d?' has':'')+'" data-akp="_tool" aria-label="使った物">🛠 道具'+(d?'<span>'+[d].concat(DD).map(x=>x==='_other'?'✍️'+esc(dx||'その他'):esc((toolOf(x)||{ic:'❓'}).ic)).join('')+'</span>':'')+'</button>';
 if(k&&P[0]!=='_top'){const cur=kindOf(k)||{ic:'❓',lb:String(k).slice(0,4),co:'#9aa3b5'},dv=(devK&&d)?toolOf(d):null;
 return '<button class="ac-ksel sel" data-akp="_top" style="--kc:'+esc(cur.co)+'">'+esc(cur.ic)+'<span>'+esc(cur.lb)+KX.map(x=>{const q=kindOf(x);return q?'・'+esc(q.ic)+esc(q.lb):'';}).join('')+(dv?' '+esc(dv.ic):'')+'</span><i>▾</i></button><button class="ac-kx lbl" data-akx="1" aria-label="種類を外す">✕<small class="bn">外す</small></button>'+(d?tb:'');}
-if(P[0]!=='_top')return '<button class="ac-kc pick" data-akp="_top">🏷️<span>種類をえらぶ</span><i>▾</i></button>'+(d?tb:'');
+if(P[0]!=='_top')return (d?tb:'');
 {const top=kindTop5(),og=P[1]||'';
 const lvOf=t=>t.ch?t.ch.map(c=>typeof c==='string'?kb(c,t):('<div class="ka-subw"><div class="ka-sub">'+c.ic+' '+esc(c.lb)+'</div>'+c.ch.map(x=>kb(x,t)).join('')+'</div>')).join('')+(t.plus?'<button class="ac-plus lbl" data-ak-add="1" aria-label="種類を足す">＋<small class="bn">足す</small></button>':''):(etc.map(id=>kb(id,t)).join('')+'<button class="ac-plus lbl" data-ak-add="1" aria-label="種類を足す">＋<small class="bn">足す</small></button>');
 if(og){const t=KIND_TREE.find(x=>x.id===og);if(t)return '<div class="ac-kcats"><button class="ac-kcat on" data-akp="_top">'+t.ic+'<span>'+esc(t.lb)+'</span><i>▴</i></button><div class="ac-kl ac-kopen">'+lvOf(t)+'</div></div>';}
@@ -4444,7 +4444,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c32.8）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c32.9）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -11681,7 +11681,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c32.8";
+const CL_APPVER="c32.9";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;

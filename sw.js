@@ -1,7 +1,7 @@
 /* HIBIKI Service Worker：オフラインでも開けるようにする。
    index.html は「まずネット、だめならキャッシュ」（新しい版をすぐ拾う）。アイコン類は「キャッシュ優先」。
    データ（Supabase の API）と写真はここでは触らない（アプリが自分で端末に控える）。 */
-const VER='hibiki-c32.8';
+const VER='hibiki-c32.9';
 const CORE=['./','./index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png','./icon-512-maskable.png','./apple-touch-icon.png'];
 self.addEventListener('install',e=>{
   e.waitUntil(caches.open(VER).then(c=>c.addAll(CORE).catch(()=>{})).then(()=>self.skipWaiting()));
@@ -56,7 +56,7 @@ function swVib(){return new Promise(ok=>{let done=false;const fin=v=>{if(!done){
 self.addEventListener('notificationclick',e=>{e.notification.close();
   let u='./';try{const w=e.notification.data&&e.notification.data.url;if(w){const x=new URL(w,self.registration.scope);if(x.origin===self.location.origin)u=x.href;}}catch(z){}
   e.waitUntil(self.clients.matchAll({type:'window',includeUncontrolled:true}).then(cs=>{
-    const isCk=String(e.notification.tag||'').indexOf('ck|')===0;   /* c32.8 */
+    const isCk=String(e.notification.tag||'').indexOf('ck|')===0;   /* c32.9 */
     for(const c of cs){if(isCk)try{c.postMessage({hibiki:'ck'});}catch(z){}if('focus' in c)return Promise.resolve().then(()=>c.focus()).catch(()=>self.clients.openWindow&&self.clients.openWindow(u));}   /* c20.6：focus() が拒まれたら開き直す（ホーム画面のアプリで前面に出せない時） */
     if(self.clients.openWindow)return self.clients.openWindow(u);}));});
 /* ページからの「新しい版に入れ替えて」 */
