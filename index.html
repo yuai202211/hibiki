@@ -1992,6 +1992,8 @@ details.ck-fd>.in{padding:0 8px 10px}details.ck-fd.r{box-shadow:inset 4px 0 0 #e
 .mvq .ks{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.mvq .ks button{border:0;border-radius:999px;padding:9px 11px;font-weight:800;font-size:13.5px;font-family:inherit}
 .mvp .ks button.pl,.mvq .ks button.pl{background:#fff0e3;color:#c2410c}.mvp .ks button.pl.on,.mvq .ks button.pl.on{background:#ff6b1a;color:#fff}
 .ct-back{display:block;margin-top:6px;padding:8px 10px;border-radius:12px;background:#eef3ff;font-size:12.5px;font-weight:800;color:#2c5cc5}.ct-b{display:flex;gap:8px;margin-top:6px}.ct-ok,.ct-no{padding:7px 12px;border-radius:999px;cursor:pointer;font-weight:900}.ct-ok{background:#2c5cc5;color:#fff}.ct-no{background:#fff;color:#5b6475;box-shadow:inset 0 0 0 1px #d0d6e2}
+.pln-row.done .pln-tt,.plan.done .pt,.plan2.done .p2c,.dn-it.ok .dn-t,.ds-it.done .dn-t,.ck3r.done span{text-decoration:line-through!important;text-decoration-color:#2c6be0!important;text-decoration-thickness:3px!important;text-decoration-skip-ink:none;color:#6b7280!important}
+.pln-row.done .pln-tt{opacity:1!important}
 .a-mdm{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:800;color:#e5484d}.a-mdm .mdb{display:inline-flex;align-items:center;justify-content:center;width:34px;height:30px;border-radius:10px;background:#fdecef;color:#e5484d;font-size:17px;font-weight:900;cursor:pointer}.a-mdm .mdv{min-width:54px;text-align:center;padding:5px 8px;border-radius:10px;background:#fff;box-shadow:inset 0 0 0 2px #f6c3cc;color:#c0303f;cursor:pointer}.a-mdm small{color:#8a93a6;font-size:11px}
 .a-sw{grid-column:2 / -1;display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;margin-top:5px}.a-sw .ios{cursor:pointer;font-size:12px;color:#5b6475}.a-sw .ios.on .tl{color:#14275a}
 .mvp .ks{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
@@ -4433,7 +4435,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c32.4）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c32.5）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -11670,7 +11672,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c32.4";
+const CL_APPVER="c32.5";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
