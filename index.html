@@ -1994,6 +1994,7 @@ details.ck-fd>.in{padding:0 8px 10px}details.ck-fd.r{box-shadow:inset 4px 0 0 #e
 .ct-back{display:block;margin-top:6px;padding:8px 10px;border-radius:12px;background:#eef3ff;font-size:12.5px;font-weight:800;color:#2c5cc5}.ct-b{display:flex;gap:8px;margin-top:6px}.ct-ok,.ct-no{padding:7px 12px;border-radius:999px;cursor:pointer;font-weight:900}.ct-ok{background:#2c5cc5;color:#fff}.ct-no{background:#fff;color:#5b6475;box-shadow:inset 0 0 0 1px #d0d6e2}
 .pln-row.done .pln-tt,.plan.done .pt,.plan2.done .p2c,.dn-it.ok .dn-t,.ds-it.done .dn-t,.ck3r.done span{text-decoration:line-through!important;text-decoration-color:#2c6be0!important;text-decoration-thickness:3px!important;text-decoration-skip-ink:none;color:#6b7280!important}
 .pln-row.done .pln-tt{opacity:1!important}
+.loc.mvrt .rt-l{display:block;line-height:1.3}.loc.mvrt .rt-ar{display:block;font-size:13px;line-height:1;color:#9db4ec;margin:2px 0 2px 6px}.loc.mvrt .rt-wait{font-size:12px;color:#8a93a6;font-weight:800}
 #acRows .ac-tq,#acRows .ac-mo,#acRows .ac-pb,#secActs .ac-tq,#secActs .ac-mo,#secActs .ac-pb{display:none!important}#acRows .ac-k:empty{display:none!important}#acRows .ac-kw:not(:has(.ac-k:not(:empty))):not(:has(button)){display:none!important}
 #nowBar .line{display:none!important}
 .pln-row.done{background:#e8f2fd!important;box-shadow:inset 5px 0 0 #3b82d6!important}
@@ -3838,6 +3839,8 @@ $('sheet2').querySelectorAll('[data-mq]').forEach(b=>b.onclick=()=>{const v=b.da
 function actsExpand(A){if(!Array.isArray(A))return [];const out=[];for(const a of A){if(!a)continue;out.push(a);
 (Array.isArray(a.kx)?a.kx:[]).forEach(k=>{const c=Object.assign({},a,{k});delete c.kx;delete c.dd;delete c.d;delete c.n;out.push(c);});
 (Array.isArray(a.dd)?a.dd:[]).forEach(d=>{const c=Object.assign({},a,{d});delete c.k;delete c.kx;delete c.dd;delete c.n;out.push(c);});}return out;}
+function mvRtHtml(rt,ic,open){const P=String(rt||'').split('→').map(z=>z.trim());const A=P.filter(Boolean);if(!A.length)return esc(ic)+' 移動'+(open?'<span class="rt-wait">（移動中…🏁到着を押す）</span>':'');
+const L=P.length>1?P:[P[0],''];return L.map((z,i)=>(i?'<span class="rt-ar">↓</span>':'')+'<span class="rt-l">'+(i?'':esc(ic)+' ')+(z?esc(z):(open?'<span class="rt-wait">移動中…🏁到着を押す</span>':'<span class="rt-wait">（着いた所なし）</span>'))+'</span>').join('');}
 function kHead(en){const k=en&&en.k;if(!k||en.mv)return k||'';const A=Array.isArray(en.acts)?en.acts:[];return A.some(a=>a&&(a.k===k||(Array.isArray(a.kx)&&a.kx.indexOf(k)>=0)))?'':k;}
 function actsSort(a,base){
 const b=String(base||'');let key='';
@@ -4051,7 +4054,7 @@ if((en.mv&&mvOpenOk(ui.date,en))||(!en.mv&&en.k!=='sleep'&&recOpenOk(ui.date,en)
 const dm=(en.e&&!en.noT)?durMin(en.s,en.e,en.ed):0;
 const pill=dm?'<span class="dpill">⏱ '+esc(durText(dm))+'</span>':'';
 html+='<button class="hour filled" data-k="'+esc(rowK)+'"><span class="hh">'+(en.noT?'<b style="color:#c3c8d4">—</b>':('<b>'+esc(en.s||(pad(h)+':00'))+'</b>'+(en.e?'<small>'+(en.ed?(en.ed===1?'翌':'+'+en.ed+'日'):'')+esc(en.e)+'</small>':'')))+'</span><div class="body">'+
-pfTag(en)+((ek=>en.mv?'<span class="loc big" style="color:#4d7dff">'+(TRICON[en.tr]||'🚗')+' '+esc(en.rt||'移動')+(mvOpenOk(ui.date,en)?'　（移動中…🏁到着を押す）':'')+'</span>'
+pfTag(en)+((ek=>en.mv?'<span class="loc big mvrt" style="color:#4d7dff">'+mvRtHtml(en.rt,TRICON[en.tr]||'🚗',mvOpenOk(ui.date,en))+'</span>'
 :recHead(en,ek).t)(kHead(en)))+
 ((!en.mv&&en.k!=='sleep'&&recOpenOk(ui.date,en)&&!list.some(z=>z.en&&z.en!==en&&!z.en.del&&!z.en.noT&&z.en.s&&z.en.s>en.s))?'<span class="loc" style="color:#e0603c;font-weight:800">⏳ 途中（押して終わりを入れる）</span>':'')+
 recHead(en,kHead(en)).g+pill+(en.md?'<span class="dpill mdp">🕳️ ムダ</span>':'')+actsHtml(en)+(SG?SG.mid.map(m=>'<span class="sg-sub" role="button" data-sgk="'+esc(m.k)+'">🚙 車内 '+esc(m.en.s)+'–'+esc(m.en.e||'')+((m.en.acts&&m.en.acts.length)?'　'+esc(m.en.acts.map(a=>a&&a.t).filter(Boolean).join('・')):'')+(m.en.t?'　💬 '+esc(String(m.en.t).split('\n')[0]).slice(0,40):'')+((m.en.ph&&m.en.ph.length)?'　📷'+m.en.ph.length:'')+'</span>').join(''):'')+
@@ -4444,7 +4447,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c33.0）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c33.1）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -11681,7 +11684,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c33.0";
+const CL_APPVER="c33.1";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
