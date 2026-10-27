@@ -1874,6 +1874,14 @@ body.cardvis .fab{display:none!important}
 .ck-hero .hk{font-size:12px;font-weight:900;color:#ffce54}.ck-hero .ht{font-size:26px;font-weight:900;margin:2px 0;background:linear-gradient(90deg,#ffe29a,#ffce54 50%,#f5a623);-webkit-background-clip:text;background-clip:text;color:transparent;line-height:1.25}
 .ck-cd{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px;position:relative;z-index:1}
 .ck-cd div{background:rgba(255,255,255,.08);box-shadow:inset 0 0 0 1px rgba(255,206,84,.35);border-radius:14px;padding:8px 4px;text-align:center}.ck-cd b{font-size:26px;font-weight:900;line-height:1;color:#ffce54}.ck-cd span{font-size:12px;font-weight:900}.ck-cd small{display:block;font-size:10.5px;font-weight:800;opacity:.9}
+.rd-card{background:#fffdf7;box-shadow:inset 0 0 0 2px #e9dcc0}.rd-card.done{background:#f3f7fd;box-shadow:inset 0 0 0 2px #cfe0f6}
+.rd-top{display:flex;align-items:center;justify-content:space-between;font-size:15px;font-weight:900;color:#14275a}.rd-top span{color:#b7791f;font-weight:900}
+.rd-sl{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:8px 0 10px}.rd-sl>div{border-radius:12px;background:#eef1f6;padding:6px 0;text-align:center}.rd-sl small{display:block;font-size:11px;font-weight:900;color:#7a8294}.rd-sl b{font-size:14px;font-weight:900;color:#9aa3b5}.rd-sl .ok{background:#3b82d6}.rd-sl .ok small,.rd-sl .ok b{color:#fff}.rd-sl .now{box-shadow:inset 0 0 0 2px #e6b800;background:#fffbe6}
+.rd-p{margin:12px 0 4px;padding-top:10px;border-top:1px dashed #e2d6bb}.rd-nm{font-size:16px;font-weight:900;color:#14275a;margin-bottom:4px}.rd-h{display:inline-block;margin:10px 0 4px;padding:2px 10px;border-radius:999px;background:#14275a;color:#ffd77a;font-size:12px;font-weight:900}
+.rd-p p{margin:4px 0;font-size:14.5px;line-height:1.85;color:#1d2230}.rd-src{margin-top:8px;font-size:11px;color:#7a8294}.rd-src summary{cursor:pointer;font-weight:800}.rd-src div{word-break:break-all;margin:2px 0}
+.rd-end{display:flex;flex-direction:column;align-items:stretch;gap:10px;margin-top:14px;padding-top:12px;border-top:2px solid #e2d6bb}.rd-end .ios{justify-content:space-between;font-size:16px}
+.rd-go{border:0;border-radius:16px;height:56px;font-size:17px;font-weight:900;background:#ffce54;color:#3a2a00;font-family:inherit}.rd-go:disabled{background:#e6e8ee;color:#9aa3b5}
+.rd-again summary{cursor:pointer;font-weight:900;color:#2c6be0;font-size:13.5px}
 .ck-sec{margin:14px 4px 6px;font-size:12px;font-weight:900;display:flex;align-items:center;gap:6px;color:#7a8294}.ck-sec i{flex:1;height:2px;background:#e1e4ec;border-radius:2px}
 .ck-card{margin:0 2px 8px;border-radius:16px;padding:12px;background:#fff;box-shadow:0 1px 3px rgba(20,24,40,.06)}
 .ck-track{position:relative;height:100px;margin:0 8px}
@@ -2456,6 +2464,8 @@ for(const d in (src.scr||{})){const nu=src.scr[d];if(!nu)continue;out.scr=out.sc
 for(const d in (src.prep||{})){const nu=src.prep[d];if(!nu)continue;out.prep=out.prep||{};const cur=out.prep[d];if(!cur||((nu.ts||0)>(cur.ts||0)))out.prep[d]=nu;}
 for(const d in (src.cond||{})){const nu=src.cond[d];if(!nu)continue;out.cond=out.cond||{};const cur=out.cond[d];if(!cur||((nu.ts||0)>(cur.ts||0)))out.cond[d]=nu;}
 if(src.wishcfg&&typeof src.wishcfg==='object'&&(!out.wishcfg||((src.wishcfg.ts||0)>(out.wishcfg.ts||0))))out.wishcfg=src.wishcfg;
+for(const d in (src.rdin||{})){const nu=src.rdin[d];if(!nu)continue;out.rdin=out.rdin||{};const cur=out.rdin[d];if(!cur){out.rdin[d]=nu;continue;}const m=Object.assign({},cur);for(const s in nu){if(s!=='ts'&&nu[s]&&!m[s])m[s]=nu[s];}m.ts=Math.max(nu.ts||0,cur.ts||0);out.rdin[d]=m;}
+if(src.rdtxt&&typeof src.rdtxt==='object'&&(!out.rdtxt||((src.rdtxt.ts||0)>(out.rdtxt.ts||0))))out.rdtxt=src.rdtxt;
 if(src.daily5&&typeof src.daily5==='object'&&(!out.daily5||((src.daily5.ts||0)>(out.daily5.ts||0))))out.daily5=src.daily5;
 for(const d in (src.ckcnt||{})){const nu=src.ckcnt[d];if(!nu)continue;out.ckcnt=out.ckcnt||{};const cur=out.ckcnt[d];if(!cur||((nu.ts||0)>(cur.ts||0)))out.ckcnt[d]=nu;}
 for(const d in (src.ckin||{})){const nu=src.ckin[d];if(!nu)continue;out.ckin=out.ckin||{};const cur=out.ckin[d];if(!cur){out.ckin[d]=nu;continue;}const m=Object.assign({},cur);for(const s in nu){if(s!=='ts'&&nu[s]&&!m[s])m[s]=nu[s];}m.ts=Math.max(nu.ts||0,cur.ts||0);out.ckin[d]=m;}
@@ -4165,7 +4175,7 @@ openSub('<div class="sh-time" style="justify-content:center"><span>🚪 ログ�
 '<div class="sh-btns"><button class="delbtn" id="lgNo" style="flex:1">いいえ</button><button class="savebtn" id="lgYes">はい</button></div>',null);
 $('lgNo').onclick=()=>closeSub();$('lgYes').onclick=()=>{closeSub();appLogout();};};}
 pane.querySelectorAll('[data-h]').forEach(b=>{
-b.onclick=()=>{if(b.classList.contains('wr')&&ckGate())return;openEntrySheet(ui.date,{hour:Number(b.dataset.h),pick:!b.classList.contains('wr'),wr:b.classList.contains('wr')});};
+b.onclick=()=>{if(b.classList.contains('wr')&&(ckGate()||rdGate()))return;openEntrySheet(ui.date,{hour:Number(b.dataset.h),pick:!b.classList.contains('wr'),wr:b.classList.contains('wr')});};
 b.onkeydown=ev=>{if(ev.target!==b)return;if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();openEntrySheet(ui.date,{hour:Number(b.dataset.h),wr:b.classList.contains('wr')});}};
 });
 const wB=(id,fn)=>{const b=pane.querySelector('#'+id);if(b)b.onclick=ev=>{ev.stopPropagation();fn();};};
@@ -4464,7 +4474,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c33.9）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c34.0）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -7135,6 +7145,21 @@ function ckDay(d){const o=((state.ckin||{})[d])||{};return o.del?{}:o;}
 function ckDone(){return !!ckDay(ckDayKey())[ckSlotNow()];}
 function ckDo(){const d=ckDayKey(),sl=ckSlotNow();if(ckDay(d)[sl])return;mutate(()=>{state.ckin=state.ckin||{};state.ckin[d]=Object.assign({},ckDay(d),{[sl]:nowHM(),ts:Date.now()});});}
 let ckWant=false;
+const RD_SL=[['朝',5,12],['昼',12,18],['晩',18,29]];
+function rdSlotNow(){let hh=new Date().getHours();if(hh<5)hh+=24;const s=RD_SL.find(x=>hh>=x[1]&&hh<x[2]);return s?s[0]:'晩';}
+function rdDayKey(){const n=new Date();return n.getHours()<5?addDays(todayStr(),-1):todayStr();}
+function rdDay(d){const o=((state.rdin||{})[d])||{};return o.del?{}:o;}
+function rdItems(){const s=state.rdtxt;return (s&&Array.isArray(s.items))?s.items.filter(x=>x&&!x.del&&x.nm):[];}
+function rdDone(){return !rdItems().length||!!rdDay(rdDayKey())[rdSlotNow()];}
+let rdWant=false;
+function rdGate(){try{if(ui.date!==todayStr()||rdDone()||openMove()||entDraft(ui.date))return false;rdWant=true;if(topView!=='top'){topView='top';render();}
+setTimeout(()=>{try{const c=$('rdCard'),sc=$('scr');if(c&&sc)sc.scrollTop+=c.getBoundingClientRect().top-sc.getBoundingClientRect().top-8;}catch(e){}},60);toast('📖 先に創業者の話を最後まで読んで「全部読んだ！」');return true;}catch(e){return false;}}
+function rdHtml(){try{const L=rdItems();if(!L.length)return '';const d=rdDayKey(),sl=rdSlotNow(),D=rdDay(d),dn=!!D[sl],cnt=RD_SL.filter(x=>D[x[0]]).length,ttl=(state.rdtxt&&state.rdtxt.ttl)||'1日3回の読み物';
+const body=L.map(it=>'<div class="rd-p"><div class="rd-nm">'+esc(it.nm)+'</div>'+(it.secs||[]).map(s=>'<div class="rd-h">'+esc(s.h||'')+'</div>'+String(s.t||'').split(/\n+/).filter(Boolean).map(p=>'<p>'+esc(p)+'</p>').join('')).join('')+
+((it.src&&it.src.length)?'<details class="rd-src"><summary>出典 '+it.src.length+'件</summary>'+it.src.map(u=>'<div>'+esc(u)+'</div>').join('')+'</details>':'')+'</div>').join('');
+return '<div class="ck-sec">📖 '+esc(ttl)+'<i></i></div><div class="ck-card rd-card'+(dn?' done':'')+'" id="rdCard"><div class="rd-top"><b>📖 '+esc(sl)+'の読み物</b><span>'+cnt+' / 3</span></div><div class="rd-sl">'+RD_SL.map(x=>'<div class="'+(D[x[0]]?'ok':(x[0]===sl?'now':''))+'"><small>'+x[0]+'</small><b>'+(D[x[0]]?esc(D[x[0]]):'—')+'</b></div>').join('')+'</div>'+
+(dn?'<details class="rd-again"><summary>✓ '+esc(sl)+'は読んだ（'+esc(D[sl])+'）　もう一度読む ▾</summary>'+body+'</details>'
+:(rdWant?'<div class="ck-gatebar">📖 最後まで読んで「全部読んだ！」を押すと、そのまま書ける</div>':'')+body+'<div class="rd-end">'+iosSw('rdSw',false,'✓ 全部読んだ！','','')+'<button type="button" class="rd-go" id="rdGo" disabled>📖 '+esc(sl)+'の読み物：読んだ</button></div>')+'</div>';}catch(e){return '';}}
 function ckGate(){try{if(ui.date!==todayStr()||ckDone()||openMove()||entDraft(ui.date))return false;
 ckWant=true;if(topView!=='top'){topView='top';render();}setTimeout(()=>{try{const sc=$('scr');if(sc)sc.scrollTop=0;}catch(e){}},30);toast('📒 先にトップを一番下まで見て、チェックインしてから書く');return true;}catch(e){return false;}}
 function ckGoalExtra(){const g=(state.goal&&typeof state.goal==='object')?state.goal:{};const n=(v,d)=>{const x=Number(v);return isFinite(x)&&x>0?x:d;};return {biz:n(g.biz,360),car:n(g.car,1)};}
@@ -7195,6 +7220,7 @@ return '<div class="ck-gq'+(i?' alt':'')+'"><div class="ck-ring" style="--p:'+p+
 '<div class="m">'+(Number(d.yen)>0?'💰 '+esc(manY(Number(d.yen)))+'　':'')+(nl.length?'📦 '+ok+'/'+nl.length:'')+'</div>'+
 (s.next?'<button type="button" class="go'+(hit?' done':'')+'" data-ckok="'+esc(s.next.id)+'">'+(hit?'✓ 今日は進めた':'✓ 今日の1手')+'<small>'+esc(s.next.t)+'</small></button>':'<button type="button" class="go add" data-ckds="'+esc(d.id)+'">＋ 次の1手を書く</button>')+'</div>';}).join('')+'</div>';
 const hc=arr.filter(d=>dreamHit(d.id)).length;h+='<div class="ck-streak">🔥 夢に近づいた手：今日 <b>'+hc+'</b></div>';}}catch(e){}
+h+=rdHtml();
 const DL=ckDaily(t),done=DL.filter(x=>x.v>=x.g).length;
 h+='<div class="ck-sec">🧱 毎日の積み重ね＝夢までの最短ルート<i></i></div><div class="ck-card ck-formula"><div class="ck-fx"><div class="ck-fb"><b>'+esc(manY(left))+'</b><small>あと</small></div><span>÷</span><div class="ck-fb"><b>'+days+'日</b><small>'+esc(GC.until.slice(5).replace('-','/'))+'まで</small></div><span>＝</span><div class="ck-fb big"><b>'+esc(manY(per))+'</b><small>1日に稼ぐ</small></div></div><div class="ck-fw">そのために 毎日これを積み重ねる ↓　<button type="button" class="ck-edb" id="ckEdit">✎ 編集</button></div>'+
 DL.map(d=>{const ok=d.v>=d.g,p=d.g?Math.min(100,Math.round(d.v/d.g*100)):0;return '<div class="ck-d'+(ok?' ok':'')+'"><div class="ic">'+d.ic+'</div><div class="nm">'+esc(d.nm)+'　'+d.v+' / '+d.g+d.u+'<small>→ '+esc(d.to)+'</small><div class="ck-pb"><i style="width:'+p+'%"></i></div></div>'+(d.auto?'<span class="auto">日記から自動</span>':'<button type="button" data-ckd="'+esc(d.k)+'">'+(ok&&d.src!=='learn'?'✓ ＋1':d.btn)+'</button>')+'</div>';}).join('')+
@@ -7268,6 +7294,8 @@ pane.querySelectorAll('[data-ckd]').forEach(b=>b.onclick=ev=>{const k=b.dataset.
 {const b=pane.querySelector('#ckEdit');if(b)b.onclick=ckEdit;}
 {const b=pane.querySelector('#ckInc');if(b)b.onclick=()=>openIncSheet();}
 pane.querySelectorAll('[data-ck3]').forEach(b=>b.onclick=ev=>{ckBurst(ev.clientX,ev.clientY,'✓ 完了！');tdComplete(b.dataset.ck3);});{const b=pane.querySelector('#ck3Add');if(b)b.onclick=()=>openTodoPage();}
+{const sw=pane.querySelector('#rdSw'),go=pane.querySelector('#rdGo');if(sw&&go){sw.onclick=()=>{const on=!sw.classList.contains('on');iosSet(sw,on);go.disabled=!on;};
+go.onclick=ev=>{if(go.disabled)return;const d=rdDayKey(),sl=rdSlotNow();ckBurst(ev.clientX,ev.clientY,'📖 ✓');mutate(()=>{state.rdin=state.rdin||{};state.rdin[d]=Object.assign({},rdDay(d),{[sl]:nowHM(),ts:Date.now()});});toast('📖 '+sl+'の読み物：読んだ');if(rdWant){rdWant=false;if(!ckGate())setTimeout(()=>openEntrySheet(ui.date,{hour:new Date().getHours(),wr:true}),350);}};}}
 {const b=pane.querySelector('#ckGo');if(b)b.onclick=ev=>{if(ckDone()){if(ckWant){ckWant=false;openEntrySheet(ui.date,{hour:new Date().getHours(),wr:true});}return;}ckBurst(ev.clientX,ev.clientY,'📒 ✓');ckDo();if(ckWant){ckWant=false;setTimeout(()=>openEntrySheet(ui.date,{hour:new Date().getHours(),wr:true}),350);}};}}
 function mvNestedRec(x){return !!(x.rl||(!x.mv&&x.k!=='sleep'&&x.k!=='incar'&&(TEL_KS.indexOf(x.k)>=0||x.k==='spplay'||x.k==='spwork'||!x.p)));}
 function mvNormCore(d,k,J){const E=state.entries[d]||{},en=E[k];if(!en||en.del||!en.mv||!en.s||!en.e||en.noT)return false;const S=hmMin(en.s),EE=hmMin(en.e)+(en.ed?1440:0);if(EE<=S)return false;let touched=false;const now=Date.now();
@@ -11200,7 +11228,7 @@ async function clRpcJson(name,body,sig,ms){const t=await clRpcText(name,typeof b
 async function clRpc(name,body){return clRpcJson(name,body);}
 
 const CL_ID=['dreams','memos','pays','aims','moves','pins','steps','payrep','rtn','rlog','payppl','pha','kinds','tools','places','projects','marks','bedp','arp','todos','plreg','plgrp','kgrp','trs','srr','tdq','ksub','dlg','dgoal','aip','msx','inc','cash','rtm','dep','tbox','wish'];
-const CL_DAY=['ai','rules','scr','cond','prep','ckin','ckcnt'];
+const CL_DAY=['ai','rules','scr','cond','prep','ckin','ckcnt','rdin'];
 const CL_DAY2=['entries','plans'];
 const CL_SKIP={updatedAt:1,photos:1};
 function clItems(st){
@@ -11716,7 +11744,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c33.9";
+const CL_APPVER="c34.0";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
