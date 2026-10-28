@@ -52,15 +52,20 @@ display:flex;flex-direction:column;align-items:stretch;justify-content:flex-star
 padding:8px 14px 2px;flex-shrink:0;gap:2px;
  }
 .datebar{display:flex;align-items:center;gap:6px;min-width:0;width:100%}
-.hdr0{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;min-height:26px}
-.hdr0 .yr{font-size:11px;font-weight:800;color:var(--sub)}
-.hdr0 .hb-brand{flex-direction:row;align-items:baseline;gap:8px}
-.hdr0 .hb-brand .hb-logo{font-size:13px}
-.hdr0 .right-top{margin-left:auto;gap:8px}
-.hdr0 .right-top .topset{margin-left:4px}
-.datebar #topOut{margin-left:auto!important}
+.hdr0{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:6px;width:100%;min-height:36px}
+.hdr0>.hb-brand,.hdr0>.yr{grid-column:2;grid-row:1;justify-self:center}
+.hdr0>.hbtn{grid-column:3;grid-row:1;justify-self:end;display:flex;gap:6px}
+.hdr0 .yr{font-size:12px;font-weight:800;color:var(--sub)}
+.hdr0 .hb-brand{flex-direction:row;align-items:baseline;gap:8px;margin:0}
+.hdr0 .hb-brand .hb-logo{font-size:15px}
+.hdr0 .hbtn .topset{margin:0!important;min-width:46px}
 .topset.topout{min-width:56px;background:#fff1f3}
 .topset.topout small{color:#b4232c;font-weight:900}
+.hdr1{display:flex;justify-content:center;align-items:center;gap:8px;flex-wrap:wrap;width:100%;min-height:22px}
+.hdr1 .syncdot{margin-right:26px}
+.top .datebar{display:grid!important;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;width:100%;position:relative}
+.datebar .dmid{display:flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap}
+.top .datebar #prevD,.top .datebar #nextD{width:100%;margin:0!important;height:48px}
 .datebar .chev{color:#c3c8d4;font-size:20px;padding:2px 7px;border-radius:10px}
 .datebar .chev:active{background:#eef0f5}
 .datebar .d{font-weight:800;font-size:22px;letter-spacing:.01em;white-space:nowrap}
@@ -2162,19 +2167,20 @@ input.pin,textarea.pin{color:#14181f!important;-webkit-text-fill-color:#14181f!i
 <div class="top">
 <div class="hdr0">
 <span class="hb-brand"><span class="hb-logo"><b>HIBIKI</b><i>日々記</i></span><span class="yr" id="yr"></span></span>
-<div class="right-top">
+<div class="hbtn">
+<button class="topset" id="topSet2" aria-label="設定"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.5-2-3.4-2.3 1a7 7 0 0 0-2-1.2L14.2 3h-4l-.4 2.7a7 7 0 0 0-2 1.2l-2.3-1-2 3.4 2 1.5A7 7 0 0 0 5 12a7 7 0 0 0 .1 1.2l-2 1.5 2 3.4 2.3-1a7 7 0 0 0 2 1.2l.4 2.7h4l.4-2.7a7 7 0 0 0 2-1.2l2.3 1 2-3.4-2-1.5A7 7 0 0 0 19 12z"/></svg><small>設定</small></button>
+<button class="topset topout" id="topOut" aria-label="ログアウト">🚪<small>ログアウト</small></button>
+</div>
+</div>
+<div class="hdr1">
 <button class="mlchip" id="mlChip" style="display:none"></button>
 <span class="streak" id="streak" style="display:none"></span>
 <span class="syncdot" id="syncdot" title="" role="button" aria-label="同期"></span>
-<button class="topset" id="topSet2" aria-label="設定"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.5-2-3.4-2.3 1a7 7 0 0 0-2-1.2L14.2 3h-4l-.4 2.7a7 7 0 0 0-2 1.2l-2.3-1-2 3.4 2 1.5A7 7 0 0 0 5 12a7 7 0 0 0 .1 1.2l-2 1.5 2 3.4 2.3-1a7 7 0 0 0 2 1.2l.4 2.7h4l.4-2.7a7 7 0 0 0 2-1.2l2.3 1 2-3.4-2-1.5A7 7 0 0 0 19 12z"/></svg><small>設定</small></button>
-</div>
 </div>
 <div class="datebar">
 <button class="chev lbl" id="prevD" aria-label="前の日">‹<small class="bn">前の日</small></button>
-<span class="d" id="dd"></span>
-<span class="yobi" id="yb"></span>
+<span class="dmid"><span class="d" id="dd"></span><span class="yobi" id="yb"></span></span>
 <button class="chev lbl" id="nextD" aria-label="次の日">›<small class="bn">次の日</small></button>
-<button class="topset topout" id="topOut" aria-label="ログアウト">🚪<small>ログアウト</small></button>
 <button class="todaybtn" id="todayBtn" style="display:none">今日</button>
 </div>
 </div>
@@ -4521,7 +4527,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c35.6）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c35.7）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -11945,7 +11951,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c35.6";
+const CL_APPVER="c35.7";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
