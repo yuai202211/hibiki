@@ -1905,7 +1905,13 @@ body.cardvis .fab{display:none!important}
 .blk-any{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;cursor:grab}.blk-any.blk-lift{background:#fff}
 .blk-any button,.blk-any a,.blk-any summary,.blk-any label{cursor:pointer}
 .blk-any input,.blk-any textarea,.blk-any select,.blk-any [contenteditable="true"]{-webkit-user-select:text;user-select:text;cursor:auto}
-.ck-fd>summary.blk-hd>.bt{flex:0 0 auto;white-space:nowrap;font-weight:900}.ck-fd>summary.blk-hd>.s{flex:1 1 0;min-width:0}.blk-grip{margin-left:auto;padding-left:8px;color:#b4bccb;font-size:16px;line-height:1;flex:0 0 auto}
+.ck-fd.blk-flat{background:transparent;box-shadow:none;margin:0 2px 6px}
+.ck-fd.blk-flat[open]>summary{padding:10px 4px 6px}
+.ck-fd.blk-flat[open]>summary>.bt{font-size:12px;color:#7a8294}
+.ck-fd.blk-flat[open]>summary>.s{display:none}
+.ck-fd.blk-flat[open]>.in{padding:0}
+.ck-fd.blk-flat:not([open]){background:#fff;box-shadow:0 1px 3px rgba(20,24,40,.06)}
+.ck-fd>summary.blk-hd>.bt{flex:0 1 auto;min-width:0;max-width:62%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:900}.ck-fd>summary.blk-hd>.s{flex:1 1 0;min-width:0}.blk-grip{margin-left:auto;padding-left:8px;color:#b4bccb;font-size:16px;line-height:1;flex:0 0 auto}
 .ck-sec.blk-hd i{flex:1}
 .blk-lift{z-index:6;box-shadow:0 14px 32px rgba(20,39,90,.3);border-radius:16px;background:#fff;outline:3px solid #ffce54;opacity:.97}
 body.blk-dragging,body.blk-dragging *{cursor:grabbing!important;-webkit-user-select:none!important;user-select:none!important}
@@ -4527,7 +4533,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c35.7）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c35.8）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -7328,7 +7334,13 @@ if(b.id==='road'&&!sum){const st=(blkTxt(t).match(/ステージ\d/)||[])[0];sum=
 if(b.fold&&!b.fid)t=String(t).replace(/（[^）]*）/g,'').trim();
 const grip='<span class="blk-grip" title="長押しで入れ替え">⠿</span>';
 if(b.fold){const fid=b.fid||b.id;return '<section class="blk blk-any" data-blk="'+esc(b.id)+'"><details class="ck-fd'+(b.cls?' '+b.cls:'')+'" data-ckf="'+esc(fid)+'"'+(ckFoldOpen(fid)?' open':'')+'><summary class="blk-hd"><b class="bt">'+t+'</b><span class="s">'+sum+'</span>'+grip+'</summary><div class="in">'+inn+'</div></details></section>';}
-return '<section class="blk blk-any" data-blk="'+esc(b.id)+'"><div class="ck-sec blk-hd">'+t+'<i></i>'+grip+'</div>'+inn+'</section>';}
+{const fid='o_'+b.id,force=(b.id==='ck'&&typeof ckWant!=='undefined'&&ckWant)||(b.id==='rd'&&typeof rdWant!=='undefined'&&rdWant),op=force||ckFoldOpenDef(fid,true),s2=blkSumOf(b.id,inn);t=String(t).replace(/（[^）]*）/g,'').replace(/＝.*$/,'').trim();
+return '<section class="blk blk-any" data-blk="'+esc(b.id)+'"><details class="ck-fd blk-flat" data-ckf="'+esc(fid)+'"'+(op?' open':'')+'><summary class="blk-hd"><b class="bt">'+t+'</b><span class="s">'+s2+'</span>'+grip+'</summary><div class="in">'+inn+'</div></details></section>';}}
+function ckFoldOpenDef(id,def){try{const v=localStorage.getItem('hibiki-ckf-'+id);return v===null?def:v==='1';}catch(e){return def;}}
+function blkSumOf(id,html){try{const d=document.createElement('div');d.innerHTML=html;const q=s=>{const e=d.querySelector(s);return e?blkTxt(e.innerHTML):'';};
+if(id==='rd')return q('.rd-top');if(id==='dream')return q('.ht');if(id==='daily')return q('.ck-dsum');if(id==='todo')return q('.ck3 .ck-rh')||q('.ck-rh');if(id==='ck')return q('.ck-ci .t');
+if(id==='pins')return [...d.querySelectorAll('.ck-gq')].map(g=>blkTxt((g.querySelector('h4')||{}).innerHTML||'')+' '+blkTxt((g.querySelector('.d')||{}).innerHTML||'')).join('・');
+return blkTxt(d.textContent||'').slice(0,40);}catch(e){return '';}}
 function layOrder(k,def){const L=(((state.lay||{})[k])||[]).filter(id=>def.indexOf(id)>=0);def.forEach((id,i)=>{if(L.indexOf(id)>=0)return;const prev=def.slice(0,i).reverse().find(x=>L.indexOf(x)>=0);L.splice(prev?L.indexOf(prev)+1:0,0,id);});return L;}
 function laySave(k,ids){mutate(()=>{const o=Object.assign({},state.lay||{});if(ids)o[k]=ids;else delete o[k];o.ts=Date.now();state.lay=o;});}
 let BD=null;
@@ -7359,6 +7371,12 @@ const begin=(sec,x,y,mouse)=>({sec,x,y,cy:y,on:false,mouse,fromIds:sibsOf(sec).m
 root.addEventListener('touchstart',ev=>{if(BD)return;const hd=hdOf(ev.target);if(!hd||ev.touches.length!==1)return;const t=ev.touches[0];BD=begin(hd,t.clientX,t.clientY,false);BD.tm=setTimeout(go,420);},{passive:true});
 root.addEventListener('touchmove',ev=>{if(!BD)return;const t=ev.touches[0];if(!BD.on){if(Math.abs(t.clientX-BD.x)>8||Math.abs(t.clientY-BD.y)>8){clearTimeout(BD.tm);BD=null;}return;}ev.preventDefault();BD.cy=t.clientY;},{passive:false});
 root.addEventListener('touchend',()=>end());root.addEventListener('touchcancel',()=>end());
+let FL=null;
+root.addEventListener('touchstart',ev=>{FL=null;if(ev.touches.length!==1)return;const t=ev.target;if(!t||!t.closest||t.closest('input,textarea,select,[contenteditable="true"],.rd-scroll,.mvp'))return;const sec=t.closest('.blk');if(!sec||!sec.parentElement||!sec.parentElement.dataset.lay)return;const d=sec.querySelector(':scope>details[open]');if(!d)return;const p=ev.touches[0];FL={sec,d,x:p.clientX,y:p.clientY,lx:p.clientX,ly:p.clientY,t:performance.now()};},{passive:true});
+root.addEventListener('touchmove',ev=>{if(!FL)return;const p=ev.touches[0];FL.lx=p.clientX;FL.ly=p.clientY;},{passive:true});
+root.addEventListener('touchend',()=>{const f=FL;FL=null;if(!f||BD)return;const dy=f.ly-f.y,dx=f.lx-f.x,dt=performance.now()-f.t;if(!(dy<=-70&&dt<=300&&Math.abs(dx)<60&&Math.abs(dy)>Math.abs(dx)*1.6))return;if(!f.d.open)return;
+f.d.open=false;try{localStorage.setItem('hibiki-ckf-'+f.d.dataset.ckf,'0');}catch(e){}try{navigator.vibrate&&navigator.vibrate(15);}catch(e){}toast('📁 たたんだ（押すと開く）');
+const keep=()=>{try{const sc=$('page')&&$('page').contains(f.sec)?($('page').querySelector('.page-body')||$('page')):$('scr');const r=f.sec.getBoundingClientRect(),s=sc.getBoundingClientRect();if(r.top<s.top+4)sc.scrollTop+=r.top-s.top-8;}catch(e){}};requestAnimationFrame(keep);setTimeout(keep,260);setTimeout(keep,600);},{passive:true});
 root.addEventListener('contextmenu',ev=>{if(hdOf(ev.target))ev.preventDefault();});
 root.addEventListener('mousedown',ev=>{if(ev.button!==0||BD)return;const hd=hdOf(ev.target);if(!hd)return;BD=begin(hd,ev.clientX,ev.clientY,true);BD.tm=setTimeout(go,300);
 const mv=e=>{if(!BD)return;if(!BD.on){if(Math.abs(e.clientX-BD.x)>4||Math.abs(e.clientY-BD.y)>4){clearTimeout(BD.tm);BD.cy=e.clientY;go();}else return;}e.preventDefault();BD.cy=e.clientY;};
@@ -11951,7 +11969,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c35.7";
+const CL_APPVER="c35.8";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
