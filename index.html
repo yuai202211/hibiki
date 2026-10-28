@@ -48,10 +48,19 @@ body{align-items:center;padding:24px 0}
  }
 
 .top{
-display:flex;align-items:center;justify-content:space-between;
-padding:16px 16px 2px;flex-shrink:0;gap:6px;
+display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;
+padding:8px 14px 2px;flex-shrink:0;gap:2px;
  }
-.datebar{display:flex;align-items:center;gap:6px;min-width:0}
+.datebar{display:flex;align-items:center;gap:6px;min-width:0;width:100%}
+.hdr0{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;min-height:26px}
+.hdr0 .yr{font-size:11px;font-weight:800;color:var(--sub)}
+.hdr0 .hb-brand{flex-direction:row;align-items:baseline;gap:8px}
+.hdr0 .hb-brand .hb-logo{font-size:13px}
+.hdr0 .right-top{margin-left:auto;gap:8px}
+.hdr0 .right-top .topset{margin-left:4px}
+.datebar #topOut{margin-left:auto!important}
+.topset.topout{min-width:56px;background:#fff1f3}
+.topset.topout small{color:#b4232c;font-weight:900}
 .datebar .chev{color:#c3c8d4;font-size:20px;padding:2px 7px;border-radius:10px}
 .datebar .chev:active{background:#eef0f5}
 .datebar .d{font-weight:800;font-size:22px;letter-spacing:.01em;white-space:nowrap}
@@ -1712,6 +1721,7 @@ button.sp-row:active{background:#f1f3f8}
 #bedAlt{position:fixed;left:50%;bottom:140px;transform:translate(-50%,20px);opacity:0;pointer-events:none;transition:.2s;z-index:9998;background:#1f2937;color:#fff;border-radius:999px;padding:6px 6px 6px 16px;display:flex;gap:10px;align-items:center;font-weight:800;font-size:18px;max-width:92vw;box-shadow:0 8px 24px rgba(0,0,0,.25)}
 #bedAlt.show{opacity:1;transform:translate(-50%,0);pointer-events:auto}#bedAlt button{flex:0 0 auto;background:#fff;color:#1f2937;border-radius:999px;padding:7px 14px;min-height:38px;font-size:14px;font-weight:800}
 .gstrip .gt{flex:0 1 auto;max-width:100%;color:#fff;font-size:12.5px;font-weight:800;line-height:1.35;text-align:left;padding:3px 2px}.gstrip .gt b{font-size:14px;color:#ffd166}.gstrip .gt.ov,.gstrip .gt.ov b{color:#ff8fa3}.gstrip .gt .hit,.gstrip .gt .hit b{color:#7ef0a8}
+.gstrip .gs.gsl{background:#ffce54;color:#3a2a00;font-weight:900;white-space:nowrap}.gstrip .gs.gsl.on{background:#fff;color:#14275a}
 .gstrip .gsep{flex:0 0 auto;width:1px;height:16px;background:rgba(255,255,255,.3);margin:0 3px}
 .pq-redo{color:#e0405a;font-weight:800}
 .prep.nop .pq-one{flex:1 1 100%;display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;min-height:52px;padding:10px 14px;border-radius:14px;background:#fff;color:#8a6a00;font-size:16px;font-weight:800;box-shadow:0 2px 8px rgba(138,106,0,.15)}
@@ -1802,7 +1812,7 @@ body.cardvis .fab{display:none!important}
 .kfavw{display:contents}.kfavw>button{position:relative;box-shadow:inset 0 0 0 1.5px #f0c75e}.kfavw>button::after{content:'⭐';position:absolute;top:-7px;right:-5px;font-size:11px;line-height:1}
 .ka-fav{background:#fff8e1;border-radius:12px;padding:4px 6px 6px}.ka-favnone{font-size:12px;font-weight:700;color:#b9a06a;padding:2px 4px}.ka-fav .ka-sub{color:#a8790a}.ka-fav .ka-sub small{margin-left:6px;font-weight:700;color:#b9a06a}
 .nearw{flex:1 0 100%;width:100%;display:flex;flex-direction:column;gap:6px;margin:2px 0 6px;padding:6px 8px;border-left:3px solid #7a6ef3;background:rgba(122,110,243,.07);border-radius:10px;box-sizing:border-box}.nearw>*{margin:0!important}
-#kakuTop{position:sticky;top:0;z-index:6;flex:none;padding:6px 10px 6px;background:var(--app,#f6f7fb)}#kakuTop>.hour.wr{position:static;margin:0}
+#kakuTop{position:sticky;top:0;z-index:6;flex:none;padding:4px 10px 4px;background:var(--app,#f6f7fb)}#kakuTop>.hour.wr{position:static;margin:0}
 .chip.mvb.pln{background:#ff6b1a;color:#fff;position:relative}.pln-bdg{position:absolute;top:-6px;right:-6px;background:#e24b4b;color:#fff;font-size:9px;font-weight:900;border-radius:8px;padding:1px 5px;font-style:normal;line-height:1.3}
 .pln-lab{font-size:12px;font-weight:900;color:#7a8296;margin:10px 0 4px}.pln-lab i{font-style:normal;color:var(--ink)}
 .pln-in{width:100%;border:1.5px solid var(--line);border-radius:14px;padding:11px 12px;font-size:16px;font-weight:800;background:var(--card);box-sizing:border-box;color:var(--ink)}.pln-in.big{font-size:18px;padding:13px 12px}
@@ -1903,7 +1913,7 @@ body.blk-dragging,body.blk-dragging *{cursor:grabbing!important;-webkit-user-sel
 .rd-miss{display:block;width:100%;min-height:48px;border:0;border-radius:14px;background:#e5484d;color:#fff;font-weight:900;font-size:15px;font-family:inherit;margin:0 0 4px;cursor:pointer}
 .rd-p p[data-rdq]{cursor:pointer}.rd-p p.rd-heard{box-shadow:inset 4px 0 0 #34c759;padding-left:10px;border-radius:4px}
 .rd-p p.rd-reading{background:#fff3c4;border-radius:6px;box-shadow:0 0 0 4px #fff3c4}.rd-vhint{font-size:11.5px;color:#8a5a00;margin:-2px 2px 8px;line-height:1.5}
-.rd-goal{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:8px 0 2px}.rd-goal>div{background:#14275a;border-radius:12px;padding:7px 9px;color:#fff;display:flex;flex-direction:column;gap:1px;min-width:0}.rd-goal small{font-size:11.5px;font-weight:900;color:#ffd77a;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rd-goal b{font-size:13px;font-weight:900}.rd-goal b em{font-style:normal;font-size:22px;color:#ffd77a;margin:0 2px}.rd-goal i{font-style:normal;font-size:11px;color:#c9d3ea}
+.rd-goal{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:8px 0 2px}.rd-goal>div{background:#14275a;border-radius:12px;padding:7px 9px;color:#fff;display:flex;flex-direction:column;gap:1px;min-width:0}.rd-goal small{font-size:11.5px;font-weight:900;color:#ffd77a;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rd-goal b{font-size:13px;font-weight:900}.rd-goal b em{font-style:normal;font-size:22px;color:#ffd77a;margin:0 2px}.rd-goal i{font-style:normal;font-size:11px;color:#c9d3ea}.rd-goal i.y{color:#ffd77a;font-weight:900;font-size:12px}
 .rd-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:4px 0 6px;padding:8px 0 6px}
 .rd-tab{position:relative;border:0;border-radius:14px;background:#eef1f6;padding:9px 4px 7px;font-family:inherit;color:#5b6475;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;box-shadow:0 2px 0 #d5dae5;min-height:64px}
 .rd-tab .ic{font-size:22px;line-height:1;display:flex;align-items:center;min-height:24px}.rd-tab b{font-size:13px;font-weight:900}
@@ -2018,10 +2028,10 @@ details.ck-fd>.in{padding:0 8px 10px}details.ck-fd.r{box-shadow:inset 4px 0 0 #e
 .mvp .big .go{background:var(--green)}.mvp .big .arr{background:#f08a24}.mvp .big .stp{background:#f5a524;color:#5a3a00}.mvp .big .res{background:#2c5cc5}.mvp .big .rnd{background:#0f766e;font-size:14.5px;line-height:1.15}
 .mvp .big .now{flex:1;border:2px dashed #dfe3ec;border-radius:16px;height:60px;color:#8a93a6;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:12.5px;padding:0 8px;text-align:center;line-height:1.3}
 .mvp .trs{display:flex;flex-wrap:wrap;gap:5px;margin:0 2px 8px}.mvp .trs button{border:0;border-radius:999px;padding:8px 10px;font-weight:800;font-size:13px;background:#f1f3f8;color:#4a5568;white-space:nowrap;font-family:inherit}.mvp .trs button.on{background:#13864a;color:#fff;box-shadow:0 2px 6px rgba(19,134,74,.35)}
-#app .hour.gap.wr.wrbig{background:linear-gradient(135deg,#0bc167,#0e9f57)!important;border:0!important;border-radius:16px!important;min-height:56px;padding:8px 16px!important;box-shadow:0 4px 14px rgba(11,161,87,.35);display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+#app .hour.gap.wr.wrbig{background:linear-gradient(135deg,#0bc167,#0e9f57)!important;border:0!important;border-radius:16px!important;min-height:46px;padding:6px 14px!important;box-shadow:0 3px 10px rgba(11,161,87,.28);display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;-webkit-tap-highlight-color:transparent}
 #app .hour.gap.wr.wrbig:active{transform:scale(.98)}
-#app .hour.gap.wr.wrbig .hh{color:#fff!important;font-size:22px;font-weight:900;width:auto;margin:0}
-#app .hour.gap.wr.wrbig .body{color:#fff!important;font-size:19px;font-weight:900;flex:0 1 auto;min-width:0;display:flex;align-items:center;gap:8px;overflow:visible}
+#app .hour.gap.wr.wrbig .hh{color:#fff!important;font-size:18px;font-weight:900;width:auto;margin:0}
+#app .hour.gap.wr.wrbig .body{color:#fff!important;font-size:16px;font-weight:900;flex:0 1 auto;min-width:0;display:flex;align-items:center;gap:8px;overflow:visible}
 #app .hour.gap.wr.wrbig .wr-sub{font-size:12px;font-weight:700;color:rgba(255,255,255,.85)}
 #app .hour.gap.wr.wrbig .wr-dft{background:#fff;color:#0e9f57;border-radius:999px;padding:2px 8px;font-size:12px}
 #app .hour.gap.wr.wrbig .wr-r:empty{display:none}
@@ -2150,19 +2160,22 @@ input.pin,textarea.pin{color:#14181f!important;-webkit-text-fill-color:#14181f!i
 
 
 <div class="top">
-<div class="datebar">
+<div class="hdr0">
 <span class="hb-brand"><span class="hb-logo"><b>HIBIKI</b><i>日々記</i></span><span class="yr" id="yr"></span></span>
-<button class="chev lbl" id="prevD" aria-label="前の日">‹<small class="bn">前の日</small></button>
-<span class="d" id="dd"></span>
-<span class="yobi" id="yb"></span>
-<button class="chev lbl" id="nextD" aria-label="次の日">›<small class="bn">次の日</small></button>
-<button class="topset" id="topSet2" aria-label="設定"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.5-2-3.4-2.3 1a7 7 0 0 0-2-1.2L14.2 3h-4l-.4 2.7a7 7 0 0 0-2 1.2l-2.3-1-2 3.4 2 1.5A7 7 0 0 0 5 12a7 7 0 0 0 .1 1.2l-2 1.5 2 3.4 2.3-1a7 7 0 0 0 2 1.2l.4 2.7h4l.4-2.7a7 7 0 0 0 2-1.2l2.3 1 2-3.4-2-1.5A7 7 0 0 0 19 12z"/></svg><small>設定</small></button>
-<button class="todaybtn" id="todayBtn" style="display:none">今日</button>
-</div>
 <div class="right-top">
 <button class="mlchip" id="mlChip" style="display:none"></button>
 <span class="streak" id="streak" style="display:none"></span>
 <span class="syncdot" id="syncdot" title="" role="button" aria-label="同期"></span>
+<button class="topset" id="topSet2" aria-label="設定"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.5-2-3.4-2.3 1a7 7 0 0 0-2-1.2L14.2 3h-4l-.4 2.7a7 7 0 0 0-2 1.2l-2.3-1-2 3.4 2 1.5A7 7 0 0 0 5 12a7 7 0 0 0 .1 1.2l-2 1.5 2 3.4 2.3-1a7 7 0 0 0 2 1.2l.4 2.7h4l.4-2.7a7 7 0 0 0 2-1.2l2.3 1 2-3.4-2-1.5A7 7 0 0 0 19 12z"/></svg><small>設定</small></button>
+</div>
+</div>
+<div class="datebar">
+<button class="chev lbl" id="prevD" aria-label="前の日">‹<small class="bn">前の日</small></button>
+<span class="d" id="dd"></span>
+<span class="yobi" id="yb"></span>
+<button class="chev lbl" id="nextD" aria-label="次の日">›<small class="bn">次の日</small></button>
+<button class="topset topout" id="topOut" aria-label="ログアウト">🚪<small>ログアウト</small></button>
+<button class="todaybtn" id="todayBtn" style="display:none">今日</button>
 </div>
 </div>
 
@@ -3348,7 +3361,7 @@ try{ntfKick();}catch(e){}
 {const bm=document.getElementById('bootmsg');if(bm)bm.remove();}
 const t=todayStr(),isToday=ui.date===t;
 const dobj=parseD(ui.date),w=dobj.getDay();
-$('yr').textContent=dobj.getFullYear();
+$('yr').textContent=dobj.getFullYear();try{topOutPaint();}catch(e){}
 $('dd').textContent=(dobj.getMonth()+1)+'月'+dobj.getDate()+'日';
 $('yb').textContent=YOBI[w];
 $('yb').className='yobi'+(w===0?' sun':w===6?' sat':'');
@@ -4188,7 +4201,6 @@ else if(isToday)html=html.slice(0,tvA)+ckTopHtml({slp:html.slice(tvA,tvB),wr:htm
 else html=html.slice(0,tvA)+tbTopHtml()+depCardHtml()+html.slice(tvA,tvR0)+html.slice(tvR1);
 let foot='';
 foot+='<div class="lgo"><button id="alarmBtn">⏰ 注意の時刻を変える</button><small>'+esc(alarmSummary())+'</small></div>';
-if(typeof clLogout==='function'&&typeof cloudLoggedIn==='function'&&cloudLoggedIn())foot+='<div class="lgo"><button id="appLogout">🚪 ログアウト（最新の版に入れ替える）</button><small>今の版 '+esc(String(typeof CL_APPVER!=='undefined'?CL_APPVER:''))+'。押すと、送っていない記録を送ってからログアウト→最新の版を読み込む。入り直せば続きから</small></div>';
 const ckOn=topView==='top'&&isToday;try{$('app').classList.toggle('topck',ckOn);}catch(e){}
 if(ckOn)html=html.replace('<!--ckfoot-->',foot);
 pane.innerHTML=html;
@@ -4509,7 +4521,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c35.5）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c35.6）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -7231,13 +7243,15 @@ else{render();if(!D[sl])setTimeout(()=>toast('🎉 '+L.length+'人とも聞き�
 function ttYen(v){let n=Math.round((Number(v)||0)/1000)*1000;const neg=n<0;n=Math.abs(n);const m=Math.floor(n/10000),r=Math.round((n%10000)/1000);return (neg?'マイナス':'')+(n===0?'0円':(m?m+'万':'')+(r?r+'千':'')+'円');}
 function moneyTalkText(){const t=todayStr(),GC=goalCfg(),got=incSum('in',GC.from,t),cash=cashLatest(),left=Math.max(0,GC.yen-got-cash),days=goalDays(),per=days?Math.ceil(left/days):left;
 const d=parseD(t),wd=(d.getDay()+6)%7,ws=addDays(t,-wd),ms=t.slice(0,8)+'01',dim=new Date(d.getFullYear(),d.getMonth()+1,0).getDate(),dom=Number(t.slice(8,10));
-const K=[['gp','粗利'],['in','入金']],out=['お金の状況です。','目標まで、あと'+ttYen(left)+'。残り'+days+'日。1日の目標は'+ttYen(per)+'です。'];
+const K=[['gp','粗利'],['in','入金']],out=['お金の状況です。','まず、'+esc(GC.until.slice(5).replace('-','月'))+'日の壁。目標まで、あと'+ttYen(left)+'。残り'+days+'日。1日の目標は'+ttYen(per)+'です。'];
+try{let sumY=0,sumD=0;pinnedDreams().slice(0,2).forEach(dd=>{const n=stepStat(dd).n,y=Number(dd.yen)||0,pd=(y&&n>0)?Math.ceil(y/n):0;sumY+=y;sumD+=pd;out.push('次に、'+String(dd.t||'')+'。'+(n===null?'期限なし。':n<0?(-n)+'日超過。':'あと'+n+'日。')+(y?'必要なお金は'+ttYen(y)+'。'+(pd?'1日あたり'+ttYen(pd)+'。':''):'必要なお金が未設定。'));});
+if(sumY)out.push('壁の'+ttYen(left)+'と合わせると、全部で、あと'+ttYen(left+sumY)+'必要です。'+(sumD?'1日に稼ぐ合計は'+ttYen(per+sumD)+'です。':''));}catch(e){}
 const P=[['今日',t,1,1],['今週',ws,7,wd+1],['今月',ms,dim,dom]];
 P.forEach(([lb,s,full,pace])=>{out.push(lb+'。');K.forEach(([ty,kn])=>{const cur=incSum(ty,s,t),goal=per*full,pg=per*pace;let x=kn+'、目標'+ttYen(goal)+'に対して、今'+ttYen(cur)+'。';
 if(lb==='今日')x+=cur>=goal?'目標達成です。':'あと'+ttYen(goal-cur)+'。';else{const df=pg-cur;x+='今日までのペースより'+ttYen(Math.abs(df))+(df>0?'遅れ。':'先。');}out.push(x);});});
 out.push('以上です。');return out.join('');}
 function rdMoneyBtn(){const on=TT.kind==='money'&&TT.on;return '<button type="button" class="rd-money'+(on?' on':'')+'" id="rdMoney">'+(on?'⏸ 止める（お金の状況）':'🔊 お金の状況（粗利・入金を 日・週・月）')+'</button>';}
-function moneyListen(){if(TT.kind==='money'&&TT.on){ttStop();render();return;}ttStop();TT.kind='money';TT.q=ttSplit(moneyTalkText()).map(t=>({t,q:-1}));TT.k=0;TT.done=()=>{TT.kind='';render();};ttRun();render();}
+function moneyListen(){const gp=()=>{try{gstripPaint();}catch(e){}};if(TT.kind==='money'&&TT.on){ttStop();render();gp();return;}ttStop();TT.kind='money';TT.q=ttSplit(moneyTalkText()).map(t=>({t,q:-1}));TT.k=0;TT.done=()=>{TT.kind='';render();gp();};ttRun();render();gp();toast('🔊 お金の状況を読み上げ中');}
 try{speechSynthesis.getVoices();speechSynthesis.addEventListener('voiceschanged',()=>{try{if(document.getElementById('rdCard')&&!TT.on)render();}catch(e){}});document.addEventListener('visibilitychange',()=>{if(document.hidden||!TT.kind)return;setTimeout(()=>{try{if(TT.on&&!speechSynthesis.speaking&&!speechSynthesis.pending)ttStop(true);render();}catch(e){}},600);});}catch(e){}
 let rdCur=null,rdPop=-1;
 function rdShort(nm){const m=String(nm||'').match(/^(\S+)\s+(\S{2})/);return m?{ic:m[1],n:m[2]}:{ic:'📖',n:String(nm||'')};}
@@ -7246,14 +7260,14 @@ function rdScrollCard(){setTimeout(()=>{try{const s=$('rdScr');if(s)s.scrollTop=
 function rdHtml(){try{const L=rdItems();if(!L.length)return '';const d=rdDayKey(),sl=rdSlotNow(),D=rdDay(d),dn=!!D[sl],cnt=RD_SL.filter(x=>D[x[0]]).length,ttl=(state.rdtxt&&state.rdtxt.ttl)||'1日3回の読み物';
 const pd=i=>!!D[sl+'#'+i];if(rdCur==null||rdCur>=L.length){const f=L.findIndex((x,i)=>!pd(i));rdCur=f<0?0:f;}
 const it=L[rdCur],all=L.every((x,i)=>pd(i)),left=L.filter((x,i)=>!pd(i)).length,s0=rdShort(it.nm),nx=L.findIndex((x,i)=>i!==rdCur&&!pd(i));
-let goal='';try{const P=pinnedDreams().slice(0,2);if(P.length)goal='<div class="rd-goal">'+P.map(g=>{const n=stepStat(g).n,u=dreamDue(g);return '<div><small>'+pinIcon(g.t)+' '+esc(g.t)+'</small><b>'+(n===null?'期限なし':n<0?'⚠ '+(-n)+'日超過':'あと<em>'+n+'</em>日')+'</b>'+(u?'<i>'+esc(u.replace(/-/g,'/'))+' まで</i>':'')+'</div>';}).join('')+'</div>';}catch(e){}
+let goal='';try{const P=pinnedDreams().slice(0,2);if(P.length)goal='<div class="rd-goal">'+P.map(g=>{const n=stepStat(g).n,u=dreamDue(g);const y=Number(g.yen)||0;return '<div><small>'+pinIcon(g.t)+' '+esc(g.t)+'</small><b>'+(n===null?'期限なし':n<0?'⚠ '+(-n)+'日超過':'あと<em>'+n+'</em>日')+'</b>'+(u?'<i>'+esc(u.replace(/-/g,'/'))+' まで</i>':'')+'<i class="y">💰 '+(y?'必要 '+esc(manY(y)):'額が未設定')+'</i></div>';}).join('')+'</div>';}catch(e){}
 const tabs='<div class="rd-tabs">'+L.map((x,i)=>{const s=rdShort(x.nm),ok=pd(i);return '<button type="button" class="rd-tab'+(i===rdCur?' cur':'')+(ok?' sumi':'')+'" data-rdi="'+i+'"><span class="ic">'+rdIc(x)+'</span><b>'+esc(s.n)+'さん</b>'+(ok?'<span class="rd-stamp'+(rdPop===i?' pop':'')+'">済</span>':'')+'</button>';}).join('')+'</div>';
 let pk=0;const body='<div class="rd-p"><div class="rd-nm">'+rdIc(it)+' '+esc(String(it.nm).replace(/^\S+\s+/,''))+'</div>'+(it.secs||[]).map(s=>'<div class="rd-h">'+esc(s.h||'')+'</div>'+String(s.t||'').split(/\n+/).filter(Boolean).map(p=>{const q=pk++;return '<p data-rdq="'+q+'"'+(rdParaHeard(q)?' class="rd-heard"':'')+'>'+esc(p)+'</p>';}).join('')).join('')+
 ((it.src&&it.src.length)?'<details class="rd-src"><summary>出典 '+it.src.length+'件</summary>'+it.src.map(u=>'<div>'+esc(u)+'</div>').join('')+'</details>':'')+'</div>';
 const one=pd(rdCur)?'<button type="button" class="rd-one done" disabled>✓ '+esc(s0.n)+'さんは読んだ（'+esc(D[sl+'#'+rdCur])+'）</button>':'<button type="button" class="rd-one" id="rdOne">'+rdIc(it)+' '+esc(s0.n)+'さんを読んだ'+(nx>=0?'　→ 次は'+esc(rdShort(L[nx].nm).n)+'さん':'')+'</button>';
 const end=all?'<div class="rd-end">'+iosSw('rdSw',false,'✓ 全部読んだ！','','')+'<button type="button" class="rd-go" id="rdGo" disabled>📖 '+esc(sl)+'の読み物：読んだ</button></div>':'<div class="rd-left">あと '+left+'人。'+L.length+'人とも「済」になると「全部読んだ！」が出る</div>';
 rdPop=-1;
-return '<div class="ck-sec">📖 '+esc(ttl)+'<i></i></div><div class="ck-card rd-card'+(dn?' done':'')+'" id="rdCard"><div class="rd-top"><b>📖 '+esc(sl)+'の読み物</b><span>'+cnt+' / 3</span></div>'+goal+rdMoneyBtn()+'<div class="rd-sl">'+RD_SL.map(x=>'<div class="'+(D[x[0]]?'ok':(x[0]===sl?'rd-now':''))+'"><small>'+x[0]+'</small><b>'+(D[x[0]]?esc(D[x[0]]):'—')+'</b></div>').join('')+'</div>'+
+return '<div class="ck-sec">📖 '+esc(ttl)+'<i></i></div><div class="ck-card rd-card'+(dn?' done':'')+'" id="rdCard"><div class="rd-top"><b>📖 '+esc(sl)+'の読み物</b><span>'+cnt+' / 3</span></div>'+goal+'<div class="rd-sl">'+RD_SL.map(x=>'<div class="'+(D[x[0]]?'ok':(x[0]===sl?'rd-now':''))+'"><small>'+x[0]+'</small><b>'+(D[x[0]]?esc(D[x[0]]):'—')+'</b></div>').join('')+'</div>'+
 (dn?'<details class="rd-again"><summary>✓ '+esc(sl)+'は読んだ（'+esc(D[sl])+'）　もう一度読む ▾</summary>'+tabs+rdListenBtn(it)+'<div class="rd-scroll">'+body+'</div></details>'
 :(rdWant?'<div class="ck-gatebar">📖 '+L.length+'人とも読んで「全部読んだ！」を押すと、そのまま書ける</div>':'')+tabs+rdListenBtn(it)+'<div class="rd-scroll" id="rdScr">'+body+one+end+'</div>')+'</div>';}catch(e){return '';}}
 function ckGate(){try{if(ui.date!==todayStr()||ckDone()||openMove()||entDraft(ui.date))return false;
@@ -10826,6 +10840,8 @@ $('syncdot').onclick=openSyncSheet;
 $('streak').onclick=openStatsSheet;
 $('dreamBar').onclick=()=>{dseg='clock';openDreamPage();};
 $('topSet2').onclick=openSetPage;
+function topOutPaint(){try{const b=$('topOut');if(!b)return;const inn=typeof cloudLoggedIn==='function'&&cloudLoggedIn();const k=inn?'out':'in';if(b.dataset.k===k)return;b.dataset.k=k;b.innerHTML=inn?'🚪<small>ログアウト</small>':'🔑<small>ログイン</small>';b.setAttribute('aria-label',inn?'ログアウト':'ログイン');}catch(e){}}
+$('topOut').onclick=()=>{if(typeof cloudLoggedIn==='function'&&cloudLoggedIn())appLogout();else if(typeof openLoginSheet==='function')openLoginSheet();else toast('ログインの仕組みが読み込まれていない');};setInterval(topOutPaint,3000);
 {const sc=$('scr'),ap=$('app'),fb=$('foldBar');
 try{if(sc&&ap){ap.classList.remove('fold');const first=sc.firstChild;['gstrip','ftk'].forEach(id=>{const e=$(id);if(e&&e.parentElement===ap)sc.insertBefore(e,first);});ap.querySelectorAll(':scope>.dreamrow').forEach(e=>sc.insertBefore(e,first));['pinRow','nowCard'].forEach(id=>{const e=$(id);if(e&&e.parentElement===ap)sc.insertBefore(e,first);});}}catch(e){}
 if(fb){fb.style.display='none';fb.onclick=()=>{try{sc.scrollTo({top:0,behavior:'smooth'});}catch(e){sc.scrollTop=0;}};}
@@ -10870,13 +10886,14 @@ const g1=[],g2=[],g3=[];
 g1.push('<button class="gs" data-gs="money">💰 あと <b>'+manY(left)+'</b></button>');
 for(const d of pinnedDreams()){const due=dreamDue(d);let lb='',cl='';if(due){const nn=Math.round((parseD(due).getTime()-parseD(t).getTime())/864e5);if(nn<0){lb='⚠ '+(-nn)+'日超過';cl=' ov';}else if(nn===0){lb='今日';cl=' ov';}else{lb='あと <b>'+nn+'</b>日';cl=nn<=14?' ov':'';}}else lb='期限なし';
 g1.push('<button class="gs'+cl+(dreamHit(d.id)?' ok':'')+'" data-gs="'+esc(d.id)+'">'+pinIcon(d.t)+' '+esc(String(d.t||'').slice(0,8))+' '+lb+'</button>');}
+g1.push('<button class="gs gsl'+((typeof TT!=='undefined'&&TT.kind==='money'&&TT.on)?' on':'')+'" data-gs="listen">'+((typeof TT!=='undefined'&&TT.kind==='money'&&TT.on)?'⏸ 止める':'🔊 お金を聞く')+'</button>');
 g1.push(tbStripHtml('play'));
 g2.push(depChipHtml());g2.push(plnChipHtml());g2.push(tbStripHtml('tb'));
 {const c=actTodayCnt(t),gd=GC.dm,gp=GC.post;g3.push('<span class="gt">📣 <span'+(c.dm>=gd?' class="hit"':'')+'>DM <b>'+c.dm+'</b>/'+gd+'</span>・<span'+(c.post>=gp?' class="hit"':'')+'>𝕏投稿 <b>'+c.post+'</b>/'+gp+'</span>'+learnChipHtml(t,GC.learn)+'・✉ <b>'+c.rep+'</b></span>');}
 return [g1,g2,g3].map(a=>a.join('')).filter(x=>x).join('<i class="gsep" aria-hidden="true"></i>');}catch(e){return '';}}
 function gstripBind(el){if(!el)return;
 try{el.querySelectorAll('.gsep').forEach(s=>{const p=s.previousElementSibling,n=s.nextElementSibling,cy=r=>r.top+r.height/2,y=cy(s.getBoundingClientRect());
-s.style.visibility=((p&&Math.abs(cy(p.getBoundingClientRect())-y)>10)||(n&&Math.abs(cy(n.getBoundingClientRect())-y)>10))?'hidden':'';});}catch(e){}el.querySelectorAll('[data-gs]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();const v=b.dataset.gs;if(v==='act')return;if(v==='money')openIncSheet();else if(v==='dep')openDepMini(b.dataset.dep);else if(v==='pln')openTodoPage();else openDreamSheet(v,null);});}
+s.style.visibility=((p&&Math.abs(cy(p.getBoundingClientRect())-y)>10)||(n&&Math.abs(cy(n.getBoundingClientRect())-y)>10))?'hidden':'';});}catch(e){}el.querySelectorAll('[data-gs]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();const v=b.dataset.gs;if(v==='act')return;if(v==='money')openIncSheet();else if(v==='listen')moneyListen();else if(v==='dep')openDepMini(b.dataset.dep);else if(v==='pln')openTodoPage();else openDreamSheet(v,null);});}
 function gstripPaint(){try{const el=$('gstrip');if(!el)return;const html=gstripHtml();el.innerHTML=html;el.style.display=html?'':'none';gstripBind(el);
 const pg=$('page');if(pg&&pg.classList.contains('open')){let s=pg.querySelector('.gstrip');const hd=pg.querySelector('.page-head');if(!s&&hd){hd.insertAdjacentHTML('afterend','<div class="gstrip pg"></div>');s=pg.querySelector('.gstrip');}if(s){s.innerHTML=html;s.style.display=html?'':'none';gstripBind(s);}}}catch(e){}}
 (function(){try{const pg=$('page');if(pg&&typeof MutationObserver!=='undefined')new MutationObserver(ms=>{if(ms.some(m=>[...m.addedNodes].some(x=>x.nodeType===1&&(x.classList.contains('page-head')||x.querySelector&&x.querySelector('.page-head')))))gstripPaint();}).observe(pg,{childList:true,subtree:false});}catch(e){}})();
@@ -11928,7 +11945,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c35.5";
+const CL_APPVER="c35.6";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
