@@ -2605,11 +2605,12 @@ for(const id in (src.photos||{})){if(!out.photos[id])out.photos[id]=src.photos[i
 for(const id in (src.pha||{})){if(!out.pha[id]&&src.pha[id])out.pha[id]=src.pha[id];}
  }
 out.life=((b.life&&(!(a.life)||((b.life.ts||0)>(a.life.ts||0))))?b.life:a.life)||null;
-const known={updatedAt:1,dream:1,entries:1,plans:1,ai:1,dreams:1,memos:1,life:1,photos:1,pha:1,pays:1,rules:1,aims:1,moves:1,pins:1,steps:1,payrep:1,rtn:1,rlog:1,payppl:1,kinds:1,tools:1,places:1,projects:1,marks:1,bedp:1,scr:1,alarm:1,goal:1,learn:1,arp:1,todos:1,plreg:1,plgrp:1,kgrp:1,trs:1,srr:1,tdq:1,ksub:1,cond:1,dlg:1,dgoal:1,aip:1,msx:1,inc:1,cash:1,rtm:1,dep:1,prep:1,tbox:1,rew:1,tstep:1,fst:1,ntf:1};
+const known={updatedAt:1,dream:1,entries:1,plans:1,ai:1,dreams:1,memos:1,life:1,photos:1,pha:1,pays:1,rules:1,aims:1,moves:1,pins:1,steps:1,payrep:1,rtn:1,rlog:1,payppl:1,kinds:1,tools:1,places:1,projects:1,marks:1,bedp:1,scr:1,alarm:1,goal:1,learn:1,arp:1,todos:1,plreg:1,plgrp:1,kgrp:1,trs:1,srr:1,tdq:1,ksub:1,cond:1,dlg:1,dgoal:1,aip:1,msx:1,inc:1,cash:1,rtm:1,dep:1,prep:1,tbox:1,rew:1,tstep:1,fst:1,ntf:1,ckin:1,rdin:1,ckcnt:1,lay:1,rdtxt:1,daily5:1,wish:1,wishcfg:1};
+const doneK=new Set(Object.keys(out));
 const newer=((b.updatedAt||0)>=(a.updatedAt||0))?b:a;
 const older=(newer===b)?a:b;
-for(const k in older)if(!known[k]&&older[k]!==undefined)out[k]=older[k];
-for(const k in newer)if(!known[k]&&newer[k]!==undefined)out[k]=newer[k];
+for(const k in older)if(!known[k]&&!doneK.has(k)&&older[k]!==undefined)out[k]=older[k];
+for(const k in newer)if(!known[k]&&!doneK.has(k)&&newer[k]!==undefined)out[k]=newer[k];
 plnMvDedup(out);
 return out;
 function plnMvDedup(st){try{const P=st.plans||{},xf=['ad','tel','who','mo'],live=(d,k)=>{const x=(P[d]||{})[k];return x&&!x.del?x:null;};
@@ -4569,7 +4570,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c36.6）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c36.7）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -12041,7 +12042,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c36.6";
+const CL_APPVER="c36.7";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
