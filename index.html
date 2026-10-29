@@ -1029,6 +1029,19 @@ display:flex;flex-direction:column;gap:11px;max-height:94%;overflow-y:auto;
 .mvc-pl b{color:#2c6be0;font-size:15px;font-weight:900;word-break:break-word}
 .mvc-pl em{display:inline-flex;font-style:normal;font-size:11px;font-weight:900;color:#fff;border-radius:999px;padding:1px 7px;margin-left:4px;vertical-align:2px;white-space:nowrap}.mvc-pl em.kr{background:#1d9e75}.mvc-pl em.md{background:#e24b4a}
 .mvc-pl b.mvc-no{color:#8a93a6;font-size:12px}
+.ida-go{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:62px;border:0;border-radius:16px;background:#ffb020;color:#3a2600;font-size:19px;font-weight:900;font-family:inherit;cursor:pointer;box-shadow:0 3px 0 #d98e00;margin:2px 0 4px}
+.ida-ed{margin-top:10px;background:#fff;border-radius:14px;padding:10px;border:2px solid #ffb020}.ida-ed[hidden]{display:none}
+.ida-ed .sh-ta-wrap textarea,.ida-ed textarea{min-height:110px!important}
+.ida-meta{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12px;font-weight:800;color:#7a8294;margin-bottom:6px}
+.ida-del{border:0;background:none;color:#c0392b;font-size:12px;font-weight:800;font-family:inherit;cursor:pointer}.ida-del.arm{background:#c0392b;color:#fff;border-radius:999px;padding:3px 10px}
+.ida-save{display:block;width:100%;min-height:48px;margin-top:8px;border:0;border-radius:12px;background:#14275a;color:#fff;font-size:16px;font-weight:900;font-family:inherit;cursor:pointer}
+.ida-sv{font-size:12px;font-weight:800;color:#0f6e56;margin-top:6px;min-height:16px}.ida-sv.ng{color:#c0392b}
+.ida-sec{margin:16px 2px 4px;font-size:12.5px;font-weight:900;color:#5f6b85}
+.ida-card{background:#fff;border-left:4px solid #ffb020;border-radius:0 12px 12px 0;padding:8px 10px;margin-top:8px}.ida-card.cur{box-shadow:0 0 0 2px #ffb020}
+.ida-tx{display:block;width:100%;text-align:left;background:none;border:0;padding:0;font-family:inherit;color:#14275a;cursor:pointer}
+.ida-tx b{display:block;font-size:14.5px;font-weight:900;word-break:break-word;white-space:pre-wrap}.ida-tx small{display:block;font-size:12px;color:#5f6b85;margin-top:2px;word-break:break-word;white-space:pre-wrap}
+.ida-at{display:block;font-size:11.5px;color:#7a8294;font-weight:800;margin-top:3px}
+.ida-act{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}.ida-act button{border:0;border-radius:999px;padding:5px 11px;font-size:12px;font-weight:800;font-family:inherit;background:#eef1f6;color:#14275a;cursor:pointer}.ida-act button.on{background:#faeeda;color:#854f0b}.ida-act button.pl0{color:#2c6be0}
 .mvt-vd{position:absolute;top:3px;width:10px;height:10px;border-radius:50%;background:#fff;border:2px solid #14275a;transform:translateX(-50%);box-sizing:border-box;z-index:1}
 .mvt-vn{position:absolute;top:-15px;transform:translateX(-50%);font-style:normal;font-size:11px;font-weight:900;color:#14275a;line-height:1;z-index:1}
 .mvt{display:block;margin:4px 0 6px;padding:8px 8px 6px;border-radius:12px;background:#fff;border:1.5px dashed #c9d3e6;color:#14275a;text-align:left}
@@ -2310,7 +2323,7 @@ input.pin,textarea.pin{color:#14181f!important;-webkit-text-fill-color:#14181f!i
 <button class="nb" id="navDiary"><svg viewBox="0 0 24 24"><path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H19v16H6.5A1.5 1.5 0 0 0 5 20.5zM5 20.5A1.5 1.5 0 0 0 6.5 22H19v-3M9 7h6M9 10.5h6"/></svg><span>日記</span></button>
 <button class="nb" id="navTodo"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8l1.5 1.5L12 7M8 13l1.5 1.5L12 12M14 8.5h3M14 13.5h3M8 18h9"/></svg><span>予定</span><i class="nbdg" id="navTodoB" style="display:none"></i></button>
 <button class="nb" id="navPay"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8.5 7.5l3.5 5 3.5-5M12 12.5V17M9 13h6M9 15.5h6"/></svg><span>支払い</span><i class="nbdg" id="navPayB" style="display:none"></i></button>
-<button class="nb" id="navMemo"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6zM14 3v5h5M9 12h7M9 16h7"/></svg><span>メモ</span></button>
+<button class="nb" id="navMemo"><svg viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.8 10.6c.6.6 .8 1.3 .8 2.4h6c0-1.1 .2-1.8 .8-2.4A6 6 0 0 0 12 3z"/></svg><span>アイデア</span></button>
 <button class="nb" id="navLearn"><svg viewBox="0 0 24 24"><path d="M2 9l10-5 10 5-10 5zM6 11.5V16c0 1.5 2.7 3 6 3s6-1.5 6-3v-4.5M22 9v6"/></svg><span>学ぶ</span></button>
 </div><div class="nvp">
 <button class="nb" id="navAna"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>分析</span></button>
@@ -4664,7 +4677,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c36.9）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c37.0）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -6270,7 +6283,7 @@ openOvl();
 
 function memosOf(){
 const m=state.memos||{};
-return Object.keys(m).filter(id=>!m[id].del).map(id=>({id,...m[id]})).sort((a,b)=>(b.ts||0)-(a.ts||0));
+return Object.keys(m).filter(id=>!m[id].del&&!m[id].idea).map(id=>({id,...m[id]})).sort((a,b)=>(b.ts||0)-(a.ts||0));
 }
 const PAY_ALARM_DAYS={7:1,5:1,3:1,2:1,1:1,0:1};
 let PAY_C_PRESETS=['家賃','携帯電話','電気','ガス','水道','ネット回線','サブスク','保険','駐車場代','借入返済'];
@@ -7081,6 +7094,45 @@ closeSheet();renderPayPage();toast(tail?'削除した。この支払いの自動
 };
 }
 
+function ideasOf(){const m=state.memos||{};return Object.keys(m).filter(id=>m[id]&&!m[id].del&&m[id].idea).map(id=>({id,...m[id]})).sort((a,b)=>(b.at||b.ts||0)-(a.at||a.ts||0));}
+function idAt(ms){const d=new Date(ms||Date.now());return (d.getMonth()+1)+'/'+d.getDate()+'（'+'日月火水木金土'[d.getDay()]+'）'+pad(d.getHours())+':'+pad(d.getMinutes());}
+function idRecentPlaces(){const out=[],seen={};for(let i=0;i<21&&out.length<10;i++){const d=addDays(todayStr(),-i),eo=(state.entries||{})[d]||{};
+Object.values(eo).filter(x=>x&&!x.del&&!x.mv&&x.p&&x.s).sort((a,b)=>String(b.s).localeCompare(String(a.s))).forEach(x=>{const k=placeKey(x.p);if(!k||seen[k]||out.length>=10)return;seen[k]=1;out.push(x.p);});}return out;}
+let idCur=null,idNewAt=0,idTimer=null;
+function idSvMsg(manual){const el=$('idSv');if(!el)return;const d=new Date(),tm=pad(d.getHours())+':'+pad(d.getMinutes());
+if(typeof localSaveFail!=='undefined'&&localSaveFail){el.textContent='⚠️ この端末に保存できなかった。もう一度［💾 保存］を押して';el.className='ida-sv ng';return;}
+let cl=false;try{cl=!!(CL&&CL.uid);}catch(e){}
+el.className='ida-sv';el.textContent='✓ 保存した '+tm+(cl?'・☁ クラウドへ送っている…':'（この端末）');
+if(cl){let n=0;const chk=()=>{const e=$('idSv');if(!e)return;let dn=1;try{dn=clDirtyCount();}catch(x){}
+if(dn===0){e.textContent='✓ 保存した '+tm+'・☁ クラウドにも入った';return;}if(++n<20)setTimeout(chk,1000);else e.textContent='✓ この端末に保存した '+tm+'（クラウドへはつながった時に自動で送る）';};setTimeout(chk,800);}
+if(manual)toast('✓ 保存した');}
+function idSave(manual){const ta=$('idTa');if(!ta)return;clearTimeout(idTimer);const t=ta.value;if(!t.trim()){if(manual)toast('まだ空っぽ');return;}
+const ex=idCur&&state.memos&&state.memos[idCur];if(ex&&!ex.del&&ex.t===t&&!manual)return;
+const id=(ex&&!ex.del)?idCur:('i'+Date.now()+Math.floor(Math.random()*1e3));const base=(ex&&!ex.del)?ex:{idea:1,at:idNewAt||Date.now(),pl:'',st:0};
+mutate(()=>{state.memos=state.memos||{};state.memos[id]=Object.assign({},base,{t,ts:Date.now(),idea:1});});idCur=id;idSvMsg(manual);idPaintList();idPaintMeta();}
+function idPaintMeta(){const m=$('idMeta');if(!m)return;const ex=idCur&&state.memos&&state.memos[idCur];
+m.innerHTML='<span>🕒 '+esc(idAt(ex?ex.at:idNewAt))+(ex&&ex.pl?'　📍 '+esc(ex.pl):'')+'</span>'+(ex&&!ex.del?'<button type="button" class="ida-del" id="idDel">🗑 削除</button>':'');
+const del=$('idDel');if(del)del.onclick=()=>{if(!del.classList.contains('arm')){del.classList.add('arm');del.textContent='本当に削除？';setTimeout(()=>{if(del.isConnected){del.classList.remove('arm');del.textContent='🗑 削除';}},2500);return;}
+const id=idCur;mutate(()=>{state.memos[id]={del:1,ts:Date.now()};});idCur=null;$('idEd').hidden=true;idPaintList();toast('削除した');};}
+function idOpen(id){const ed=$('idEd'),ta=$('idTa');if(!ed||!ta)return;if(ta.value.trim()&&!ed.hidden)idSave(false);
+if(id){const x=state.memos[id];if(!x||x.del)return;idCur=id;idNewAt=x.at||x.ts||Date.now();ta.value=x.t||'';}else{idCur=null;idNewAt=Date.now();ta.value='';}
+ed.hidden=false;$('idSv').textContent=id?'':'✏️ 新しいアイデア（'+idAt(idNewAt)+'）。打つそばから自動で保存';$('idSv').className='ida-sv';idPaintMeta();idPaintList();
+try{taGrow(ta);}catch(e){}ta.focus();try{$('page').querySelector('.page-body').scrollTop=0;}catch(e){}}
+function idPaintList(){const L=$('idaL');if(!L)return;const A=ideasOf();
+L.innerHTML=A.length?A.map(x=>{const ls=String(x.t||'').split('\n'),f=ls.find(z=>z.trim())||'（書いている途中）',rest=ls.slice(ls.indexOf(f)+1).join('\n').trim();
+return '<div class="ida-card'+(x.id===idCur?' cur':'')+'"><button type="button" class="ida-tx" data-idea="'+esc(x.id)+'"><b>'+esc(f)+'</b>'+(rest?'<small>'+esc(rest)+'</small>':'')+'<span class="ida-at">🕒 '+esc(idAt(x.at||x.ts))+'</span></button>'+
+'<div class="ida-act"><button type="button" data-ipl="'+esc(x.id)+'"'+(x.pl?'':' class="pl0"')+'>📍 '+(x.pl?esc(x.pl):'場所を入れる')+'</button><button type="button" data-ist="'+esc(x.id)+'"'+(x.st?' class="on"':'')+'>'+(x.st?'⭐ 気になる':'☆ 気になる')+'</button></div></div>';}).join('')
+:'<div class="empty-hint">思いついたら［💡 思いついた！］を押して書くだけ。<br>時刻は自動で入る。場所はあとでいい</div>';
+$('idaN').textContent=A.length+'件';
+L.querySelectorAll('[data-idea]').forEach(b=>b.onclick=()=>idOpen(b.dataset.idea));
+L.querySelectorAll('[data-ist]').forEach(b=>b.onclick=()=>{const id=b.dataset.ist;mutate(()=>{const x=state.memos[id];if(x&&!x.del){x.st=x.st?0:1;x.ts=Date.now();}});idPaintList();});
+L.querySelectorAll('[data-ipl]').forEach(b=>b.onclick=()=>idPlace(b.dataset.ipl));}
+function idPlace(id){const x=state.memos&&state.memos[id];if(!x||x.del)return;const P=idRecentPlaces();
+const put=v=>{v=String(v||'').trim();mutate(()=>{const y=state.memos[id];if(y&&!y.del){y.pl=v;y.ts=Date.now();}});closeSub();idPaintList();idPaintMeta();toast(v?'✓ 📍 '+v:'場所を消した');};
+openSub('<div class="sh-time"><span>📍 どこで思いついた？</span></div>'+(P.length?'<div class="sh-note">最近いた所（押すだけ）</div><div class="sr-r">'+P.map(p=>'<button type="button" class="chip" data-idp="'+esc(p)+'">'+esc(p)+'</button>').join('')+'</div>':'')+
+'<div class="sh-note">ない時は打つ</div><div class="sh-ta-wrap"><textarea id="idPlIn" rows="1" placeholder="場所の名前"></textarea></div><div class="sr-r big"><button type="button" class="chip on" id="idPlOk">✓ 入れる</button>'+(x.pl?'<button type="button" class="chip" id="idPlClr">✕ 場所を消す</button>':'')+'</div>',null);
+const s=$('sheet2');s.querySelectorAll('[data-idp]').forEach(b=>b.onclick=()=>put(b.dataset.idp));
+$('idPlOk').onclick=()=>{const v=$('idPlIn').value;if(!v.trim()){toast('場所を打つか、上のボタンを押して');return;}put(v);};const c=$('idPlClr');if(c)c.onclick=()=>put('');}
 function renderMemoPage(){
 pageMode='memo';
 const p=$('page');
@@ -7101,16 +7153,27 @@ const dt=(now-(m.ts||0)<604800000)?((d.getMonth()+1)+'/'+d.getDate()):(d.getFull
 return '<button class="memo-row" data-me="'+esc(m.id)+'"><div class="m1">'+esc((lines[0]||'（無題）').slice(0,42))+'</div>'+
 '<div class="m2"><span style="color:#9aa3b5;font-weight:700">'+dt+'</span>　'+esc(lines.slice(1).join(' ').slice(0,44))+'</div></button>';
 }).join('');
-p.innerHTML='<div class="page-head"><button class="bk" id="pgBk">‹ 戻る</button><span class="tt">📝 メモ</span><button class="padd tx" id="pgAdd">＋ メモ</button></div>'+
+p.innerHTML='<div class="page-head"><button class="bk" id="pgBk">‹ 戻る</button><span class="tt">💡 アイデア</span><button class="padd tx" id="pgAdd">＋ メモ</button></div>'+
 '<div class="page-body">'+
+'<button type="button" class="ida-go" id="idGo">💡 思いついた！</button>'+
+'<div class="ida-ed" id="idEd" hidden><div class="ida-meta" id="idMeta"></div><div class="sh-ta-wrap"><textarea id="idTa" placeholder="思いついたまま書く（声でもOK）"></textarea><button class="sh-mic lbl" id="idMic" aria-label="声で書く">'+MICSVG+'<small class="bn">声</small></button></div>'+
+'<button type="button" class="ida-save" id="idSave">💾 保存</button><div class="ida-sv" id="idSv"></div></div>'+
+'<div class="ida-sec">💡 アイデア <span id="idaN"></span>（新しい順）</div><div id="idaL"></div>'+
+'<div class="ida-sec">📝 メモ（今までのメモ）</div>'+
 '<div style="color:#8a90a0;font-size:11.5px;font-weight:700;padding:0 2px 4px">'+arr.length+'件のメモ</div>'+
 (arr.length?groups.map(g=>'<div class="glab" style="margin:10px 0 4px;color:var(--green)">'+esc(g.label)+'</div>'+rows(g)).join('')
 :'<div class="empty-hint">手帳の白紙ページ。<br>思いついたら＋で書き殴る。整理はAIの仕事</div>')+
 '</div>';
 p.classList.add('open');
-$('pgBk').onclick=closePage;
-$('pgAdd').onclick=()=>renderMemoEditor(null);
-p.querySelectorAll('[data-me]').forEach(b=>b.onclick=()=>renderMemoEditor(b.dataset.me));
+$('pgBk').onclick=()=>{idSave(false);closePage();};
+$('pgAdd').onclick=()=>{idSave(false);renderMemoEditor(null);};
+idCur=null;idPaintList();
+$('idGo').onclick=()=>idOpen(null);
+$('idSave').onclick=()=>idSave(true);
+$('idMic').onclick=()=>micToggle($('idMic'),$('idTa'));
+$('idTa').addEventListener('input',()=>{clearTimeout(idTimer);idTimer=setTimeout(()=>idSave(false),1200);});
+$('idTa').addEventListener('blur',()=>{if($('idTa').value.trim())idSave(false);});
+p.querySelectorAll('[data-me]').forEach(b=>b.onclick=()=>{idSave(false);renderMemoEditor(b.dataset.me);});
 }
 function renderMemoEditor(id){
 pageMode='memoEd';
@@ -7118,7 +7181,7 @@ const p=$('page');
 const ex=id?state.memos[id]:null;
 const d=ex?new Date(ex.ts||Date.now()):new Date();
 const dtxt=d.getFullYear()+'年'+(d.getMonth()+1)+'月'+d.getDate()+'日 '+pad(d.getHours())+':'+pad(d.getMinutes());
-p.innerHTML='<div class="page-head"><button class="bk" id="mBk">‹ メモ</button><span class="tt" style="color:#9aa3b5;font-size:11px;font-weight:700">'+dtxt+'</span><span style="width:36px"></span></div>'+
+p.innerHTML='<div class="page-head"><button class="bk" id="mBk">‹ アイデア・メモ</button><span class="tt" style="color:#9aa3b5;font-size:11px;font-weight:700">'+dtxt+'</span><span style="width:36px"></span></div>'+
 '<div class="memo-ed"><div class="sh-ta-wrap" style="flex:1;min-height:0;display:flex"><textarea id="mTa" style="flex:1;min-height:0" placeholder="書けば自動で保存される。思いつくまま書き殴れ。整理はAIにやらせる"></textarea>'+
 '<button class="sh-mic lbl" id="mMic" aria-label="声で書く">'+MICSVG+'<small class="bn">声</small></button></div>'+
 '<div class="memo-btns">'+(ex?'<button class="delbtn" id="mDel">削除</button>':'')+
@@ -12140,7 +12203,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c36.9";
+const CL_APPVER="c37.0";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
