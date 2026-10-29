@@ -1042,6 +1042,14 @@ display:flex;flex-direction:column;gap:11px;max-height:94%;overflow-y:auto;
 .ida-tx b{display:block;font-size:14.5px;font-weight:900;word-break:break-word;white-space:pre-wrap}.ida-tx small{display:block;font-size:12px;color:#5f6b85;margin-top:2px;word-break:break-word;white-space:pre-wrap}
 .ida-at{display:block;font-size:11.5px;color:#7a8294;font-weight:800;margin-top:3px}
 .ida-act{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}.ida-act button{border:0;border-radius:999px;padding:5px 11px;font-size:12px;font-weight:800;font-family:inherit;background:#eef1f6;color:#14275a;cursor:pointer}.ida-act button.on{background:#faeeda;color:#854f0b}.ida-act button.pl0{color:#2c6be0}
+.ern-tabs{grid-template-columns:repeat(2,1fr)}.rd-tab.ern-dim{opacity:.55}
+.ern-box{background:#fffbea;border-radius:14px;padding:10px;margin-top:4px}.ern-nm{font-size:17px;font-weight:900}
+.ern-cv{display:inline-block;margin-top:6px;background:#14275a;color:#fff;border-radius:999px;padding:4px 11px;font-size:12.5px;font-weight:800;line-height:1.4}
+.ern-dn{font-size:12.5px;font-weight:800;color:#0f6e56;background:#e1f5ee;border-radius:8px;padding:5px 8px;margin-top:8px}
+.ern-ideas{font-size:12.5px;font-weight:800;color:#854f0b;background:#faeeda;border-radius:8px;padding:6px 8px;margin-top:8px;line-height:1.5}
+.ern-note{font-size:12px;font-weight:800;color:#8a90a0;margin:10px 4px;text-align:center}
+.page-body .ern-card{margin:0}
+.ida-act button.on[data-iln]{background:#e1f5ee;color:#0f6e56}
 .mvt-vd{position:absolute;top:3px;width:10px;height:10px;border-radius:50%;background:#fff;border:2px solid #14275a;transform:translateX(-50%);box-sizing:border-box;z-index:1}
 .mvt-vn{position:absolute;top:-15px;transform:translateX(-50%);font-style:normal;font-size:11px;font-weight:900;color:#14275a;line-height:1;z-index:1}
 .mvt{display:block;margin:4px 0 6px;padding:8px 8px 6px;border-radius:12px;background:#fff;border:1.5px dashed #c9d3e6;color:#14275a;text-align:left}
@@ -2321,11 +2329,12 @@ input.pin,textarea.pin{color:#14181f!important;-webkit-text-fill-color:#14181f!i
 <div class="nav" id="nav"><div class="nvw" id="nvw"><div class="nvp">
 <button class="nb on" id="navHome"><svg viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zM4 8h16"/></svg><span>トップ</span></button>
 <button class="nb" id="navDiary"><svg viewBox="0 0 24 24"><path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H19v16H6.5A1.5 1.5 0 0 0 5 20.5zM5 20.5A1.5 1.5 0 0 0 6.5 22H19v-3M9 7h6M9 10.5h6"/></svg><span>日記</span></button>
+<button class="nb" id="navEarn"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9 10.2h6M9 13.6h6M9.6 7l2.4 3.2L14.4 7"/></svg><span>稼ぐ</span></button>
 <button class="nb" id="navTodo"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8l1.5 1.5L12 7M8 13l1.5 1.5L12 12M14 8.5h3M14 13.5h3M8 18h9"/></svg><span>予定</span><i class="nbdg" id="navTodoB" style="display:none"></i></button>
 <button class="nb" id="navPay"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8.5 7.5l3.5 5 3.5-5M12 12.5V17M9 13h6M9 15.5h6"/></svg><span>支払い</span><i class="nbdg" id="navPayB" style="display:none"></i></button>
 <button class="nb" id="navMemo"><svg viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.8 10.6c.6.6 .8 1.3 .8 2.4h6c0-1.1 .2-1.8 .8-2.4A6 6 0 0 0 12 3z"/></svg><span>アイデア</span></button>
-<button class="nb" id="navLearn"><svg viewBox="0 0 24 24"><path d="M2 9l10-5 10 5-10 5zM6 11.5V16c0 1.5 2.7 3 6 3s6-1.5 6-3v-4.5M22 9v6"/></svg><span>学ぶ</span></button>
 </div><div class="nvp">
+<button class="nb" id="navLearn"><svg viewBox="0 0 24 24"><path d="M2 9l10-5 10 5-10 5zM6 11.5V16c0 1.5 2.7 3 6 3s6-1.5 6-3v-4.5M22 9v6"/></svg><span>学ぶ</span></button>
 <button class="nb" id="navAna"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>分析</span></button>
 <button class="nb" id="navRtn"><svg viewBox="0 0 24 24"><path d="M4 5.5C4 4.7 4.7 4 5.5 4H11v16H5.5c-.8 0-1.5-.7-1.5-1.5zM20 5.5c0-.8-.7-1.5-1.5-1.5H13v16h5.5c.8 0 1.5-.7 1.5-1.5zM7 8h2M15 8h2M7 11h2M15 11h2"/></svg><span>ルーティン</span><i class="nbdg z" id="navRtnB" style="display:none"></i></button>
 <button class="nb" id="navAim"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2"/></svg><span>今日の1個</span><i class="nbdg z" id="navAimB" style="display:none"></i></button><button class="nb" id="navRule"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 12.5l2.8 2.8L16.5 9"/></svg><span>ルール</span></button><button class="nb" id="navSleep"><svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/></svg><span>睡眠</span></button><button class="nb" id="navPlan"><svg viewBox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg><span>段取り</span></button>
@@ -2621,6 +2630,8 @@ for(const d in (src.prep||{})){const nu=src.prep[d];if(!nu)continue;out.prep=out
 for(const d in (src.cond||{})){const nu=src.cond[d];if(!nu)continue;out.cond=out.cond||{};const cur=out.cond[d];if(!cur||((nu.ts||0)>(cur.ts||0)))out.cond[d]=nu;}
 if(src.wishcfg&&typeof src.wishcfg==='object'&&(!out.wishcfg||((src.wishcfg.ts||0)>(out.wishcfg.ts||0))))out.wishcfg=src.wishcfg;
 for(const d in (src.rdin||{})){const nu=src.rdin[d];if(!nu)continue;out.rdin=out.rdin||{};const cur=out.rdin[d];if(!cur){out.rdin[d]=nu;continue;}const m=Object.assign({},cur);for(const s in nu){if(s!=='ts'&&nu[s]&&!m[s])m[s]=nu[s];}m.ts=Math.max(nu.ts||0,cur.ts||0);out.rdin[d]=m;}
+for(const d in (src.ernin||{})){const nu=src.ernin[d];if(!nu)continue;out.ernin=out.ernin||{};const cur=out.ernin[d];if(!cur){out.ernin[d]=nu;continue;}const m=Object.assign({},cur);for(const s in nu){if(s!=='ts'&&nu[s]&&!m[s])m[s]=nu[s];}m.ts=Math.max(nu.ts||0,cur.ts||0);out.ernin[d]=m;}
+if(src.ern&&typeof src.ern==='object'&&(!out.ern||((src.ern.ts||0)>(out.ern.ts||0))))out.ern=src.ern;
 if(src.lay&&typeof src.lay==='object'&&(!out.lay||((src.lay.ts||0)>(out.lay.ts||0))))out.lay=src.lay;
 if(src.rdtxt&&typeof src.rdtxt==='object'&&(!out.rdtxt||((src.rdtxt.ts||0)>(out.rdtxt.ts||0))))out.rdtxt=src.rdtxt;
 if(src.daily5&&typeof src.daily5==='object'&&(!out.daily5||((src.daily5.ts||0)>(out.daily5.ts||0))))out.daily5=src.daily5;
@@ -2670,7 +2681,7 @@ for(const id in (src.photos||{})){if(!out.photos[id])out.photos[id]=src.photos[i
 for(const id in (src.pha||{})){if(!out.pha[id]&&src.pha[id])out.pha[id]=src.pha[id];}
  }
 out.life=((b.life&&(!(a.life)||((b.life.ts||0)>(a.life.ts||0))))?b.life:a.life)||null;
-const known={updatedAt:1,dream:1,entries:1,plans:1,ai:1,dreams:1,memos:1,life:1,photos:1,pha:1,pays:1,rules:1,aims:1,moves:1,pins:1,steps:1,payrep:1,rtn:1,rlog:1,payppl:1,kinds:1,tools:1,places:1,projects:1,marks:1,bedp:1,scr:1,alarm:1,goal:1,learn:1,arp:1,todos:1,plreg:1,plgrp:1,kgrp:1,trs:1,srr:1,tdq:1,ksub:1,cond:1,dlg:1,dgoal:1,aip:1,msx:1,inc:1,cash:1,rtm:1,dep:1,prep:1,tbox:1,rew:1,tstep:1,fst:1,ntf:1,ckin:1,rdin:1,ckcnt:1,lay:1,rdtxt:1,daily5:1,wish:1,wishcfg:1};
+const known={updatedAt:1,dream:1,entries:1,plans:1,ai:1,dreams:1,memos:1,life:1,photos:1,pha:1,pays:1,rules:1,aims:1,moves:1,pins:1,steps:1,payrep:1,rtn:1,rlog:1,payppl:1,kinds:1,tools:1,places:1,projects:1,marks:1,bedp:1,scr:1,alarm:1,goal:1,learn:1,arp:1,todos:1,plreg:1,plgrp:1,kgrp:1,trs:1,srr:1,tdq:1,ksub:1,cond:1,dlg:1,dgoal:1,aip:1,msx:1,inc:1,cash:1,rtm:1,dep:1,prep:1,tbox:1,rew:1,tstep:1,fst:1,ntf:1,ckin:1,rdin:1,ckcnt:1,lay:1,rdtxt:1,daily5:1,wish:1,wishcfg:1,ern:1,ernin:1};
 const doneK=new Set(Object.keys(out));
 const newer=((b.updatedAt||0)>=(a.updatedAt||0))?b:a;
 const older=(newer===b)?a:b;
@@ -4378,7 +4389,7 @@ openSub('<div class="sh-time" style="justify-content:center"><span>🚪 ログ�
 '<div class="sh-btns"><button class="delbtn" id="lgNo" style="flex:1">いいえ</button><button class="savebtn" id="lgYes">はい</button></div>',null);
 $('lgNo').onclick=()=>closeSub();$('lgYes').onclick=()=>{closeSub();appLogout();};};}
 pane.querySelectorAll('[data-h]').forEach(b=>{
-b.onclick=()=>{if(b.classList.contains('wr')&&(ckGate()||rdGate()))return;openEntrySheet(ui.date,{hour:Number(b.dataset.h),pick:!b.classList.contains('wr'),wr:b.classList.contains('wr')});};
+b.onclick=()=>{if(b.classList.contains('wr')&&(ckGate()||rdGate()||ernGate()))return;openEntrySheet(ui.date,{hour:Number(b.dataset.h),pick:!b.classList.contains('wr'),wr:b.classList.contains('wr')});};
 b.onkeydown=ev=>{if(ev.target!==b)return;if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();openEntrySheet(ui.date,{hour:Number(b.dataset.h),wr:b.classList.contains('wr')});}};
 });
 const wB=(id,fn)=>{const b=pane.querySelector('#'+id);if(b)b.onclick=ev=>{ev.stopPropagation();fn();};};
@@ -4677,7 +4688,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c37.1）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c37.2）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -5979,10 +5990,12 @@ paint();
 }
 function openDreamPage(){pageMode='dream';renderPage();}
 function openMemoPage(){pageMode='memo';renderPage();}
+function openEarnPage(){pageMode='earn';renderPage();}
 function closePage(){micStopAll();pageMode=null;$('page').classList.remove('open');payReopenMark();render();maybePendingReload();}
 function renderPage(){
 if(pageMode==='dream')renderDreamPage();
 else if(pageMode==='memo')renderMemoPage();
+else if(pageMode==='earn')renderEarnPage();
 else if(pageMode==='set')renderSetPage();
 
 }
@@ -7122,12 +7135,13 @@ try{taGrow(ta);}catch(e){}ta.focus();try{$('page').querySelector('.page-body').s
 function idPaintList(){const L=$('idaL');if(!L)return;const A=ideasOf();
 L.innerHTML=A.length?A.map(x=>{const ls=String(x.t||'').split('\n'),f=ls.find(z=>z.trim())||'（書いている途中）',rest=ls.slice(ls.indexOf(f)+1).join('\n').trim();
 return '<div class="ida-card'+(x.id===idCur?' cur':'')+'"><button type="button" class="ida-tx" data-idea="'+esc(x.id)+'"><b>'+esc(f)+'</b>'+(rest?'<small>'+esc(rest)+'</small>':'')+'<span class="ida-at">🕒 '+esc(idAt(x.at||x.ts))+'</span></button>'+
-'<div class="ida-act"><button type="button" data-ipl="'+esc(x.id)+'"'+(x.pl?'':' class="pl0"')+'>📍 '+(x.pl?esc(x.pl):'場所を入れる')+'</button><button type="button" data-ist="'+esc(x.id)+'"'+(x.st?' class="on"':'')+'>'+(x.st?'⭐ 気になる':'☆ 気になる')+'</button></div></div>';}).join('')
+'<div class="ida-act"><button type="button" data-ipl="'+esc(x.id)+'"'+(x.pl?'':' class="pl0"')+'>📍 '+(x.pl?esc(x.pl):'場所を入れる')+'</button><button type="button" data-ist="'+esc(x.id)+'"'+(x.st?' class="on"':'')+'>'+(x.st?'⭐ 気になる':'☆ 気になる')+'</button><button type="button" data-iln="'+esc(x.id)+'"'+(x.ln?' class="on"':'')+'>'+(x.ln?'💰 線に入れた':'💰 線に入れる')+'</button></div></div>';}).join('')
 :'<div class="empty-hint">思いついたら［💡 思いついた！］を押して書くだけ。<br>時刻は自動で入る。場所はあとでいい</div>';
 $('idaN').textContent=A.length+'件';
 L.querySelectorAll('[data-idea]').forEach(b=>b.onclick=()=>idOpen(b.dataset.idea));
 L.querySelectorAll('[data-ist]').forEach(b=>b.onclick=()=>{const id=b.dataset.ist;mutate(()=>{const x=state.memos[id];if(x&&!x.del){x.st=x.st?0:1;x.ts=Date.now();}});idPaintList();});
-L.querySelectorAll('[data-ipl]').forEach(b=>b.onclick=()=>idPlace(b.dataset.ipl));}
+L.querySelectorAll('[data-ipl]').forEach(b=>b.onclick=()=>idPlace(b.dataset.ipl));
+L.querySelectorAll('[data-iln]').forEach(b=>b.onclick=()=>{const id=b.dataset.iln;mutate(()=>{const x=state.memos[id];if(x&&!x.del){x.ln=x.ln?0:1;x.ts=Date.now();}});idPaintList();toast((state.memos[id]&&state.memos[id].ln)?'💰 AIで稼ぐ の 💡 に入れた':'💰 線から外した');});}
 function idPlace(id){const x=state.memos&&state.memos[id];if(!x||x.del)return;const P=idRecentPlaces();
 const put=v=>{v=String(v||'').trim();mutate(()=>{const y=state.memos[id];if(y&&!y.del){y.pl=v;y.ts=Date.now();}});closeSub();idPaintList();idPaintMeta();toast(v?'✓ 📍 '+v:'場所を消した');};
 openSub('<div class="sh-time"><span>📍 どこで思いついた？</span></div>'+(P.length?'<div class="sh-note">最近いた所（押すだけ）</div><div class="sr-r">'+P.map(p=>'<button type="button" class="chip" data-idp="'+esc(p)+'">'+esc(p)+'</button>').join('')+'</div>':'')+
@@ -7493,6 +7507,41 @@ rdPop=-1;
 return '<div class="ck-sec">📖 '+esc(ttl)+'<i></i></div><div class="ck-card rd-card'+(dn?' done':'')+'" id="rdCard"><div class="rd-top"><b>📖 '+esc(sl)+'の読み物</b><span>'+cnt+' / 3</span></div>'+goal+'<div class="rd-sl">'+RD_SL.map(x=>'<div class="'+(D[x[0]]?'ok':(x[0]===sl?'rd-now':''))+'"><small>'+x[0]+'</small><b>'+(D[x[0]]?esc(D[x[0]]):'—')+'</b></div>').join('')+'</div>'+
 (dn?'<details class="rd-again"><summary>✓ '+esc(sl)+'は読んだ（'+esc(D[sl])+'）　もう一度読む ▾</summary>'+tabs+rdListenBtn(it)+'<div class="rd-scroll">'+body+'</div></details>'
 :(rdWant?'<div class="ck-gatebar">📖 '+L.length+'人とも読んで「全部読んだ！」を押すと、そのまま書ける</div>':'')+tabs+rdListenBtn(it)+'<div class="rd-scroll" id="rdScr">'+body+one+end+'</div>')+'</div>';}catch(e){return '';}}
+const ERN_SL=[['朝',5,15],['夜',15,29]];
+function ernSlotNow(){let hh=new Date().getHours();if(hh<5)hh+=24;const s=ERN_SL.find(x=>hh>=x[1]&&hh<x[2]);return s?s[0]:'夜';}
+function ernDayKey(){const n=new Date();return n.getHours()<5?addDays(todayStr(),-1):todayStr();}
+function ernDay(d){const o=((state.ernin||{})[d])||{};return o.del?{}:o;}
+const ERN_DEF=[{id:'a',ic:'📘',nm:'記事を公開する',sl:'朝'},{id:'b',ic:'🎓',nm:'中古車コンサルづくり',sl:'朝'},{id:'c',ic:'💡',nm:'AIでビジネスアイデア出し',sl:'夜'},{id:'d',ic:'🛠',nm:'アイデアをカタチにして実行',sl:'夜'}];
+function ernLines(){const s=state.ern;const L=(s&&Array.isArray(s.lines))?s.lines.filter(x=>x&&!x.del&&x.nm&&x.id):null;return (L&&L.length)?L:ERN_DEF;}
+function ernSlotOf(x){return x.sl==='夜'?'夜':'朝';}
+function ernDone(){return !!ernDay(ernDayKey())[ernSlotNow()];}
+let ernWant=false,ernCur=null;
+function ernGate(){try{if(ui.date!==todayStr()||ernDone()||openMove()||entDraft(ui.date))return false;ernWant=true;openEarnPage();toast('💰 先に AIで稼ぐ を1つやって「やった」');return true;}catch(e){return false;}}
+function ernMark(id){const d=ernDayKey(),sl=ernSlotNow();mutate(()=>{state.ernin=state.ernin||{};state.ernin[d]=Object.assign({},ernDay(d),{[sl+'#'+id]:nowHM(),ts:Date.now()});});}
+function ernSlotDo(){const d=ernDayKey(),sl=ernSlotNow();mutate(()=>{state.ernin=state.ernin||{};state.ernin[d]=Object.assign({},ernDay(d),{[sl]:nowHM(),ts:Date.now()});});}
+function ernIdeas(){const m=state.memos||{};return Object.keys(m).filter(k=>m[k]&&!m[k].del&&m[k].idea&&m[k].ln).map(k=>m[k]).sort((a,b)=>(b.at||b.ts||0)-(a.at||a.ts||0));}
+function ernChipHtml(){try{const sl=ernSlotNow(),D=ernDay(ernDayKey()),L=ernLines().filter(x=>ernSlotOf(x)===sl),n=L.filter(x=>D[sl+'#'+x.id]).length;return '<button class="gs'+(D[sl]?' ok':'')+'" data-gs="earn">💰 '+esc(sl)+' <b>'+n+'</b>/'+L.length+(D[sl]?' ✓':'')+'</button>';}catch(e){return '';}}
+function ernCardHtml(){try{const L=ernLines(),d=ernDayKey(),sl=ernSlotNow(),D=ernDay(d),dn=!!D[sl],pd=x=>!!D[sl+'#'+x.id];
+const mine=L.filter(x=>ernSlotOf(x)===sl),nDone=mine.filter(pd).length;
+if(ernCur==null||!L.some(x=>x.id===ernCur)){const f=mine.find(x=>!pd(x))||mine[0]||L[0];ernCur=f?f.id:null;}
+const it=L.find(x=>x.id===ernCur)||L[0];
+const slots='<div class="rd-sl">'+ERN_SL.map(x=>'<div class="'+(D[x[0]]?'ok':(x[0]===sl?'rd-now':''))+'"><small>'+x[0]+' '+L.filter(y=>ernSlotOf(y)===x[0]).map(y=>esc(y.ic||'💰')).join('')+'</small><b>'+(D[x[0]]?esc(D[x[0]]):'—')+'</b></div>').join('')+'</div>';
+const tabs='<div class="rd-tabs ern-tabs">'+L.map(x=>'<button type="button" class="rd-tab'+(x.id===ernCur?' cur':'')+(pd(x)?' sumi':'')+(ernSlotOf(x)!==sl?' ern-dim':'')+'" data-erni="'+esc(x.id)+'"><span class="ic">'+esc(x.ic||'💰')+'</span><b>'+esc(x.nm)+'</b>'+(pd(x)?'<span class="rd-stamp">済</span>':'')+'</button>').join('')+'</div>';
+let ideas='';if(it&&it.ic==='💡'){const I=ernIdeas();if(I.length)ideas='<div class="ern-ideas">⭐ 線に入れたアイデア<br>'+I.slice(0,5).map(x=>'・'+esc(String(x.t||'').split('\n')[0].slice(0,40))).join('<br>')+'</div>';}
+const box=it?'<div class="ern-box"><div class="ern-nm">'+esc(it.ic||'💰')+' '+esc(it.nm)+'</div>'+(it.cv?'<div class="ern-cv">'+esc(it.cv)+'</div>':'')+(it.dn?'<div class="ern-dn">できた＝'+esc(it.dn)+'</div>':'')+ideas+
+(pd(it)?'<button type="button" class="rd-one done" disabled>✓ '+esc(it.nm)+' はやった（'+esc(D[sl+'#'+it.id])+'）</button>':'<button type="button" class="rd-one" id="ernOne">'+esc(it.ic||'💰')+' '+esc(it.nm)+' をやった</button>')+'</div>':'';
+const end=nDone>=1?'<div class="rd-end">'+iosSw('ernSw',false,'✓ やった！','','')+'<button type="button" class="rd-go" id="ernGo" disabled>💰 '+esc(sl)+'のAIで稼ぐ：やった</button></div>':'<div class="rd-left">'+esc(sl)+'は '+mine.map(x=>esc((x.ic||'💰')+' '+x.nm)).join(' か ')+' のどれか1つでいい。1つやると「やった！」が出る</div>';
+const gate=(ernWant&&!dn)?'<div class="ck-gatebar">💰 1つやって「やった」を押すと、そのまま書ける</div>':'';
+return '<div class="ck-card rd-card ern-card'+(dn?' done':'')+'" id="ernCard"><div class="rd-top"><b>💰 '+esc(sl)+'のAIで稼ぐ</b><span>'+nDone+' / '+mine.length+'</span></div>'+slots+
+(dn?'<details class="rd-again"><summary>✓ '+esc(sl)+'は済（'+esc(D[sl])+'）　もう1つやる ▾</summary>'+tabs+box+'</details>':gate+tabs+box+end)+'</div>';}catch(e){return '';}}
+function renderEarnPage(){pageMode='earn';const p=$('page');
+p.innerHTML='<div class="page-head"><button class="bk" id="pgBk">‹ 戻る</button><span class="tt">💰 AIで稼ぐ</span><span style="width:36px"></span></div><div class="page-body">'+ernCardHtml()+'<div class="ern-note">朝＝PCの線・夜＝スマホでもいい線。AIの種類は会話が覚えている。1回に1つやれば「済」</div></div>';
+p.classList.add('open');$('pgBk').onclick=()=>{ernWant=false;closePage();};ernBind(p);}
+function ernBind(p){p.querySelectorAll('[data-erni]').forEach(b=>b.onclick=()=>{ernCur=b.dataset.erni;renderEarnPage();});
+{const o=p.querySelector('#ernOne');if(o)o.onclick=ev=>{const it=ernLines().find(x=>x.id===ernCur);if(!it)return;ckBurst(ev.clientX,ev.clientY,'㊞ 済');ernMark(it.id);toast('㊞ '+it.nm+' 済！');renderEarnPage();try{gstripPaint();}catch(e){}};}
+{const sw=p.querySelector('#ernSw'),go=p.querySelector('#ernGo');if(sw&&go){sw.onclick=()=>{const on=!sw.classList.contains('on');iosSet(sw,on);go.disabled=!on;};
+go.onclick=ev=>{if(go.disabled)return;const sl=ernSlotNow();ckBurst(ev.clientX,ev.clientY,'💰 ✓');ernSlotDo();toast('💰 '+sl+'のAIで稼ぐ：やった');try{gstripPaint();}catch(e){}
+if(ernWant){ernWant=false;closePage();if(!ckGate()&&!rdGate())setTimeout(()=>openEntrySheet(ui.date,{hour:new Date().getHours(),wr:true}),350);}else renderEarnPage();};}}}
 function ckGate(){try{if(ui.date!==todayStr()||ckDone()||openMove()||entDraft(ui.date))return false;
 ckWant=true;if(topView!=='top'){topView='top';render();}setTimeout(()=>{try{const sc=$('scr');if(sc)sc.scrollTop=0;}catch(e){}},30);toast('📒 先にトップを見て、手帳チェックインしてから書く');return true;}catch(e){return false;}}
 function ckGoalExtra(){const g=(state.goal&&typeof state.goal==='object')?state.goal:{};const n=(v,d)=>{const x=Number(v);return isFinite(x)&&x>0?x:d;};return {biz:n(g.biz,360),car:n(g.car,1)};}
@@ -11107,7 +11156,7 @@ const navGo=fn=>{if($('page').classList.contains('open'))closePage();fn();};
 $('navHome').onclick=()=>{closePage();ui.date=todayStr();ui.tab='di';topView='top';render();try{$('scr').scrollTop=0;}catch(e){}};
 $('navDiary').onclick=()=>{closePage();ui.date=todayStr();ui.tab='di';topView='diary';render();scrollToNow();};
 $('navPay').onclick=()=>navGo(openPayPage);
-$('navMemo').onclick=()=>navGo(openMemoPage);$('navLearn').onclick=()=>openLearnSheet();
+$('navMemo').onclick=()=>navGo(openMemoPage);$('navEarn').onclick=()=>navGo(openEarnPage);$('navLearn').onclick=()=>openLearnSheet();
 $('navRtn').onclick=()=>navGo(openRtnPage);
 $('navAna').onclick=()=>navGo(openAnaPage);
 renderTodoPage=(o=>function(){o();try{plnInject();}catch(e){}})(renderTodoPage);
@@ -11144,20 +11193,20 @@ g1.push('<button class="gs'+cl+(dreamHit(d.id)?' ok':'')+'" data-gs="'+esc(d.id)
 g1.push('<button class="gs gsl'+((typeof TT!=='undefined'&&TT.kind==='money'&&TT.on)?' on':'')+'" data-gs="listen">'+((typeof TT!=='undefined'&&TT.kind==='money'&&TT.on)?'⏸ 止める':'🔊 お金を聞く')+'</button>');
 g1.push(tbStripHtml('play'));
 g2.push(depChipHtml());g2.push(plnChipHtml());g2.push(tbStripHtml('tb'));
-{const c=actTodayCnt(t),gd=GC.dm,gp=GC.post;g3.push('<span class="gt">📣 <span'+(c.dm>=gd?' class="hit"':'')+'>DM <b>'+c.dm+'</b>/'+gd+'</span>・<span'+(c.post>=gp?' class="hit"':'')+'>𝕏投稿 <b>'+c.post+'</b>/'+gp+'</span>'+learnChipHtml(t,GC.learn)+'・✉ <b>'+c.rep+'</b></span>');}
+{const c=actTodayCnt(t),gd=GC.dm,gp=GC.post;g3.push('<span class="gt">📣 <span'+(c.dm>=gd?' class="hit"':'')+'>DM <b>'+c.dm+'</b>/'+gd+'</span>・<span'+(c.post>=gp?' class="hit"':'')+'>𝕏投稿 <b>'+c.post+'</b>/'+gp+'</span>'+learnChipHtml(t,GC.learn)+'・✉ <b>'+c.rep+'</b></span>');g3.push(ernChipHtml());}
 return [g1,g2,g3].map(a=>a.join('')).filter(x=>x).join('<i class="gsep" aria-hidden="true"></i>');}catch(e){return '';}}
 function gstripBind(el){if(!el)return;
 try{el.querySelectorAll('.gsep').forEach(s=>{const p=s.previousElementSibling,n=s.nextElementSibling,cy=r=>r.top+r.height/2,y=cy(s.getBoundingClientRect());
-s.style.visibility=((p&&Math.abs(cy(p.getBoundingClientRect())-y)>10)||(n&&Math.abs(cy(n.getBoundingClientRect())-y)>10))?'hidden':'';});}catch(e){}el.querySelectorAll('[data-gs]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();const v=b.dataset.gs;if(v==='act')return;if(v==='money')openIncSheet();else if(v==='listen')moneyListen();else if(v==='dep')openDepMini(b.dataset.dep);else if(v==='pln')openTodoPage();else openDreamSheet(v,null);});}
+s.style.visibility=((p&&Math.abs(cy(p.getBoundingClientRect())-y)>10)||(n&&Math.abs(cy(n.getBoundingClientRect())-y)>10))?'hidden':'';});}catch(e){}el.querySelectorAll('[data-gs]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();const v=b.dataset.gs;if(v==='act')return;if(v==='money')openIncSheet();else if(v==='listen')moneyListen();else if(v==='dep')openDepMini(b.dataset.dep);else if(v==='pln')openTodoPage();else if(v==='earn')openEarnPage();else openDreamSheet(v,null);});}
 function gstripPaint(){try{const el=$('gstrip');if(!el)return;const html=gstripHtml();el.innerHTML=html;el.style.display=html?'':'none';gstripBind(el);
 const pg=$('page');if(pg&&pg.classList.contains('open')){let s=pg.querySelector('.gstrip');const hd=pg.querySelector('.page-head');if(!s&&hd){hd.insertAdjacentHTML('afterend','<div class="gstrip pg"></div>');s=pg.querySelector('.gstrip');}if(s){s.innerHTML=html;s.style.display=html?'':'none';gstripBind(s);}}}catch(e){}}
 (function(){try{const pg=$('page');if(pg&&typeof MutationObserver!=='undefined')new MutationObserver(ms=>{if(ms.some(m=>[...m.addedNodes].some(x=>x.nodeType===1&&(x.classList.contains('page-head')||x.querySelector&&x.querySelector('.page-head')))))gstripPaint();}).observe(pg,{childList:true,subtree:false});}catch(e){}})();
 function navPaint(){try{gstripPaint();}catch(e){}try{scrub.init();scrub.sync();}catch(e){}try{fabPaint();}catch(e){}
 try{
 const pg=$('page'),open=pg.classList.contains('open');
-const tab=!open?(topView==='diary'?'diary':'home'):pageMode==='pay'?'pay':pageMode==='memo'?'memo':pageMode==='rtn'?'rtn':pageMode==='ana'?'ana':(pageMode==='todo'||pageMode==='st')?'todo':pageMode==='rules'?'rule':pageMode==='plan'?'plan':pageMode==='aim'?'aim':pageMode==='srch'?'srch':'';
-pg.classList.toggle('withnav',open&&(pageMode==='srch'||pageMode==='plan'||pageMode==='pay'||pageMode==='memo'||pageMode==='rules'||pageMode==='aim'||pageMode==='rtn'||pageMode==='ana'||pageMode==='st'||pageMode==='todo'||pageMode==='set'));
-[['navHome','home'],['navDiary','diary'],['navPay','pay'],['navMemo','memo'],['navRtn','rtn'],['navAna','ana'],['navTodo','todo'],['navAim','aim'],['navRule','rule'],['navPlan','plan']].forEach(x=>{const b=$(x[0]);if(b)b.classList.toggle('on',tab===x[1]);});
+const tab=!open?(topView==='diary'?'diary':'home'):pageMode==='pay'?'pay':pageMode==='memo'?'memo':pageMode==='earn'?'earn':pageMode==='rtn'?'rtn':pageMode==='ana'?'ana':(pageMode==='todo'||pageMode==='st')?'todo':pageMode==='rules'?'rule':pageMode==='plan'?'plan':pageMode==='aim'?'aim':pageMode==='srch'?'srch':'';
+pg.classList.toggle('withnav',open&&(pageMode==='srch'||pageMode==='plan'||pageMode==='pay'||pageMode==='memo'||pageMode==='earn'||pageMode==='rules'||pageMode==='aim'||pageMode==='rtn'||pageMode==='ana'||pageMode==='st'||pageMode==='todo'||pageMode==='set'));
+[['navHome','home'],['navDiary','diary'],['navPay','pay'],['navMemo','memo'],['navEarn','earn'],['navRtn','rtn'],['navAna','ana'],['navTodo','todo'],['navAim','aim'],['navRule','rule'],['navPlan','plan']].forEach(x=>{const b=$(x[0]);if(b)b.classList.toggle('on',tab===x[1]);});
 {const b=$('navLearn');if(b)b.classList.toggle('on',!!openKindRec(['vstudy']));}
 const nv=$('nav');if(nv&&nv.offsetHeight)document.documentElement.style.setProperty('--navh',nv.offsetHeight+'px');
 sleepBarTick();
@@ -11248,7 +11297,7 @@ document.querySelectorAll('[data-ym]').forEach(b=>b.onclick=()=>{vm=b.dataset.ym
 draw();openOvl();
 }
 
-const NTF_LS='hibiki-push',NTF_SIG='hibiki-push-sig',NTF_D={x:1,num:1,sleep:1,meal:1,pay:1,dm:1,td3:1,prep:1,wake:1,tb:1,dep:1,gap:1,hito:1,pln:1,ck:1};
+const NTF_LS='hibiki-push',NTF_SIG='hibiki-push-sig',NTF_D={x:1,num:1,sleep:1,meal:1,pay:1,dm:1,td3:1,prep:1,wake:1,tb:1,dep:1,gap:1,hito:1,pln:1,ck:1,ern:1};
 const NTF_XN={sns_xv:'X',sns_iv:'インスタ',c_snsc:'SNS',spplay:'スマホ',video:'動画'};
 let NTF_REG=null,NTF_SUBD=null,NTF_KT=0,NTF_BUSY=0,NTF_AG=0,NTF_FAIL=0,NTF_N=0,NTF_KA=0,NTF_KS='';
 function ntfCfg(){const s=(typeof state!=='undefined'&&state&&state.ntf&&typeof state.ntf==='object')?state.ntf:{};const so=(s.on&&typeof s.on==='object')?s.on:{},st=(s.t&&typeof s.t==='object')?s.t:{};
@@ -11341,6 +11390,8 @@ if(on.hito&&hitoMust()){try{const eo=(state.entries||{})[t]||{};let n=0;for(cons
 if(n>0)add('hito|'+t,ntfAt(t,'22:00').getTime(),'💬 今日、文の無い記録が '+n+'件','コメントだけ。押すと赤い💬の行が並ぶ');}catch(e){}}
 if(on.ck){try{const W=alarmCfg().wake||'09:00',TM=[['朝',W],['昼前','10:30'],['昼','12:30'],['夕','15:30'],['夜','19:30']];
 for(const d of [t,d1]){const cd=ckDay(d);for(const s of TM){if(d===t&&cd[s[0]])continue;add('ck|'+d+'|'+s[0],ntfAt(d,s[1]),'📒 '+s[0]+'のチェックイン','トップで数字と目標を見て「見た ✓」。夢まで あと'+goalDays()+'日');}}}catch(e){}}
+if(on.ern){try{const TM=[['朝','09:30'],['夜','20:00']];for(const d of [t,d1]){const D=ernDay(d);for(const s of TM){if(d===t&&D[s[0]])continue;const L=ernLines().filter(x=>ernSlotOf(x)===s[0]),f=L.find(x=>!(d===t&&D[s[0]+'#'+x.id]))||L[0];
+add('ern|'+d+'|'+s[0],ntfAt(d,s[1]),'💰 '+s[0]+'のAIで稼ぐ',(f?(f.ic||'💰')+' '+f.nm+'。':'')+'会話を開いて「続き」→ やった');}}}catch(e){}}
 if(on.pln){try{for(const d of [t,d1])plnOpen(d).forEach(o=>{const x=o.x;if(!x.hh)return;const P=ntfAt(d,x.hh).getTime();add('pln|'+d+'|'+o.k,P-15*60000,'📅 あと15分 '+Array.from(String(x.t)).slice(0,20).join(''),(x.pl?'📍 '+x.pl+'。':'')+'時刻が来たら ✓ 始まった');});}catch(e){}}
 if(on.gap){try{const t0=todayStr(),y0=addDays(t0,-1);let E=0,EP='';
 const scan=(d,off)=>{const eo=(state.entries||{})[d]||{};for(const k in eo){const en=eo[k];if(!en||en.del||en.noT||!en.s)continue;const sm=hmMin(en.s)+off,em=en.e?(hmMin(en.e)+(en.ed?1440:0)+off):null;
@@ -11446,7 +11497,7 @@ row('dm','📣 DM',tin('ntDm',C.t.dm))+
 row('td3','🎯 今日の3つ',tin('ntTd3',C.t.td3))+
 row('prep','🌅 明日の準備',tin('ntPrep',C.t.prep))+
 row('wake','🌞 起きる',tin('ntWake',A.wake))+
-row('tb','⏱ 箱','<span class="ntf-v" id="ntTbv">'+C.t.tbPre+'分前</span>')+row('dep','🚩 出発予定','')+row('gap','⬜ 空き（何してた？）','30分後')+row('hito','💬 コメント（文の無い記録）','22:00')+row('pln','📅 予定','15分前')+row('ck','📒 手帳チェックイン','朝・10:30・12:30・15:30・19:30')+
+row('tb','⏱ 箱','<span class="ntf-v" id="ntTbv">'+C.t.tbPre+'分前</span>')+row('dep','🚩 出発予定','')+row('gap','⬜ 空き（何してた？）','30分後')+row('hito','💬 コメント（文の無い記録）','22:00')+row('pln','📅 予定','15分前')+row('ck','📒 手帳チェックイン','朝・10:30・12:30・15:30・19:30')+row('ern','💰 AIで稼ぐ','09:30・20:00')+
 '</div><details class="ntf-more"><summary>くわしく</summary>'+
 '<div class="ntf-mrow"><span>📱 X・スマホ</span><input type="number" id="ntXmin" min="5" max="180" inputmode="numeric" value="'+C.t.xmin+'"><small>分で</small></div>'+
 '<div class="ntf-mrow"><span>⏱ 箱</span><input type="number" id="ntTbPre" min="1" max="30" inputmode="numeric" value="'+C.t.tbPre+'"><small>分前</small></div>'+
@@ -11684,7 +11735,7 @@ async function clRpcJson(name,body,sig,ms){const t=await clRpcText(name,typeof b
 async function clRpc(name,body){return clRpcJson(name,body);}
 
 const CL_ID=['dreams','memos','pays','aims','moves','pins','steps','payrep','rtn','rlog','payppl','pha','kinds','tools','places','projects','marks','bedp','arp','todos','plreg','plgrp','kgrp','trs','srr','tdq','ksub','dlg','dgoal','aip','msx','inc','cash','rtm','dep','tbox','wish'];
-const CL_DAY=['ai','rules','scr','cond','prep','ckin','ckcnt','rdin'];
+const CL_DAY=['ai','rules','scr','cond','prep','ckin','ckcnt','rdin','ernin'];
 const CL_DAY2=['entries','plans'];
 const CL_SKIP={updatedAt:1,photos:1};
 function clItems(st){
@@ -12204,7 +12255,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c37.1";
+const CL_APPVER="c37.2";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
