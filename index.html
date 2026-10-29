@@ -998,6 +998,58 @@ display:flex;flex-direction:column;gap:11px;max-height:94%;overflow-y:auto;
 .trip-chain{display:flex;align-items:center;flex-wrap:wrap;gap:4px;margin:6px 0 4px}.trip-chain .tc{display:inline-flex;flex-direction:column;align-items:center;min-width:44px;padding:3px 6px;border-radius:12px;background:#fff;box-shadow:0 2px 5px rgba(20,30,60,.10)}.trip-chain .tc i{font-style:normal;font-size:19px;line-height:1.15}.trip-chain .tc small{font-size:10.5px;font-weight:900;color:#5b6475}.trip-chain .tc-to{color:#9db4ec;font-weight:900}
 .pfmini{display:inline-flex;align-items:center;gap:2px;vertical-align:2px;margin:0 6px 0 0;padding:1px 8px 1px 6px;border-radius:6px;background:#14275a;color:#ffd77a;font-size:11.5px;font-weight:900;line-height:1.5;white-space:nowrap;letter-spacing:.3px}.pfmini i{font-style:normal;font-size:12.5px}.pftag b{font-weight:800;opacity:.75;margin:0 3px}
 .pftag b.pftr{opacity:1;font-size:13px}
+.trf{display:inline-block;line-height:1;font-style:normal}.trf-sh{transform:scaleX(-1)}.trf-sv{transform:rotate(90deg) scaleX(-1)}.trf-ph{transform:rotate(45deg)}.trf-pv{transform:rotate(135deg)}
+.mvc{display:block;margin:2px 0 4px;color:#14275a;text-align:left}
+.mvc-top{display:flex;align-items:center;gap:2px;flex-wrap:wrap;row-gap:4px}.mvc-g{display:inline-flex;align-items:center;gap:2px;white-space:nowrap}
+.mvc-pf{display:inline-flex;align-items:center;gap:2px;background:#14275a;color:#ffd77a;font-weight:900;font-size:12px;padding:2px 5px;border-radius:7px;white-space:nowrap}.mvc-pf i{font-style:normal}
+.mvc-kr,.mvc-md{font-size:11px;font-weight:900;white-space:nowrap}.mvc-kr{color:#0f6e56}.mvc-md{color:#c0392b}
+.mvc-ln{flex:1 1 0;min-width:2px;height:3px;border-radius:2px;background:#9fb0d0}
+.mvc-go{display:inline-flex;align-items:center;gap:3px;background:#5b9bff;color:#fff;font-size:10.5px;font-weight:900;padding:1px 2px 1px 5px;border-radius:999px;border:2px solid #d6e6ff;white-space:nowrap}
+.mvc-go i{display:inline-flex;align-items:center;justify-content:center;width:13px;height:13px;border-radius:50%;background:#fff;color:#5b9bff;font-style:normal;font-size:10px}
+.mvc-trk{position:relative;display:block;height:62px;margin-top:4px}
+.mvc-gd{position:absolute;left:30px;right:30px;top:34px;height:16px;display:block}
+.mvc-st,.mvc-gl{position:absolute;top:24px;width:32px;height:32px;box-sizing:border-box;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;z-index:2}
+.mvc-st{left:0;border:3px solid #5dcaa5}.mvc-gl{right:0;border:3px solid #fac775}
+.mvc-sp{position:absolute;right:-4px;top:10px;font-size:13px;z-index:3;animation:mvcTw 1.4s ease-in-out infinite}
+.mvc-vw{position:absolute;top:13px;transform:translateX(-50%);z-index:2;line-height:1}.mvc-vw.mvc-fly{top:-2px}
+.mvc-bob{position:relative;display:inline-block;animation:mvcBb .9s ease-in-out infinite}.mvc-bob .trf{font-size:26px}
+.mvc-puff{position:absolute;right:100%;top:9px;font-size:13px;animation:mvcPf .9s ease-in-out infinite}
+@keyframes mvcBb{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@keyframes mvcPf{0%{transform:translateX(4px);opacity:.8}100%{transform:translateX(-6px);opacity:0}}
+@keyframes mvcTw{0%,100%{transform:scale(.7);opacity:.5}50%{transform:scale(1.15);opacity:1}}
+@media (prefers-reduced-motion:reduce){.mvc-bob,.mvc-puff,.mvc-sp{animation:none}}
+.mvc-road{display:block;height:16px;border-radius:8px;background:#9aa6bf;position:relative}.mvc-road:after{content:'';position:absolute;left:8px;right:8px;top:7px;border-top:2px dashed #fff}
+.mvc-rail{display:block;position:relative;height:16px}.mvc-rail:before{content:'';position:absolute;left:0;right:0;top:3px;border-top:7px dashed #c9a77c}.mvc-rail:after{content:'';position:absolute;left:0;right:0;top:3px;height:4px;border-top:2px solid #8790a6;border-bottom:2px solid #8790a6}
+.mvc-sky,.mvc-sea{display:block;position:relative;height:16px}.mvc-sky svg{position:absolute;left:0;top:-26px}.mvc-sea svg{position:absolute;left:0;top:2px}.mvc-sky i{position:absolute;font-style:normal;line-height:1}
+.mvc-foot{display:flex;justify-content:space-between;align-items:center;height:16px;font-size:11px}.mvc-foot i{display:inline-block;font-style:normal;transform:rotate(90deg)}
+.mvc-tm{display:flex;justify-content:space-between;font-size:11.5px;font-weight:800;color:#5f6b85;margin:0 2px}
+.mvc-via{display:block;font-size:12px;color:#7a8294;font-weight:800;margin-top:2px;text-align:center}
+.mvc-pl{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-top:4px}
+.mvc-a,.mvc-b{display:block;min-width:0}.mvc-b{text-align:right}
+.mvc-pl b{color:#2c6be0;font-size:15px;font-weight:900;word-break:break-word}
+.mvc-pl em{display:inline-flex;font-style:normal;font-size:11px;font-weight:900;color:#fff;border-radius:999px;padding:1px 7px;margin-left:4px;vertical-align:2px;white-space:nowrap}.mvc-pl em.kr{background:#1d9e75}.mvc-pl em.md{background:#e24b4a}
+.mvc-pl b.mvc-no{color:#8a93a6;font-size:12px}
+.mvt-vd{position:absolute;top:3px;width:10px;height:10px;border-radius:50%;background:#fff;border:2px solid #14275a;transform:translateX(-50%);box-sizing:border-box;z-index:1}
+.mvt-vn{position:absolute;top:-15px;transform:translateX(-50%);font-style:normal;font-size:11px;font-weight:900;color:#14275a;line-height:1;z-index:1}
+.mvt{display:block;margin:4px 0 6px;padding:8px 8px 6px;border-radius:12px;background:#fff;border:1.5px dashed #c9d3e6;color:#14275a;text-align:left}
+.mvt-h{display:block;font-size:11.5px;font-weight:900;color:#5f6b85;margin-bottom:2px}
+.mvt-trk{display:flex;align-items:flex-end;height:54px}
+.mvt-end{flex:0 0 28px;width:28px;height:28px;box-sizing:border-box;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;margin-bottom:2px;position:relative;z-index:2}
+.mvt-st{border:3px solid #5dcaa5}.mvt-gl{border:3px solid #fac775}
+.mvt-dot{flex:0 0 20px;width:20px;height:20px;border-radius:50%;background:#14275a;color:#ffd77a;font-size:11.5px;font-weight:900;display:flex;align-items:center;justify-content:center;margin-bottom:6px;position:relative;z-index:2}
+.mvt-seg{position:relative;flex:1 1 0;min-width:0;height:54px;display:block}
+.mvt-gd{position:absolute;left:-3px;right:-3px;bottom:8px;height:16px;display:block}.mvt-gd .mvc-foot{overflow:hidden;padding:0 4px}
+.mvt-vh{position:absolute;left:50%;bottom:20px;transform:translateX(-50%);line-height:1}.mvt-vh.mvt-fly{bottom:28px}.mvt-vh .trf{font-size:22px}
+.mvt-ls{display:block;margin-top:6px}
+.mvt-p{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.mvt-p b{color:#2c6be0;font-size:14px;font-weight:900}.mvt-p b.mvc-no{color:#8a93a6;font-size:12px}
+.mvt-p em{font-style:normal;font-size:10.5px;font-weight:900;color:#fff;border-radius:999px;padding:1px 7px;white-space:nowrap}.mvt-p em.kr{background:#1d9e75}.mvt-p em.md{background:#e24b4a}.mvt-p em.tr{background:#5b9bff}
+.mvt-ic{font-style:normal;width:20px;text-align:center;font-size:14px}
+.mvt-num{font-style:normal;flex:0 0 20px;width:20px;height:20px;border-radius:50%;background:#14275a;color:#ffd77a;font-size:11.5px;font-weight:900;display:inline-flex;align-items:center;justify-content:center}
+.mvt-leg{display:block;margin:2px 0 2px 9px;padding:3px 0 3px 14px;border-left:3px dotted #9fb0d0;font-size:12px;font-weight:800;color:#5f6b85}
+.mvt-leg .trf{font-size:16px;margin-right:2px}.mvt-leg small{display:block;font-size:11px;color:#7a8294}
+.mvc-sum{display:block;text-align:center;font-size:12px;font-weight:800;color:#5f6b85;margin-top:4px}
+.mvc-sum i{font-style:normal;display:inline-flex;font-size:11px;font-weight:900;border-radius:999px;padding:1px 8px;margin-left:6px}.mvc-sum i.mvc-ok{color:#0f6e56;background:#e1f5ee}.mvc-sum i.mvc-now{color:#854f0b;background:#faeeda}
 .hour.filled.mvrec .pftag::after,.hour.filled[style*="background"] .pftag::after{background:transparent}
 .ks-close{width:100%;padding:12px;border-radius:14px;background:#f1f3f8;color:#5b6170;font-weight:800;font-size:14px;flex-shrink:0}
 .grab{width:38px;height:4px;border-radius:99px;background:#d5d9e3;margin:0 auto;flex-shrink:0}
@@ -3833,7 +3885,7 @@ return {code:c,name:p[1],area:p[2],short:p[3],co:a?a.co:'#9aa3b5'};}
 const PF_SYM=['🐄','🍎','🐎','🎋','🐕','🍒','🐮','🍈','🍓','🥬','🌾','🥜','🗼','⛵','🍙','🦐','🦀','🦖','🍇','🏔️','🏯','🗻','🍤','🦞','🛶','⛩️','🐙','⚓','🦌','🐼','🐪','🦪','🍑','🍁','🐡','🌀','🍜','🍊','🐟','🌶️','🦑','⛪','🐻','♨️','🥭','🌋','🌺'];
 function pfSym(p){return (p&&PF_SYM[p.code-1])||'📍';}
 function pfTag(en){const p=en&&prefOf(en.pf),p0=en&&en.mv?prefOf(en.pf0):null,one=q=>'<i>'+pfSym(q)+'</i>'+esc(q.short);
-if(p0&&p&&p0.code!==p.code)return '<span class="pftag" title="'+esc(p0.name+' → '+p.name)+'">'+one(p0)+'<b class="pftr">'+esc((typeof TRICON!=='undefined'&&TRICON[en.tr])||'🚗')+'</b>'+one(p)+'</span>';
+if(p0&&p&&p0.code!==p.code)return '<span class="pftag" title="'+esc(p0.name+' → '+p.name)+'">'+one(p0)+'<b class="pftr">'+trFace((typeof TRICON!=='undefined'&&TRICON[en.tr])||'🚗',en.tr,'h')+'</b>'+one(p)+'</span>';
 if(!p&&p0)return '<span class="pftag" title="'+esc(p0.name)+'">'+one(p0)+'</span>';
 return p?'<span class="pftag" title="'+esc(p.name)+'">'+one(p)+'</span>':'';}
 function pfArrive(date,sm){const eo=state.entries[date]||{};let bs='',bv=0;for(const k in eo){const en=eo[k];if(!en||en.del||!en.s||en.noT)continue;if(sm&&en.s>sm)continue;if(en.s>=bs){bs=en.s;bv=(en.mv&&prefOf(en.pf))?Number(en.pf):0;}}return bv;}
@@ -3962,7 +4014,49 @@ document.addEventListener('click',ev=>{const t=ev.target;if(t&&t.closest&&t.clos
 function mvRtHtml(rt,ic,open,en){const P=String(rt||'').split('→').map(z=>z.trim());const A=P.filter(Boolean);if(!A.length)return esc(ic)+' 移動'+(open?'<span class="rt-wait">（移動中…🏁到着を押す）</span>':'');
 const L=P.length>1?P:[P[0],''];const PF=mvLinePf(L,en),cross=PF.some((q,i)=>q&&PF.some(r=>r&&r.code!==q.code));let last=0;
 return L.map((z,i)=>{let tg='';const q=PF[i];if(cross&&q&&q.code!==last){tg='<span class="pfmini"><i>'+pfSym(q)+'</i>'+esc(q.short)+'</span>';}if(q)last=q.code;
-return (i?'<span class="rt-ar">↓</span>':'')+'<span class="rt-l">'+tg+(i?'':esc(ic)+' ')+(z?esc(z):(open?'<span class="rt-wait">移動中…🏁到着を押す</span>':'<span class="rt-wait">（着いた所なし）</span>'))+'</span>';}).join('');}
+return (i?'<span class="rt-ar">↓</span>':'')+'<span class="rt-l">'+tg+(i?'':(en?trFace(ic,en.tr,'v'):esc(ic))+' ')+(z?esc(z):(open?'<span class="rt-wait">移動中…🏁到着を押す</span>':'<span class="rt-wait">（着いた所なし）</span>'))+'</span>';}).join('');}
+const TR_GD={car:'road',taxi:'road',carrier:'road',bus:'road',shinkansen:'rail',train:'rail',plane:'sky',ferry:'sea',walk:'foot'};
+function trFace(ic,tr,dir){if(tr==='walk')dir='h';const k=TR_GD[tr]?(tr==='plane'?'p':'s'):'';return '<span class="trf'+(k?' trf-'+k+(dir==='v'?'v':'h'):'')+'">'+esc(ic||'🚗')+'</span>';}
+function trName(tr){const r=TRS.find(z=>z[0]===tr);return r?String(r[1]).replace(/^[^ ]+ /,''):'移動';}
+function mvGround(g,pos,done,nf){
+if(g==='rail')return '<span class="mvc-rail"></span>';
+if(g==='sky')return '<span class="mvc-sky"><svg width="100%" height="40" viewBox="0 0 100 40" preserveAspectRatio="none"><path d="M0 38 Q50 -6 100 38" fill="none" stroke="#85b7eb" stroke-width="1.6" stroke-dasharray="3 3" vector-effect="non-scaling-stroke"/></svg><i style="left:16%;top:-30px;font-size:15px">☁️</i><i style="left:70%;top:-34px;font-size:12px">☁️</i></span>';
+if(g==='sea')return '<span class="mvc-sea"><svg width="100%" height="16" viewBox="0 0 120 16" preserveAspectRatio="none"><path d="M0 6 Q5 0 10 6 T20 6 T30 6 T40 6 T50 6 T60 6 T70 6 T80 6 T90 6 T100 6 T110 6 T120 6 V16 H0 Z" fill="#b5d4f4"/></svg></span>';
+if(g==='foot'){let s='';const F=nf||9;for(let i=0;i<F;i++)s+='<i style="opacity:'+((done||(i+0.5)/F<=pos)?1:0.25)+'">👣</i>';return '<span class="mvc-foot">'+s+'</span>';}
+return '<span class="mvc-road"></span>';}
+function mvCardHtml(en,open){
+const tr=en.tr||'car',ic=TRICON[tr]||'🚗',P=String(en.rt||'').split('→').map(z=>z.trim());
+const from=P[0]||'',to=P.length>1?P[P.length-1]:'',vias=P.slice(1,-1).filter(Boolean);
+const L=P.length>1?P:[from,''],PF=mvLinePf(L,en),q0=PF[0]||null,q1=PF[PF.length-1]||q0;
+const tag=q=>'<span class="mvc-pf"><i>'+pfSym(q)+'</i>'+esc(q.short)+'</span>';
+const top='<span class="mvc-top">'+(q0?'<span class="mvc-g">'+tag(q0)+'<b class="mvc-kr">から</b></span>':'')+'<span class="mvc-ln"></span><span class="mvc-go">移動<i>➜</i></span><span class="mvc-ln"></span>'+(q1?'<span class="mvc-g">'+tag(q1)+'<b class="mvc-md">まで</b></span>':'')+'</span>';
+const g=TR_GD[tr]||'road',done=!open&&!!to,pos=(open||tr==='plane'||!to)?0.5:0.82;
+const veh='<span class="mvc-vw'+(tr==='plane'?' mvc-fly':'')+'" style="left:calc(30px + (100% - 60px) * '+pos+')"><span class="mvc-bob">'+(tr==='plane'?'':'<span class="mvc-puff">💨</span>')+trFace(ic,tr,'h')+'</span></span>';
+const trk='<span class="mvc-trk"><span class="mvc-gd">'+mvGround(g,pos,done)+mvViaDots(vias)+'</span><span class="mvc-st">🚩</span><span class="mvc-gl">🏁</span>'+(done?'<span class="mvc-sp">✨</span>':'')+veh+'</span>';
+const tm='<span class="mvc-tm"><span>'+esc(en.s||'')+'</span><span>'+(en.e?(en.ed?'翌':'')+esc(en.e):'？')+'</span></span>';
+const via=vias.length?'<span class="mvc-via">経由 '+vias.map((v,j)=>mvNum(j)+' '+esc(v)).join('　')+'</span>':'';
+const pl='<span class="mvc-pl"><span class="mvc-a">'+(from?'<b>'+esc(from)+'</b>':'<b class="mvc-no">（出発した所なし）</b>')+'<em class="kr">から</em></span><span class="mvc-b">'+(to?'<b>'+esc(to)+'</b><em class="md">まで</em>':(open?'<b class="mvc-no">移動中…🏁到着を押す</b>':'<b class="mvc-no">（着いた所なし）</b>'))+'</span></span>';
+const dm=(en.e&&!en.noT)?durMin(en.s,en.e,en.ed):0;
+const sum='<span class="mvc-sum">'+esc(trName(tr))+'で'+(dm?' '+esc(durText(dm)):'')+(open?'<i class="mvc-now">移動中</i>':(to?'<i class="mvc-ok">🏁 到着</i>':''))+'</span>';
+return '<span class="mvc">'+top+trk+tm+via+pl+sum+'</span>';}
+function mvNum(i){const N=[...'①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳'];return N[i]||('('+(i+1)+')');}
+function mvViaDots(vias){return (vias||[]).map((v,j,a)=>{const p=Math.round((j+1)/(a.length+1)*1000)/10;return '<i class="mvt-vd" style="left:'+p+'%"></i><i class="mvt-vn" style="left:'+p+'%">'+mvNum(j)+'</i>';}).join('');}
+function mvTripHtml(T,open){try{const ends=x=>String(x.rt||'').split('→').map(z=>z.trim()).filter(Boolean),segs=[];
+T.filter(o=>o.x&&o.x.mv).forEach(o=>{const x=o.x,tr=x.tr||'car',p=ends(x),mm=x.e?durMin(x.s,x.e,(x.ed||x.e<x.s)?1:0):0,l=segs[segs.length-1];
+const from=p[0]||'',to=p.length>1?p[p.length-1]:'',iv=p.slice(1,-1);
+if(l&&l.tr===tr){if(l.to)l.vias.push(l.to);iv.forEach(v=>l.vias.push(v));l.to=to;l.m+=mm;}else segs.push({tr,from,to,m:mm,vias:iv.slice()});});
+if(segs.length<1)return '';
+let vn=0;const V=s=>s.vias.map(v=>({v,n:vn++}));segs.forEach(s=>{s.vv=V(s);});
+const trk='<span class="mvt-trk"><span class="mvt-end mvt-st">🚩</span>'+segs.map((s,i)=>{const g=TR_GD[s.tr]||'road',last=i===segs.length-1,dn=!(open&&last);
+return (i?'<span class="mvt-dot">'+(i)+'</span>':'')+'<span class="mvt-seg"><span class="mvt-gd">'+mvGround(g,0.5,dn,3)+s.vv.map((o,j,a)=>{const p=Math.round((j+1)/(a.length+1)*1000)/10;return '<i class="mvt-vd" style="left:'+p+'%"></i>';}).join('')+'</span><span class="mvt-vh'+(s.tr==='plane'?' mvt-fly':'')+'"><span class="mvc-bob">'+trFace(TRICON[s.tr]||'🚗',s.tr,'h')+'</span></span></span>';}).join('')+'<span class="mvt-end mvt-gl">🏁</span></span>';
+const ls='<span class="mvt-ls"><span class="mvt-p"><i class="mvt-ic">🚩</i><b>'+esc(segs[0].from||'（出発した所なし）')+'</b><em class="kr">から</em></span>'+segs.map((s,i)=>{const last=i===segs.length-1;
+return '<span class="mvt-leg">'+trFace(TRICON[s.tr]||'🚗',s.tr,'v')+' '+esc(trName(s.tr))+'で'+(s.m?' '+esc(durText(s.m)):'')+(s.vv.length?'<small>経由 '+s.vv.map(o=>esc(o.v)).join(' → ')+'</small>':'')+'</span>'+
+(last?'<span class="mvt-p"><i class="mvt-ic">🏁</i>'+(s.to?'<b>'+esc(s.to)+'</b><em class="md">まで</em>':'<b class="mvc-no">移動中…</b>')+'</span>'
+:'<span class="mvt-p"><i class="mvt-num">'+(i+1)+'</i><b>'+esc(s.to||'？')+'</b><em class="tr">乗り換え</em></span>');}).join('')+'</span>';
+return '<span class="mvt"><span class="mvt-h">🗺️ 全体の道のり'+(segs.length>1?'（乗り換え '+(segs.length-1)+'回）':'')+'</span>'+trk+ls+'</span>';}catch(e){return '';}}
+function mvTrAsk(A){try{const x=state.entries[A.d]&&state.entries[A.d][A.k];if(!x||x.del||!x.mv)return;const cur=x.tr||'car',nm=t=>(TRICON[t]||'🚗')+' '+trName(t);
+openSub('<div class="sh-time"><span>🚉 '+esc(A.p)+' から先も '+esc(nm(cur))+'？</span></div><div class="sh-note">途中で乗り物を替えたなら、替えた物を押す</div><div class="sr-r big"><button type="button" class="chip on" data-mta="__keep">✓ そのまま（'+esc(nm(cur))+'）</button></div><div class="sh-note">✕ 変える</div><div class="sr-r">'+TRS.filter(z=>z[0]!==cur).map(z=>'<button type="button" class="chip" data-mta="'+esc(z[0])+'">'+esc(z[1])+'</button>').join('')+'</div>',null);
+$('sheet2').querySelectorAll('[data-mta]').forEach(b=>b.onclick=()=>{const v=b.dataset.mta;closeSub();if(v==='__keep')return;mutate(()=>{const y=state.entries[A.d]&&state.entries[A.d][A.k];if(y&&!y.del){y.tr=v;y.ts=Date.now();}});toast('✓ '+A.p+' から先は '+nm(v));render();});}catch(e){}}
 function pfOfPlace(p,d){try{const k=placeKey(p);if(!k)return null;const T=d||todayStr();for(let i=0;i<4;i++){const eo=(state.entries||{})[addDays(T,-i)]||{};for(const id in eo){const x=eo[id];if(x&&!x.del&&!x.mv&&x.p&&x.pf&&placeKey(x.p)===k)return prefOf(x.pf);}}const pl=(typeof placePf==='function')?placePf(p):0;return pl?prefOf(pl):null;}catch(e){return null;}}
 function mvLinePf(L,en){const n=L.length;return L.map((z,i)=>{if(!en)return null;if(i===0)return prefOf(en.pf0)||pfOfPlace(z)||null;if(i===n-1)return prefOf(en.pf)||(z?pfOfPlace(z):null)||prefOf(en.pf0)||null;return z?pfOfPlace(z):null;});}
 function kHead(en){const k=en&&en.k;if(!k||en.mv)return k||'';const A=Array.isArray(en.acts)?en.acts:[];return A.some(a=>a&&(a.k===k||(Array.isArray(a.kx)&&a.kx.indexOf(k)>=0)))?'':k;}
@@ -4176,9 +4270,9 @@ html+='<button class="hour filled rlrow" data-rlk="'+esc(x.id)+'"><span class="h
 const SG=(!it.rl&&SGM[it.k]&&SGM[it.k]!=='skip')?SGM[it.k]:null,en=SG?SG.v:it.en,rowK=SG?SG.rk:it.k;tlRI.push({sm:it.sm,e:(en&&en.e)||''});
 if((en.mv&&mvOpenOk(ui.date,en))||(!en.mv&&en.k!=='sleep'&&recOpenOk(ui.date,en)))tlOpen.push(tlRS.length-1);
 const dm=(en.e&&!en.noT)?durMin(en.s,en.e,en.ed):0;
-const pill=dm?'<span class="dpill">⏱ '+esc(durText(dm))+'</span>':'';
+const pill=(dm&&!en.mv)?'<span class="dpill">⏱ '+esc(durText(dm))+'</span>':'';
 html+='<button class="hour filled" data-k="'+esc(rowK)+'"><span class="hh">'+(en.noT?'<b style="color:#c3c8d4">—</b>':('<b>'+esc(en.s||(pad(h)+':00'))+'</b>'+(en.e?'<small>'+(en.ed?(en.ed===1?'翌':'+'+en.ed+'日'):'')+esc(en.e)+'</small>':'')))+'</span><div class="body">'+
-pfTag(en)+(en.mv?'<span class="mvbadge">➡ 移動</span>':'')+((ek=>en.mv?'<span class="loc big mvrt" style="color:#4d7dff">'+mvRtHtml(en.rt,TRICON[en.tr]||'🚗',mvOpenOk(ui.date,en),en)+'</span>'+rtcHtml(en)
+(en.mv?'':pfTag(en))+((ek=>en.mv?mvCardHtml(en,mvOpenOk(ui.date,en))+rtcHtml(en)
 :recHead(en,ek).t)(kHead(en)))+
 ((!en.mv&&en.k!=='sleep'&&recOpenOk(ui.date,en)&&!list.some(z=>z.en&&z.en!==en&&!z.en.del&&!z.en.noT&&z.en.s&&z.en.s>en.s))?'<span class="loc" style="color:#e0603c;font-weight:800">⏳ 途中（押して終わりを入れる）</span>':'')+
 recHead(en,kHead(en)).g+pill+(en.md?'<span class="dpill mdp">🕳️ ムダ</span>':'')+actsHtml(en)+(SG?SG.mid.map(m=>'<span class="sg-sub" role="button" data-sgk="'+esc(m.k)+'">🚙 車内 '+esc(m.en.s)+'–'+esc(m.en.e||'')+((m.en.acts&&m.en.acts.length)?'　'+esc(m.en.acts.map(a=>a&&a.t).filter(Boolean).join('・')):'')+(m.en.t?'　💬 '+esc(String(m.en.t).split('\n')[0]).slice(0,40):'')+((m.en.ph&&m.en.ph.length)?'　📷'+m.en.ph.length:'')+'</span>').join(''):'')+
@@ -4570,7 +4664,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c36.8）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c36.9）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -4631,8 +4725,8 @@ sc.scrollTop=Math.max(0,Math.round(sc.scrollTop+(r.bottom-sr.top)-sc.clientHeigh
 
 let sheetSt=null;
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-const TRS=[['car','🚗 車'],['taxi','🚕 タクシー'],['carrier','🚛 積載車'],['shinkansen','🚅 新幹線'],['train','🚆 電車'],['plane','✈️ 飛行機'],['ferry','🚢 フェリー'],['bus','🚌 バス'],['walk','🚶 徒歩']];
-const TRICON={car:'🚗',taxi:'🚕',carrier:'🚛',shinkansen:'🚅',train:'🚆',plane:'✈️',ferry:'🚢',bus:'🚌',walk:'🚶'};
+const TRS=[['car','🚗 車'],['taxi','🚕 タクシー'],['carrier','🚛 積載車'],['shinkansen','🚅 新幹線'],['train','🚈 電車'],['plane','✈️ 飛行機'],['ferry','🚢 フェリー'],['bus','🚌 バス'],['walk','🚶 徒歩']];
+const TRICON={car:'🚗',taxi:'🚕',carrier:'🚛',shinkansen:'🚅',train:'🚈',plane:'✈️',ferry:'🚢',bus:'🚌',walk:'🚶'};
 const MICSVG='<svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>';
 
 let curMic={r:null,btn:null,ta:null};
@@ -5358,7 +5452,7 @@ if(tEd<0&&sheetSt.key!=null&&sheetSt.date!==d0){const o=(state.entries[sheetSt.d
 else (ne.acts||[]).forEach(a=>delete a.sp);}
 });mvJoin.skipOpen=false;if(CUTS.length||actsS.some(a=>a.sp))setTimeout(()=>toast('🔀 記録を分けた'),400);
 const svE=(state.entries[d0]||{})[saveKey],svNo=!!(svE&&!svE.del&&!hitoHas(svE));if(sheetSt){sheetSt.saved=true;if(sheetSt.wr)entDraft(sheetSt.date,null);}
-closeSheet();{const J=(autoMsg.length&&mvJoin.last&&(mvJoin.last.snap.length||mvJoin.last.legs.length))?mvJoin.last:null;if(J)undoBar(autoMsg[0]+(autoMsg.length>1?'　ほか'+(autoMsg.length-1)+'件':''),()=>mvJoinUndo(J),{d:d0,k:saveKey});else if(svNo)undoBar('✓ '+(d0!==ui.date?payMD(d0)+' に':'')+'記録した '+(svE.noT?'':(svE.s||''))+(p?'　'+p:''),null,{d:d0,k:saveKey});else toast(d0!==ui.date?('✓ '+payMD(d0)+' に記録した'):'✓ 記録した');}if(!(sheetSt&&sheetSt.existing))ui._jump=(d0===ui.date&&saveKey)?saveKey:'last';diJumpKick();try{setTimeout(prepAskAfterSave,350);}catch(e){}
+closeSheet();{const J=(autoMsg.length&&mvJoin.last&&(mvJoin.last.snap.length||mvJoin.last.legs.length))?mvJoin.last:null;if(J)undoBar(autoMsg[0]+(autoMsg.length>1?'　ほか'+(autoMsg.length-1)+'件':''),()=>mvJoinUndo(J),{d:d0,k:saveKey});else if(svNo)undoBar('✓ '+(d0!==ui.date?payMD(d0)+' に':'')+'記録した '+(svE.noT?'':(svE.s||''))+(p?'　'+p:''),null,{d:d0,k:saveKey});else toast(d0!==ui.date?('✓ '+payMD(d0)+' に記録した'):'✓ 記録した');if(J&&J.trAsk)setTimeout(()=>mvTrAsk(J.trAsk),400);}if(!(sheetSt&&sheetSt.existing))ui._jump=(d0===ui.date&&saveKey)?saveKey:'last';diJumpKick();try{setTimeout(prepAskAfterSave,350);}catch(e){}
 if(!plAsk(p,pfS,isMv)&&!prev&&d0===todayStr())stepNudge();
 };
 const del=$('shDel');
@@ -7204,7 +7298,7 @@ for(const k in eo){const x=eo[k];if(k===key||!x||x.del||!x.mv||!x.s||!x.e||x.noT
 const p0=pts(x),dst=p0.length>=2?p0[p0.length-1]:'';
 if(dst&&placeKey(dst)===pk){if(xe-S<=60){keep(d,k,x);shift(x,null);x.e=ne.s;delete x.ed;x.ts=now;msg.push('⏱ 移動の終わりを '+ne.s+' に合わせた');}continue;}
 if(E!=null&&!ne.ed&&xe>E){keep(d,k,x);const nk='e'+now+Math.floor(Math.random()*1e4),leg={p:'',t:'',ph:[],s:ne.e,e:x.e,mv:1,rt:ne.p+' → '+dst,tr:x.tr||'car',ts:now,mn:1,mt:'m'};if(x.ed)leg.ed=1;if(ne.pf)leg.pf0=ne.pf;if(x.pf)leg.pf=x.pf;shift(x,leg);
-x.e=ne.s;delete x.ed;x.rt=(p0[0]?p0[0]+' ':'')+'→ '+ne.p;if(ne.pf)x.pf=ne.pf;x.ts=now;eo[nk]=leg;J.legs.push(nk);msg.push('🚗 移動を '+ne.p+' の前後に分けた');}
+x.e=ne.s;delete x.ed;x.rt=(p0[0]?p0[0]+' ':'')+'→ '+ne.p;if(ne.pf)x.pf=ne.pf;x.ts=now;eo[nk]=leg;J.legs.push(nk);J.trAsk={d,k:nk,p:ne.p,tr:leg.tr};msg.push('🚗 移動を '+ne.p+' の前後に分けた');}
 else if(xe-S<=60){keep(d,k,x);shift(x,null);x.e=ne.s;delete x.ed;x.rt=(p0[0]?p0[0]+' ':'')+'→ '+ne.p;if(ne.pf)x.pf=ne.pf;x.ts=now;msg.push('⏱ 移動の終わりを '+ne.s+' に合わせた');}}
  }
 for(const k in eo){const x=eo[k];if(k===key||!x||x.del||x.mv||!x.s||!x.e||x.noT||x.k==='sleep'||nested(x))continue;if(isSt&&x.p&&placeKey(x.p)===pk)continue;const xs=hmMin(x.s),xe=hmMin(x.e)+(x.ed?1440:0);if(xs<S&&xe>S&&xe-S<=60){keep(d,k,x);x.e=ne.s;delete x.ed;x.ts=now;msg.push('⏱ '+(x.p||'前の記録')+' の終わりを '+ne.s+' に合わせた');}}
@@ -7241,7 +7335,7 @@ if(!near(st.x.s,m.e)||!st.x.e||!near(nx.x.s,st.x.e)||durMin(st.x.s,st.x.e,st.x.e
 const L=T[T.length-1].x,vias=T.filter(o=>!o.x.mv).length,dur=L.e?durMin(a.x.s,L.e,(L.ed||L.e<a.x.s)?1:0):0;
 tn++;T.forEach((o,n)=>{o.el.classList.add('trip');if(tn%2===0)o.el.classList.add('trip-alt');if(n===0)o.el.classList.add('trip-s');if(n===T.length-1)o.el.classList.add('trip-e');if(!o.x.mv)o.el.classList.add('trip-via');});
 const SG=[];T.filter(o=>o.x.mv).forEach(o=>{const tr=o.x.tr||'car',mm=o.x.e?durMin(o.x.s,o.x.e,(o.x.ed||o.x.e<o.x.s)?1:0):0,l=SG[SG.length-1];if(l&&l.tr===tr)l.m+=mm;else SG.push({tr,m:mm});});const mixed=SG.length>1;
-{const b=a.el.querySelector('.body');if(b&&!b.querySelector('.trip-tag'))b.insertAdjacentHTML('afterbegin','<span class="trip-tag">'+(mixed?'':esc(TRICON[a.x.tr]||'🚗')+' ')+'出発 '+esc(a.x.s)+' → 🏁 '+(L.e?'到着 '+esc(L.e)+'（'+esc(durText(dur)||'0分')+(mixed?'・乗り換え'+(SG.length-1):'')+(vias?'・経由'+vias:'')+'）':'走行中')+'</span>'+(mixed?'<span class="trip-chain">'+SG.map(s=>'<span class="tc"><i>'+esc(TRICON[s.tr]||'🚗')+'</i><small>'+esc(s.m?durText(s.m):'…')+'</small></span>').join('<span class="tc-to">›</span>')+'</span>':''));}
+{const b=a.el.querySelector('.body');if(b&&!b.querySelector('.trip-tag'))b.insertAdjacentHTML('afterbegin','<span class="trip-tag">'+(mixed?'':trFace(TRICON[a.x.tr]||'🚗',a.x.tr,'h')+' ')+'出発 '+esc(a.x.s)+' → 🏁 '+(L.e?'到着 '+esc(L.e)+'（'+esc(durText(dur)||'0分')+(mixed?'・乗り換え'+(SG.length-1):'')+(vias?'・経由'+vias:'')+'）':'走行中')+'</span>'+(T.filter(o=>o.x.mv).length>=2?mvTripHtml(T,!L.e):(mixed?'<span class="trip-chain">'+SG.map(s=>'<span class="tc"><i>'+trFace(TRICON[s.tr]||'🚗',s.tr,'h')+'</i><small>'+esc(s.m?durText(s.m):'…')+'</small></span>').join('<span class="tc-to">›</span>')+'</span>':'')));}
 T.filter(o=>!o.x.mv).forEach(o=>{const b=o.el.querySelector('.body');if(b&&!b.querySelector('.trip-via-tag'))b.insertAdjacentHTML('afterbegin','<span class="trip-via-tag">⋯ 経由</span>');});
 i=j;}}
 const CK_SL=[['朝',5,10],['昼前',10,12],['昼',12,15],['夕',15,19],['夜',19,29]];
@@ -12046,7 +12140,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c36.8";
+const CL_APPVER="c36.9";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
