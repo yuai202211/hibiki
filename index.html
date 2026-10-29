@@ -4570,7 +4570,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c36.7）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c36.8）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -11685,9 +11685,9 @@ clStore.upd('outbox:'+CL.uid,cur=>{const o={};for(const k in ((cur&&cur.rows)||{
 }
 
 async function clLoadShadow(uid){
-CL.uid=uid;CL.shadowFor=uid;CL.shadow={};CL.seq=0;CL.shadowOk=false;CL.full=null;CL.pushedDuring={};CL.bad={};
+CL.uid=uid;CL.shadowFor=uid;CL.shadow={};CL.skip={};CL.seq=0;CL.shadowOk=false;CL.full=null;CL.pushedDuring={};CL.bad={};
 const rec=await clStore.get('shadow:'+uid);
-if(rec&&rec.ver===CL_SHVER&&rec.uid===uid&&rec.map&&typeof rec.map==='object'&&Number(rec.seq)>0){CL.shadow=rec.map;CL.seq=Number(rec.seq);CL.shadowOk=true;}
+if(rec&&rec.ver===CL_SHVER&&rec.uid===uid&&rec.map&&typeof rec.map==='object'&&Number(rec.seq)>0){CL.shadow=rec.map;CL.skip=(rec.skip&&typeof rec.skip==='object')?rec.skip:{};CL.seq=Number(rec.seq);CL.shadowOk=true;}
 CL.shadowLoadedAt=Date.now();
 if(CL.shadowOk){
 const have=new Set();for(const it of clItems(state))have.add(clKey(it));
@@ -11702,11 +11702,11 @@ if(!CL.uid||!CL.shadowOk||CL.seq<=0)return false;
 if(typeof localSaveFail!=='undefined'&&localSaveFail){
 if(!CL.persistWarned){CL.persistWarned=1;clNote('shadow','端末保存に失敗中のため、影と受信位置は保存しない');}return false;}
 CL.persistWarned=0;
-const uid=CL.uid,map=CL.shadow,seq=CL.seq,loaded=CL.shadowLoadedAt,me=CL.tabId;
+const uid=CL.uid,map=CL.shadow,seq=CL.seq,loaded=CL.shadowLoadedAt,me=CL.tabId,skip=CL.skip||{};
 return clStore.upd('shadow:'+uid,cur=>{
 let m=map,s=seq;
 if(cur&&cur.ver===CL_SHVER&&cur.writer&&cur.writer!==me&&(cur.savedAt||0)>loaded&&cur.map){m={};for(const k in map)if(cur.map[k]===map[k])m[k]=map[k];s=Math.min(seq,Number(cur.seq)||0);}
-return {ver:CL_SHVER,uid,seq:s,map:m,writer:me,savedAt:Date.now()};
+return {ver:CL_SHVER,uid,seq:s,map:m,skip,writer:me,savedAt:Date.now()};
 });
 }
 
@@ -11761,7 +11761,9 @@ return sent;
 
 function clMergeRows(rows,full){
 const tgt=full?CL.full.nsh:CL.shadow,use=[],echo={};
-for(const r of rows){if(!r||!r.coll||!clRowUsable(r))continue;const k=clKey(r),sg=clSigOf({ts:r.ts,data:r.data},true);
+const skp=full?(CL.full.nskip||(CL.full.nskip={})):(CL.skip||(CL.skip={}));
+for(const r of rows){if(r&&r.coll){const k=clKey(r);if(clRowUsable(r))delete skp[k];else skp[k]=Number(r.ts)||0;}
+if(!r||!r.coll||!clRowUsable(r))continue;const k=clKey(r),sg=clSigOf({ts:r.ts,data:r.data},true);
 if(CL.shadowOk&&CL.shadow[k]===sg)echo[k]=1;
 tgt[k]=sg;use.push(r);}
 if(!use.length)return false;
@@ -11797,7 +11799,7 @@ got+=rows.length;
  }
 let fullDone=false;
 if(full){
-CL.shadow=Object.assign(CL.full.nsh,CL.pushedDuring);CL.pushedDuring={};CL.seq=Math.max(CL.seq,since);
+CL.shadow=Object.assign(CL.full.nsh,CL.pushedDuring);CL.skip=CL.full.nskip||{};CL.pushedDuring={};CL.seq=Math.max(CL.seq,since);
 const rb=CL.full.rebuild;CL.full=null;CL.shadowOk=true;fullDone=true;
 clNote('pull','全件受信 完了 '+got+'件'+(rb?'（照合し直し）':''));
 }else if(got)clNote('pull','受信 '+got+'件');
@@ -11840,7 +11842,9 @@ if(CL.mutSeq!==mut||clDirtyCount()>0)return 'skip';
 const srv={};for(const m of String(txt).match(/\{[^{}]*\}/g)||[]){const c=/"coll"\s*:\s*"((?:[^"\\]|\\.)*)"/.exec(m),n=/"n"\s*:\s*(\d+)/.exec(m),t=/"tsum"\s*:\s*(-?\d+)/.exec(m);
 if(c&&n&&t){let name;try{name=JSON.parse('"'+c[1]+'"');}catch(e){name=c[1];}srv[name]={n:Number(n[1]),t:BigInt(t[1])};}}
 const lim=Date.now()+3600000,loc={};
-for(const it of clItems(state)){const k=clKey(it);if(CL.bad[k])continue;const c=loc[it.coll]||(loc[it.coll]={n:0,t:0n});c.n++;c.t+=BigInt(Math.min(clTsOf(it.ts),lim));}
+const haveK=new Set();
+for(const it of clItems(state)){const k=clKey(it);haveK.add(k);if(CL.bad[k])continue;const c=loc[it.coll]||(loc[it.coll]={n:0,t:0n});c.n++;c.t+=BigInt(Math.min(clTsOf(it.ts),lim));}
+for(const k in (CL.skip||{})){if(haveK.has(k))continue;const cn=k.slice(0,k.indexOf('\u0000')),c=loc[cn]||(loc[cn]={n:0,t:0n});c.n++;c.t+=BigInt(Math.min(clTsOf(CL.skip[k]),lim));}
 const bad=[];
 for(const c of new Set(Object.keys(srv).concat(Object.keys(loc)))){if(!CL_COLLS.has(c))continue;const a=srv[c]||{n:0,t:0n},b=loc[c]||{n:0,t:0n};
 if(a.n!==b.n||a.t!==b.t)bad.push(c+'(雲'+a.n+'/端'+b.n+')');}
@@ -12042,7 +12046,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c36.7";
+const CL_APPVER="c36.8";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
