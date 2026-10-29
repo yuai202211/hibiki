@@ -4677,7 +4677,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c37.0）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c37.1）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -5037,7 +5037,7 @@ let ch='',opn=false;if(i!==ri)QG_OPEN='';try{opn=!L.mvMin&&qgOn(q);ch=qOrgHtml(i
 const pk=sel.map(id=>{const z=kindOf(id);return z?z.ic+z.lb:'';}).filter(Boolean).join('・');
 const t=r.querySelector('.ac-t'),l1=r.querySelector('.ac-l1'),l2=r.querySelector('.ac-l2'),tq=r.querySelector('.ac-tq'),tools=document.createElement('div');tools.className='tools';
 [...r.children].forEach(c=>{if(c!==l1&&c!==l2&&c!==tq)tools.appendChild(c);});
-r.innerHTML=(n>1?'<button type="button" class="ix lbl" data-rx="'+i+'" aria-label="この組を消す">✕<small class="bn">消す</small></button>':'')+
+r.innerHTML='<button type="button" class="ix lbl" data-rx="'+i+'" aria-label="この組を消す">✕<small class="bn">消す</small></button>'+
 '<div class="sh-label" style="margin:0 0 4px">🏷️ ここで何をした'+(n>1?' <span class="nth">'+(i+1)+'組目</span>':'')+'<small>押すだけ。いくつでも押せる（もう一度で外す）</small></div>'+
 '<div class="sh-chips">'+ch+(opn?'':'<div class="qsec">'+''+'<button type="button" class="chip ac-qall" data-rall="'+i+'">🏷️ ほか（全部）</button></div>')+'</div>'+
 '<div class="lblrow"'+(i>0?' style="margin-top:8px"':'')+'><div class="sh-label" style="margin:0">💬 コメント</div>'+iosSw(i===0?'hitoSw2u':'hitoSw2u'+i,hitoMust(),'必ず','data-hito="1"','sm')+'</div>'+
@@ -5051,7 +5051,7 @@ r.querySelectorAll('[data-rk]').forEach(b=>b.onclick=()=>{const go=id=>{acRead()
 acRead();const a=acts[i];if(!a)return;const z=[a.k].concat(a.kx||[]).filter(Boolean),id=b.dataset.rk;
 if(id==='meal'&&z.indexOf('mealto')>=0){go('mealto');return;}if(id==='meal'&&z.indexOf('meal')<0){mealAsk(v=>go(v));return;}go(id);});
 r.querySelectorAll('[data-rqg]').forEach(b=>b.onclick=()=>{acRead();const G=b.dataset.rqg;QG_OPEN=(QG_OPEN===G&&sheetSt._qgRi===i)?'':G;sheetSt._qgRi=i;acPaint();});
-{const x=r.querySelector('[data-rx]');if(x)x.onclick=()=>{acRead();acts.splice(i,1);if(sheetSt._qgRi===i){QG_OPEN='';sheetSt._qgRi=null;}else if(sheetSt._qgRi!=null&&i<sheetSt._qgRi)sheetSt._qgRi--;acPaint();};}
+{const x=r.querySelector('[data-rx]');if(x)x.onclick=()=>{acRead();acts.splice(i,1);if(!acts.length)acts.push({t:'',m:0,s:'',e:''});toast('✕ この組を消した（保存で確定）');if(sheetSt._qgRi===i){QG_OPEN='';sheetSt._qgRi=null;}else if(sheetSt._qgRi!=null&&i<sheetSt._qgRi)sheetSt._qgRi--;acPaint();};}
 {const m=r.querySelector('[data-rm]');if(m)m.onclick=()=>{acRead();const a=acts[i];if(!a)return;const u=acUi(a);u.more=!u.more;acPaint();};}
 {const t=r.querySelector('[data-rt]');if(t)t.onclick=()=>{acRead();const a=acts[i];if(!a)return;const u=acUi(a);u.tm=!u.tm;acPaint();};}
 {const al=r.querySelector('[data-rall]');if(al)al.onclick=()=>{acRead();openKindAll((id,d)=>{acRead();const a=acts[i];if(!a)return;acKTog(a,id,d);acPaint();acFocusT(i);},'🏷️ ここで何をした？','分野を押すと中身が出る。押した物を足す（もう一度で外す）');};}
@@ -5408,6 +5408,7 @@ const rt=$('mvRt').value.replace(/\s*→\s*$/,'').trim();
 const isMv=eType==='move';
 acRead();
 acts.forEach(a=>{if(!a.t.trim()&&(a.k||a.d)){const z=kindOf(a.k)||toolOf(a.d);if(z)a.t=(!a.k&&a.d==='_other'&&a.dx)?a.dx:z.lb;}if(!a.t.trim()&&a.ph&&a.ph.length)a.t='写真';});
+acts.forEach(a=>{if(!a.t.trim()&&!a.k&&!a.d&&!a.m&&!(a.c&&a.c.trim())&&!(a.ph&&a.ph.length)&&(!a.s||a.s===tS)&&(!a.e||a.e===tE)){a.s='';a.e='';}});
 {const bad=acts.findIndex(a=>!a.t.trim()&&(a.m||a.s||a.e||a.k||a.d||(a.c&&a.c.trim())));
 if(bad>=0){cMode='list';cPaint();
 try{$('acRows').querySelectorAll('.ac-t')[bad].focus();}catch(e){}
@@ -12203,7 +12204,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c37.0";
+const CL_APPVER="c37.1";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
