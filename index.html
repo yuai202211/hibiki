@@ -4692,7 +4692,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c37.5）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c37.6）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -7533,6 +7533,7 @@ const D=numSums(t,t),inD=incSum('in',t,t),gpD=incSum('gp',t,t);
 const day=[mk('💰','壁まで あと',manY(left)+'（残り'+days+'日）','目標まで、あと'+ttYen(left)+'。残り'+days+'日。'),mk('🎯','1日の目標',manY(per),'1日の目標は'+ttYen(per)+'。'),mk('💴','今日の入金・粗利',manY(inD)+'・'+manY(gpD),'今日の入金は'+ttYen(inD)+'、粗利は'+ttYen(gpD)+'。'),mk('🏦','手元現金',manY(cash),'手元現金は'+ttYen(cash)+'。'),
 mk('📣','DM・投稿・返信',D.dm+'/'+GC.dm+'通・'+D.post+'/'+GC.post+'本・'+D.rep+'件','DMは'+D.dm+'通、投稿は'+D.post+'本、返信は'+D.rep+'件。'),mk('📚','学ぶ',D.learn+'/'+GC.learn+'分','学ぶは'+D.learn+'分。'),mk('💼','商売の時間',H(D.biz)+'h','商売の時間は'+H(D.biz)+'時間。'),mk('🚗','車の行動',D.car+'件','車の行動は'+D.car+'件。'),
 mk('💰','AIで稼ぐ',D.ern+'/2 回','AIで稼ぐは'+D.ern+'回。'),mk('📖','読み物・📒チェックイン',D.rd+'/3・'+D.ck+'/5','読み物は'+D.rd+'回、チェックインは'+D.ck+'回。')];
+try{const pu=tbPlayU(t),pa=tbPlayA(t);day.push(mk('📱','遊び',pu>pa?pu+'/'+pa+'分 超えた':'残り'+(pa-pu)+'分',pu>pa?'遊びは'+(pu-pa)+'分超えた。':'遊びは残り'+(pa-pu)+'分。'));}catch(e){}
 const W=numSums(ws,t),inW=incSum('in',ws,t),gpW=incSum('gp',ws,t);
 const week=[mk('📅','今週',md(ws)+'〜 '+W.n+'日目',md(ws).replace('/','月')+'日からの'+W.n+'日間。'),mk('💴','入金・粗利',manY(inW)+'・'+manY(gpW)+'（目標 '+manY(per*7)+'）','入金は'+ttYen(inW)+'、粗利は'+ttYen(gpW)+'。週の目標は'+ttYen(per*7)+'。'),mk('🏦','手元現金',manY(cash),'手元現金は'+ttYen(cash)+'。'),
 mk('📣','DM・投稿・返信',W.dm+'/35通・'+W.post+'/7本・'+W.rep+'件','DMは'+W.dm+'通、投稿は'+W.post+'本、返信は'+W.rep+'件。'),mk('📚','学ぶ',W.learn+'分','学ぶは'+W.learn+'分。'),mk('💼','商売の時間',H(W.biz)+'h','商売の時間は'+H(W.biz)+'時間。'),mk('🚗','車の行動',W.car+'件','車の行動は'+W.car+'件。'),
@@ -11264,7 +11265,7 @@ return [g1,g2,g3].map(a=>a.join('')).filter(x=>x).join('<i class="gsep" aria-hid
 function gstripBind(el){if(!el)return;
 try{el.querySelectorAll('.gsep').forEach(s=>{const p=s.previousElementSibling,n=s.nextElementSibling,cy=r=>r.top+r.height/2,y=cy(s.getBoundingClientRect());
 s.style.visibility=((p&&Math.abs(cy(p.getBoundingClientRect())-y)>10)||(n&&Math.abs(cy(n.getBoundingClientRect())-y)>10))?'hidden':'';});}catch(e){}el.querySelectorAll('[data-gs]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();const v=b.dataset.gs;if(v==='act')return;if(v==='money')openIncSheet();else if(v==='listen')moneyListen();else if(v==='ttstop'){ttStop();try{render();}catch(e){}try{gstripPaint();}catch(e){}}else if(v==='dep')openDepMini(b.dataset.dep);else if(v==='pln')openTodoPage();else if(v==='earn')openEarnPage();else openDreamSheet(v,null);});}
-function gstripPaint(){try{const el=$('gstrip');if(!el)return;const html=gstripHtml();el.innerHTML=html;el.style.display=html?'':'none';gstripBind(el);
+function gstripPaint(){try{const el=$('gstrip');if(!el)return;const html=gstripHtml();el.innerHTML=html;const onTop=(typeof topView!=='undefined'&&topView==='top')&&!$('page').classList.contains('open')&&!(typeof TT!=='undefined'&&TT.on&&TT.kind);el.style.display=(html&&!onTop)?'':'none';gstripBind(el);
 const pg=$('page');if(pg&&pg.classList.contains('open')){let s=pg.querySelector('.gstrip');const hd=pg.querySelector('.page-head');if(!s&&hd){hd.insertAdjacentHTML('afterend','<div class="gstrip pg"></div>');s=pg.querySelector('.gstrip');}if(s){s.innerHTML=html;s.style.display=html?'':'none';gstripBind(s);}}}catch(e){}}
 (function(){try{const pg=$('page');if(pg&&typeof MutationObserver!=='undefined')new MutationObserver(ms=>{if(ms.some(m=>[...m.addedNodes].some(x=>x.nodeType===1&&(x.classList.contains('page-head')||x.querySelector&&x.querySelector('.page-head')))))gstripPaint();}).observe(pg,{childList:true,subtree:false});}catch(e){}})();
 function navPaint(){try{gstripPaint();}catch(e){}try{scrub.init();scrub.sync();}catch(e){}try{fabPaint();}catch(e){}
@@ -12322,7 +12323,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c37.5";
+const CL_APPVER="c37.6";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
