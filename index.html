@@ -916,7 +916,13 @@ display:flex;flex-direction:column;gap:11px;max-height:94%;overflow-y:auto;
 .nvw{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch}.nvw::-webkit-scrollbar{display:none}
 .nvp{flex:0 0 100%;display:flex;justify-content:space-around;align-items:stretch;scroll-snap-align:start;padding:2px 10px 0;box-sizing:border-box}
 .nav .nb.nbx{visibility:hidden}
-.nvd{display:flex;justify-content:center;gap:6px;padding:2px 0 0}.nvd i{width:6px;height:6px;border-radius:99px;background:#d6dae3;cursor:pointer}.nvd i.on{background:#8a93a6}.nvd{align-items:center}.nvd span{font-size:10px;line-height:1.2;font-weight:800;color:#b3b9c6;cursor:pointer;padding:1px 4px;margin-right:6px}.nvd span:last-child{margin-right:0}.nvd span.on{color:#5b6475}.pl-sub{font-size:12.5px;font-weight:800;color:#8a93a6;margin:0 0 6px}.page-head .padd.tx{width:auto;height:34px;padding:0 14px;border-radius:999px;font-size:13px;font-weight:800;line-height:1;white-space:nowrap}.pinc .chip.incsm{padding:4px 10px;font-size:11.5px}.pent{margin:6px 0 0}
+.nvd{display:flex;justify-content:center;gap:6px;padding:2px 0 0}
+.nvw .nvp+.nvp{display:none}
+.nvd-btn{display:flex;align-items:center;justify-content:center;gap:6px;width:calc(100% - 20px);margin:3px 10px 0;border:0;border-radius:10px;background:#eef1f6;color:#14275a;font-weight:900;font-size:12.5px;padding:5px 8px;font-family:inherit;cursor:pointer;white-space:nowrap;overflow:hidden}.nvd-btn small{font-weight:800;color:#8a93a6;font-size:10.5px;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.hoka-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px}
+.hoka-t{position:relative;border:1.5px solid #e3e8f2;border-radius:14px;padding:12px 6px 10px;text-align:center;font-size:13px;font-weight:900;background:#fff;font-family:inherit;color:#14275a;cursor:pointer;line-height:1.3}
+.hoka-t i{display:block;font-style:normal;font-size:28px;margin-bottom:4px}.hoka-t b{position:absolute;top:6px;right:8px;background:#e24b4a;color:#fff;border-radius:999px;font-size:10px;padding:1px 6px}
+.hoka-t:active{background:#eef1f6}.nvd i{width:6px;height:6px;border-radius:99px;background:#d6dae3;cursor:pointer}.nvd i.on{background:#8a93a6}.nvd{align-items:center}.nvd span{font-size:10px;line-height:1.2;font-weight:800;color:#b3b9c6;cursor:pointer;padding:1px 4px;margin-right:6px}.nvd span:last-child{margin-right:0}.nvd span.on{color:#5b6475}.pl-sub{font-size:12.5px;font-weight:800;color:#8a93a6;margin:0 0 6px}.page-head .padd.tx{width:auto;height:34px;padding:0 14px;border-radius:999px;font-size:13px;font-weight:800;line-height:1;white-space:nowrap}.pinc .chip.incsm{padding:4px 10px;font-size:11.5px}.pent{margin:6px 0 0}
 .actrow .ac-st{display:flex;flex-direction:column;align-items:center;font-size:16px;line-height:1.1;color:#8a93a6}.actrow .ac-st span{font-size:9.5px;font-weight:800}
 .ac-md{display:flex;flex-direction:column;align-items:center;font-size:15px;line-height:1.1;color:#8a93a6;opacity:.55}.ac-md span{font-size:9.5px;font-weight:800}.ac-md.on{opacity:1;color:#e0405a}.act.mdx .a-h::before,.act.mdx .a-x1::before{content:"🕳️ "}.act.mdx{color:#e0405a}.dpill.mdp{background:#ffe9ec;color:#e0405a;margin-left:6px}
 .pjchip.mdchip.on{background:#ffe9ec;color:#e0405a;box-shadow:inset 0 0 0 2px #e0405a}.actrow .ac-st.done{color:#0a9a54}.actrow .ac-st.wip{color:#c2410c}
@@ -2362,7 +2368,7 @@ input.pin,textarea.pin{color:#14181f!important;-webkit-text-fill-color:#14181f!i
 <button class="nb" id="navAna"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>分析</span></button>
 <button class="nb" id="navRtn"><svg viewBox="0 0 24 24"><path d="M4 5.5C4 4.7 4.7 4 5.5 4H11v16H5.5c-.8 0-1.5-.7-1.5-1.5zM20 5.5c0-.8-.7-1.5-1.5-1.5H13v16h5.5c.8 0 1.5-.7 1.5-1.5zM7 8h2M15 8h2M7 11h2M15 11h2"/></svg><span>ルーティン</span><i class="nbdg z" id="navRtnB" style="display:none"></i></button>
 <button class="nb" id="navAim"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2"/></svg><span>今日の1個</span><i class="nbdg z" id="navAimB" style="display:none"></i></button><button class="nb" id="navRule"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 12.5l2.8 2.8L16.5 9"/></svg><span>ルール</span></button><button class="nb" id="navSleep"><svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/></svg><span>睡眠</span></button><button class="nb" id="navPlan"><svg viewBox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg><span>段取り</span></button>
-</div></div><div class="nvd" id="nvd"><i class="on" data-nvp="0"></i><span class="on" data-nvp="0">毎日</span><i data-nvp="1"></i><span data-nvp="1">ほか</span></div><!-- c21.1：1ページ目＝毎日の6つ・2ページ目＝ほか（点の横に文字） -->
+</div></div><div class="nvd" id="nvd"><button type="button" class="nvd-btn" id="hokaBtn">📂 ほか <small>各種・学ぶ・分析・ルーティン・今日の1個・ルール・睡眠・段取り</small> ▴</button></div><!-- c21.1：1ページ目＝毎日の6つ・2ページ目＝ほか（点の横に文字） -->
 </div>
 
 <div class="page" id="page"></div>
@@ -4715,7 +4721,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c38.1）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c38.2）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -11287,6 +11293,11 @@ const navGo=fn=>{gateClear();if($('page').classList.contains('open'))closePage()
 $('navHome').onclick=()=>{closePage();ui.date=todayStr();ui.tab='di';topView='top';render();try{$('scr').scrollTop=0;}catch(e){}};
 $('navDiary').onclick=()=>{closePage();ui.date=todayStr();ui.tab='di';topView='diary';render();scrollToNow();};
 $('navMisc').onclick=()=>{closePage();ui.date=todayStr();ui.tab='di';topView='misc';render();try{$('scr').scrollTop=0;}catch(e){}};
+const HOKA=[['navMisc','📂','各種（記録と設定）',''],['navLearn','🎓','学ぶ',''],['navAna','📊','分析',''],['navRtn','🔁','ルーティン','navRtnB'],['navAim','🎯','今日の1個','navAimB'],['navRule','📏','ルール',''],['navSleep','🌙','睡眠',''],['navPlan','🗓','段取り','']];
+function hokaSheet(){const bd=id=>{const e=id&&$(id);return (e&&e.style.display!=='none'&&String(e.textContent||'').trim())?'<b>'+esc(String(e.textContent).trim())+'</b>':'';};
+openSub('<div class="mvq"><div class="sh-time" style="justify-content:center"><span>📂 ほか</span></div><div class="sh-note">押すとその画面へ</div><div class="hoka-grid">'+HOKA.filter(x=>$(x[0])).map(x=>'<button type="button" class="hoka-t" data-hk="'+x[0]+'">'+bd(x[3])+'<i>'+x[1]+'</i>'+esc(x[2])+'</button>').join('')+'</div><div class="sh-btns" style="margin-top:10px"><button class="delbtn" id="hokaX" style="flex:1">閉じる</button></div></div>',null);
+$('sheet2').querySelectorAll('[data-hk]').forEach(b=>b.onclick=()=>{const id=b.dataset.hk;closeSub();const t=$(id);if(t)t.click();});$('hokaX').onclick=closeSub;}
+{const hb=$('hokaBtn');if(hb)hb.onclick=hokaSheet;}
 $('navPay').onclick=()=>navGo(openPayPage);
 $('navMemo').onclick=()=>navGo(openMemoPage);$('navEarn').onclick=()=>navGo(openEarnPage);$('navLearn').onclick=()=>openLearnSheet();
 $('navRtn').onclick=()=>navGo(openRtnPage);
@@ -12389,7 +12400,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c38.1";
+const CL_APPVER="c38.2";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
