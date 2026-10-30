@@ -1058,6 +1058,11 @@ display:flex;flex-direction:column;gap:11px;max-height:94%;overflow-y:auto;
 .misc-go{display:block;width:100%;margin:10px 0 6px;border:0;border-radius:14px;min-height:50px;background:#eef1f6;color:#14275a;font-weight:900;font-size:15px;font-family:inherit;cursor:pointer;box-shadow:inset 0 0 0 1.5px #d3dbea}
 .misc-ttl{margin-top:4px}
 .num-row.ng b,.num-row.ng span{color:#c0392b}.band-plus{margin-top:8px}.band-gap{margin-top:8px;background:#e0603c!important;box-shadow:0 3px 0 #b3472b!important}
+.rd-face{position:relative;display:inline-block;width:40px;height:40px;vertical-align:middle;flex:0 0 auto}.rd-face>img:first-child{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block;background:#eef1f6}
+.rd-face .rd-lg{position:absolute;right:-8px;bottom:-5px;width:24px;height:24px;border-radius:7px;object-fit:contain;background:#fff;padding:2px;box-sizing:border-box;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+.rd-tab .rd-face{width:46px;height:46px}.rd-tab .ic:has(.rd-face){height:50px;min-height:50px}
+.rd-one .rd-face{width:26px;height:26px;margin-right:4px}.rd-one .rd-face .rd-lg{display:none}
+.rd-nm .rd-face{width:68px;height:68px;float:left;margin:0 12px 8px 0}.rd-nm .rd-face .rd-lg{width:30px;height:30px}.rd-nm::after{content:'';display:block;clear:both}
 .ern-tabs{grid-template-columns:repeat(2,1fr)}.rd-tab.ern-dim{opacity:.55}
 .ern-box{background:#fffbea;border-radius:14px;padding:10px;margin-top:4px}.ern-nm{font-size:17px;font-weight:900}
 .ern-cv{display:inline-block;margin-top:6px;background:#14275a;color:#fff;border-radius:999px;padding:4px 11px;font-size:12.5px;font-weight:800;line-height:1.4}
@@ -4710,7 +4715,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c38.0）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c38.1）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -7515,7 +7520,8 @@ function moneyListen(){const gp=()=>{try{gstripPaint();}catch(e){}};if(TT.kind==
 try{speechSynthesis.getVoices();speechSynthesis.addEventListener('voiceschanged',()=>{try{if(document.getElementById('rdCard')&&!TT.on)render();}catch(e){}});document.addEventListener('visibilitychange',()=>{if(document.hidden||!TT.kind)return;setTimeout(()=>{try{if(TT.on&&!speechSynthesis.speaking&&!speechSynthesis.pending)ttStop(true);render();}catch(e){}},600);});}catch(e){}
 let rdCur=null,rdPop=-1,rdSlotSeen='';
 function rdShort(nm){const m=String(nm||'').match(/^(\S+)\s+(\S{2})/);return m?{ic:m[1],n:m[2]}:{ic:'📖',n:String(nm||'')};}
-function rdIc(it){const b=it&&it.icb;if(b&&b.t)return '<span class="rd-icb'+(b.it?' it':'')+(b.sans?' sans':'')+(b.big?' big':'')+'" style="background:'+esc(b.bg||'#d7141a')+';color:'+esc(b.fg||'#fff')+(b.bd?';box-shadow:inset 0 0 0 1px '+esc(b.bd):'')+'">'+(b.dot?'<i style="background:'+esc(b.dot)+'"></i>':'')+'<span>'+String(b.t).split(/\s+/).map(esc).join('<br>')+'</span></span>';return esc(rdShort(it&&it.nm).ic);}
+function rdIc(it){if(it&&it.ph){return '<span class="rd-face"><img src="'+esc(phUrl(it.ph))+'" alt="" loading="lazy">'+(it.lg?'<img class="rd-lg" src="'+esc(phUrl(it.lg))+'" alt="" loading="lazy">':'')+'</span>';}
+const b=it&&it.icb;if(b&&b.t)return '<span class="rd-icb'+(b.it?' it':'')+(b.sans?' sans':'')+(b.big?' big':'')+'" style="background:'+esc(b.bg||'#d7141a')+';color:'+esc(b.fg||'#fff')+(b.bd?';box-shadow:inset 0 0 0 1px '+esc(b.bd):'')+'">'+(b.dot?'<i style="background:'+esc(b.dot)+'"></i>':'')+'<span>'+String(b.t).split(/\s+/).map(esc).join('<br>')+'</span></span>';return esc(rdShort(it&&it.nm).ic);}
 function rdScrollCard(){setTimeout(()=>{try{const s=$('rdScr');if(s)s.scrollTop=0;const c=$('rdCard'),sc=$('scr');if(c&&sc)sc.scrollTop+=c.getBoundingClientRect().top-sc.getBoundingClientRect().top-8;}catch(e){}},60);}
 function rdHtml(){try{const L=rdItems();if(!L.length)return '';const d=rdDayKey(),sl=rdSlotNow(),D=rdDay(d),dn=!!D[sl],cnt=RD_SL.filter(x=>D[x[0]]).length,ttl=(state.rdtxt&&state.rdtxt.ttl)||'1日3回の読み物';
 const pd=i=>!!D[sl+'#'+i];if(rdSlotSeen!==sl){rdSlotSeen=sl;rdCur=null;}if(rdCur==null||rdCur>=L.length){const f=L.findIndex((x,i)=>!pd(i));rdCur=f<0?0:f;}
@@ -7767,7 +7773,7 @@ if(topView==='diary'){const p=$('pane');if(p)blkAuto(p,'diary',BLK_CFG._diary);}
 function blkMoInit(){if(blkMoInit.d)return;const pg=$('page'),pn=$('pane');if(!pg||!pn)return;blkMoInit.d=1;const mo=new MutationObserver(()=>blkAutoScan());mo.observe(pg,{childList:true,subtree:true});mo.observe(pn,{childList:true});blkInit(pg);blkInit(pn);blkAutoScan();}
 setTimeout(()=>{try{blkMoInit();}catch(e){}},0);
 function dphStrip(ph,key){const L=Array.isArray(ph)?ph.filter(Boolean):[];return '<div class="ck-ph">'+L.slice(0,3).map(id=>'<button type="button" class="ck-phi" data-phv2="'+esc(id)+'" data-phk2="'+esc(key)+'" aria-label="写真を大きく"><img src="'+esc(phUrl(id))+'" alt="" loading="lazy"></button>').join('')+(L.length>3?'<span class="ck-phmore">+'+(L.length-3)+'</span>':'')+'<button type="button" class="ck-phadd" data-dph="'+esc(key)+'">📷 '+(L.length?'足す':'写真を足す')+'</button></div>';}
-function dphAdd(key,pid){mutate(()=>{if(key==='_dream'){state.dream=Object.assign({},state.dream||{},{ph:((state.dream&&state.dream.ph)||[]).concat(pid),ts:Date.now()});}else{const d=(state.dreams||{})[key];if(d&&!d.del){d.ph=(d.ph||[]).concat(pid);d.ts=Date.now();}}});}
+function dphAdd(key,pid){mutate(()=>{phKeep(pid);if(key==='_dream'){state.dream=Object.assign({},state.dream||{},{ph:((state.dream&&state.dream.ph)||[]).concat(pid),ts:Date.now()});}else{const d=(state.dreams||{})[key];if(d&&!d.del){d.ph=(d.ph||[]).concat(pid);d.ts=Date.now();}}});}
 function dphView(id,key){openSub('<div class="mvq"><img class="dph-big" src="'+esc(phUrl(id))+'" alt=""><div class="sh-btns" style="margin-top:10px"><button class="delbtn" id="dphX" style="flex:1">✕ この写真を外す</button><button class="savebtn" id="dphOk" style="flex:1.3">閉じる</button></div></div>',null);
 $('dphOk').onclick=closeSub;$('dphX').onclick=()=>{mutate(()=>{if(key==='_dream'){state.dream=Object.assign({},state.dream||{},{ph:((state.dream&&state.dream.ph)||[]).filter(x=>x!==id),ts:Date.now()});}else{const d=(state.dreams||{})[key];if(d&&!d.del){d.ph=(d.ph||[]).filter(x=>x!==id);d.ts=Date.now();}}});closeSub();toast('写真を外した（写真そのものは残る）');render();};}
 function ckTopHtml(P){const t=todayStr(),GC=goalCfg(),got=incSum('in',GC.from,t),cash=cashLatest(),left=Math.max(0,GC.yen-got-cash),days=goalDays(),per=days?Math.ceil(left/days):left;let h='';const BK=[];const bk=(id,title,html,o)=>{if(html&&String(html).trim())BK.push(Object.assign({id,title,html},o||{}));};
@@ -12383,7 +12389,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c38.0";
+const CL_APPVER="c38.1";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
