@@ -4700,7 +4700,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c37.7）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c37.8）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -7936,9 +7936,9 @@ function mvpArrAsk(){const o=openMove();if(!o)return;const r=mvOpenRow(o),base=h
 openSub('<div class="mvq"><div class="sh-time" style="justify-content:center"><span>🏁 到着？</span></div><div class="sh-note">'+esc(o.en.s)+' に出発'+(r?'・'+esc(r.x.s)+' から止まり中':'')+'。着いた時刻</div>'+mvpTmRow(base,mn)+'<div class="sh-btns"><button class="delbtn" id="mvqN" style="flex:1">いいえ</button><button class="savebtn" id="mvqY" style="flex:1.3">はい、到着</button></div></div>',null);
 mvpBindTm();$('mvqN').onclick=closeSub;$('mvqY').onclick=()=>{const t=mvpT();closeSub();mvpArrPlaceAsk(t);};}
 function mvpArrPlaceAsk(t){const o=openMove();if(!o)return;const r=mvOpenRow(o);const pre=(r&&r.x.p)?r.x.p:'';const L=mvpArrPlaces();const sel=(r&&Array.isArray(r.x.pk))?r.x.pk.slice():[];
-openSub('<div class="mvq"><div class="sh-time" style="justify-content:center"><span>🏁 どこに着いた？</span></div><div class="sh-note">'+esc(t)+' 着。1つ押す＝📍ができる（終わりは次の出発で自動）</div><input type="text" class="pin" id="mvqPin" placeholder="ここに貼り付け（Googleマップ）" value="'+esc(pre)+'" autocomplete="off"><div class="pl">'+L.map(z=>'<button type="button" data-ap="'+esc(z.p)+'"'+(z.plan?' class="plan"':'')+'>'+(z.plan?'📅 ':'')+esc(z.p)+'</button>').join('')+'</div><div id="mvqPl">'+mvpPlHtml('')+'</div><div id="mvqPk">'+mvpPlanHtml(sel)+'</div><div class="sh-btns"><button class="delbtn" id="mvqL" style="flex:1">あとで</button><button class="savebtn" id="mvqY" style="flex:1.3">✓ この場所</button></div></div>',null);
+openSub('<div class="mvq"><div class="sh-time" style="justify-content:center"><span>🏁 どこに着いた？</span></div><div class="sh-note">'+esc(t)+' 着。1つ押す＝📍ができる（終わりは次の出発で自動）</div><input type="text" class="pin" id="mvqPin" placeholder="ここに貼り付け（Googleマップ）" value="'+esc(pre)+'" autocomplete="off"><div class="pl">'+L.filter(z=>z.plan).map(z=>'<button type="button" data-ap="'+esc(z.p)+'" class="plan">📅 '+esc(z.p)+'</button>').join('')+'</div><div id="mvqPl">'+(mvpPflOpen=false,mvpPlHtml('',true))+'</div><div id="mvqPk">'+mvpPlanHtml(sel)+'</div><div class="sh-btns"><button class="delbtn" id="mvqL" style="flex:1">あとで</button><button class="savebtn" id="mvqY" style="flex:1.3">✓ この場所</button></div></div>',null);
 const s2=$('sheet2');s2.querySelectorAll('[data-ap]').forEach(b=>b.onclick=()=>{closeSub();mvpArrive(t,b.dataset.ap,sel);});
-{const w=$('mvqPl');const rp=()=>{w.innerHTML=mvpPlHtml('');mvpPlBind(w,p=>{closeSub();mvpArrive(t,p,sel);},rp);};mvpPlBind(w,p=>{closeSub();mvpArrive(t,p,sel);},rp);}$('mvqL').onclick=()=>{closeSub();mvpArrive(t,'');};$('mvqY').onclick=()=>{const p=($('mvqPin').value||'').trim();closeSub();mvpArrive(t,p,sel);};
+{const w=$('mvqPl');const rp=()=>{w.innerHTML=mvpPlHtml('',true);mvpPlBind(w,p=>{closeSub();mvpArrive(t,p,sel);},rp);};mvpPlBind(w,p=>{closeSub();mvpArrive(t,p,sel);},rp);}$('mvqL').onclick=()=>{closeSub();mvpArrive(t,'');};$('mvqY').onclick=()=>{const p=($('mvqPin').value||'').trim();closeSub();mvpArrive(t,p,sel);};
 {const pw=$('mvqPk');const bp=()=>{pw.querySelectorAll('[data-mpk]').forEach(b=>b.onclick=()=>{const pk=b.dataset.mpk,i=sel.indexOf(pk),q=((state.plans||{})[todayStr()]||{})[pk];if(i>=0)sel.splice(i,1);else{sel.push(pk);const pin=$('mvqPin');if(pin&&!pin.value.trim()&&q&&q.pl)pin.value=q.pl;}pw.innerHTML=mvpPlanHtml(sel);bp();});};bp();}}
 function mvpArrive(t,p,pks){const o=openMove();if(!o)return;const r=mvOpenRow(o),now=Date.now(),J={d:o.d,snap:[{d:o.d,k:o.k,v:JSON.parse(JSON.stringify(o.en))}],legs:[]};
 let at=t;if(r&&r.x.p&&!p){p=r.x.p;at=r.x.s;}
@@ -11285,7 +11285,7 @@ return [g1,g2,g3].map(a=>a.join('')).filter(x=>x).join('<i class="gsep" aria-hid
 function gstripBind(el){if(!el)return;
 try{el.querySelectorAll('.gsep').forEach(s=>{const p=s.previousElementSibling,n=s.nextElementSibling,cy=r=>r.top+r.height/2,y=cy(s.getBoundingClientRect());
 s.style.visibility=((p&&Math.abs(cy(p.getBoundingClientRect())-y)>10)||(n&&Math.abs(cy(n.getBoundingClientRect())-y)>10))?'hidden':'';});}catch(e){}el.querySelectorAll('[data-gs]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();const v=b.dataset.gs;if(v==='act')return;if(v==='money')openIncSheet();else if(v==='listen')moneyListen();else if(v==='ttstop'){ttStop();try{render();}catch(e){}try{gstripPaint();}catch(e){}}else if(v==='dep')openDepMini(b.dataset.dep);else if(v==='pln')openTodoPage();else if(v==='earn')openEarnPage();else openDreamSheet(v,null);});}
-function gstripPaint(){try{const el=$('gstrip');if(!el)return;const html=gstripHtml();el.innerHTML=html;const onTop=(typeof topView!=='undefined'&&topView==='top')&&!$('page').classList.contains('open')&&!(typeof TT!=='undefined'&&TT.on&&TT.kind);el.style.display=(html&&!onTop)?'':'none';gstripBind(el);
+function gstripPaint(){try{const el=$('gstrip');if(!el)return;const tt=(typeof TT!=='undefined'&&TT.on&&TT.kind)?TT.kind:'';const html=tt?(tt==='money'?'<button class="gs gsl on" data-gs="listen">⏸ お金の読み上げを止める</button>':'<button class="gs gsl on" data-gs="ttstop">⏸ 読み上げを止める</button>'):'';el.innerHTML=html;el.style.display=html?'':'none';gstripBind(el);
 const pg=$('page');if(pg&&pg.classList.contains('open')){let s=pg.querySelector('.gstrip');const hd=pg.querySelector('.page-head');if(!s&&hd){hd.insertAdjacentHTML('afterend','<div class="gstrip pg"></div>');s=pg.querySelector('.gstrip');}if(s){s.innerHTML=html;s.style.display=html?'':'none';gstripBind(s);}}}catch(e){}}
 (function(){try{const pg=$('page');if(pg&&typeof MutationObserver!=='undefined')new MutationObserver(ms=>{if(ms.some(m=>[...m.addedNodes].some(x=>x.nodeType===1&&(x.classList.contains('page-head')||x.querySelector&&x.querySelector('.page-head')))))gstripPaint();}).observe(pg,{childList:true,subtree:false});}catch(e){}})();
 function navPaint(){try{gstripPaint();}catch(e){}try{scrub.init();scrub.sync();}catch(e){}try{fabPaint();}catch(e){}
@@ -12343,7 +12343,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c37.7";
+const CL_APPVER="c37.8";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
