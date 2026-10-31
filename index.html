@@ -4392,7 +4392,8 @@ if(!isToday&&R.length>2){const k=R.length-2;
 if(!sugNo('tl|pall')){const mid=R.slice(0,k).map(x=>x.g+x.r).join(''),sgs=mid.match(/<b hidden data-sg="1"><\/b>[\s\S]*?<b hidden data-sg="0"><\/b>/g)||[],nG=(mid.match(/gaprow/g)||[]).length,L=tlRI[k-1]||list[k-1];
 fB='<button class="hour gap tlfold" id="pdFold"><span class="hh">▸</span><div class="body"><span class="gp-l">前の記録 <b>'+k+'</b>件　'+esc((tlRI[0]||list[0]).sm)+'〜'+esc(L.e||(L.en&&L.en.e)||L.sm)+'</span>'+(nG?'<span class="tlf-g">⬜ 空き '+nG+'</span>':'')+'<span class="gp-q">全部 ▾</span></div></button>'+sgs.join('');R=R.slice(k);}
 else fB='<button class="hour gap tlfold" id="pdFold"><span class="hh">▴</span><div class="body"><span class="gp-l">最新だけにする</span></div></button>';}
-try{if(isToday){const eo=state.entries[ui.date]||{};let sk=null,se='';for(const k in eo){const en=eo[k];if(en&&!en.del&&en.k==='sleep'&&en.e&&(!sk||String(en.e)>se)){sk=k;se=String(en.e);}}
+try{if(isToday){const eo=state.entries[ui.date]||{},SL={sleep:1,nap:1};let sk=null,ss='';const take=(k,s)=>{s=String(s||'');if(!sk||s<ss){sk=k;ss=s;}};
+for(const k in eo){const en=eo[k];if(!en||en.del||en.noT)continue;if(SL[en.k]&&en.e)take(k,en.s);for(const a of actsExpand(en.acts)){if(a&&a.e&&[a.k].concat(a.kx||[]).some(x=>SL[x]))take(k,a.s||en.s);}}
 if(sk){const i=R.findIndex(x=>x.r.indexOf('data-k="'+sk+'"')>=0);if(i>=0){const pcH=prepCardHtml();if(pcH){R[i].r+=pcH;prepSkip=true;}}}}}catch(e){}
 const srB=srBarHtml();
 const body=newF?(srB+tail+R.slice().reverse().map(x=>x.r+x.g).join('')+fB+cvB):(cvB+srB+fB+R.map(x=>x.g+x.r).join('')+tail);
@@ -4721,7 +4722,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c38.2）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c38.3）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -10654,7 +10655,7 @@ let best=null;for(const key in C){const c=C[key];if(!best||c.n>best.n||(c.n===be
 return (best&&best.n>=2)?best.p:'';}
 function prepNopHtml(){
 const us=(new Date().getHours()<17)?prepUsual():'';
-return '<div class="prep nop" id="prepCard"><button type="button" class="pq-one" id="pqNew" data-pu="'+esc(us)+'"><b>🌅 今日の行き先を決める</b>'+(us?'<small>（いつもの：📍'+esc(us)+'）</small>':'')+'</button></div>';}
+return '<div class="prep nop" id="prepCard"><button type="button" class="pq-one" id="pqNew" data-pu="'+esc(us)+'"><b>🌅 はじめの一歩：どこで何をする？</b>'+(us?'<small>（いつもの：📍'+esc(us)+'）</small>':'')+'</button></div>';}
 function prepRoute(p){const f=String(p.from||'').trim(),vs=(Array.isArray(p.vias)?p.vias:[]).map(v=>String(v||'').trim()).filter(Boolean);
 return '<span class="pk-rt">'+(f?'<span class="rs fr">'+esc(f)+'</span>':'')+vs.map(v=>'<span class="rs via">'+esc(v)+'</span>').join('')+'<span class="rs to">📍 '+esc(p.to)+'</span></span>';}
 function prepVias(p){return (Array.isArray(p&&p.vias)?p.vias:[]).map(x=>String(x||'').trim()).filter(Boolean);}
@@ -12400,7 +12401,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c38.2";
+const CL_APPVER="c38.3";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
