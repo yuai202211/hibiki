@@ -4727,7 +4727,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c38.9）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c39.0）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -8031,7 +8031,7 @@ if(T.o){const x=A[T.i];if(!x)return;back={k:x.k,kx:x.kx,p:x.p,ntr:x.ntr};
 if(s<=x.s){A.splice(T.i,1);}else{x.e=s;x.m=durMin(x.s,s,0);delete x.ntr;}
 const nr={t:lb,k,s,e:e||'',m:e?durMin(s,e,0):0,mvp:1};if(sp||back.p)nr.p=sp||back.p;if(!e&&back.ntr)nr.ntr=back.ntr;A.push(nr);
 if(e){const cr={t:(kindOf(back.k)||{}).lb||back.k,k:back.k,s:e,e:'',m:0,mvp:1};if(back.kx)cr.kx=back.kx.slice();if(back.p)cr.p=back.p;if(back.ntr)cr.ntr=back.ntr;A.push(cr);}}
-else{const ks=[];A.forEach(a=>{if(!a||a.mvp)return;if(!a.s&&!a.e&&!a.w){a.s=en.s;a.e=s;a.m=durMin(en.s,s,0);ks.push(a.k);}else if(a.s&&!a.e&&a.s<=s){a.e=s;a.m=durMin(a.s,s,0);ks.push(a.k);}});
+else{const ks=[];A.forEach(a=>{if(!a||a.mvp)return;if(!a.s&&!a.e){a.s=en.s;a.e=s;a.m=durMin(en.s,s,0);delete a.w;ks.push(a.k);}else if(a.s&&!a.e&&a.s<=s){a.e=s;a.m=durMin(a.s,s,0);ks.push(a.k);}});
 const nr={t:lb,k,s,e:e||'',m:e?durMin(s,e,0):0};if(sp)nr.p=sp;A.push(nr);
 if(e){const bk=ks.indexOf('rest')>=0?'rest':(ks.find(Boolean)||'rest');A.push({t:(kindOf(bk)||{}).lb||bk,k:bk,s:e,e:'',m:0});}}
 A.sort((a,b)=>String(a&&a.s||'')<String(b&&b.s||'')?-1:String(a&&a.s||'')>String(b&&b.s||'')?1:0);en.ts=Date.now();});
@@ -12438,7 +12438,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c38.9";
+const CL_APPVER="c39.0";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
