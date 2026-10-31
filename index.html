@@ -4722,7 +4722,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c38.3）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c38.4）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -7529,7 +7529,9 @@ let rdCur=null,rdPop=-1,rdSlotSeen='';
 function rdShort(nm){const m=String(nm||'').match(/^(\S+)\s+(\S{2})/);return m?{ic:m[1],n:m[2]}:{ic:'📖',n:String(nm||'')};}
 function rdIc(it){if(it&&it.ph){return '<span class="rd-face"><img src="'+esc(phUrl(it.ph))+'" alt="" loading="lazy">'+(it.lg?'<img class="rd-lg" src="'+esc(phUrl(it.lg))+'" alt="" loading="lazy">':'')+'</span>';}
 const b=it&&it.icb;if(b&&b.t)return '<span class="rd-icb'+(b.it?' it':'')+(b.sans?' sans':'')+(b.big?' big':'')+'" style="background:'+esc(b.bg||'#d7141a')+';color:'+esc(b.fg||'#fff')+(b.bd?';box-shadow:inset 0 0 0 1px '+esc(b.bd):'')+'">'+(b.dot?'<i style="background:'+esc(b.dot)+'"></i>':'')+'<span>'+String(b.t).split(/\s+/).map(esc).join('<br>')+'</span></span>';return esc(rdShort(it&&it.nm).ic);}
-function rdScrollCard(){setTimeout(()=>{try{const s=$('rdScr');if(s)s.scrollTop=0;const c=$('rdCard'),sc=$('scr');if(c&&sc)sc.scrollTop+=c.getBoundingClientRect().top-sc.getBoundingClientRect().top-8;}catch(e){}},60);}
+function scrTopGap(){try{const sc=$('scr'),kt=$('kakuTop');let t=sc.getBoundingClientRect().top;if(kt&&kt.offsetParent)t=Math.max(t,kt.getBoundingClientRect().bottom);return t+8;}catch(e){return 0;}}
+function keepTop(sel,fn){const sc=$('scr');let y0=null;try{const e=document.querySelector(sel);if(e)y0=e.getBoundingClientRect().top;}catch(e){}fn();try{const e=document.querySelector(sel);if(sc&&e&&y0!=null){const d=e.getBoundingClientRect().top-y0;if(Math.abs(d)>1)sc.scrollTop+=d;}}catch(e){}}
+function rdScrollCard(){setTimeout(()=>{try{const s=$('rdScr');if(s)s.scrollTop=0;const c=$('rdCard'),sc=$('scr');if(c&&sc)sc.scrollTop+=c.getBoundingClientRect().top-scrTopGap();}catch(e){}},60);}
 function rdHtml(){try{const L=rdItems();if(!L.length)return '';const d=rdDayKey(),sl=rdSlotNow(),D=rdDay(d),dn=!!D[sl],cnt=RD_SL.filter(x=>D[x[0]]).length,ttl=(state.rdtxt&&state.rdtxt.ttl)||'1日3回の読み物';
 const pd=i=>!!D[sl+'#'+i];if(rdSlotSeen!==sl){rdSlotSeen=sl;rdCur=null;}if(rdCur==null||rdCur>=L.length){const f=L.findIndex((x,i)=>!pd(i));rdCur=f<0?0:f;}
 const it=L[rdCur],all=L.every((x,i)=>pd(i)),left=L.filter((x,i)=>!pd(i)).length,s0=rdShort(it.nm),nx=L.findIndex((x,i)=>i!==rdCur&&!pd(i));
@@ -7549,7 +7551,7 @@ function numDay(d){const o=((state.nmin||{})[d])||{};return o.del?{}:o;}
 function numDone(){return !!numDay(numDayKey())[numSlotNow()];}
 let numWant=false,numCur=0;
 const NUM_NM=['今日','今週','今月'];
-function numScroll(){setTimeout(()=>{try{const c=$('numCard'),sc=$('scr');if(c&&sc)sc.scrollTop+=c.getBoundingClientRect().top-sc.getBoundingClientRect().top-8;}catch(e){}},60);}
+function numScroll(){setTimeout(()=>{try{const c=$('numCard'),sc=$('scr');if(c&&sc)sc.scrollTop+=c.getBoundingClientRect().top-scrTopGap();}catch(e){}},60);}
 function numGate(){try{if(!gateDay()||numDone()||openMove())return false;numWant=true;if(topView!=='top'){topView='top';render();}numScroll();toast('📊 先に数字を見て「全部見た！」');return true;}catch(e){return false;}}
 function numPayMonth(ym){try{return paysOf().filter(p=>String(p.d||'').slice(0,7)===ym).reduce((s,p)=>s+(Number(p.a)||0),0);}catch(e){return 0;}}
 function numSums(s,e){let dm=0,post=0,rep=0,learn=0,biz=0,car=0,ern=0,rd=0,ck=0,n=0;
@@ -7614,9 +7616,9 @@ const end=nDone>=1?'<div class="rd-end">'+iosSw('ernSw',false,'✓ やった！'
 const gate=(ernWant&&!dn)?'<div class="ck-gatebar">💰 1つやって「やった」を押すと、そのまま書ける</div>':'';
 return '<div class="ck-card rd-card ern-card'+(dn?' done':'')+'" id="ernCard"><div class="rd-top"><b>💰 '+esc(sl)+'のAIで稼ぐ</b><span>'+nDone+' / '+L.length+'</span></div>'+slots+
 (dn?'<div class="rd-left">✓ '+esc(sl)+'は済（'+esc(D[sl])+'）。もう1つやるなら下から</div>'+tabs+box:gate+tabs+box+end)+'</div>';}catch(e){return '';}}
-function renderEarnPage(){pageMode='earn';const p=$('page');
+function renderEarnPage(){pageMode='earn';const p=$('page');let y0=0;try{const ob=p.querySelector('.page-body');if(ob&&p.classList.contains('open'))y0=ob.scrollTop;}catch(e){}
 p.innerHTML='<div class="page-head"><button class="bk" id="pgBk">‹ 戻る</button><span class="tt">💰 AIで稼ぐ</span><span style="width:36px"></span></div><div class="page-body">'+ernCardHtml()+'<div class="ern-note">朝＝PCの線・夜＝スマホでもいい線。AIの種類は会話が覚えている。1回に1つやれば「済」</div></div>';
-p.classList.add('open');$('pgBk').onclick=()=>{ernWant=false;closePage();};ernBind(p);}
+p.classList.add('open');$('pgBk').onclick=()=>{ernWant=false;closePage();};ernBind(p);try{const nb=p.querySelector('.page-body');if(nb&&y0)nb.scrollTop=y0;}catch(e){}}
 function ernBind(p){p.querySelectorAll('[data-erni]').forEach(b=>b.onclick=()=>{ernCur=b.dataset.erni;renderEarnPage();});
 {const o=p.querySelector('#ernOne');if(o)o.onclick=ev=>{const it=ernLines().find(x=>x.id===ernCur);if(!it)return;ckBurst(ev.clientX,ev.clientY,'㊞ 済');ernMark(it.id);toast('㊞ '+it.nm+' 済！');renderEarnPage();try{gstripPaint();}catch(e){}};}
 {const sw=p.querySelector('#ernSw'),go=p.querySelector('#ernGo');if(sw&&go){sw.onclick=()=>{const on=!sw.classList.contains('on');iosSet(sw,on);go.disabled=!on;};
@@ -7899,21 +7901,21 @@ pane.querySelectorAll('[data-ckd]').forEach(b=>b.onclick=ev=>{const k=b.dataset.
 {const b=pane.querySelector('#ckEdit');if(b)b.onclick=ckEdit;}
 {const b=pane.querySelector('#ckInc');if(b)b.onclick=()=>openIncSheet();}
 pane.querySelectorAll('[data-ck3]').forEach(b=>b.onclick=ev=>{ckBurst(ev.clientX,ev.clientY,'✓ 完了！');tdComplete(b.dataset.ck3);});{const b=pane.querySelector('#ck3Add');if(b)b.onclick=()=>openTodoPage();}
-pane.querySelectorAll('[data-rdi]').forEach(b=>b.onclick=()=>{const i=+b.dataset.rdi;if(TT.kind==='rd'&&TT.on&&TT.i!==i)ttStop(true);rdCur=i;render();rdScrollCard();});
+pane.querySelectorAll('[data-rdi]').forEach(b=>b.onclick=()=>{const i=+b.dataset.rdi;if(TT.kind==='rd'&&TT.on&&TT.i!==i)ttStop(true);keepTop('#rdCard',()=>{rdCur=i;render();});try{const s=$('rdScr');if(s)s.scrollTop=0;}catch(e){}});
 {const b=pane.querySelector('#rdListen');if(b)b.onclick=()=>rdListen();const m=pane.querySelector('#rdMoney');if(m)m.onclick=()=>moneyListen();
 const pv=pane.querySelector('#rdPrev'),nx=pane.querySelector('#rdNext'),ms=pane.querySelector('#rdMiss');if(pv)pv.onclick=()=>rdSeekPrev();if(nx)nx.onclick=()=>rdSeekNext();if(ms)ms.onclick=()=>{if(TT.miss&&TT.miss.length)rdSeek(TT.miss[0]);};
 pane.querySelectorAll('#rdCard p[data-rdq]').forEach(p=>p.onclick=()=>{if(TT.kind==='rd'&&TT.i===rdCur)rdSeek(rdParaStart(+p.dataset.rdq));});}
 {const o=pane.querySelector('#rdOne');if(o)o.onclick=ev=>{const L=rdItems(),d=rdDayKey(),sl=rdSlotNow(),i=rdCur,s=rdShort((L[i]||{}).nm);ckBurst(ev.clientX,ev.clientY,'㊞ 済');rdPop=i;
-mutate(()=>{state.rdin=state.rdin||{};state.rdin[d]=Object.assign({},rdDay(d),{[sl+'#'+i]:nowHM(),ts:Date.now()});});const D=rdDay(d),nx=L.findIndex((x,k)=>!D[sl+'#'+k]);if(nx>=0)rdCur=nx;toast('㊞ '+s.n+'さん 済！');render();rdScrollCard();};}
+mutate(()=>{state.rdin=state.rdin||{};state.rdin[d]=Object.assign({},rdDay(d),{[sl+'#'+i]:nowHM(),ts:Date.now()});});const D=rdDay(d),nx=L.findIndex((x,k)=>!D[sl+'#'+k]);if(nx>=0)rdCur=nx;toast('㊞ '+s.n+'さん 済！');keepTop('#rdCard',()=>render());};}
 {const sw=pane.querySelector('#rdSw'),go=pane.querySelector('#rdGo');if(sw&&go){sw.onclick=()=>{const on=!sw.classList.contains('on');iosSet(sw,on);go.disabled=!on;};
 go.onclick=ev=>{if(go.disabled)return;const d=rdDayKey(),sl=rdSlotNow();ckBurst(ev.clientX,ev.clientY,'📖 ✓');mutate(()=>{state.rdin=state.rdin||{};state.rdin[d]=Object.assign({},rdDay(d),{[sl]:nowHM(),ts:Date.now()});});toast('📖 '+sl+'の読み物：読んだ');try{localStorage.setItem('hibiki-ckf-o_rd','0');}catch(e){}if(rdWant){rdWant=false;if(!ckGate()&&!numGate()&&!ernGate())setTimeout(()=>openEntrySheet(ui.date,{hour:new Date().getHours(),wr:true}),350);}};}}
 {const mg=pane.querySelector('#miscGo');if(mg)mg.onclick=()=>{topView='misc';render();try{$('scr').scrollTop=0;}catch(e){}};}
 {const bg=pane.querySelector('#bandGap');if(bg)bg.onclick=()=>{topView='diary';render();setTimeout(()=>{try{const g=document.querySelector('#pane .gaprow, #pane .hour.gap');if(g)g.scrollIntoView({block:'center'});}catch(e){}},200);};}
 pane.querySelectorAll('[data-dph]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();const key=b.dataset.dph;wishPick(pid=>{dphAdd(key,pid);toast('📷 写真を足した');render();});});
 pane.querySelectorAll('[data-phv2]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();dphView(b.dataset.phv2,b.dataset.phk2);});
-pane.querySelectorAll('[data-numi]').forEach(b=>b.onclick=()=>{numCur=+b.dataset.numi;render();numScroll();});
+pane.querySelectorAll('[data-numi]').forEach(b=>b.onclick=()=>{keepTop('#numCard',()=>{numCur=+b.dataset.numi;render();});});
 {const l=pane.querySelector('#numListen');if(l)l.onclick=()=>numListen();}
-{const o=pane.querySelector('#numOne');if(o)o.onclick=ev=>{const d=numDayKey(),sl=numSlotNow(),i=numCur;ckBurst(ev.clientX,ev.clientY,'㊞ 済');mutate(()=>{state.nmin=state.nmin||{};state.nmin[d]=Object.assign({},numDay(d),{[sl+'#'+i]:nowHM(),ts:Date.now()});});const D=numDay(d),nx=[0,1,2].find(k=>!D[sl+'#'+k]);if(nx!=null)numCur=nx;toast('㊞ '+NUM_NM[i]+'の数字 済！');render();numScroll();};}
+{const o=pane.querySelector('#numOne');if(o)o.onclick=ev=>{const d=numDayKey(),sl=numSlotNow(),i=numCur;ckBurst(ev.clientX,ev.clientY,'㊞ 済');mutate(()=>{state.nmin=state.nmin||{};state.nmin[d]=Object.assign({},numDay(d),{[sl+'#'+i]:nowHM(),ts:Date.now()});});const D=numDay(d),nx=[0,1,2].find(k=>!D[sl+'#'+k]);if(nx!=null)numCur=nx;toast('㊞ '+NUM_NM[i]+'の数字 済！');keepTop('#numCard',()=>render());};}
 {const sw=pane.querySelector('#numSw'),go=pane.querySelector('#numGo');if(sw&&go){sw.onclick=()=>{const on=!sw.classList.contains('on');iosSet(sw,on);go.disabled=!on;};
 go.onclick=ev=>{if(go.disabled)return;const d=numDayKey(),sl=numSlotNow();ckBurst(ev.clientX,ev.clientY,'📊 ✓');mutate(()=>{state.nmin=state.nmin||{};state.nmin[d]=Object.assign({},numDay(d),{[sl]:nowHM(),ts:Date.now()});});toast('📊 '+sl+'の数字：見た');try{localStorage.setItem('hibiki-ckf-o_num','0');}catch(e){}if(numWant){numWant=false;if(!ckGate()&&!rdGate()&&!ernGate())setTimeout(()=>openEntrySheet(ui.date,{hour:new Date().getHours(),wr:true}),350);}};}}
 {const b=pane.querySelector('#ckGo');if(b)b.onclick=ev=>{if(ckDone()){if(ckWant){ckWant=false;if(!rdGate()&&!numGate()&&!ernGate())openEntrySheet(ui.date,{hour:new Date().getHours(),wr:true});}return;}ckBurst(ev.clientX,ev.clientY,'📒 ✓');ckDo();if(ckWant){ckWant=false;if(!rdGate()&&!numGate()&&!ernGate())setTimeout(()=>openEntrySheet(ui.date,{hour:new Date().getHours(),wr:true}),350);}};}}
@@ -12401,7 +12403,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c38.3";
+const CL_APPVER="c38.4";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
