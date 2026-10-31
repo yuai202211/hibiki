@@ -4734,7 +4734,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c39.3）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c39.4）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -5594,11 +5594,11 @@ mutate(()=>{x.done=false;delete x.rk;delete x.lk;x.ts=Date.now();if(en){if(plain
 try{if(ui.tab==='di')render();}catch(e){}
 undoBar('↩ 予定『'+o.t+'』を未完了に戻した'+(plain?'（予定から作った記録も消した）':(en?'（日記の記録は残した）':'')),()=>{mutate(()=>{P[k]=Object.assign({},o,{ts:Date.now()});if(ek&&oe)E[ek]=Object.assign({},oe,{ts:Date.now()});});plnAfter();try{if(ui.tab==='di')render();}catch(e){}});}
 function plnNewRec(d,k){const x=((state.plans||{})[d]||{})[k];if(!x||x.done)return;const T=todayStr(),s=x.hh||(d===T?plnNow():'12:00'),ek='e'+Date.now()+Math.floor(Math.random()*1e4);
-let e=x.e||((x.hh&&x.mm)?hmAdd(x.hh,x.mm):null);if(e&&!(hmMin(e)>hmMin(s)&&(d<T||hmMin(e)<=hmMin(plnNow()))))e=null;
-if(e){const nx=Object.values(entriesOf(d)).filter(z=>z&&!z.del&&!z.noT&&z.s&&hmMin(z.s)>hmMin(s)).map(z=>hmMin(z.s)).sort((p,q)=>p-q)[0];if(nx!=null&&hmMin(e)>nx)e=pad(Math.floor(nx/60))+':'+pad(nx%60);}
-const pEnd=x.e||((x.hh&&x.mm)?hmAdd(x.hh,x.mm):null),pEndFut=!!(pEnd&&d===T&&(hmMin(pEnd)>hmMin(plnNow())||hmMin(pEnd)<=hmMin(s)));
+let e=x.e||((x.hh&&x.mm)?hmAdd(x.hh,x.mm):null),eD=0;if(e&&hmMin(e)<=hmMin(s)){eD=1;const d1=addDays(d,1);if(!(d1<T||(d1===T&&hmMin(e)<=hmMin(plnNow()))))e=null;}else if(e&&!(hmMin(e)>hmMin(s)&&(d<T||hmMin(e)<=hmMin(plnNow()))))e=null;
+if(e){const nx=Object.values(entriesOf(d)).filter(z=>z&&!z.del&&!z.noT&&z.s&&hmMin(z.s)>hmMin(s)).map(z=>hmMin(z.s)).sort((p,q)=>p-q)[0];if(nx!=null&&hmMin(e)+(eD?1440:0)>nx){e=pad(Math.floor(nx/60))+':'+pad(nx%60);eD=0;}}
+const pEnd=x.e||((x.hh&&x.mm)?hmAdd(x.hh,x.mm):null),pEndFut=!!(pEnd&&((d===T&&(hmMin(pEnd)>hmMin(plnNow())||hmMin(pEnd)<=hmMin(s)))||(addDays(d,1)===T&&hmMin(pEnd)<=hmMin(s)&&hmMin(pEnd)>hmMin(plnNow()))));
 const pe=!e&&!pEndFut&&(d<T||!!(x.hh&&x.hh<plnNow()));
-const plnAutoMsg=[];mutate(()=>{state.entries[d]=state.entries[d]||{};const ne={p:x.pl||'',t:'',ph:[],s,ts:Date.now(),mn:1,mt:'s',pln:1,plk:k};if(e){ne.e=e;ne.e0=e;}else ne.e0='';if(pe)ne.pe=1;state.entries[d][ek]=ne;x.done=true;x.rk=ek;x.ts=Date.now();try{mvJoin(d,ek,ne,false,plnAutoMsg);}catch(e){}});const plnJ=(plnAutoMsg.length&&mvJoin.last&&(mvJoin.last.snap.length||mvJoin.last.legs.length))?mvJoin.last:null;plnAfter();
+const plnAutoMsg=[];mutate(()=>{state.entries[d]=state.entries[d]||{};const ne={p:x.pl||'',t:'',ph:[],s,ts:Date.now(),mn:1,mt:'s',pln:1,plk:k};if(e){ne.e=e;ne.e0=e;if(eD)ne.ed=1;}else ne.e0='';if(pe)ne.pe=1;state.entries[d][ek]=ne;x.done=true;x.rk=ek;x.ts=Date.now();try{mvJoin(d,ek,ne,false,plnAutoMsg);}catch(e){}});const plnJ=(plnAutoMsg.length&&mvJoin.last&&(mvJoin.last.snap.length||mvJoin.last.legs.length))?mvJoin.last:null;plnAfter();
 undoBar((e?('✓ '+s+'–'+e+' に日記の記録を作った'):('✓ '+s+' に日記の記録を作った（終わりは'+(pe?'日記で入れる':'後で')+'）'))+(plnAutoMsg.length?'　'+plnAutoMsg[0]:''),()=>{if(plnJ)mvJoinUndo(plnJ);mutate(()=>{const en=(state.entries[d]||{})[ek];if(en)en.del=1;x.done=false;delete x.rk;x.ts=Date.now();});plnAfter();},{d,k:ek});}
 function plnRecLabel(en){return en.mv?('🚗 移動中（'+String(en.rt||'')+'）'):('📍 '+(en.p||((kindOf(en.k)||{}).lb)||'場所なし'));}
 function plnAskHtml(d,k,x,r,inSheet){const tt=(x.hh?esc(x.hh)+' の':'')+'予定『'+esc(x.t)+'』';let kind,msg;
@@ -7366,7 +7366,7 @@ mutate(()=>{const en=state.entries[o.d][o.k];en.e=e;if(ed)en.ed=ed;else delete e
 const mn=durMin(o.en.s,e,ed);
 const ct=setTimeout(()=>{try{if(!condToday())openSub('<div class="sh-time"><span>☀ 今日の体調は？</span></div><div class="sr-r big">'+Object.keys(COND).map(k=>'<button class="chip" data-cq="'+k+'">'+COND[k][0]+' '+COND[k][1]+'</button>').join('')+'</div><div class="sh-btns"><button class="delbtn" id="cqNo">あとで</button></div>',null);
 const S=$('sheet2');S.querySelectorAll('[data-cq]').forEach(b=>b.onclick=()=>{closeSub();condSet(b.dataset.cq);});{const x=$('cqNo');if(x)x.onclick=closeSub;}}catch(e){}},2200);
-undoBar('✓ ☀ おはよう。睡眠 '+durText(mn)+(mn>=SLEEP_MIN?' ✅':' 😵 7時間未満')+((o.d===todayStr()&&o.en.s>=SLEEP_BED&&o.en.s<'11:00')?'　🦉 '+SLEEP_BED+'すぎに就寝':''),()=>{clearTimeout(ct);ubBack(sn,'[data-cq]')();},{d:o.d,k:o.k});
+undoBar('✓ ☀ おはよう。睡眠 '+durText(mn)+(mn>=SLEEP_MIN?' ✅':' 😵 7時間未満')+((o.d===todayStr()&&lateBed(o.en.s))?'　🦉 '+SLEEP_BED+'すぎに就寝':''),()=>{clearTimeout(ct);ubBack(sn,'[data-cq]')();},{d:o.d,k:o.k});
 }
 function placeBefore(date,hm){const eo=state.entries[date]||{};let bestM='',bestV='';
 for(const k in eo){const en=eo[k];if(!en||en.del)continue;
@@ -7967,9 +7967,11 @@ function mvpPlHtml(cur,fold){if(mvpPfl!=='ot'&&!plGroups().some(x=>x.g===mvpPfl)
 if(fold&&!mvpPflOpen)return '<div class="pfflt mvpfl" data-fold="1">'+pflBtns('').replace('<button data-pfl="_ed" class="pf-ed">✎ 編集</button>','')+'</div>';
 return '<div class="pfflt mvpfl"'+(fold?' data-fold="1"':'')+'>'+pflBtns(mvpPfl).replace('<button data-pfl="_ed" class="pf-ed">✎ 編集</button>','')+'</div><div class="ks mvpl">'+(L.length?L.map(p=>'<button type="button" data-mpl="'+esc(p)+'"'+(cur===p?' class="on"':'')+'>'+esc(p)+'</button>').join(''):'<span class="sh-note">この県の場所はまだ無い</span>')+'</div>';}
 function mvpPlBind(host,pick,repaint){host.querySelectorAll('.mvpfl [data-pfl]').forEach(b=>b.onclick=()=>{const g=b.dataset.pfl;if(b.closest('[data-fold]')&&mvpPfl===g&&mvpPflOpen){mvpPflOpen=false;repaint();return;}mvpPflOpen=true;mvpPfl=g;try{localStorage.setItem('hibiki-mvp-pfl',mvpPfl);}catch(e){}repaint();});host.querySelectorAll('[data-mpl]').forEach(b=>b.onclick=()=>pick(b.dataset.mpl));}
-function mvpTmRow(base,min){min=min-1;let mn=min;if(min>base){if(min-base<720)base=min;else mn=0;}return '<div class="tmrow"><button type="button" data-tma="-1" aria-label="5分前">－</button><input type="time" id="mvqT" class="tmi" lang="ja-JP" data-m="'+base+'" data-min="'+mn+'" value="'+hmOf(base)+'" aria-label="時刻（押すと手で入れられる）"><button type="button" data-tma="1" aria-label="5分後">＋</button></div>';}
-function mvpBindTm(){const s2=$('sheet2'),T=$('mvqT');if(!s2||!T)return;s2.querySelectorAll('[data-tma]').forEach(b=>b.onclick=()=>{const m0=Number(T.dataset.m),dir=Number(b.dataset.tma),r=((m0%5)+5)%5;let m=dir<0?(r?m0-r:m0-5):(r?m0+5-r:m0+5);const mn=Number(T.dataset.min),mx=hmMin(nowHM());if(m<mn)m=mn;if(m>mx)m=mx;T.dataset.m=m;T.value=hmOf(m);});T.onchange=()=>{if(!/^\d\d:\d\d$/.test(T.value)){T.value=hmOf(Number(T.dataset.m));return;}let m=hmMin(T.value);const mn=Number(T.dataset.min),mx=hmMin(nowHM());if(m<mn)m=mn;if(m>mx)m=mx;T.dataset.m=m;T.value=hmOf(m);};}
-function mvpT(){const T=$('mvqT');if(!T)return nowHM();if(/^\d\d:\d\d$/.test(T.value)){let m=hmMin(T.value);const mn=Number(T.dataset.min),mx=hmMin(nowHM());if(m<mn)m=mn;if(m>mx)m=mx;return hmOf(m);}return hmOf(Number(T.dataset.m));}
+function mvpTmRow(base,min){min=min-1;let mn=min,cx=0;if(min>base){if(min-base<720)base=min;else{cx=1;base+=1440;}}return '<div class="tmrow"><button type="button" data-tma="-1" aria-label="5分前">－</button><input type="time" id="mvqT" class="tmi" lang="ja-JP" data-m="'+base+'" data-min="'+mn+'" data-x="'+cx+'" value="'+hmOf(base)+'" aria-label="時刻（押すと手で入れられる）"><button type="button" data-tma="1" aria-label="5分後">＋</button></div>';}
+function mvpTmMx(T){return hmMin(nowHM())+(T&&T.dataset.x==='1'?1440:0);}
+function mvpTmIn(T,v){let m=hmMin(v);if(T.dataset.x==='1'&&m<=hmMin(nowHM()))m+=1440;return m;}
+function mvpBindTm(){const s2=$('sheet2'),T=$('mvqT');if(!s2||!T)return;s2.querySelectorAll('[data-tma]').forEach(b=>b.onclick=()=>{const m0=Number(T.dataset.m),dir=Number(b.dataset.tma),r=((m0%5)+5)%5;let m=dir<0?(r?m0-r:m0-5):(r?m0+5-r:m0+5);const mn=Number(T.dataset.min),mx=mvpTmMx(T);if(m<mn)m=mn;if(m>mx)m=mx;T.dataset.m=m;T.value=hmOf(m);});T.onchange=()=>{if(!/^\d\d:\d\d$/.test(T.value)){T.value=hmOf(Number(T.dataset.m));return;}let m=mvpTmIn(T,T.value);const mn=Number(T.dataset.min),mx=mvpTmMx(T);if(m<mn)m=mn;if(m>mx)m=mx;T.dataset.m=m;T.value=hmOf(m);};}
+function mvpT(){const T=$('mvqT');if(!T)return nowHM();if(/^\d\d:\d\d$/.test(T.value)){let m=mvpTmIn(T,T.value);const mn=Number(T.dataset.min),mx=mvpTmMx(T);if(m<mn)m=mn;if(m>mx)m=mx;return hmOf(m);}return hmOf(Number(T.dataset.m));}
 function mvpDayOf(o,hm){const dT=todayStr();return (o.d<dT&&hm<o.en.s)?dT:o.d;}
 function mvpStopNow(){const o=openMove();if(!o||mvOpenRow(o))return;const sn=ubSnap(o.d,o.k);mvPauseStart('rest');const r=mvOpenRow(openMove()||o);undoBar('☕ '+(r?r.x.s:nowHM())+' から止まっている',ubBack(sn),{d:o.d,k:o.k});render();}
 function mvpRowSet(fn){const o=openMove(),r=o&&mvOpenRow(o);if(!r)return;mutate(()=>{const en=state.entries[o.d][o.k];const x=(en.acts||[])[r.i];if(x&&x.mvp){fn(x);en.ts=Date.now();}});}
@@ -8388,7 +8390,7 @@ function tdPlace(id){const x=(state.todos||{})[id];if(!x)return;mutate(()=>{tdUn
 for(const k in eo){const en=eo[k];if(!en||en.del||en.mv||!en.s||en.noT)continue;const a=hmMin(en.s);let b=en.e?hmMin(en.e)+(Number(en.ed)||0)*1440:a+1440;if(en.e&&b<=a)b+=1440;if(a<=s&&s<b&&(!host||en.s>host.en.s))host={k,en};}
 const row={t:x.t,m:durMin(x.s,x.e,0),s:x.s,e:x.e,td:id};if(x.c)row.c=x.c;if(x.k)row.k=x.k;if(x.done){row.st='done';row.dn=x.dn||todayStr();}
 if(host){host.en.acts=Array.isArray(host.en.acts)?host.en.acts.filter(a=>a&&(String(a.t||'').trim()||a.k)):[];host.en.acts.push(row);host.en.acts=actsSort(host.en.acts,host.en.s);host.en.ts=Date.now();}
-else{const key='e'+Date.now()+Math.floor(Math.random()*1e4);eo[key]={p:'',t:'',ph:[],s:x.s,e:x.e,acts:[row],tdo:1,ts:Date.now()};}});}
+else{const key='e'+Date.now()+Math.floor(Math.random()*1e4);eo[key]={p:'',t:'',ph:[],s:x.s,e:x.e,acts:[row],tdo:1,ts:Date.now()};if(hmMin(x.e)<=hmMin(x.s))eo[key].ed=1;}});}
 function tdNagara(id){const r=tdRowOf(id);if(!r)return false;if(r.en.mv)return true;const a=r.a;if(!a.s||!a.e)return false;const s=hmMin(a.s),e=hmMin(a.e)+(a.e<=a.s?1440:0);const eo=state.entries[r.d]||{};
 for(const k in eo){const en=eo[k];if(!en||en.del)continue;if(k!==r.k&&en.mv&&en.s&&en.e){const es=hmMin(en.s);let ee=hmMin(en.e)+(Number(en.ed)||0)*1440;if(ee<=es)ee+=1440;if(es<e&&s<ee)return true;}
 (en.acts||[]).forEach((b,j)=>{});for(let j=0;j<(en.acts||[]).length;j++){if(k===r.k&&j===r.i)continue;const b=en.acts[j];if(!b||!b.s||!b.e)continue;const bs=hmMin(b.s);let be=hmMin(b.e);if(be<=bs)be+=1440;if(bs<e&&s<be)return true;}}return false;}
@@ -8937,6 +8939,7 @@ setTimeout(()=>{if(sheetSt&&sheetSt.frFocus)sheetSt.frFocus();},250);
 }
 
 let SLEEP_BED='02:00',SLEEP_MIN=420,SLEEP_WAKE='09:00';
+function lateBed(s){if(!s)return false;const b=hmMin(SLEEP_BED),m=hmMin(s);return b>=720?(m>=b||m<660):(m>=b&&m<660);}
 function alarmCfg(){const a=(typeof state!=='undefined'&&state&&state.alarm)||{};const ok=v=>/^\d\d:\d\d$/.test(String(v||''));
 const o={bath:ok(a.bath)?a.bath:'22:00',bed:ok(a.bed)?a.bed:'02:00',wake:ok(a.wake)?a.wake:'09:00',meal:(ok(a.meal)&&!(a.meal==='00:00'&&!a.m21))?a.meal:'21:00',nap:Math.max(5,Math.min(240,Number(a.nap)||30)),j1s:ok(a.j1s)?a.j1s:'06:30',j1e:ok(a.j1e)?a.j1e:'10:00',j2s:ok(a.j2s)?a.j2s:'16:30',j2e:ok(a.j2e)?a.j2e:'20:00'};
 SLEEP_BED=o.bed;SLEEP_WAKE=o.wake;return o;}
@@ -9081,7 +9084,7 @@ const flags=[];
 if(morning.length>=2)flags.push('🔁 二度寝'+(morning.length>2?'×'+(morning.length-1):''));
 if(lastWake&&lastWake>'10:00')flags.push('⏰ 寝坊');
 else if(lastWake&&lastWake>SLEEP_WAKE)flags.push('☀ 9時すぎ');
-if(main.date===wd&&main.s>=SLEEP_BED&&main.s<'11:00')flags.push('🦉 夜更かし');
+if(main.date===wd&&lateBed(main.s))flags.push('🦉 夜更かし');
 if(ss.some(x=>x.date===wd&&x.s>='11:00'&&x.s<'20:00'))flags.push('💤 昼寝');
 if(total>SLEEP_MAX8)flags.push('😪 寝すぎ');
 if(total<420)flags.push('😵 寝不足');
@@ -10121,13 +10124,13 @@ function tbMore(id){const b=(state.tbox||{})[id];if(!b||b.st!=='run')return;cons
 const tbDel=id=>{mutate(()=>{state.tbox[id]=Object.assign({},state.tbox[id],{del:1,ts:Date.now()});});toast('外した');};
 function openTbAt(tid){const x=tdAll().find(y=>y.id===tid);if(!x)return;const t=todayStr();let m=50;
 if(tbN(t,['run','done','plan'])>=3){toast('今日は3箱まで');return;}
-const n=new Date(),d0=Math.min(1435,Math.ceil((n.getHours()*60+n.getMinutes()+10)/5)*5);
-openSub('<div class="sh-time"><span>⏰ 時刻に置く</span></div><div class="sh-note" style="text-align:left">'+TB_DR[TB_DREAM]+' '+esc(x.t)+'</div><input type="time" id="tbAtIn" value="'+prepHM(d0)+'" style="width:100%;box-sizing:border-box;font:inherit;font-size:16px;padding:10px;border-radius:12px;border:1px solid var(--line)"><div style="display:flex;gap:6px;margin:8px 0"><button class="chip sel" data-tbm="50">50分</button><button class="chip" data-tbm="25">25分</button></div><div class="sh-btns"><button class="delbtn" id="tbAtNo" style="flex:1">閉じる</button><button class="savebtn" id="tbAtGo">置く</button></div>',null);
+const n=new Date(),d0=Math.ceil((n.getHours()*60+n.getMinutes()+10)/5)*5;
+openSub('<div class="sh-time"><span>⏰ 時刻に置く</span></div><div class="sh-note" style="text-align:left">'+TB_DR[TB_DREAM]+' '+esc(x.t)+'</div><input type="time" id="tbAtIn" value="'+hmOf(d0)+'" style="width:100%;box-sizing:border-box;font:inherit;font-size:16px;padding:10px;border-radius:12px;border:1px solid var(--line)"><div style="display:flex;gap:6px;margin:8px 0"><button class="chip sel" data-tbm="50">50分</button><button class="chip" data-tbm="25">25分</button></div><div class="sh-btns"><button class="delbtn" id="tbAtNo" style="flex:1">閉じる</button><button class="savebtn" id="tbAtGo">置く</button></div>',null);
 const S=$('sheet2');S.querySelectorAll('[data-tbm]').forEach(b=>b.onclick=()=>{m=Number(b.dataset.tbm);S.querySelectorAll('[data-tbm]').forEach(c=>c.classList.toggle('sel',c===b));});
 $('tbAtNo').onclick=()=>closeSub();
-$('tbAtGo').onclick=()=>{const v=$('tbAtIn').value;if(!/^\d\d:\d\d$/.test(v))return;if(hmMin(v)<=hmMin(nowMin())){toast('今より後の時刻にして');return;}
-if(tbN(t,['run','done','plan'])>=3){toast('今日は3箱まで');return;}
-const id='tb'+Date.now().toString(36)+Math.floor(Math.random()*1e3);mutate(()=>{state.tbox=state.tbox||{};state.tbox[id]={d:t,tid:x.id,t:x.t,dream:TB_DREAM,min:m,at:v,st:'plan',ts:Date.now()};});closeSub();toast('⏰ '+v+' に置いた');};}
+$('tbAtGo').onclick=()=>{const v=$('tbAtIn').value;if(!/^\d\d:\d\d$/.test(v))return;const df=hmMin(nowMin())-hmMin(v);if(df>=0&&df<720){toast('今より後の時刻にして');return;}const t=df>=720?addDays(todayStr(),1):todayStr();
+if(tbN(t,['run','done','plan'])>=3){toast((t===todayStr()?'今日':'明日')+'は3箱まで');return;}
+const id='tb'+Date.now().toString(36)+Math.floor(Math.random()*1e3);mutate(()=>{state.tbox=state.tbox||{};state.tbox[id]={d:t,tid:x.id,t:x.t,dream:TB_DREAM,min:m,at:v,st:'plan',ts:Date.now()};});closeSub();toast('⏰ '+(t===todayStr()?'':'明日 ')+v+' に置いた');};}
 function openTbPlan(id){const b=(state.tbox||{})[id];if(!b||b.st!=='plan')return;let arm=0;
 openSub('<div class="sh-time"><span>⏰ '+esc(b.at)+' の箱</span></div><div class="sh-note" style="text-align:left">'+TB_DR[b.dream]+' '+esc(b.t)+'（'+b.min+'分）</div><div class="sh-btns"><button class="delbtn" id="tbPx">外す</button><button class="savebtn" id="tbPs">▶ 今から始める</button></div><div class="sh-btns"><button class="delbtn" id="tbPc" style="flex:1">閉じる</button></div>',null);
 $('tbPs').onclick=()=>{closeSub();tbStart(b.tid,b.dream,b.min,id);};$('tbPc').onclick=()=>closeSub();
@@ -11282,7 +11285,7 @@ $('dpOk').onclick=()=>{
 if(!/^\d\d:\d\d$/.test(S.at||'')){needMark($('dpAt'));toast('出発の時刻を入れてくれ（赤い所）');return;}
 const c0=cur();if(!c0.to){needMark(document.querySelector('#dpPts [data-f="t"]')||document.querySelector('[data-f="t"]'));toast('行き先を入れてくれ（赤い所）');return;}
 const c=calc();let d=dd;
-if(!ok0&&hmMin(S.at)<depNowMin()&&hmMin(S.at)<360&&depNowMin()>=1080)d=addDays(td,1);
+if(!ok0&&hmMin(S.at)<depNowMin()&&depNowMin()>=1080&&(hmMin(S.at)<360||depNowMin()-hmMin(S.at)>=180))d=addDays(td,1);
 const nid=ok0?id:('dp'+Date.now().toString(36)+Math.floor(Math.random()*1e4).toString(36));
 const rec={d,at:S.at,from:c0.from,vias:c0.vias,to:c0.to,pf:S.pf||0,tr:S.tr,memo:String(S.memo||'').trim().slice(0,60),done:0,cr:ok0?(Number(old.cr)||Date.now()):Date.now(),ts:Date.now()};
 mutate(()=>{state.dep=state.dep||{};state.dep[nid]=rec;
@@ -12455,7 +12458,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c39.3";
+const CL_APPVER="c39.4";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
