@@ -4723,7 +4723,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c38.7）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c38.8）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -7999,12 +7999,12 @@ en.e=at;if(dA!==o.d)en.ed=1;else delete en.ed;if(p){const p0=String(en.rt||'').s
 if(p){state.entries[dA]=state.entries[dA]||{};const sk='e'+now+'3'+Math.floor(Math.random()*1e3),st={p,s:at,e:'',mn:1,mt:'s',t:'',ph:[],ts:now};if(pf)st.pf=pf;const ks=r&&at===r.x.s?[r.x.k].concat(r.x.kx||[]).filter(k=>k&&kindOf(k)):[];if(ks.length)st.acts=ks.map(k=>({k,t:(kindOf(k)||{}).lb||k,m:0,w:1}));state.entries[dA][sk]=st;mvpPlanLink(dA,sk,st,(pks&&pks.length)?pks:(r&&r.x.pk));J.legs.push({d:dA,k:sk});}});try{plnAfter();}catch(e){}
 {const J2=mvNormalize(o.d,o.k);if(J2){J.snap=J.snap.concat(J2.snap.filter(z=>!J.snap.some(q=>q.d===z.d&&q.k===z.k)));J.legs=J.legs.concat(J2.legs);}}
 undoBar('🏁 到着 '+at+(p?'　📍 '+p:'（場所はあとで）'),()=>mvJoinUndo(J),{d:o.d,k:o.k});render();}
-function mvpNoScroll(el){if(!el||el.dataset.ns)return;el.dataset.ns='1';window.addEventListener('resize',()=>mvpFit(el));let y0=0;const box=()=>el.querySelector('.box');
-const stop=(ev,dy)=>{const b=box();if(!b||!b.contains(ev.target))return;const can=b.scrollHeight>b.clientHeight+1;if(!can){ev.preventDefault();return;}const top=b.scrollTop<=0,bot=b.scrollTop+b.clientHeight>=b.scrollHeight-1;if((dy<0&&top)||(dy>0&&bot))ev.preventDefault();};
+function mvpNoScroll(el){if(!el||el.dataset.ns)return;el.dataset.ns='1';let rzT=0;window.addEventListener('resize',()=>{clearTimeout(rzT);rzT=setTimeout(()=>mvpFit(el),250);});let y0=0;const box=()=>el.querySelector('.box');
+const stop=(ev,dy)=>{const b=box();if(!b||!b.contains(ev.target))return;if(ev.target.closest&&ev.target.closest('input,textarea,select'))return;const can=b.scrollHeight>b.clientHeight+1;if(!can){ev.preventDefault();return;}const top=b.scrollTop<=0,bot=b.scrollTop+b.clientHeight>=b.scrollHeight-1;if((dy<0&&top)||(dy>0&&bot))ev.preventDefault();};
 el.addEventListener('wheel',ev=>stop(ev,ev.deltaY),{passive:false});
 el.addEventListener('touchstart',ev=>{y0=ev.touches[0]?ev.touches[0].clientY:0;},{passive:true});
 el.addEventListener('touchmove',ev=>{const y=ev.touches[0]?ev.touches[0].clientY:0;stop(ev,y0-y);},{passive:false});}
-function mvpFit(el){try{const b=el.querySelector('.box:not(.mini)');if(!b)return;const sc=$('scr'),kt=$('kakuTop'),nb=$('nowBar');const r=sc.getBoundingClientRect();let top=r.top;if(kt&&kt.offsetParent)top=Math.max(top,kt.getBoundingClientRect().bottom);let bot=r.bottom;if(nb&&nb.style.display!=='none'&&nb.offsetHeight)bot=Math.min(bot,nb.getBoundingClientRect().top);const av=Math.floor(bot-top-14);if(av>200)b.style.maxHeight=av+'px';}catch(e){}}
+function mvpFit(el){try{const b=el.querySelector('.box:not(.mini)');if(!b)return;const ae=document.activeElement;if(ae&&el.contains(ae)&&ae.matches&&ae.matches('input,textarea,select'))return;const sc=$('scr'),kt=$('kakuTop'),nb=$('nowBar');let av=sc.clientHeight-((kt&&kt.offsetParent)?kt.offsetHeight:0)-((nb&&nb.style.display!=='none')?nb.offsetHeight:0)-14;av=Math.floor(av);if(av<=200)return;const cur=parseFloat(b.style.maxHeight)||0;if(Math.abs(cur-av)>=6)b.style.maxHeight=av+'px';}catch(e){}}
 function paintMvp(){const el=$('mvp');if(!el)return;mvpNoScroll(el);const show=ui.tab==='di'&&(typeof topView==='undefined'||topView==='diary')&&ui.date===todayStr();if(!show){el.style.display='none';return;}
 {const ae=document.activeElement;if(ae&&el.contains(ae)&&ae.matches&&ae.matches('input,textarea,select'))return;}const o=openMove(),r=o&&mvOpenRow(o);let h='';
 let mn=false;try{mn=localStorage.getItem('hibiki-mvp-min')==='1';}catch(e){}
@@ -12406,7 +12406,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c38.7";
+const CL_APPVER="c38.8";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
