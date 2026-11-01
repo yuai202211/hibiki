@@ -2193,6 +2193,8 @@ details.ck-fd>.in{padding:0 8px 10px}details.ck-fd.r{box-shadow:inset 4px 0 0 #e
 #app .hour.gap.wr.wrbig .wr-sub{font-size:12px;font-weight:700;color:rgba(255,255,255,.85)}
 #app .hour.gap.wr.wrbig .wr-dft{background:#fff;color:#0e9f57;border-radius:999px;padding:2px 8px;font-size:12px}
 #app .hour.gap.wr.wrbig .wr-r:empty{display:none}
+#app .hour.gap.wr.wrbig:has(#bedPill){flex-wrap:wrap;row-gap:6px;padding-top:8px!important;padding-bottom:8px!important}#app .hour.gap.wr.wrbig:has(#bedPill) .body{flex:0 0 auto}#app .hour.gap.wr.wrbig:has(#bedPill) .wr-r{flex:1 1 100%;display:flex;justify-content:center;min-width:0}#app .hour.gap.wr.wrbig #bedPill{white-space:normal;max-width:100%;text-align:center}
+.nw{white-space:nowrap}
 #acRows .ac-sp,#acRows .ac-dn,#acRows .ac-wp{display:none!important}
 #acRows .ac-md.ios{flex-direction:row!important;width:auto!important;height:auto!important;min-height:32px;padding:2px 4px!important;opacity:1!important;background:none!important;border:0!important;border-radius:0!important;color:var(--ink)!important;font-size:12.5px!important;gap:8px;white-space:nowrap}
 #acRows .ac-md.ios.on .tl{color:#e5484d}
@@ -4786,7 +4788,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c40.0）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c40.1）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -7773,8 +7775,8 @@ if(b.fold&&!b.fid)t=String(t).replace(/（[^）]*）/g,'').trim();
 const grip='<span class="blk-grip" title="長押しで入れ替え">⠿</span>';
 if(b.fold){const fid=b.fid||b.id;return '<section class="blk blk-any" data-blk="'+esc(b.id)+'"><details class="ck-fd'+(b.cls?' '+b.cls:'')+'" data-ckf="'+esc(fid)+'"'+(ckFoldOpen(fid)?' open':'')+'><summary class="blk-hd"><b class="bt">'+t+'</b><span class="s">'+sum+'</span>'+grip+'</summary><div class="in">'+inn+'</div></details></section>';}
 {const fid='o_'+b.id,T4=blkTop4(b.id),force=(b.id==='ck'&&typeof ckWant!=='undefined'&&ckWant)||(b.id==='rd'&&typeof rdWant!=='undefined'&&rdWant)||(b.id==='num'&&typeof numWant!=='undefined'&&numWant);
-if(T4&&T4.auto){try{const k='hibiki-ckf-auto-'+b.id;if(localStorage.getItem(k)!==T4.auto){localStorage.setItem(k,T4.auto);localStorage.setItem('hibiki-ckf-'+fid,'1');}}catch(e){}}
-const op=force||ckFoldOpenDef(fid,T4?false:true),s2=T4?T4.html:blkSumOf(b.id,inn);t=String(t).replace(/（[^）]*）/g,'').replace(/＝.*$/,'').trim();
+if(T4&&T4.auto){try{const k='hibiki-ckf-auto-'+b.id;if(localStorage.getItem(k)!==T4.auto){localStorage.setItem(k,T4.auto);ckfSet(fid,'1');}}catch(e){}}
+const op=force||ckFoldOpenDef(fid,true)/* c40.1：4つも最初は開く */,s2=T4?T4.html:blkSumOf(b.id,inn);t=String(t).replace(/（[^）]*）/g,'').replace(/＝.*$/,'').trim();
 return '<section class="blk blk-any'+(T4?' blk-top4'+(T4.ok?' ok':'')+(T4.todo?' todo':''):'')+'" data-blk="'+esc(b.id)+'"><details class="ck-fd blk-flat" data-ckf="'+esc(fid)+'"'+(op?' open':'')+'><summary class="blk-hd'+(T4?' rich':'')+'"><b class="bt">'+t+'</b>'+(T4?(T4.badge||'')+grip+'<span class="s rich">'+s2+'</span>':'<span class="s">'+s2+'</span>'+grip)+'</summary><div class="in">'+inn+'</div></details></section>';}}
 function blkTop4(id){try{const t=todayStr();
 if(id==='dream'){const GC=goalCfg(),got=incSum('in',GC.from,t),cash=cashLatest(),left=Math.max(0,GC.yen-got-cash),days=goalDays(),per=days?Math.ceil(left/days):left;
@@ -7786,7 +7788,7 @@ return {html:esc(sl)+' <b>'+n+'</b>/'+L.length+' 人'+chips(RD_SL,D,sl),badge:dn
 if(id==='num'){const d=numDayKey(),sl=numSlotNow(),D=numDay(d),n=[0,1,2].filter(i=>D[sl+'#'+i]).length,dn=!!D[sl];
 return {html:esc(sl)+' <b>'+n+'</b>/3 表'+chips(RD_SL,D,sl),badge:dn?'<span class="st ok">✓ 済</span>':'<span class="st todo">まだ</span>',ok:dn,todo:!dn,auto:dn?'':(d+'#'+sl)};}
 return null;}catch(e){return null;}}
-function ckFoldOpenDef(id,def){try{const v=localStorage.getItem('hibiki-ckf-'+id);return v===null?def:v==='1';}catch(e){return def;}}
+function ckFoldOpenDef(id,def){const v=ckfGet(id);return v==null?def:v;}
 function blkSumOf(id,html){try{const d=document.createElement('div');d.innerHTML=html;const q=s=>{const e=d.querySelector(s);return e?blkTxt(e.innerHTML):'';};
 if(id==='rd')return q('.rd-top');if(id==='dream')return q('.ht');if(id==='daily')return q('.ck-dsum');if(id==='todo')return q('.ck3 .ck-rh')||q('.ck-rh');if(id==='ck')return q('.ck-ci .t');
 if(id==='pins')return [...d.querySelectorAll('.ck-gq')].map(g=>blkTxt((g.querySelector('h4')||{}).innerHTML||'')+' '+blkTxt((g.querySelector('.d')||{}).innerHTML||'')).join('・');
@@ -7825,7 +7827,7 @@ let FL=null;
 root.addEventListener('touchstart',ev=>{FL=null;if(ev.touches.length!==1)return;const t=ev.target;if(!t||!t.closest||t.closest('input,textarea,select,[contenteditable="true"],.rd-scroll,.rd-p,.mvp,[data-blk="rd"]'))return;const sec=t.closest('.blk');if(!sec||!sec.parentElement||!sec.parentElement.dataset.lay)return;const d=sec.querySelector(':scope>details[open]');if(!d)return;const p=ev.touches[0];FL={sec,d,x:p.clientX,y:p.clientY,lx:p.clientX,ly:p.clientY,t:performance.now()};},{passive:true});
 root.addEventListener('touchmove',ev=>{if(!FL)return;const p=ev.touches[0];FL.lx=p.clientX;FL.ly=p.clientY;},{passive:true});
 root.addEventListener('touchend',()=>{const f=FL;FL=null;if(!f||BD)return;const dy=f.ly-f.y,dx=f.lx-f.x,dt=performance.now()-f.t;if(!(dy<=-70&&dt<=300&&Math.abs(dx)<60&&Math.abs(dy)>Math.abs(dx)*1.6))return;if(!f.d.open)return;
-f.d.open=false;try{localStorage.setItem('hibiki-ckf-'+f.d.dataset.ckf,'0');}catch(e){}try{navigator.vibrate&&navigator.vibrate(15);}catch(e){}toast('📁 たたんだ（押すと開く）');
+f.d.open=false;ckfSet(f.d.dataset.ckf,'0');try{navigator.vibrate&&navigator.vibrate(15);}catch(e){}toast('📁 たたんだ（押すと開く）');
 const keep=()=>{try{const sc=$('page')&&$('page').contains(f.sec)?($('page').querySelector('.page-body')||$('page')):$('scr');const r=f.sec.getBoundingClientRect(),s=sc.getBoundingClientRect();if(r.top<s.top+4)sc.scrollTop+=r.top-s.top-8;}catch(e){}};requestAnimationFrame(keep);setTimeout(keep,260);setTimeout(keep,600);},{passive:true});
 root.addEventListener('contextmenu',ev=>{if(hdOf(ev.target))ev.preventDefault();});
 root.addEventListener('mousedown',ev=>{if(ev.button!==0||BD)return;const hd=hdOf(ev.target);if(!hd)return;BD=begin(hd,ev.clientX,ev.clientY,true);BD.tm=setTimeout(go,300);
@@ -7946,7 +7948,12 @@ paint();}
 function ck3Html(t){try{const L=tdAll().filter(x=>!x.quit&&!tdHib(x)&&!x.dlg&&x.pin===t),dn=L.filter(x=>tdDone(x)).length;
 return '<div class="ck-card ck3"><div class="ck-rh">✅ 今日の行動3つ <span>'+dn+' / '+Math.max(3,L.length)+'</span></div>'+L.map(x=>{const d=tdDone(x);return '<div class="ck3r'+(d?' done':'')+'"><button type="button" data-ck3="'+esc(x.id)+'"'+(d?' disabled':'')+'>'+(d?'✓':'')+'</button><span>'+esc(x.t||'')+'</span></div>';}).join('')+
 (L.length<3?'<button type="button" class="ck-inc" id="ck3Add">＋ 今日の3つを決める（あと'+(3-L.length)+'つ）</button>':'')+'</div>';}catch(e){return '';}}
-function ckFoldOpen(id){try{return localStorage.getItem('hibiki-ckf-'+id)==='1';}catch(e){return false;}}
+function nwFix(root){try{if(!root)return;const ok={block:1,inline:1,'inline-block':1,'list-item':1,'table-cell':1},L=[];const tw=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);let t;
+while(t=tw.nextNode()){const s=t.textContent;if(!s||s.length<4||s.length>80||!/[・、。\s　]/.test(s.trim()))continue;const p=t.parentElement;if(!p||p.closest('textarea,input,script,style,.nw,svg'))continue;let d='';try{d=getComputedStyle(p).display;}catch(e){}if(!ok[d])continue;L.push(t);}
+L.forEach(t=>{const parts=t.textContent.match(/[^・、。\s　]+[・、。]?[\s　]*|[・、。\s　]+/g);if(!parts||parts.length<2)return;const fr=document.createDocumentFragment();parts.forEach(x=>{if(x.trim().length>1&&x.length<=18){const sp=document.createElement('span');sp.className='nw';sp.textContent=x;fr.appendChild(sp);}else fr.appendChild(document.createTextNode(x));});t.replaceWith(fr);});}catch(e){}}
+function ckfGet(id){const o=state&&state.ckf&&state.ckf.o;if(o&&o[id]!=null)return String(o[id])==='1';return null;}
+function ckfSet(id,v){try{v=String(v)==='1'?'1':'0';try{localStorage.setItem('hibiki-ckf-'+id,v);}catch(e){}const o=Object.assign({},(state.ckf&&state.ckf.o)||{});if(o[id]===v)return;o[id]=v;state.ckf={o,ts:Date.now()};state.updatedAt=Date.now();saveLocal(false);pendingCkpt=true;try{schedulePublish(3000);}catch(e){}}catch(e){}}
+function ckFoldOpen(id){const v=ckfGet(id);return v==null?true:v;}
 function ckReportHtml(t,DL,done,per){try{const GC=goalCfg(),gp=incSum('gp',t,t),inn=incSum('in',t,t),ym=t.slice(0,7),gpM=incSum('gp',ym+'-01',ym+'-31'),inM=incSum('in',ym+'-01',ym+'-31'),gpA=incSum('gp',GC.from,t),inA=incSum('in',GC.from,t),cash=cashLatest();
 const dom=Number(t.slice(8,10)),dim=new Date(Number(t.slice(0,4)),Number(t.slice(5,7)),0).getDate(),plan=per*dom,lagG=plan-gpM,lagI=plan-inM,rest=Math.max(1,dim-dom+1);
 let c=null;try{c=anaCount(anaRange('day',t));}catch(e){}const tot=(c&&c.total)||0,none=(c&&c.sum1&&c.sum1._none)||(c&&c.sum&&c.sum._none)||0,rec=Math.max(0,tot-none),muda=(c&&c.muda&&c.muda.total)||0;let biz=0,ai=0;try{const b=bizSplit(t);biz=b.biz;}catch(e){}
@@ -7967,7 +7974,7 @@ return '<div class="ck-sec">📈 今日の成績表（日記から自動）<i></
 '<div class="ck-kp"><div><b>'+(wage?wage.toLocaleString()+'円':'—')+'</b><small>今日の時給</small></div><div><b>'+gw.toLocaleString()+'円</b><small>目標の時給</small></div><div class="'+(muda>120?'bad':'')+'"><b>'+esc(hs(muda))+'</b><small>ムダ（上限2h）</small></div><div><b>'+(rec?Math.round(biz/rec*100):0)+'%</b><small>稼ぐ時間の割合</small></div></div></div>'+
 '<div class="ck-rr"><div class="ck-rh">📅 直近7日</div><div class="ck-wk">'+W.map((w,i)=>'<div class="'+(i===6?'t':'')+'"><em>'+'●'.repeat(Math.min(w.dn,5))+'</em><i style="height:'+Math.max(3,Math.round(w.gv/mx*48))+'px"></i>'+w.lb+'</div>').join('')+'</div><small>棒＝粗利　●＝決めた事の達成数</small></div></div>';}catch(e){return '';}}
 function ckBind(pane){
-pane.querySelectorAll('details.ck-fd').forEach(d=>d.addEventListener('toggle',()=>{try{localStorage.setItem('hibiki-ckf-'+d.dataset.ckf,d.open?'1':'0');}catch(e){}}));
+pane.querySelectorAll('details.ck-fd').forEach(d=>d.addEventListener('toggle',()=>{ckfSet(d.dataset.ckf,d.open?'1':'0');}));try{nwFix(pane);}catch(e){}
 blkInit(pane);try{blkMoInit();}catch(e){}
 {const b=pane.querySelector('#ckDream');if(b)b.onclick=()=>{dseg='clock';openDreamPage();};}
 pane.querySelectorAll('[data-wish]').forEach(b=>b.onclick=()=>wishEdit(b.dataset.wish));{const b=pane.querySelector('#wishAdd');if(b)b.onclick=()=>wishEdit(null);}{const b=pane.querySelector('#wishTtl');if(b)b.onclick=wishTtlEdit;}
@@ -7985,7 +7992,7 @@ pane.querySelectorAll('#rdCard p[data-rdq]').forEach(p=>p.onclick=()=>{if(TT.kin
 {const o=pane.querySelector('#rdOne');if(o)o.onclick=ev=>{const L=rdItems(),d=rdDayKey(),sl=rdSlotNow(),i=rdCur,s=rdShort((L[i]||{}).nm);ckBurst(ev.clientX,ev.clientY,'㊞ 済');rdPop=i;
 mutate(()=>{state.rdin=state.rdin||{};state.rdin[d]=Object.assign({},rdDay(d),{[sl+'#'+i]:nowHM(),ts:Date.now()});});const D=rdDay(d),nx=L.findIndex((x,k)=>!D[sl+'#'+k]);if(nx>=0)rdCur=nx;toast('㊞ '+s.n+'さん 済！');keepTop('#rdCard',()=>render());};}
 {const sw=pane.querySelector('#rdSw'),go=pane.querySelector('#rdGo');if(sw&&go){sw.onclick=()=>{const on=!sw.classList.contains('on');iosSet(sw,on);go.disabled=!on;};
-go.onclick=ev=>{if(go.disabled)return;const d=rdDayKey(),sl=rdSlotNow();ckBurst(ev.clientX,ev.clientY,'📖 ✓');mutate(()=>{state.rdin=state.rdin||{};state.rdin[d]=Object.assign({},rdDay(d),{[sl]:nowHM(),ts:Date.now()});});toast('📖 '+sl+'の読み物：読んだ');try{localStorage.setItem('hibiki-ckf-o_rd','0');}catch(e){}if(rdWant){rdWant=false;if(!ckGate()&&!numGate()&&!ernGate())setTimeout(()=>openEntrySheet(ui.date,{hour:new Date().getHours(),wr:true}),350);}};}}
+go.onclick=ev=>{if(go.disabled)return;const d=rdDayKey(),sl=rdSlotNow();ckBurst(ev.clientX,ev.clientY,'📖 ✓');mutate(()=>{state.rdin=state.rdin||{};state.rdin[d]=Object.assign({},rdDay(d),{[sl]:nowHM(),ts:Date.now()});});toast('📖 '+sl+'の読み物：読んだ');ckfSet('o_rd','0');if(rdWant){rdWant=false;if(!ckGate()&&!numGate()&&!ernGate())setTimeout(()=>openEntrySheet(ui.date,{hour:new Date().getHours(),wr:true}),350);}};}}
 {const mg=pane.querySelector('#miscGo');if(mg)mg.onclick=()=>{topView='misc';render();try{$('scr').scrollTop=0;}catch(e){}};}
 {const bg=pane.querySelector('#bandGap');if(bg)bg.onclick=()=>{topView='diary';render();setTimeout(()=>{try{const g=document.querySelector('#pane .gaprow, #pane .hour.gap');if(g)g.scrollIntoView({block:'center'});}catch(e){}},200);};}
 pane.querySelectorAll('[data-dph]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();const key=b.dataset.dph;wishPick(pid=>{dphAdd(key,pid);toast('📷 写真を足した');render();});});
@@ -7994,7 +8001,7 @@ pane.querySelectorAll('[data-numi]').forEach(b=>b.onclick=()=>{keepTop('#numCard
 {const l=pane.querySelector('#numListen');if(l)l.onclick=()=>numListen();}
 {const o=pane.querySelector('#numOne');if(o)o.onclick=ev=>{const d=numDayKey(),sl=numSlotNow(),i=numCur;ckBurst(ev.clientX,ev.clientY,'㊞ 済');mutate(()=>{state.nmin=state.nmin||{};state.nmin[d]=Object.assign({},numDay(d),{[sl+'#'+i]:nowHM(),ts:Date.now()});});const D=numDay(d),nx=[0,1,2].find(k=>!D[sl+'#'+k]);if(nx!=null)numCur=nx;toast('㊞ '+NUM_NM[i]+'の数字 済！');keepTop('#numCard',()=>render());};}
 {const sw=pane.querySelector('#numSw'),go=pane.querySelector('#numGo');if(sw&&go){sw.onclick=()=>{const on=!sw.classList.contains('on');iosSet(sw,on);go.disabled=!on;};
-go.onclick=ev=>{if(go.disabled)return;const d=numDayKey(),sl=numSlotNow();ckBurst(ev.clientX,ev.clientY,'📊 ✓');mutate(()=>{state.nmin=state.nmin||{};state.nmin[d]=Object.assign({},numDay(d),{[sl]:nowHM(),ts:Date.now()});});toast('📊 '+sl+'の数字：見た');try{localStorage.setItem('hibiki-ckf-o_num','0');}catch(e){}if(numWant){numWant=false;if(!ckGate()&&!rdGate()&&!ernGate())setTimeout(()=>openEntrySheet(ui.date,{hour:new Date().getHours(),wr:true}),350);}};}}
+go.onclick=ev=>{if(go.disabled)return;const d=numDayKey(),sl=numSlotNow();ckBurst(ev.clientX,ev.clientY,'📊 ✓');mutate(()=>{state.nmin=state.nmin||{};state.nmin[d]=Object.assign({},numDay(d),{[sl]:nowHM(),ts:Date.now()});});toast('📊 '+sl+'の数字：見た');ckfSet('o_num','0');if(numWant){numWant=false;if(!ckGate()&&!rdGate()&&!ernGate())setTimeout(()=>openEntrySheet(ui.date,{hour:new Date().getHours(),wr:true}),350);}};}}
 {const b=pane.querySelector('#ckGo');if(b)b.onclick=ev=>{if(ckDone()){if(ckWant){ckWant=false;if(!rdGate()&&!numGate()&&!ernGate())openEntrySheet(ui.date,{hour:new Date().getHours(),wr:true});}return;}ckBurst(ev.clientX,ev.clientY,'📒 ✓');ckDo();if(ckWant){ckWant=false;if(!rdGate()&&!numGate()&&!ernGate())setTimeout(()=>openEntrySheet(ui.date,{hour:new Date().getHours(),wr:true}),350);}};}}
 function mvNestedRec(x){return !!(x.rl||(!x.mv&&x.k!=='sleep'&&x.k!=='incar'&&(TEL_KS.indexOf(x.k)>=0||x.k==='spplay'||x.k==='spwork'||!x.p)));}
 function mvNormCore(d,k,J){const E=state.entries[d]||{},en=E[k];if(!en||en.del||!en.mv||!en.s||!en.e||en.noT)return false;const S=hmMin(en.s),EE=hmMin(en.e)+(en.ed?1440:0);if(EE<=S)return false;let touched=false;const now=Date.now();
@@ -11389,9 +11396,9 @@ if(!FABIO){FABIO=new IntersectionObserver(es=>{FABCV=es.some(e=>e.isIntersecting
 const pg=$('page');if(pg&&window.MutationObserver)new MutationObserver(fabCardApply).observe(pg,{attributes:true,attributeFilter:['class']});}
 const c=document.getElementById('prepCard');if(soft&&c===FABEL)return;FABEL=c;FABIO.disconnect();FABCV=false;if(c)FABIO.observe(c);else fabCardApply();}catch(e){}}
 function fabMode(){if(openSleep())return 'wake';const h=new Date().getHours();return (h>=5&&h<17)?'prep':'sleep';}
-function fbBelow(){try{const sc=$('scr');if(!sc)return;const mid=sc.getBoundingClientRect().top+sc.clientHeight*0.5;const ids=[];sc.querySelectorAll('details.ck-fd[data-ckf]').forEach(d=>{if(!d.open)return;const s=d.querySelector('summary');if(!s)return;if(s.getBoundingClientRect().top>mid){d.open=false;ids.push(d.dataset.ckf);try{localStorage.setItem('hibiki-ckf-'+d.dataset.ckf,'0');}catch(e){}}});
+function fbBelow(){try{const sc=$('scr');if(!sc)return;const mid=sc.getBoundingClientRect().top+sc.clientHeight*0.5;const ids=[];sc.querySelectorAll('details.ck-fd[data-ckf]').forEach(d=>{if(!d.open)return;const s=d.querySelector('summary');if(!s)return;if(s.getBoundingClientRect().top>mid){d.open=false;ids.push(d.dataset.ckf);ckfSet(d.dataset.ckf,'0');}});
 if(!ids.length){toast('この下に開いている物はない');return;}try{localStorage.setItem('hibiki-fold-below',JSON.stringify(ids));}catch(e){}toast('⬇ ここから下を畳んだ（'+ids.length+'つ）');fbPaint();}catch(e){}}
-function fbRestore(){try{let ids=[];try{ids=JSON.parse(localStorage.getItem('hibiki-fold-below')||'[]');}catch(e){}ids.forEach(id=>{try{localStorage.setItem('hibiki-ckf-'+id,'1');}catch(e){}const d=document.querySelector('details.ck-fd[data-ckf="'+id+'"]');if(d)d.open=true;});try{localStorage.removeItem('hibiki-fold-below');}catch(e){}toast('↺ 元に戻した');fbPaint();}catch(e){}}
+function fbRestore(){try{let ids=[];try{ids=JSON.parse(localStorage.getItem('hibiki-fold-below')||'[]');}catch(e){}ids.forEach(id=>{ckfSet(id,'1');const d=document.querySelector('details.ck-fd[data-ckf="'+id+'"]');if(d)d.open=true;});try{localStorage.removeItem('hibiki-fold-below');}catch(e){}toast('↺ 元に戻した');fbPaint();}catch(e){}}
 function fbPaint(){try{let b=$('fbtn');if(!b){b=document.createElement('button');b.id='fbtn';b.type='button';b.className='fbtn';b.setAttribute('aria-label','ここから下を畳む');document.body.appendChild(b);b.onclick=()=>{if(b.dataset.m==='r')fbRestore();else fbBelow();};}
 const show=(typeof topView!=='undefined'&&(topView==='top'||topView==='misc'))&&ui.date===todayStr()&&!$('page').classList.contains('open');let saved=[];try{saved=JSON.parse(localStorage.getItem('hibiki-fold-below')||'[]');}catch(e){}
 b.style.display=show?'':'none';if(saved.length){b.dataset.m='r';b.innerHTML='↺<small>元に戻す</small>';}else{b.dataset.m='f';b.innerHTML='⬇<small>下を畳む</small>';}}catch(e){}}
@@ -12539,7 +12546,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c40.0";
+const CL_APPVER="c40.1";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
