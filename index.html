@@ -1999,7 +1999,13 @@ body.cardvis .fab{display:none!important}
 .ntf-row .ntf-sw.ios .trk{position:absolute;right:12px;top:50%;margin-top:-15.5px}
 .ntf-top .ios.ntf-main{flex:1 1 0;min-width:0;min-height:46px;justify-content:space-between;padding:0 8px}
 .lblrow{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:10px 0 6px}
-.sheet.kbty .sh-btns.main>:not(#shSave){display:none!important}
+.sheet.kbty .sh-btns.main>:not(#shSave):not(#cmBar){display:none!important}
+#cmBar{display:none;flex:0 0 100%;min-width:0}#cmBar.open{display:block}
+#cmBar .cm-who{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:900;color:#0f766e;margin:0 0 4px}#cmBar .cm-who small{font-weight:700;color:#8a93a6}
+#cmBar .hbox{margin:0;border-color:#1d9e75;background:#f6fcf9;box-shadow:0 -6px 18px rgba(20,24,40,.08)}#cmBar .pre{padding-top:4px}
+#cmBar .cm-x{border:0;border-radius:10px;background:#eef1f6;color:#5f6b85;font-weight:800;font-size:12px;padding:8px 10px;flex:0 0 auto;margin-top:1px;line-height:1.2;white-space:nowrap}
+.cm-away{display:none!important}
+.cm-ph{flex:1 1 auto;min-width:0;border:1.5px dashed #c9d3e6;border-radius:10px;background:#f7f9fc;color:#8a93a6;font-size:12.5px;font-weight:800;display:flex;align-items:center;padding:4px 10px;box-sizing:border-box;min-height:30px}
 .hbox{display:flex;align-items:flex-start;gap:6px;border:2px solid #3b63d9;border-radius:14px;padding:8px 10px;background:#fff}
 .hbox .pre{font-weight:900;white-space:nowrap;max-width:45%;overflow:hidden;text-overflow:ellipsis;padding-top:4px}
 .hbox .bar{width:1px;align-self:stretch;background:var(--line)}
@@ -2428,13 +2434,47 @@ if(!sc||sc===document.body){if(r.bottom>bot||r.top<top+10)el.scrollIntoView({blo
 let y0=r.top,y1=r.bottom;if(el.tagName==='TEXTAREA'&&r.height>bot-top-24){try{const cs=getComputedStyle(el),m=document.createElement('div');m.style.cssText='position:absolute;left:0;top:0;visibility:hidden;white-space:pre-wrap;word-break:break-word;pointer-events:none;';m.style.font=cs.font;m.style.lineHeight=cs.lineHeight;m.style.padding=cs.padding;m.style.letterSpacing=cs.letterSpacing;m.style.boxSizing='border-box';m.style.width=r.width+'px';m.style.border=cs.borderWidth+' solid transparent';m.textContent=el.value.slice(0,el.selectionEnd||0);const s=document.createElement('span');s.textContent='\u200b';m.appendChild(s);document.body.appendChild(m);const lh=parseFloat(cs.lineHeight)||22,cy=s.offsetTop;m.remove();y0=r.top+cy;y1=y0+lh+4;}catch(e){}}
 const scR=sc.getBoundingClientRect();bot=Math.min(bot,scR.bottom-8);const tl=Math.max(top+10,scR.top+8,kvCoverBot(el)+6);if(y1>bot)sc.scrollTop+=Math.ceil(y1-bot);else if(y0<tl)sc.scrollTop-=Math.ceil(tl-y0);}catch(e){}},0);}
 document.addEventListener('focusin',ev=>{const t=ev.target;if(!kvTxt(t))return;if(t.tagName==='TEXTAREA')taGrow(t);if(!t.closest('#mvp'))kbOn(t.closest('#sheet,#sheet2,#scr,#page'));
+if(t.closest('#cmBar')){$('sheet').classList.add('kbty');return;}
+if(t.tagName==='TEXTAREA'&&t.closest('#sheet')&&cmbEl()&&!t.classList.contains('cm-away')){cmbOpen(t);return;}
 if(t.closest('#sheet')){const sh=$('sheet');sh.classList.add('kbty');keepVisible(t);[380,900].forEach((ms,n)=>setTimeout(()=>{if(document.activeElement!==t)return;if(!n)kvSheetTop(t);else keepVisible(t);},ms));return;}
 keepVisible(t);[120,350,650,1000,1500].forEach(ms=>setTimeout(()=>{if(document.activeElement===t)keepVisible(t);},ms));});
+const CMB={t:null,w:null,ph:null,loc:null,open:false,pend:null,last:null};
+function cmbEl(){return $('cmBar');}
+function cmbLoc(t){try{const sh=$('sheet');if(!sh||!sh.contains(t))return null;if(t.id)return {sel:'#'+t.id,i:0};const cls=[...t.classList].filter(c=>c.indexOf('cm-')!==0)[0];if(!cls)return null;const sel='textarea.'+cls,L=[...sh.querySelectorAll(sel)];return {sel,i:L.indexOf(t)};}catch(e){return null;}}
+function cmbFind(loc){try{const sh=$('sheet');if(!sh||!loc)return null;return [...sh.querySelectorAll(loc.sel)][loc.i]||null;}catch(e){return null;}}
+function cmbWho(t){try{const r=t.closest('.actrow');if(r){const L=[...$('acRows').querySelectorAll('.actrow')],i=L.indexOf(r);return '💬 コメント'+(L.length>1?'（'+(i+1)+'組目）':'');}if(t.classList.contains('mvcm'))return String(t.placeholder||'💬 コメント');if(t.classList.contains('fr-t'))return '✎ 自由に書く';if(t.classList.contains('ac-c'))return '📝 詳細';}catch(e){}return '💬 コメント';}
+function cmbPre(t){const box=t.closest('.hbox'),pre=box&&box.querySelector('.pre:not(#cmPre)'),cp=$('cmPre'),ln=$('cmBarLn');if(!cp||!ln)return;const ok=pre&&String(pre.textContent||'').trim()&&!pre.classList.contains('nok');cp.textContent=ok?pre.textContent:'';cp.style.display=ok?'':'none';ln.style.display=ok?'':'none';}
+function cmbAway(t){const w=(t.parentElement&&t.parentElement.classList.contains('tagrow'))?t.parentElement:t;if(w.classList.contains('cm-away')){CMB.w=w;return;}const ph=document.createElement('div');ph.className='cm-ph';ph.textContent='↓ 記録のすぐ上で打っています';const hh=w.offsetHeight;if(hh)ph.style.minHeight=hh+'px';w.parentNode.insertBefore(ph,w);w.classList.add('cm-away');CMB.ph=ph;CMB.w=w;}
+function cmbBack(){try{if(CMB.ph&&CMB.ph.parentNode)CMB.ph.parentNode.removeChild(CMB.ph);}catch(e){}try{if(CMB.w)CMB.w.classList.remove('cm-away');}catch(e){}CMB.ph=null;CMB.w=null;}
+function cmbSync(){const t=CMB.t,ta=$('cmTa');if(!t||!ta||!t.isConnected)return;if(t.value!==ta.value){t.value=ta.value;try{t.dispatchEvent(new Event('input',{bubbles:true}));}catch(e){}}}
+function cmbOpen(t,focus){const bar=cmbEl(),ta=$('cmTa'),sh=$('sheet');if(!bar||!ta||!t||!sh||t===ta||t.closest('#cmBar')||!sh.contains(t))return;
+if(CMB.t&&CMB.t!==t){cmbSync();cmbBack();}
+CMB.t=t;CMB.loc=cmbLoc(t);CMB.open=true;cmbPre(t);$('cmWho').textContent=cmbWho(t);ta.placeholder=t.placeholder||'コメントを書く…';
+if(ta.value!==t.value){ta.value=t.value;try{const g=ta.parentElement;if(g&&g.classList.contains('tagrow'))g.dataset.v=ta.value;}catch(e){}}
+cmbAway(t);bar.classList.add('open');sh.classList.add('kbty');try{taGrow(ta);}catch(e){}
+if(focus!==false){try{ta.focus({preventScroll:true});}catch(e){try{ta.focus();}catch(e2){}}try{const n=ta.value.length;ta.setSelectionRange(n,n);}catch(e){}}}
+function cmbClose(){CMB.last=null;CMB.pend=null;if(!CMB.open)return;const bar=cmbEl(),ta=$('cmTa');cmbSync();const t=CMB.t;cmbBack();CMB.t=null;CMB.loc=null;CMB.open=false;if(bar)bar.classList.remove('open');
+try{if(t&&t.isConnected){const g=t.parentElement;if(g&&g.classList.contains('tagrow'))g.dataset.v=t.value;}}catch(e){}
+try{if(ta&&document.activeElement===ta)ta.blur();}catch(e){}}
+function cmbRetarget(){if(!CMB.open)return;const t=CMB.t;if(t&&t.isConnected)return;const n=cmbFind(CMB.loc);if(!n){cmbClose();return;}CMB.ph=null;CMB.w=null;CMB.t=n;const ta=$('cmTa');if(ta&&n.value!==ta.value){n.value=ta.value;try{n.dispatchEvent(new Event('input',{bubbles:true}));}catch(e){}}cmbAway(n);cmbPre(n);$('cmWho').textContent=cmbWho(n);}
+function cmbGo(p){try{if(!p)return;if(p.kind==='o1'){const t=$('o1t');if(t)cmbOpen(t);}else if(p.kind==='first'){const t=$('acRows')&&$('acRows').querySelector('.actrow .ac-t');if(t)cmbOpen(t);}else if(p.kind==='row'){const r=$('acRows').querySelectorAll('.actrow')[p.i],t=r&&r.querySelector('.ac-t');if(t)cmbOpen(t);}}catch(e){}}
+document.addEventListener('click',ev=>{try{const sh=$('sheet');if(!sh||!cmbEl())return;const b=ev.target.closest('button,[role=button]');if(!b){if(ev.target.closest&&ev.target.closest('.cm-ph')&&CMB.open){const ta=$('cmTa');if(ta)ta.focus();}return;}
+if(!sh.contains(b)){CMB.pend=null;return;}const D=b.dataset;CMB.pend=null;
+if(D.rall!=null){CMB.last={kind:'row',i:+D.rall};return;}if(b.id==='o1all'){CMB.last={kind:'o1'};return;}
+if(D.o1!=null||D.o1ai!=null||D.o1ap!=null){CMB.pend={kind:'o1'};return;}if(D.aq!=null){CMB.pend={kind:'first'};return;}
+if(D.rk!=null||D.aitl!=null||D.aip!=null){const r=b.closest('.actrow'),i=r?[...$('acRows').querySelectorAll('.actrow')].indexOf(r):-1;if(i>=0)CMB.pend={kind:'row',i};}}catch(e){}},true);
+document.addEventListener('click',ev=>{try{if(!cmbEl())return;const o2=$('ovl2'),open2=!!(o2&&o2.classList.contains('open'));
+if(ev.target.closest&&ev.target.closest('#sheet2')){if(!open2&&CMB.last){const L=CMB.last;CMB.last=null;cmbGo(L);}return;}
+const p=CMB.pend;CMB.pend=null;if(!p)return;if(open2){CMB.last=p;return;}cmbGo(p);}catch(e){}});
+document.addEventListener('mousedown',ev=>{try{if(!CMB.open)return;const ta=$('cmTa');if(document.activeElement!==ta)return;const b=ev.target.closest&&ev.target.closest('button,.chip,[role=button],.cm-ph');if(b&&b.closest('#sheet')&&!b.closest('#cmBar'))ev.preventDefault();}catch(e){}},true);
+document.addEventListener('input',ev=>{const t=ev.target;if(t&&t.id==='cmTa')cmbSync();});
+document.addEventListener('focusout',ev=>{const t=ev.target;if(!t||t.id!=='cmTa')return;setTimeout(()=>{if(document.activeElement!==$('cmTa'))cmbClose();},250);});
+document.addEventListener('click',ev=>{const x=ev.target.closest&&ev.target.closest('#cmX');if(!x)return;ev.preventDefault();cmbClose();});
 function kvSheetTop(el){try{const sc=$('sheet');if(!sc||!sc.contains(el))return;const box=el.closest('.hbox')||el,lab=box.previousElementSibling,r=(lab&&lab.getBoundingClientRect().height<40?lab:box).getBoundingClientRect(),sr=sc.getBoundingClientRect(),vv=window.visualViewport,top=Math.max(sr.top,vv?vv.offsetTop:0)+10;const d=Math.round(r.top-top);if(Math.abs(d)>12)sc.scrollTop+=d;}catch(e){}}
 document.addEventListener('selectionchange',()=>{const a=document.activeElement;if(kvTxt(a)&&!a.closest('#sheet'))keepVisible(a);});
 document.addEventListener('keyup',ev=>{const t=ev.target;if(kvTxt(t)&&!t.closest('#sheet'))keepVisible(t);},true);
 document.addEventListener('focusout',ev=>{setTimeout(()=>{const a=document.activeElement;if(kvTxt(a))return;document.querySelectorAll('.kb').forEach(x=>x.classList.remove('kb'));document.querySelectorAll('.kbty').forEach(x=>x.classList.remove('kbty'));},250);});
-document.addEventListener('input',ev=>{const t=ev.target;if(!kvTxt(t)||t.closest('#mvp'))return;kbOn(t.closest('#sheet,#sheet2,#scr,#page'));keepVisible(t);setTimeout(()=>{if(document.activeElement===t)keepVisible(t);},60);});
+document.addEventListener('input',ev=>{const t=ev.target;if(!kvTxt(t)||t.closest('#mvp')||t.closest('#cmBar')||!t.offsetParent)return;kbOn(t.closest('#sheet,#sheet2,#scr,#page'));keepVisible(t);setTimeout(()=>{if(document.activeElement===t)keepVisible(t);},60);});
 let kbfRaf=0;
 function kbFit(){try{const vv=window.visualViewport,app=document.getElementById('app');if(!vv||!app)return;
 const off=()=>{if(app.classList.contains('kbfit')){app.classList.remove('kbfit');app._kbT=0;app.style.transform='';app.style.height='';}};
@@ -4746,7 +4786,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c39.8）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c39.9）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -4945,7 +4985,7 @@ TRS.map(x=>'<button class="chip" data-tr="'+x[0]+'">'+x[1]+'</button>').join('')
 '</div></div>'+
 '<button class="fr-addbar" id="frAdd2">＋ 自由に書く</button>'+
 '<div id="secPh"'+((sheetSt.ph&&sheetSt.ph.length)?'':' style="display:none"')+'><div class="sh-label">📷 写真（前に付けた分）</div><div class="phrow" id="shPhotos"></div></div>'+
-'<div class="sh-btns main">'+(sheetSt.existing?'<button class="delbtn" id="shDel">削除</button>':'')+(sheetSt.fromDft?'<button class="delbtn" id="shDftDel">🗑 下書きを消す</button>':'')+'<button class="pjchip" id="pjChip">📌 案件</button>'+iosSw('mdChip',!!(ex&&ex.md),'🕳️ まるごとムダ！','aria-label="この日記の時間まるごとムダ"','sm mdall')+
+'<div class="sh-btns main">'+'<div id="cmBar"><div class="cm-who"><span id="cmWho">💬 コメント</span><small>打った文字は元の場所に入る</small></div><div class="hbox"><span class="pre" id="cmPre"></span><span class="bar" id="cmBarLn"></span><textarea id="cmTa" rows="1" placeholder="コメントを書く…" style="resize:none;overflow:hidden;line-height:1.5;min-height:0"></textarea><button type="button" class="cm-x" id="cmX">✓ 閉じる</button></div></div>'+(sheetSt.existing?'<button class="delbtn" id="shDel">削除</button>':'')+(sheetSt.fromDft?'<button class="delbtn" id="shDftDel">🗑 下書きを消す</button>':'')+'<button class="pjchip" id="pjChip">📌 案件</button>'+iosSw('mdChip',!!(ex&&ex.md),'🕳️ まるごとムダ！','aria-label="この日記の時間まるごとムダ"','sm mdall')+
 '<button class="savebtn" id="shSave">記　録</button></div>';
 $('shTa').value=(ex&&ex.t)||'';
 const dft=ref&&ref.draft;let frs=String(((dft&&dft.text)?dft.text:(ex&&ex.t))||'').split(/\n\s*\n/).map(x=>x.trim()).filter(Boolean),frPaint=()=>{};if(dft&&dft.ax)frs.push('【やったこと】'+dft.ax);
@@ -4972,7 +5012,7 @@ w.innerHTML=mvPts.map((p,i)=>'<div class="mvpt'+(i>0&&i<mvPts.length-1&&mvPts.le
 w.querySelectorAll('.mvcm').forEach(t=>{const i=+t.dataset.mvc;try{taGrow(t);}catch(e){}t.oninput=()=>{mvCm[i]=t.value;try{taGrow(t);}catch(e){}};});
 w.querySelectorAll('.mvpi').forEach((x,i)=>{x.oninput=()=>{mvPts[i]=x.value;$('mvRt').classList.remove('auto');x.classList.remove('auto');mvSync();};
 x.onkeydown=ev=>{if(ev.key==='Enter'&&!ev.isComposing&&ev.keyCode!==229){ev.preventDefault();if(i===mvPts.length-1){mvPts.push('');mvCm.push('');mvSync();mvPaint(mvPts.length-1);}else{const nx=w.querySelectorAll('.mvpi')[i+1];if(nx)nx.focus();}}};});
-w.querySelectorAll('.mvpx').forEach((b,j)=>b.onclick=()=>{mvPts.splice(j+1,1);mvCm.splice(j+1,1);mvSync();mvPaint();});
+w.querySelectorAll('.mvpx').forEach((b,j)=>b.onclick=()=>{mvPts.splice(j+1,1);mvCm.splice(j+1,1);mvSync();mvPaint();});try{cmbRetarget();}catch(e){}
 if(focusIx!=null){const t=w.querySelectorAll('.mvpi')[focusIx];if(t){try{t.focus();}catch(e){}}}};
 mvPaint();
 {const sp=$('secPf'),rr=$('mvPts')&&$('mvPts').parentNode;if(sp&&rr&&rr.parentNode)rr.parentNode.insertBefore(sp,rr.nextSibling);}
@@ -5231,6 +5271,7 @@ ev.preventDefault();acRead();if(!acts[i]||!acts[i].t.trim())return;acts.splice(i
 if(acU())acUnitBind();
 acCh();
 acSum();
+try{cmbRetarget();}catch(e){}
 requestAnimationFrame(()=>{[...$('acRows').querySelectorAll('.actrow')].forEach((r,i)=>{if(!r.isConnected)return;const st=r.querySelector('.ac-k');if(st&&kSl[i])st.scrollLeft=kSl[i];acKVis(r);
 const dv=r.querySelector('.ac-dv'),sb=dv&&dv.querySelector('.sel');if(dSl[i])dv.scrollLeft=dSl[i];if(sb){const sl=sb.getBoundingClientRect().left-dv.getBoundingClientRect().left+dv.scrollLeft;if(sl<dv.scrollLeft||sl+sb.offsetWidth>dv.scrollLeft+dv.clientWidth)dv.scrollLeft=Math.max(0,sl-8);}});});
 if(focusLast===true||typeof focusLast==='number'){const ins=$('acRows').querySelectorAll('.ac-t');
@@ -5819,7 +5860,7 @@ function openOvl(){$('ovl').classList.add('open');sheetDirty=false;ovlArm=0;try{
 let planAutoSave=null;
 let subOnClose=null;
 function openSub(html,onClose){$('sheet2').innerHTML='<div class="grab"></div>'+html;if(onClose!==undefined)subOnClose=onClose;$('ovl2').classList.add('open');}
-function closeSub(){const o=$('ovl2');if(!o||!o.classList.contains('open'))return;o.classList.remove('open');$('sheet2').innerHTML='';
+function closeSub(){const o=$('ovl2');if(!o||!o.classList.contains('open'))return;o.classList.remove('open');$('sheet2').innerHTML='';try{if(typeof CMB!=='undefined'&&CMB.last&&cmbEl()&&$('ovl')&&$('ovl').classList.contains('open')){const L=CMB.last;CMB.last=null;cmbGo(L);}}catch(e){}
 const f=subOnClose;subOnClose=null;if(f){try{f();}catch(e){}}setTimeout(spRefresh,0);}
 function openKindSheet(which,onDone,solo){
 const isK=which!=='tool',BASE=isK?KIND_BASE:TOOL_BASE,of=isK?kindOf:toolOf,set=isK?kindSet:toolSet,own=isK?kindOwnIds:toolOwnIds,MAX=isK?KIND_MAX:TOOL_MAX;
@@ -5891,6 +5932,7 @@ $('pfOk').onclick=()=>{const i=Math.min(ps.length-1,Math.max(0,Math.round(dr.scr
 step1();
 }
 function closeSheet(){
+try{cmbClose();}catch(e){}
 try{subOnClose=null;closeSub();}catch(e){}
 if(planAutoSave){try{planAutoSave();}catch(e){}planAutoSave=null;}
 $('ovl').classList.remove('open');
@@ -12497,7 +12539,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c39.8";
+const CL_APPVER="c39.9";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
