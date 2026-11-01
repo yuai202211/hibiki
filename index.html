@@ -1035,6 +1035,8 @@ display:flex;flex-direction:column;gap:11px;max-height:94%;overflow-y:auto;
 .mvc-pl b{color:#2c6be0;font-size:15px;font-weight:900;word-break:break-word}
 .mvc-pl em{display:inline-flex;font-style:normal;font-size:11px;font-weight:900;color:#fff;border-radius:999px;padding:1px 7px;margin-left:4px;vertical-align:2px;white-space:nowrap}.mvc-pl em.kr{background:#1d9e75}.mvc-pl em.md{background:#e24b4a}
 .mvc-pl b.mvc-no{color:#8a93a6;font-size:12px}
+.mvc-pl:has(.mvc-stop) .mvc-a{flex:1 1 45%;min-width:0}.mvc-pl:has(.mvc-stop) .mvc-b{flex:1 1 55%;min-width:0}
+.mvc-stop{display:inline-flex;flex-direction:column;align-items:flex-end;gap:3px;max-width:100%;box-sizing:border-box;background:#fff7e8;border:1.5px solid #f5c46b;border-radius:12px;padding:5px 8px}.mvc-stop .mvc-stt{font-style:normal;font-size:11px;font-weight:900;color:#fff;background:#e08a00;border-radius:999px;padding:1px 8px}.mvc-pl .mvc-stop b{color:#14275a;font-size:14px;word-break:break-word;text-align:right}.mvc-stop small{font-size:11.5px;font-weight:800;color:#7a4b00}
 .ida-go{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:62px;border:0;border-radius:16px;background:#ffb020;color:#3a2600;font-size:19px;font-weight:900;font-family:inherit;cursor:pointer;box-shadow:0 3px 0 #d98e00;margin:2px 0 4px}
 .ida-ed{margin-top:10px;background:#fff;border-radius:14px;padding:10px;border:2px solid #ffb020}.ida-ed[hidden]{display:none}
 .ida-ed .sh-ta-wrap textarea,.ida-ed textarea{min-height:110px!important}
@@ -2155,7 +2157,8 @@ details.ck-fd>.in{padding:0 8px 10px}details.ck-fd.r{box-shadow:inset 4px 0 0 #e
 .nowbar .line{display:flex;align-items:center;gap:6px;background:#fff;border:2px solid #3b63d9;border-radius:999px;padding:4px 6px}
 .mvp{position:sticky;bottom:0;background:var(--app,#f6f7fb);padding:6px 0 4px;z-index:3}
 .mvp .box{background:#fff;border-radius:18px;padding:8px;box-shadow:0 -4px 16px rgba(20,24,40,.08);max-height:60vh;max-height:60dvh;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
-.mvp .mvsw{display:flex;align-items:center;gap:8px;margin:0 2px 6px}.mvp .mvsw span:last-child{font-size:12px;font-weight:800;color:#8a93a6}.mvp .box.mini{padding:6px 8px}.mvp .box.mini .mvsw{margin:0}
+.mvp .mvsw{display:flex;align-items:center;gap:8px;margin:0 2px 6px}.mvp .mvsw span:last-child,.mvsw .mvsw-t{font-size:12px;font-weight:800;color:#8a93a6}
+.mvp-ed{margin-left:auto;flex:0 0 auto;border:0;border-radius:12px;background:#eef3ff;color:#2c5cc5;font-weight:900;font-size:14px;padding:8px 14px;box-shadow:inset 0 0 0 1.5px #c9d6ff;white-space:nowrap}.mvp-ed:active{transform:scale(.97)}.mvp .box.mini{padding:6px 8px}.mvp .box.mini .mvsw{margin:0}
 .mvp .pfflt,.mvq .pfflt{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.mvp .pfflt button,.mvq .pfflt button{border:0;border-radius:999px;padding:8px 12px;font-weight:800;font-size:13px;background:#f1f3f8;color:#4a5568}.mvp .pfflt button.sel,.mvq .pfflt button.sel{background:#7c3aed;color:#fff}
 .mvq .ks{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.mvq .ks button{border:0;border-radius:999px;padding:9px 11px;font-weight:800;font-size:13.5px;background:#f1f3f8;color:#4a5568}.mvq .ks button.on{background:#2c5cc5;color:#fff}
 .mvp .st{font-size:12px;color:#8a93a6;font-weight:800;margin:0 4px 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -2260,7 +2263,7 @@ input.pin,textarea.pin{color:#14181f!important;-webkit-text-fill-color:#14181f!i
 .now .nowx.lbl{width:auto;min-width:36px;height:auto;min-height:32px;border-radius:12px;padding:3px 5px}
 .actrow .ac-k.ac-kg .ac-plus.lbl,.ac-plus.lbl{display:inline-flex;font-size:16px}.ac-plus .bn{font-size:9px}
 .actrow .ac-k.ac-kg .ac-kx.lbl{display:inline-flex}
-.hcm.lbl{width:auto;min-width:34px;height:auto;min-height:30px;border-radius:12px;padding:3px 4px;font-size:13px}.hcm .bn{font-size:9px;color:#3b63d9}.hour.filled:has(>.body>.hcm) .body{padding-right:44px}
+.hcm.lbl{width:auto;min-width:34px;height:auto;min-height:30px;border-radius:12px;padding:3px 4px;font-size:13px}.hcm .bn{font-size:9px;color:#3b63d9}.hour.filled:has(>.body>.hcm) .body{padding-right:60px}
 .plan2 .tg2.lbl{width:auto;min-width:32px;height:auto;min-height:24px;padding:2px 3px;border-radius:8px}.plan2 .tg2 .bn{color:#4d7dff;font-size:9px}.plan2.done .tg2 .bn{color:#fff}
 .addbtn.lbl{display:inline-flex;font-size:16px;width:44px;height:44px;border-radius:14px}.addbtn .bn{font-size:9.5px}
 #mvSwap.lbl,#mvArrow.lbl{display:inline-flex;padding:4px 8px}
@@ -4100,9 +4103,10 @@ const top='<span class="mvc-top">'+(q0?'<span class="mvc-g">'+tag(q0)+'<b class=
 const g=TR_GD[tr]||'road',done=!open&&!!to,pos=(open||tr==='plane'||!to)?0.5:0.82;
 const veh='<span class="mvc-vw'+(tr==='plane'?' mvc-fly':'')+'" style="left:calc(30px + (100% - 60px) * '+pos+')"><span class="mvc-bob">'+(tr==='plane'?'':'<span class="mvc-puff">💨</span>')+trFace(ic,tr,'h')+'</span></span>';
 const trk='<span class="mvc-trk"><span class="mvc-gd">'+mvGround(g,pos,done)+mvViaDots(vias)+'</span><span class="mvc-st">🚩</span><span class="mvc-gl">🏁</span>'+(done?'<span class="mvc-sp">✨</span>':'')+veh+'</span>';
-const tm='<span class="mvc-tm"><span>'+esc(en.s||'')+'</span><span>'+(en.e?(en.ed?'翌':'')+esc(en.e):'？')+'</span></span>';
+const sr=open?mvOpenRow({en}):null,sx=sr&&sr.x;
+const tm='<span class="mvc-tm"><span>'+esc(en.s||'')+'</span><span>'+(en.e?(en.ed?'翌':'')+esc(en.e):(sx?'⏸ '+esc(sx.s)+'〜':'？'))+'</span></span>';
 const via=vias.length?'<span class="mvc-via">経由 '+vias.map((v,j)=>mvNum(j)+' '+esc(v)).join('　')+'</span>':'';
-const pl='<span class="mvc-pl"><span class="mvc-a">'+(from?'<b>'+esc(from)+'</b>':'<b class="mvc-no">（出発した所なし）</b>')+'<em class="kr">から</em></span><span class="mvc-b">'+(to?'<b>'+esc(to)+'</b><em class="md">まで</em>':(open?'<b class="mvc-no">移動中…🏁到着を押す</b>':'<b class="mvc-no">（着いた所なし）</b>'))+'</span></span>';
+const pl='<span class="mvc-pl"><span class="mvc-a">'+(from?'<b>'+esc(from)+'</b>':'<b class="mvc-no">（出発した所なし）</b>')+'<em class="kr">から</em></span><span class="mvc-b">'+(to?'<b>'+esc(to)+'</b><em class="md">まで</em>':(sx?'<span class="mvc-stop"><i class="mvc-stt">⏸ 止まり中 '+esc(sx.s)+'〜</i><b>📍 '+esc(sx.p||'（場所なし）')+'</b>'+(()=>{const ks=[sx.k].concat(sx.kx||[]).filter(Boolean).map(k=>{const q=kindOf(k);return q?esc(q.ic)+' '+esc(q.lb):'';}).filter(Boolean);return ks.length?'<small>'+ks.join('・')+'</small>':'';})()+'</span>':(open?'<b class="mvc-no">移動中…🏁到着を押す</b>':'<b class="mvc-no">（着いた所なし）</b>')))+'</span></span>';
 const dm=(en.e&&!en.noT)?durMin(en.s,en.e,en.ed):0;
 const sum='<span class="mvc-sum">'+esc(trName(tr))+'で'+(dm?' '+esc(durText(dm)):'')+(open?'<i class="mvc-now">移動中</i>':(to?'<i class="mvc-ok">🏁 到着</i>':''))+'</span>';
 return '<span class="mvc">'+top+trk+tm+via+pl+sum+'</span>';}
@@ -4734,7 +4738,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c39.4）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c39.5）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -8054,7 +8058,8 @@ function mvpSplitBtn(pl){return '<button type="button" class="spl" id="mvpSplit"
 function paintMvp(){const el=$('mvp');if(!el)return;mvpNoScroll(el);const show=ui.tab==='di'&&(typeof topView==='undefined'||topView==='diary')&&ui.date===todayStr();if(!show){el.style.display='none';return;}
 {const ae=document.activeElement;if(ae&&el.contains(ae)&&ae.matches&&ae.matches('input,textarea,select'))return;}const o=openMove(),r=o&&mvOpenRow(o);let h='';
 let mn=false;try{mn=localStorage.getItem('hibiki-mvp-min')==='1';}catch(e){}
-const swH='<div class="mvsw">'+iosSw('mvpSw',!mn,'🚗 移動の画面','','sm')+'<span>'+(o?(r?'止まり中 '+esc(r.x.s)+'〜':'走行中 '+esc(o.en.s)+'〜'):'')+'</span></div>';
+const edT=o?{d:o.d,k:o.k}:(()=>{const st=mvpStay();return st?{d:st.d,k:st.k}:null;})();
+const swH='<div class="mvsw">'+iosSw('mvpSw',!mn,'🚗 移動の画面','','sm')+'<span class="mvsw-t">'+(o?(r?'止まり中 '+esc(r.x.s)+'〜':'走行中 '+esc(o.en.s)+'〜'):'')+'</span>'+((!mn&&edT)?'<button type="button" class="mvp-ed" id="mvpEd">✎ 編集</button>':'')+'</div>';
 if(mn){el._h='';el.innerHTML='<div class="box mini">'+swH+'</div>';el.style.display='';const sw=$('mvpSw');if(sw)sw.onclick=()=>{try{localStorage.setItem('hibiki-mvp-min','0');}catch(e){}paintMvp();};requestAnimationFrame(()=>{try{const nb=$('nowBar');el.style.bottom=(nb&&nb.style.display!=='none'?nb.offsetHeight:0)+'px';}catch(e){}});return;}
 if(!o){const p=placeBefore(todayStr(),nowHM());const tr=mvpTr(),tl=String((TRS.find(z=>z[0]===tr)||['','🚗 車'])[1]).replace(/^\S+\s*/,'');
 h='<div class="st">いま：📍 '+esc(p||'（場所なし）')+'</div><div class="trs">'+TRS.map(z=>'<button type="button" data-mtr="'+z[0]+'"'+(z[0]===tr?' class="on"':'')+'>'+z[1]+'</button>').join('')+'</div><div class="big"><button type="button" class="go" id="mvpGo">'+esc(TRICON[tr]||'🚗')+' 移動 <b>'+esc(tl)+'で出発</b></button></div>'+(()=>{const st=mvpStay();return st?mvpSplitBtn(st.en.p):'';})();}
@@ -8065,6 +8070,7 @@ h='<div class="st">止まり中：'+esc(r.x.s)+'〜（走行 '+esc(o.en.s)+'〜�
 const html0='<div class="box">'+swH+h+'</div>';const ob=el.querySelector('.box:not(.mini)');if(el._h===html0&&ob){el.style.display='';return;}
 const sT=ob?ob.scrollTop:0,wasT=!!(ob&&ob.classList.contains('typing'));el._h=html0;el.innerHTML=html0;el.style.display='';{const nb=el.querySelector('.box');if(nb){if(wasT){nb.scrollTop=sT;requestAnimationFrame(()=>mvpShowPl(nb));}else if(sT)nb.scrollTop=sT;}}
 {const sw=$('mvpSw');if(sw)sw.onclick=()=>{try{localStorage.setItem('hibiki-mvp-min','1');}catch(e){}paintMvp();};}
+{const eb=$('mvpEd');if(eb&&edT)eb.onclick=()=>openEntrySheet(edT.d,{key:edT.k});}
 {const ka=$('mvpKAll');if(ka)ka.onclick=()=>openKindAll(id=>{mvpRowSet(x=>{let ks=[x.k].concat(x.kx||[]).filter(Boolean);if(ks.indexOf(id)<0)ks.push(id);x.k=ks[0];x.t=(kindOf(ks[0])||{}).lb||ks[0];if(ks.length>1)x.kx=ks.slice(1);else delete x.kx;});render();},'🏷️ 止まって何をした？','分野を押すと中身が出る。押した物を足す');}
 {const w=$('mvpPlW');if(w){const pick=p=>{mvpPflOpen=false;mvpRowSet(x=>{if(x.p===p)delete x.p;else x.p=p;});render();};const rp=()=>{const o2=openMove(),r2=o2&&mvOpenRow(o2);w.innerHTML=mvpPlHtml(r2&&r2.x.p||'',true);mvpPlBind(w,pick,rp);};mvpPlBind(w,pick,rp);}}
 requestAnimationFrame(()=>{try{const nb=$('nowBar');el.style.bottom=(nb&&nb.style.display!=='none'?nb.offsetHeight:0)+'px';}catch(e){}mvpFit(el);});
@@ -12458,7 +12464,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c39.4";
+const CL_APPVER="c39.5";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
