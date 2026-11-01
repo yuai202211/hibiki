@@ -1999,10 +1999,11 @@ body.cardvis .fab{display:none!important}
 .ntf-row .ntf-sw.ios .trk{position:absolute;right:12px;top:50%;margin-top:-15.5px}
 .ntf-top .ios.ntf-main{flex:1 1 0;min-width:0;min-height:46px;justify-content:space-between;padding:0 8px}
 .lblrow{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:10px 0 6px}
+.sheet.kbty .sh-btns.main>:not(#shSave){display:none!important}
 .hbox{display:flex;align-items:flex-start;gap:6px;border:2px solid #3b63d9;border-radius:14px;padding:8px 10px;background:#fff}
 .hbox .pre{font-weight:900;white-space:nowrap;max-width:45%;overflow:hidden;text-overflow:ellipsis;padding-top:4px}
 .hbox .bar{width:1px;align-self:stretch;background:var(--line)}
-.hbox textarea,.sheet .hbox textarea,.sheet .hbox textarea:focus{flex:1;min-width:0;width:auto;border:0;background:none;margin:0;padding:2px 0;font-size:16px;font-weight:700;box-shadow:none;outline:0}
+.hbox textarea,.sheet .hbox textarea,.sheet .hbox textarea:focus{flex:1;min-width:0;width:auto;border:0;background:none;margin:0;padding:2px 4px;font-size:16px;font-weight:700;box-shadow:none;outline:0}
 .hbox.err,.actrow.err{border-color:#e0405a;animation:hshake .3s}
 .actrow.err{box-shadow:0 0 0 2px #e0405a}
 @keyframes hshake{0%,100%{transform:translateX(0)}30%{transform:translateX(-4px)}60%{transform:translateX(4px)}}
@@ -2249,7 +2250,7 @@ input.pin,textarea.pin{color:#14181f!important;-webkit-text-fill-color:#14181f!i
 .mvcut-on.uc .mvcut{border-left:5px solid var(--uc);background:var(--ub)}
 .hour.filled.trip.trip-alt{background:#eff4f9;box-shadow:inset 6px 0 0 #6a8caf}.hour.filled.trip.trip-alt.trip-s{border-top-color:#6a8caf}.hour.filled.trip.trip-alt.trip-e{border-bottom-color:#6a8caf}.hour.filled.trip-via.trip-alt{background:#f5f8fb;box-shadow:inset 6px 0 0 #6a8caf,inset 18px 0 0 #f5f8fb}.trip-alt .trip-tag{background:#6a8caf}.trip-alt .trip-via-tag{color:#6a8caf}
 .unit .hbox{align-items:center;margin-top:2px}.unit .hbox .pre{padding-top:0}.unit .hbox .pre.nok{color:#8a93a6;font-weight:800;font-size:12px}
-#acRows .unit .hbox .ac-t{flex:1;min-width:0;width:auto;height:auto;border:0;background:none;margin:0;padding:2px 0;font-size:16px;font-weight:700;box-shadow:none;outline:0}.hbox textarea.ac-t{resize:none;overflow:hidden;line-height:1.5;font-family:inherit;color:inherit;min-height:0}
+#acRows .unit .hbox .ac-t{flex:1;min-width:0;width:auto;height:auto;border:0;background:none;margin:0;padding:2px 4px;font-size:16px;font-weight:700;box-shadow:none;outline:0}.hbox textarea.ac-t{resize:none;overflow:hidden;line-height:1.5;font-family:inherit;color:inherit;min-height:0}
 .unit .more{flex:0 0 auto;width:30px;height:30px;border-radius:999px;background:#f1f3f8;color:#8a93a6;font-weight:900;padding:0;border:0}.unit .more.on{background:#3b63d9;color:#fff}
 .tmline{display:flex;align-items:center;flex-wrap:wrap;gap:6px;padding:4px 0 0 4px}.tmb{font-size:11.5px;font-weight:800;color:#8a93a6;padding:4px 6px;border-radius:8px;background:none;border:0}.tmline.open .tmb{color:#3b63d9}
 .unit .tmw,.unit .ac-side .ac-x{display:none!important}.unit .tmline.open .tmw{display:flex!important;flex-direction:column;gap:4px;flex:1 1 100%;min-width:0}.unit .tmw .ac-l2{margin-top:0}
@@ -2426,10 +2427,13 @@ let kvRaf=0;function keepVisible(el){if(!kvTxt(el))return;if(el.closest&&el.clos
 if(!sc||sc===document.body){if(r.bottom>bot||r.top<top+10)el.scrollIntoView({block:'center'});return;}
 let y0=r.top,y1=r.bottom;if(el.tagName==='TEXTAREA'&&r.height>bot-top-24){try{const cs=getComputedStyle(el),m=document.createElement('div');m.style.cssText='position:absolute;left:0;top:0;visibility:hidden;white-space:pre-wrap;word-break:break-word;pointer-events:none;';m.style.font=cs.font;m.style.lineHeight=cs.lineHeight;m.style.padding=cs.padding;m.style.letterSpacing=cs.letterSpacing;m.style.boxSizing='border-box';m.style.width=r.width+'px';m.style.border=cs.borderWidth+' solid transparent';m.textContent=el.value.slice(0,el.selectionEnd||0);const s=document.createElement('span');s.textContent='\u200b';m.appendChild(s);document.body.appendChild(m);const lh=parseFloat(cs.lineHeight)||22,cy=s.offsetTop;m.remove();y0=r.top+cy;y1=y0+lh+4;}catch(e){}}
 const scR=sc.getBoundingClientRect();bot=Math.min(bot,scR.bottom-8);const tl=Math.max(top+10,scR.top+8,kvCoverBot(el)+6);if(y1>bot)sc.scrollTop+=Math.ceil(y1-bot);else if(y0<tl)sc.scrollTop-=Math.ceil(tl-y0);}catch(e){}},0);}
-document.addEventListener('focusin',ev=>{const t=ev.target;if(!kvTxt(t))return;if(t.tagName==='TEXTAREA')taGrow(t);if(!t.closest('#mvp'))kbOn(t.closest('#sheet,#sheet2,#scr,#page'));keepVisible(t);[120,350,650,1000,1500].forEach(ms=>setTimeout(()=>{if(document.activeElement===t)keepVisible(t);},ms));});
-document.addEventListener('selectionchange',()=>{const a=document.activeElement;if(kvTxt(a))keepVisible(a);});
-document.addEventListener('keyup',ev=>{const t=ev.target;if(kvTxt(t))keepVisible(t);},true);
-document.addEventListener('focusout',ev=>{setTimeout(()=>{const a=document.activeElement;if(kvTxt(a))return;document.querySelectorAll('.kb').forEach(x=>x.classList.remove('kb'));},250);});
+document.addEventListener('focusin',ev=>{const t=ev.target;if(!kvTxt(t))return;if(t.tagName==='TEXTAREA')taGrow(t);if(!t.closest('#mvp'))kbOn(t.closest('#sheet,#sheet2,#scr,#page'));
+if(t.closest('#sheet')){const sh=$('sheet');sh.classList.add('kbty');keepVisible(t);[380,900].forEach((ms,n)=>setTimeout(()=>{if(document.activeElement!==t)return;if(!n)kvSheetTop(t);else keepVisible(t);},ms));return;}
+keepVisible(t);[120,350,650,1000,1500].forEach(ms=>setTimeout(()=>{if(document.activeElement===t)keepVisible(t);},ms));});
+function kvSheetTop(el){try{const sc=$('sheet');if(!sc||!sc.contains(el))return;const box=el.closest('.hbox')||el,lab=box.previousElementSibling,r=(lab&&lab.getBoundingClientRect().height<40?lab:box).getBoundingClientRect(),sr=sc.getBoundingClientRect(),vv=window.visualViewport,top=Math.max(sr.top,vv?vv.offsetTop:0)+10;const d=Math.round(r.top-top);if(Math.abs(d)>12)sc.scrollTop+=d;}catch(e){}}
+document.addEventListener('selectionchange',()=>{const a=document.activeElement;if(kvTxt(a)&&!a.closest('#sheet'))keepVisible(a);});
+document.addEventListener('keyup',ev=>{const t=ev.target;if(kvTxt(t)&&!t.closest('#sheet'))keepVisible(t);},true);
+document.addEventListener('focusout',ev=>{setTimeout(()=>{const a=document.activeElement;if(kvTxt(a))return;document.querySelectorAll('.kb').forEach(x=>x.classList.remove('kb'));document.querySelectorAll('.kbty').forEach(x=>x.classList.remove('kbty'));},250);});
 document.addEventListener('input',ev=>{const t=ev.target;if(!kvTxt(t)||t.closest('#mvp'))return;kbOn(t.closest('#sheet,#sheet2,#scr,#page'));keepVisible(t);setTimeout(()=>{if(document.activeElement===t)keepVisible(t);},60);});
 let kbfRaf=0;
 function kbFit(){try{const vv=window.visualViewport,app=document.getElementById('app');if(!vv||!app)return;
@@ -4742,7 +4746,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c39.7）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c39.8）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -5123,7 +5127,9 @@ r.querySelectorAll('[data-rqg]').forEach(b=>b.onclick=()=>{acRead();const G=b.da
 {const t=r.querySelector('[data-rt]');if(t)t.onclick=()=>{acRead();const a=acts[i];if(!a)return;const u=acUi(a);u.tm=!u.tm;acPaint();};}
 {const al=r.querySelector('[data-rall]');if(al)al.onclick=()=>{acRead();openKindAll((id,d)=>{acRead();const a=acts[i];if(!a)return;acKTog(a,id,d);acPaint();acFocusT(i);},'🏷️ ここで何をした？','分野を押すと中身が出る。押した物を足す（もう一度で外す）');};}
 r.querySelectorAll('[data-rbd]').forEach(b=>b.onclick=()=>{acRead();const a=acts[i];if(!a)return;a.bd=Number(b.dataset.rbd);acPaint();});
-r.querySelectorAll('[data-rcar]').forEach(b=>b.onclick=()=>{acRead();const a=acts[i];if(!a)return;if(a.car)delete a.car;else a.car=1;acPaint();});
+r.querySelectorAll('[data-rcar]').forEach(b=>b.onclick=()=>{acRead();const a=acts[i];if(!a)return;if(a.car)delete a.car;else a.car=1;
+{const S=sheetSt.sel;if(a.car&&S&&S.car){S.car=false;if(!S.stay&&!S.move)S.stay=true;sheetSt.sub=false;eType=S.move?'move':'stay';try{mty();}catch(e){}toast('🚙 この組だけ車内にした（記録全体の車内は外した）');}}
+acPaint();});
 {const pi=r.querySelector('.ac-pl');if(pi){const mk=()=>r.querySelectorAll('[data-rpl]').forEach(x=>x.classList.toggle('sel',x.dataset.rpl===pi.value.trim()));pi.oninput=mk;pi.onkeydown=ev=>{if(ev.key==='Enter'&&!ev.isComposing){ev.preventDefault();pi.blur();}};
 r.querySelectorAll('[data-rpl]').forEach(b=>b.onclick=()=>{pi.value=(pi.value.trim()===b.dataset.rpl)?'':b.dataset.rpl;mk();});}}
 {const qm=r.querySelector('[data-rqm]');if(qm)qm.onclick=()=>{acRead();qMore=!qMore;acPaint();};}
@@ -5477,6 +5483,7 @@ const t=$('shTa').value.trim(),p=sheetSt.sub?'':$('shPlace').value.trim();
 const rt=$('mvRt').value.replace(/\s*→\s*$/,'').trim();
 const isMv=eType==='move';
 acRead();
+{const S=sheetSt.sel;if(S&&S.car&&acts.some(a=>a&&a.car)){S.car=false;if(!S.stay&&!S.move)S.stay=true;sheetSt.sub=false;if(eType==='incar')eType='stay';}}
 acts.forEach(a=>{if(!a.t.trim()&&(a.k||a.d)){const z=kindOf(a.k)||toolOf(a.d);if(z)a.t=(!a.k&&a.d==='_other'&&a.dx)?a.dx:z.lb;}if(!a.t.trim()&&a.ph&&a.ph.length)a.t='写真';});
 acts.forEach(a=>{if(!a.t.trim()&&!a.k&&!a.d&&!a.m&&!(a.c&&a.c.trim())&&!(a.ph&&a.ph.length)&&(!a.s||a.s===tS)&&(!a.e||a.e===tE)){a.s='';a.e='';}});
 {const bad=acts.findIndex(a=>!a.t.trim()&&(a.m||a.s||a.e||a.k||a.d||(a.c&&a.c.trim())));
@@ -12490,7 +12497,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c39.7";
+const CL_APPVER="c39.8";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
