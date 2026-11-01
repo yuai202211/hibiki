@@ -2142,6 +2142,7 @@ details.ck-fd>.in{padding:0 8px 10px}details.ck-fd.r{box-shadow:inset 4px 0 0 #e
 .hour.filled.warn-rec{background:#fff1f0!important;outline:2px solid #f2a7a3;outline-offset:-2px}.hour.filled.warn-rec::after{content:"";position:absolute;top:0;bottom:0;right:0;width:6px;background:#e5484d;border-radius:0 12px 12px 0}.warn-tag{display:block;width:max-content;max-width:100%;margin-top:4px;background:#e5484d;color:#fff;font-size:12px;font-weight:900;border-radius:8px;padding:2px 8px}
 .hour.filled.trip{background:#f0f6f2;box-shadow:inset 6px 0 0 #6b9080}.hour.filled.trip.trip-s{border-top:2px solid #6b9080;border-top-left-radius:12px;border-top-right-radius:12px}.hour.filled.trip.trip-e{border-bottom:2px solid #6b9080;border-bottom-left-radius:12px;border-bottom-right-radius:12px;margin-bottom:6px}
 .hour.filled.trip-via{background:#f6faf7;box-shadow:inset 6px 0 0 #6b9080,inset 18px 0 0 #f6faf7}.hour.filled.trip-via .body{opacity:.9}
+.hour.trip-leg-row .mvc{display:none}.trip-leg{display:block;font-size:13px;font-weight:800;color:#14275a;margin:2px 0 4px}.trip-leg .trf{font-size:16px}.trip-leg small{font-size:11.5px;color:#5f6b85;font-weight:700;white-space:nowrap}
 .trip-tag{display:block;width:max-content;max-width:100%;background:#6b9080;color:#fff;font-size:12px;font-weight:900;border-radius:8px;padding:2px 8px;margin-bottom:4px;white-space:normal}.trip-via-tag{display:block;width:max-content;font-size:11px;font-weight:900;color:#6b9080;margin-bottom:2px}
 .hour.filled:has(>.body>.hcm) .body{padding-right:34px}
 .hcm{position:absolute;right:8px;top:8px;width:30px;height:30px;border-radius:999px;background:#eef2ff;display:flex;align-items:center;justify-content:center;font-size:14px}
@@ -4099,7 +4100,7 @@ const tr=en.tr||'car',ic=TRICON[tr]||'🚗',P=String(en.rt||'').split('→').map
 const from=P[0]||'',to=P.length>1?P[P.length-1]:'',vias=P.slice(1,-1).filter(Boolean);
 const L=P.length>1?P:[from,''],PF=mvLinePf(L,en),q0=PF[0]||null,q1=PF[PF.length-1]||q0;
 const tag=q=>'<span class="mvc-pf"><i>'+pfSym(q)+'</i>'+esc(q.short)+'</span>';
-const top='<span class="mvc-top">'+(q0?'<span class="mvc-g">'+tag(q0)+'<b class="mvc-kr">から</b></span>':'')+'<span class="mvc-ln"></span><span class="mvc-go">移動<i>➜</i></span><span class="mvc-ln"></span>'+(q1?'<span class="mvc-g">'+tag(q1)+'<b class="mvc-md">まで</b></span>':'')+'</span>';
+const top=(q0&&q1&&q0.short===q1.short)?'':'<span class="mvc-top">'+(q0?'<span class="mvc-g">'+tag(q0)+'<b class="mvc-kr">から</b></span>':'')+'<span class="mvc-ln"></span><span class="mvc-go">移動<i>➜</i></span><span class="mvc-ln"></span>'+(q1?'<span class="mvc-g">'+tag(q1)+'<b class="mvc-md">まで</b></span>':'')+'</span>';
 const g=TR_GD[tr]||'road',done=!open&&!!to,pos=(open||tr==='plane'||!to)?0.5:0.82;
 const veh='<span class="mvc-vw'+(tr==='plane'?' mvc-fly':'')+'" style="left:calc(30px + (100% - 60px) * '+pos+')"><span class="mvc-bob">'+(tr==='plane'?'':'<span class="mvc-puff">💨</span>')+trFace(ic,tr,'h')+'</span></span>';
 const trk='<span class="mvc-trk"><span class="mvc-gd">'+mvGround(g,pos,done)+mvViaDots(vias)+'</span><span class="mvc-st">🚩</span><span class="mvc-gl">🏁</span>'+(done?'<span class="mvc-sp">✨</span>':'')+veh+'</span>';
@@ -4738,7 +4739,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c39.5）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c39.6）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -7464,13 +7465,16 @@ el.classList.add('warn-rec');const b=el.querySelector('.body');if(b&&!b.querySel
 function tripDecorate(pane){let tn=0;const eo=entriesOf(ui.date)||{},rows=[...pane.querySelectorAll('.hour.filled[data-k]')],pk=s=>placeKey(String(s||'').trim()),near=(a,b)=>a&&b&&Math.abs(hmMin(a)-hmMin(b))<=5;
 const ends=x=>String(x.rt||'').split('→').map(z=>z.trim()).filter(Boolean);const R=rows.map(el=>({el,x:eo[el.dataset.k]})).filter(o=>o.x&&!o.x.del&&!o.x.noT&&o.x.s);
 for(let i=0;i<R.length;i++){const a=R[i];if(!a.x.mv||a.el.classList.contains('trip'))continue;const T=[a];let j=i;
-while(true){const m=T[T.length-1].x,st=R[j+1],nx=R[j+2];if(st&&st.x.mv&&m.e&&near(st.x.s,m.e)&&(st.x.tr||'car')!==(m.tr||'car')){T.push(st);j+=1;continue;}if(!st||!nx||st.x.mv||!nx.x.mv||!m.e)break;const dst=ends(m).slice(-1)[0],org=ends(nx.x)[0];
+while(true){const m=T[T.length-1].x,st=R[j+1],nx=R[j+2];if(st&&st.x.mv&&m.e&&near(st.x.s,m.e)&&(st.x.tr||'car')!==(m.tr||'car')){T.push(st);j+=1;continue;}break;const dst=ends(m).slice(-1)[0],org=ends(nx.x)[0];
 if(!near(st.x.s,m.e)||!st.x.e||!near(nx.x.s,st.x.e)||durMin(st.x.s,st.x.e,st.x.ed?1:0)>90||st.x.k==='sleep'||(st.x.acts||[]).some(z=>z&&(z.k==='sleep'||z.k==='nap'&&!z.mvp&&!z.s))||pk(st.x.p)!==pk(dst)||pk(nx.x.p||org)!==pk(st.x.p))break;T.push(st,nx);j+=2;}
+if(T.length<2)continue;
 const L=T[T.length-1].x,vias=T.filter(o=>!o.x.mv).length,dur=L.e?durMin(a.x.s,L.e,(L.ed||L.e<a.x.s)?1:0):0;
 tn++;T.forEach((o,n)=>{o.el.classList.add('trip');if(tn%2===0)o.el.classList.add('trip-alt');if(n===0)o.el.classList.add('trip-s');if(n===T.length-1)o.el.classList.add('trip-e');if(!o.x.mv)o.el.classList.add('trip-via');});
 const SG=[];T.filter(o=>o.x.mv).forEach(o=>{const tr=o.x.tr||'car',mm=o.x.e?durMin(o.x.s,o.x.e,(o.x.ed||o.x.e<o.x.s)?1:0):0,l=SG[SG.length-1];if(l&&l.tr===tr)l.m+=mm;else SG.push({tr,m:mm});});const mixed=SG.length>1;
 {const b=a.el.querySelector('.body');if(b&&!b.querySelector('.trip-tag'))b.insertAdjacentHTML('afterbegin','<span class="trip-tag">'+(mixed?'':trFace(TRICON[a.x.tr]||'🚗',a.x.tr,'h')+' ')+'出発 '+esc(a.x.s)+' → 🏁 '+(L.e?'到着 '+esc(L.e)+'（'+esc(durText(dur)||'0分')+(mixed?'・乗り換え'+(SG.length-1):'')+(vias?'・経由'+vias:'')+'）':'走行中')+'</span>'+(T.filter(o=>o.x.mv).length>=2?mvTripHtml(T,!L.e):(mixed?'<span class="trip-chain">'+SG.map(s=>'<span class="tc"><i>'+trFace(TRICON[s.tr]||'🚗',s.tr,'h')+'</i><small>'+esc(s.m?durText(s.m):'…')+'</small></span>').join('<span class="tc-to">›</span>')+'</span>':'')));}
 T.filter(o=>!o.x.mv).forEach(o=>{const b=o.el.querySelector('.body');if(b&&!b.querySelector('.trip-via-tag'))b.insertAdjacentHTML('afterbegin','<span class="trip-via-tag">⋯ 経由</span>');});
+if(T.filter(o=>o.x.mv).length>=2)T.forEach((o,n)=>{if(!o.x.mv)return;o.el.classList.add('trip-leg-row');if(!n)return;const b=o.el.querySelector('.body');if(!b||b.querySelector('.trip-leg'))return;const x=o.x,tr=x.tr||'car',mm=x.e?durMin(x.s,x.e,(x.ed||x.e<x.s)?1:0):0;
+b.insertAdjacentHTML('afterbegin','<span class="trip-leg">↳ 乗り換え　'+trFace(TRICON[tr]||'🚗',tr,'h')+' '+esc(trName(tr))+'で'+(mm?' '+esc(durText(mm)):'')+'　<small>'+esc(x.s)+'–'+(x.e?esc(x.e):'…')+'</small></span>');});
 i=j;}}
 const CK_SL=[['朝',5,10],['昼前',10,12],['昼',12,15],['夕',15,19],['夜',19,29]];
 function ckSlotNow(){let h=new Date().getHours();if(h<5)h+=24;const s=CK_SL.find(x=>h>=x[1]&&h<x[2]);return s?s[0]:'夜';}
@@ -12464,7 +12468,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c39.5";
+const CL_APPVER="c39.6";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
