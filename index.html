@@ -4799,7 +4799,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c41.5）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c41.6）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -9526,7 +9526,7 @@ const runs={},W0=P,W1=P+limit,IXS=IX.stay,stayMk=new Uint8Array(NT);
 const add=(ki,s,e,ac)=>{if(!ki||e<=s)return;(runs[ki]=runs[ki]||[]).push([s,e]);if(ac&&AI_KINDS[ac.k]){const v=Array.isArray(ac.ai)?ac.ai:aiGuess(ac.t);for(const id of v)(aiRuns[id]=aiRuns[id]||[]).push([s,e]);}if(ac&&Array.isArray(ac.ap))for(const id of ac.ap)(apRuns[id]=apRuns[id]||[]).push([s,e]);if(ac&&Array.isArray(ac.mp)&&ac.mp.length){for(const id of ac.mp)(mpRuns[id]=mpRuns[id]||[]).push([s,e]);if(ac.mp.some(x=>x!=='idle'))(mpRuns._fw=mpRuns._fw||[]).push([s,e]);}if(ac&&ac.bz)(bzRuns[ac.bz]=bzRuns[ac.bz]||[]).push([s,e]);};
 const addMask=(ki,A,mask,want,ac)=>{let s=-1;for(let j=0;j<=mask.length;j++){const on=j<mask.length&&mask[j]===want;if(on&&s<0)s=j;else if(!on&&s>=0){add(ki,A+s,A+j,ac);s=-1;}}};
 items.forEach(it=>{const A=Math.max(0,it.a),B=Math.min(NT,it.b);if(B<=A)return;
-if(it.mv){add(it.c,A,B);return;}
+if(it.mv){add(it.c,A,B);for(const ac of it.acts){if(!ac||ac.md)continue;const ki=(ac.wk&&IX.relb)?IX.relb:kIx(ac.k);if(!ki)continue;if(ac.s&&ac.e){let x=it.off+hmMin(ac.s),y=it.off+hmMin(ac.e);if(x<it.a)x+=1440;if(y<=x)y+=1440;x=Math.max(x,A);y=Math.min(y,B);if(y>x)add(ki,x,y,ac);}else add(ki,A,B,ac);}return;}
 const L=B-A,cl=new Uint8Array(L),timed=[],mins=[],whole=[];
 for(const ac of it.acts){if(!ac)continue;const ki=(ac.wk&&IX.relb)?IX.relb:kIx(ac.k);if(!ki)continue;
 if(ac.s&&ac.e)timed.push([ac,ki]);else if(Number(ac.m)>0)mins.push([ac,ki]);else whole.push([ac,ki]);}
@@ -12643,7 +12643,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c41.5";
+const CL_APPVER="c41.6";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
