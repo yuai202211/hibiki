@@ -2146,7 +2146,7 @@ details.ck-fd>summary .s{flex:1;min-width:0;font-weight:700;font-size:12px;color
 details.ck-fd>summary::after{content:"▾ 開く";flex:none;font-size:11px;color:#6a8caf;font-weight:900}details.ck-fd[open]>summary::after{content:"▴ 閉じる"}
 details.ck-fd>.in{padding:0 8px 10px}details.ck-fd.r{box-shadow:inset 4px 0 0 #e5484d}details.ck-fd.r>summary{color:#e5484d}
 .ck-ci{background:#1d2230;color:#fff}.ck-ci .t{display:flex;justify-content:space-between;font-weight:900}.ck-ci .t small{color:#ffce54}
-.ck-ci .row{display:flex;gap:6px;margin:8px 0}.ck-ci .slot{flex:1;border-radius:12px;padding:6px 2px;text-align:center;font-size:11px;font-weight:800;background:#2c3242;color:#9aa3b5}.ck-ci .slot b{display:block;font-size:15px}.ck-ci .slot.miss{background:#4a2420;color:#ffb4a2;box-shadow:inset 0 0 0 1px #e4572e}.ck-ci .slot.miss b{color:#ff8f6b}.ato{display:inline-block;margin-left:2px;font-size:9px;font-style:normal;font-weight:900;opacity:.75;vertical-align:top}
+.ck-ci .row{display:flex;gap:6px;margin:8px 0}.ck-ci .slot{flex:1;border-radius:12px;padding:6px 2px;text-align:center;font-size:11px;font-weight:800;background:#2c3242;color:#9aa3b5}.ck-ci .slot b{display:block;font-size:15px}.ck-ci .slot.miss{background:#4a2420;color:#ffb4a2;box-shadow:inset 0 0 0 1px #e4572e}.ck-ci .slot.miss b{color:#ff8f6b}.ato{display:inline-block;margin-left:2px;font-size:9px;font-style:normal;font-weight:900;opacity:.75;vertical-align:top}.ck-ci .slot.tap,.rd-sl>div.tap{cursor:pointer}.ck-ci .slot.tap:active,.rd-sl>div.tap:active{transform:scale(.95)}.rd-sl>div.tap{box-shadow:inset 0 0 0 1px rgba(20,39,90,.25)}
 .ck-ci .slot.done{background:#0a9a54;color:#fff}.ck-ci .slot.now{outline:2px solid #ffce54;color:#fff}
 .ck-ci .go{width:100%;border:0;border-radius:14px;height:56px;font-size:18px;font-weight:900;background:#ffce54;color:#1d2230;font-family:inherit}.ck-ci .go.ok{background:#2c3242;color:#9aa3b5}
 .ck-gatebar{margin:6px 2px 8px;background:#fff8d6;border-radius:12px;padding:8px 10px;font-weight:900;font-size:13px;color:#8a5a00;box-shadow:inset 4px 0 0 #ffce54}
@@ -7556,14 +7556,19 @@ function slMiss(SL,D,now){const i=SL.findIndex(x=>x[0]===now);return SL.slice(0,
 function slTarget(SL,D,now){const m=slMiss(SL,D,now);return m.length?m[0]:now;}
 function slLeft(SL,D,now){return slMiss(SL,D,now).length+(D[now]?0:1);}
 function atoMark(o,sl,now){if(sl!==now)o['後'+sl]=1;return o;}
-function slRow(D,sl,mis){return '<div class="rd-sl">'+RD_SL.map(x=>{const mi=(mis||[]).indexOf(x[0])>=0;return '<div class="'+(D[x[0]]?'ok':(mi?'miss':(x[0]===sl?'rd-now':'')))+'"><small>'+x[0]+'</small><b>'+(D[x[0]]?esc(D[x[0]]):(mi?'未':'—'))+'</b>'+(D['後'+x[0]]?'<i class="ato">後</i>':'')+'</div>';}).join('')+'</div>';}
+function slOpen(SL,D,now,nm){const i=SL.findIndex(x=>x[0]===nm),j=SL.findIndex(x=>x[0]===now);return i>=0&&j>=0&&i<=j&&!D[nm];}
+function slOpenList(SL,D,now){return SL.filter(x=>slOpen(SL,D,now,x[0])).map(x=>x[0]);}
+let rdPick=null,numPick=null,ernPick=null;
+function slRow(D,sl,mis,kind,opn){return '<div class="rd-sl">'+RD_SL.map(x=>{const mi=(mis||[]).indexOf(x[0])>=0,op=(opn||[]).indexOf(x[0])>=0;return '<div class="'+(D[x[0]]?'ok':(mi?'miss':(x[0]===sl?'rd-now':'')))+(op?' tap':'')+'"'+(op&&kind?' data-slp="'+kind+'|'+x[0]+'"':'')+'><small>'+x[0]+'</small><b>'+(D[x[0]]?esc(D[x[0]]):(mi?'未':'—'))+'</b>'+(D['後'+x[0]]?'<i class="ato">後</i>':'')+'</div>';}).join('')+'</div>';}
 function ckSlotNow(){let h=new Date().getHours();if(h<5)h+=24;const s=CK_SL.find(x=>h>=x[1]&&h<x[2]);return s?s[0]:'夜';}
 function ckDayKey(){const n=new Date();return n.getHours()<5?addDays(todayStr(),-1):todayStr();}
 function ckDay(d){const o=((state.ckin||{})[d])||{};return o.del?{}:o;}
 function ckMiss(){return slMiss(CK_SL,ckDay(ckDayKey()),ckSlotNow());}
 function ckTarget(){return slTarget(CK_SL,ckDay(ckDayKey()),ckSlotNow());}
 function ckDone(){return !ckMiss().length&&!!ckDay(ckDayKey())[ckSlotNow()];}
-function ckDo(){const d=ckDayKey(),sl=ckTarget();if(ckDay(d)[sl])return;mutate(()=>{state.ckin=state.ckin||{};state.ckin[d]=atoMark(Object.assign({},ckDay(d),{[sl]:nowHM(),ts:Date.now()}),sl,ckSlotNow());});}
+function ckDo(){return ckDoAt(ckTarget());}
+function ckDoAt(sl){const d=ckDayKey(),D=ckDay(d),n=ckSlotNow();if(!slOpen(CK_SL,D,n,sl))return false;mutate(()=>{state.ckin=state.ckin||{};state.ckin[d]=atoMark(Object.assign({},ckDay(d),{[sl]:nowHM(),ts:Date.now()}),sl,n);});return true;}
+function ckUndoAt(sl){const d=ckDayKey();mutate(()=>{const o=Object.assign({},ckDay(d));delete o[sl];delete o['後'+sl];o.ts=Date.now();state.ckin=state.ckin||{};state.ckin[d]=o;});}
 let ckWant=false;
 const RD_SL=[['朝',5,12],['昼',12,18],['晩',18,29]];
 function rdSlotNow(){let hh=new Date().getHours();if(hh<5)hh+=24;const s=RD_SL.find(x=>hh>=x[1]&&hh<x[2]);return s?s[0]:'晩';}
@@ -7571,7 +7576,7 @@ function rdDayKey(){const n=new Date();return n.getHours()<5?addDays(todayStr(),
 function rdDay(d){const o=((state.rdin||{})[d])||{};return o.del?{}:o;}
 function rdItems(){const s=state.rdtxt;return (s&&Array.isArray(s.items))?s.items.filter(x=>x&&!x.del&&x.nm):[];}
 function rdMiss(){return rdItems().length?slMiss(RD_SL,rdDay(rdDayKey()),rdSlotNow()):[];}
-function rdTarget(){return slTarget(RD_SL,rdDay(rdDayKey()),rdSlotNow());}
+function rdTarget(){const D=rdDay(rdDayKey()),n=rdSlotNow();if(rdPick&&slOpen(RD_SL,D,n,rdPick))return rdPick;rdPick=null;return slTarget(RD_SL,D,n);}
 function rdDone(){return !rdItems().length||(!rdMiss().length&&!!rdDay(rdDayKey())[rdSlotNow()]);}
 let rdWant=false;
 function rdGate(){try{if(!gateDay()||rdDone()||openMove())return false;rdWant=true;if(topView!=='top'){topView='top';render();}
@@ -7651,14 +7656,14 @@ let pk=0;const body='<div class="rd-p"><div class="rd-nm">'+rdIc(it)+' '+esc(Str
 const one=pd(rdCur)?'<button type="button" class="rd-one done" disabled>✓ '+esc(s0.n)+'さんは読んだ（'+esc(D[sl+'#'+rdCur])+'）</button>':'<button type="button" class="rd-one" id="rdOne">'+rdIc(it)+' '+esc(s0.n)+'さんを読んだ'+(nx>=0?'　→ 次は'+esc(rdShort(L[nx].nm).n)+'さん':'')+'</button>';
 const end=all?'<div class="rd-end">'+iosSw('rdSw',false,'✓ 全部読んだ！','','')+'<button type="button" class="rd-go" id="rdGo" disabled>📖 '+esc(sl)+'の読み物：読んだ</button></div>':'<div class="rd-left">あと '+left+'人。'+L.length+'人とも「済」になると「全部読んだ！」が出る</div>';
 rdPop=-1;
-return '<div class="ck-sec">📖 '+esc(ttl)+'<i></i></div><div class="ck-card rd-card'+(dn?' done':'')+'" id="rdCard"><div class="rd-top"><b>📖 '+esc(sl)+'の読み物</b><span>'+cnt+' / 3</span></div>'+goal+slRow(D,sl,MIS)+
+return '<div class="ck-sec">📖 '+esc(ttl)+'<i></i></div><div class="ck-card rd-card'+(dn?' done':'')+'" id="rdCard"><div class="rd-top"><b>📖 '+esc(sl)+'の読み物</b><span>'+cnt+' / 3</span></div>'+goal+slRow(D,sl,MIS,'rd',slOpenList(RD_SL,D,rdSlotNow()))+
 (dn?'<details class="rd-again"><summary>✓ '+esc(sl)+'は読んだ（'+esc(D[sl])+'）　もう一度読む ▾</summary>'+tabs+rdListenBtn(it)+'<div class="rd-scroll">'+body+'</div></details>'
 :(rdWant?'<div class="ck-gatebar">📖 '+L.length+'人とも読んで「全部読んだ！」を押すと、そのまま書ける</div>':'')+tabs+rdListenBtn(it)+'<div class="rd-scroll" id="rdScr">'+body+one+end+'</div>')+'</div>';}catch(e){return '';}}
 function numSlotNow(){return rdSlotNow();}
 function numDayKey(){return rdDayKey();}
 function numDay(d){const o=((state.nmin||{})[d])||{};return o.del?{}:o;}
 function numMiss(){return slMiss(RD_SL,numDay(numDayKey()),numSlotNow());}
-function numTarget(){return slTarget(RD_SL,numDay(numDayKey()),numSlotNow());}
+function numTarget(){const D=numDay(numDayKey()),n=numSlotNow();if(numPick&&slOpen(RD_SL,D,n,numPick))return numPick;numPick=null;return slTarget(RD_SL,D,n);}
 function numDone(){return !numMiss().length&&!!numDay(numDayKey())[numSlotNow()];}
 let numWant=false,numCur=0;
 const NUM_NM=['今日','今週','今月'];
@@ -7697,7 +7702,7 @@ const me=TT.kind==='num'&&TT.i===numCur&&TT.on;
 const body='<div class="num-list">'+it.rows.map(r=>'<div class="num-row"><i>'+r.ic+'</i><span>'+esc(r.lb)+'</span><b>'+esc(r.v)+'</b></div>').join('')+'</div>'+'<button type="button" class="rd-listen'+(me?' on':'')+'" id="numListen">'+(me?'⏸ 止める':'🔊 '+esc(it.nm)+'の数字を聞く')+'</button>';
 const one=pd(numCur)?'<button type="button" class="rd-one done" disabled>✓ '+esc(it.nm)+'の数字は見た（'+esc(D[sl+'#'+numCur])+'）</button>':'<button type="button" class="rd-one" id="numOne">'+it.ic+' '+esc(it.nm)+'の数字を見た'+(nx!=null?'　→ 次は'+esc(T[nx].nm):'')+'</button>';
 const end=all?'<div class="rd-end">'+iosSw('numSw',false,'✓ 全部見た！','','')+'<button type="button" class="rd-go" id="numGo" disabled>📊 '+esc(sl)+'の数字：見た</button></div>':'<div class="rd-left">あと '+left+'つ。3つとも「済」になると「全部見た！」が出る</div>';
-return '<div class="ck-sec">📊 数字（今日・今週・今月）<i></i></div><div class="ck-card rd-card num-card'+(dn?' done':'')+'" id="numCard"><div class="rd-top"><b>📊 '+esc(sl)+'の数字</b><span>'+cnt+' / 3</span></div>'+slRow(D,sl,MIS)+
+return '<div class="ck-sec">📊 数字（今日・今週・今月）<i></i></div><div class="ck-card rd-card num-card'+(dn?' done':'')+'" id="numCard"><div class="rd-top"><b>📊 '+esc(sl)+'の数字</b><span>'+cnt+' / 3</span></div>'+slRow(D,sl,MIS,'num',slOpenList(RD_SL,D,numSlotNow()))+
 (dn?'<details class="rd-again"><summary>✓ '+esc(sl)+'は見た（'+esc(D[sl])+'）　もう一度見る ▾</summary>'+tabs+body+'</details>'
 :(numWant?'<div class="ck-gatebar">📊 3つとも見て「全部見た！」を押すと、そのまま書ける</div>':'')+tabs+body+one+end)+'</div>';}catch(e){return '';}}
 const ERN_SL=[['朝',5,15],['夜',15,29]];
@@ -7708,7 +7713,7 @@ const ERN_DEF=[{id:'a',ic:'📘',nm:'記事を公開する',sl:'朝'},{id:'b',ic
 function ernLines(){const s=state.ern;const L=(s&&Array.isArray(s.lines))?s.lines.filter(x=>x&&!x.del&&x.nm&&x.id):null;return (L&&L.length)?L:ERN_DEF;}
 function ernSlotOf(x){return x.sl==='夜'?'夜':'朝';}
 function ernMiss(){return slMiss(ERN_SL,ernDay(ernDayKey()),ernSlotNow()).filter(s=>ernLines().some(x=>ernSlotOf(x)===s));}
-function ernTarget(){const m=ernMiss();return m.length?m[0]:ernSlotNow();}
+function ernTarget(){const D=ernDay(ernDayKey()),n=ernSlotNow();if(ernPick&&slOpen(ERN_SL,D,n,ernPick))return ernPick;ernPick=null;const m=ernMiss();return m.length?m[0]:n;}
 function ernDone(){const sl=ernSlotNow();if(ernMiss().length)return false;if(!ernLines().some(x=>ernSlotOf(x)===sl))return true;return !!ernDay(ernDayKey())[sl];}
 let ernWant=false,ernCur=null;
 function ernGate(){try{if(!gateDay()||ernDone()||openMove())return false;ernWant=true;openEarnPage();toast('💰 先に AIで稼ぐ を1つやって「やった」');return true;}catch(e){return false;}}
@@ -7720,7 +7725,7 @@ function ernCardHtml(){try{const L=ernLines(),d=ernDayKey(),sl=ernTarget(),D=ern
 const mine=L.filter(x=>ernSlotOf(x)===sl),nDone=L.filter(pd).length;
 if(ernCur==null||!L.some(x=>x.id===ernCur)){const f=mine.find(x=>!pd(x))||mine[0]||L[0];ernCur=f?f.id:null;}
 const it=L.find(x=>x.id===ernCur)||L[0];
-const slots='<div class="rd-sl">'+ERN_SL.map(x=>{const mi=MIS.indexOf(x[0])>=0;return '<div class="'+(D[x[0]]?'ok':(mi?'miss':(x[0]===sl?'rd-now':'')))+'"><small>'+x[0]+' '+L.filter(y=>ernSlotOf(y)===x[0]).map(y=>esc(y.ic||'💰')).join('')+'</small><b>'+(D[x[0]]?esc(D[x[0]]):(mi?'未':'—'))+'</b>'+(D['後'+x[0]]?'<i class="ato">後</i>':'')+'</div>';}).join('')+'</div>';
+const slots='<div class="rd-sl">'+ERN_SL.map(x=>{const mi=MIS.indexOf(x[0])>=0,op=slOpen(ERN_SL,D,ernSlotNow(),x[0]);return '<div class="'+(D[x[0]]?'ok':(mi?'miss':(x[0]===sl?'rd-now':'')))+(op?' tap':'')+'"'+(op?' data-ernp="'+x[0]+'"':'')+'><small>'+x[0]+' '+L.filter(y=>ernSlotOf(y)===x[0]).map(y=>esc(y.ic||'💰')).join('')+'</small><b>'+(D[x[0]]?esc(D[x[0]]):(mi?'未':'—'))+'</b>'+(D['後'+x[0]]?'<i class="ato">後</i>':'')+'</div>';}).join('')+'</div>';
 const tabs='<div class="rd-tabs ern-tabs">'+L.map(x=>'<button type="button" class="rd-tab'+(x.id===ernCur?' cur':'')+(pd(x)?' sumi':'')+(ernSlotOf(x)!==sl?' ern-dim':'')+'" data-erni="'+esc(x.id)+'"><span class="ic">'+esc(x.ic||'💰')+'</span><b>'+esc(x.nm)+'</b>'+(pd(x)?'<span class="rd-stamp">済</span>':'')+'</button>').join('')+'</div>';
 let ideas='';if(it&&it.ic==='💡'){const I=ernIdeas();if(I.length)ideas='<div class="ern-ideas">⭐ 線に入れたアイデア<br>'+I.slice(0,5).map(x=>'・'+esc(String(x.t||'').split('\n')[0])).join('<br>')+'</div>';}
 const box=it?'<div class="ern-box"><div class="ern-nm">'+esc(it.ic||'💰')+' '+esc(it.nm)+'</div>'+(it.cv?'<div class="ern-cv">'+esc(it.cv)+'</div>':'')+(it.dn?'<div class="ern-dn">できた＝'+esc(it.dn)+'</div>':'')+ideas+
@@ -7733,9 +7738,10 @@ function renderEarnPage(){pageMode='earn';const p=$('page');let y0=0;try{const o
 p.innerHTML='<div class="page-head"><button class="bk" id="pgBk">‹ 戻る</button><span class="tt">💰 AIで稼ぐ</span><span style="width:36px"></span></div><div class="page-body">'+ernCardHtml()+'<div class="ern-note">朝＝PCの線・夜＝スマホでもいい線。AIの種類は会話が覚えている。1回に1つやれば「済」</div></div>';
 p.classList.add('open');$('pgBk').onclick=()=>{ernWant=false;closePage();};ernBind(p);try{const nb=p.querySelector('.page-body');if(nb&&y0)nb.scrollTop=y0;}catch(e){}}
 function ernBind(p){p.querySelectorAll('[data-erni]').forEach(b=>b.onclick=()=>{ernCur=b.dataset.erni;renderEarnPage();});
+p.querySelectorAll('[data-ernp]').forEach(b=>b.onclick=()=>{ernPick=b.dataset.ernp;renderEarnPage();});
 {const o=p.querySelector('#ernOne');if(o)o.onclick=ev=>{const it=ernLines().find(x=>x.id===ernCur);if(!it)return;ckBurst(ev.clientX,ev.clientY,'㊞ 済');ernMark(it.id);toast('㊞ '+it.nm+' 済！');renderEarnPage();try{gstripPaint();}catch(e){}};}
 {const sw=p.querySelector('#ernSw'),go=p.querySelector('#ernGo');if(sw&&go){sw.onclick=()=>{const on=!sw.classList.contains('on');iosSet(sw,on);go.disabled=!on;};
-go.onclick=ev=>{if(go.disabled)return;const sl=ernTarget();ckBurst(ev.clientX,ev.clientY,'💰 ✓');ernSlotDo();toast('💰 '+sl+'のAIで稼ぐ：やった');try{gstripPaint();}catch(e){}
+go.onclick=ev=>{if(go.disabled)return;const sl=ernTarget();ckBurst(ev.clientX,ev.clientY,'💰 ✓');ernSlotDo();ernPick=null;toast('💰 '+sl+'のAIで稼ぐ：やった');try{gstripPaint();}catch(e){}
 if(ernWant){ernWant=false;closePage();if(!ckGate()&&!rdGate()&&!numGate())setTimeout(()=>openEntrySheet(ui.date,{hour:new Date().getHours(),wr:true}),350);}else renderEarnPage();};}}}
 function gateClear(){try{ckWant=false;rdWant=false;numWant=false;ernWant=false;}catch(e){}}
 function gateDay(){const hh=new Date().getHours();return ui.date===todayStr()&&(hh>=13||hh<5);}
@@ -7934,7 +7940,7 @@ const slpIt=(()=>{try{const d=document.createElement('div');d.innerHTML=slp;d.qu
 const bandPlus=bandPlusHtml(t,slpTx,slpIt);
 {const xRest=fd('pay','💴 支払い',esc(payTx),pay,/明日|今日|過ぎ/.test(payTx)?'r':'')+fd('slp','🌙 睡眠・注意',esc(slpTx),slp,/⚠|寝坊/.test(slpTx)?'r':'')+fd('band','⏱ 時間の使い方',esc(bandPlus.sum),band+bandPlus.html,bandPlus.ng?'r':'')+fd('money','💰 お金の記録','粗利・入金・手元を入れる・見る',gl)+fd('set','⚙️ 設定','注意の時刻・ログアウト','<!--ckfoot-->');const xr=P.rest.replace(band,'').replace(gl,'').replace(pay,'');if(xr.replace(/<[^>]*>/g,'').trim())bk('rest','📂 ほか',xr);}
 const dk=ckDayKey(),cd=ckDay(dk),now=ckSlotNow(),nd=CK_SL.filter(s=>cd[s[0]]).length;
-const xCk='<div class="ck-sec">📒 手帳チェックイン（見たらここで押す）<i></i></div><div class="ck-card ck-ci"><div class="t">📒 手帳チェックイン<small>'+nd+' / 5</small></div><div class="row">'+CK_SL.map(s=>{const mi=ckMiss().indexOf(s[0])>=0;return '<div class="slot'+(cd[s[0]]?' done':'')+(mi?' miss':'')+(s[0]===ckTarget()&&!cd[s[0]]?' now':'')+'">'+s[0]+'<b>'+esc(cd[s[0]]||(mi?'未':'—'))+'</b>'+(cd['後'+s[0]]?'<i class="ato">後</i>':'')+'</div>';}).join('')+'</div>'+
+const xCk='<div class="ck-sec">📒 手帳チェックイン（見たらここで押す）<i></i></div><div class="ck-card ck-ci"><div class="t">📒 手帳チェックイン<small>'+nd+' / 5</small></div><div class="row">'+CK_SL.map(s=>{const mi=ckMiss().indexOf(s[0])>=0,op=slOpen(CK_SL,cd,now,s[0]);return '<div class="slot'+(cd[s[0]]?' done':'')+(mi?' miss':'')+(s[0]===ckTarget()&&!cd[s[0]]?' now':'')+(op?' tap':'')+'"'+(op?' data-ckp="'+s[0]+'"':'')+'>'+s[0]+'<b>'+esc(cd[s[0]]||(mi?'未':'—'))+'</b>'+(cd['後'+s[0]]?'<i class="ato">後</i>':'')+'</div>';}).join('')+'</div>'+
 '<button type="button" class="go'+(ckDone()?' ok':'')+'" id="ckGo">'+(ckMiss().length?'🔁 後追い：'+ckMiss()[0]+' を入れる（あと'+slLeft(CK_SL,cd,now)+'つ）':(cd[now]?'✓ '+now+'のチェックイン済み':'📒 '+now+'のチェックイン：見た ✓'+(ckWant?' → 書く':'')))+'</button></div>';
 bk('ck',null,xCk);
 const DEF=['dream','pins','rd','num','daily','todo','report','road','wish','f_pay','f_slp','f_band','f_money','rest','f_set','ck'];
@@ -8034,16 +8040,18 @@ pane.querySelectorAll('#rdCard p[data-rdq]').forEach(p=>p.onclick=()=>{if(TT.kin
 {const o=pane.querySelector('#rdOne');if(o)o.onclick=ev=>{const L=rdItems(),d=rdDayKey(),sl=rdTarget(),i=rdCur,s=rdShort((L[i]||{}).nm);ckBurst(ev.clientX,ev.clientY,'㊞ 済');rdPop=i;
 mutate(()=>{state.rdin=state.rdin||{};state.rdin[d]=Object.assign({},rdDay(d),{[sl+'#'+i]:nowHM(),ts:Date.now()});});const D=rdDay(d),nx=L.findIndex((x,k)=>!D[sl+'#'+k]);if(nx>=0)rdCur=nx;toast('㊞ '+s.n+'さん 済！');keepTop('#rdCard',()=>render());};}
 {const sw=pane.querySelector('#rdSw'),go=pane.querySelector('#rdGo');if(sw&&go){sw.onclick=()=>{const on=!sw.classList.contains('on');iosSet(sw,on);go.disabled=!on;};
-go.onclick=ev=>{if(go.disabled)return;const d=rdDayKey(),sl=rdTarget();ckBurst(ev.clientX,ev.clientY,'📖 ✓');mutate(()=>{state.rdin=state.rdin||{};state.rdin[d]=atoMark(Object.assign({},rdDay(d),{[sl]:nowHM(),ts:Date.now()}),sl,rdSlotNow());});toast('📖 '+sl+'の読み物：読んだ');ckfSet('o_rd','0');if(rdWant&&rdDone()){rdWant=false;if(!ckGate()&&!numGate()&&!ernGate())setTimeout(()=>openEntrySheet(ui.date,{hour:new Date().getHours(),wr:true}),350);}};}}
+go.onclick=ev=>{if(go.disabled)return;const d=rdDayKey(),sl=rdTarget();ckBurst(ev.clientX,ev.clientY,'📖 ✓');mutate(()=>{state.rdin=state.rdin||{};state.rdin[d]=atoMark(Object.assign({},rdDay(d),{[sl]:nowHM(),ts:Date.now()}),sl,rdSlotNow());});rdPick=null;toast('📖 '+sl+'の読み物：読んだ');ckfSet('o_rd','0');if(rdWant&&rdDone()){rdWant=false;if(!ckGate()&&!numGate()&&!ernGate())setTimeout(()=>openEntrySheet(ui.date,{hour:new Date().getHours(),wr:true}),350);}};}}
 {const mg=pane.querySelector('#miscGo');if(mg)mg.onclick=()=>{topView='misc';render();try{$('scr').scrollTop=0;}catch(e){}};}
 {const bg=pane.querySelector('#bandGap');if(bg)bg.onclick=()=>{topView='diary';render();setTimeout(()=>{try{const g=document.querySelector('#pane .gaprow, #pane .hour.gap');if(g)g.scrollIntoView({block:'center'});}catch(e){}},200);};}
 pane.querySelectorAll('[data-dph]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();const key=b.dataset.dph;wishPick(pid=>{dphAdd(key,pid);toast('📷 写真を足した');render();});});
 pane.querySelectorAll('[data-phv2]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();dphView(b.dataset.phv2,b.dataset.phk2);});
 pane.querySelectorAll('[data-numi]').forEach(b=>b.onclick=()=>{keepTop('#numCard',()=>{numCur=+b.dataset.numi;render();});});
+pane.querySelectorAll('[data-slp]').forEach(b=>b.onclick=()=>{const p=String(b.dataset.slp).split('|');if(p[0]==='rd'){rdPick=p[1];keepTop('#rdCard',()=>render());}else{numPick=p[1];keepTop('#numCard',()=>render());}});
+pane.querySelectorAll('[data-ckp]').forEach(b=>b.onclick=ev=>{const n=b.dataset.ckp;if(!ckDoAt(n))return;ckBurst(ev.clientX,ev.clientY,'📒 ✓');keepTop('#ckGo',()=>render());undoBar('📒 '+n+' に入れた'+(n!==ckSlotNow()?'（後追い）':''),()=>{ckUndoAt(n);render();});});
 {const l=pane.querySelector('#numListen');if(l)l.onclick=()=>numListen();}
 {const o=pane.querySelector('#numOne');if(o)o.onclick=ev=>{const d=numDayKey(),sl=numTarget(),i=numCur;ckBurst(ev.clientX,ev.clientY,'㊞ 済');mutate(()=>{state.nmin=state.nmin||{};state.nmin[d]=Object.assign({},numDay(d),{[sl+'#'+i]:nowHM(),ts:Date.now()});});const D=numDay(d),nx=[0,1,2].find(k=>!D[sl+'#'+k]);if(nx!=null)numCur=nx;toast('㊞ '+NUM_NM[i]+'の数字 済！');keepTop('#numCard',()=>render());};}
 {const sw=pane.querySelector('#numSw'),go=pane.querySelector('#numGo');if(sw&&go){sw.onclick=()=>{const on=!sw.classList.contains('on');iosSet(sw,on);go.disabled=!on;};
-go.onclick=ev=>{if(go.disabled)return;const d=numDayKey(),sl=numTarget();ckBurst(ev.clientX,ev.clientY,'📊 ✓');mutate(()=>{state.nmin=state.nmin||{};state.nmin[d]=atoMark(Object.assign({},numDay(d),{[sl]:nowHM(),ts:Date.now()}),sl,numSlotNow());});toast('📊 '+sl+'の数字：見た');ckfSet('o_num','0');if(numWant&&numDone()){numWant=false;if(!ckGate()&&!rdGate()&&!ernGate())setTimeout(()=>openEntrySheet(ui.date,{hour:new Date().getHours(),wr:true}),350);}};}}
+go.onclick=ev=>{if(go.disabled)return;const d=numDayKey(),sl=numTarget();ckBurst(ev.clientX,ev.clientY,'📊 ✓');mutate(()=>{state.nmin=state.nmin||{};state.nmin[d]=atoMark(Object.assign({},numDay(d),{[sl]:nowHM(),ts:Date.now()}),sl,numSlotNow());});numPick=null;toast('📊 '+sl+'の数字：見た');ckfSet('o_num','0');if(numWant&&numDone()){numWant=false;if(!ckGate()&&!rdGate()&&!ernGate())setTimeout(()=>openEntrySheet(ui.date,{hour:new Date().getHours(),wr:true}),350);}};}}
 {const b=pane.querySelector('#ckGo');if(b)b.onclick=ev=>{if(ckDone()){if(ckWant){ckWant=false;if(!rdGate()&&!numGate()&&!ernGate())openEntrySheet(ui.date,{hour:new Date().getHours(),wr:true});}return;}ckBurst(ev.clientX,ev.clientY,'📒 ✓');ckDo();if(ckWant&&ckDone()){ckWant=false;if(!rdGate()&&!numGate()&&!ernGate())setTimeout(()=>openEntrySheet(ui.date,{hour:new Date().getHours(),wr:true}),350);}};}}
 function mvNestedRec(x){return !!(x.rl||(!x.mv&&x.k!=='sleep'&&x.k!=='incar'&&(TEL_KS.indexOf(x.k)>=0||x.k==='spplay'||x.k==='spwork'||!x.p)));}
 function mvNormCore(d,k,J){const E=state.entries[d]||{},en=E[k];if(!en||en.del||!en.mv||!en.s||!en.e||en.noT)return false;const S=hmMin(en.s),EE=hmMin(en.e)+(en.ed?1440:0);if(EE<=S)return false;let touched=false;const now=Date.now();
