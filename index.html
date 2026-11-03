@@ -7616,7 +7616,7 @@ return '<button type="button" class="rd-listen'+(me&&TT.on?' on':'')+'" id="rdLi
 (vv.n&&!vv.male?'<div class="rd-vhint">男性の声にするには：iPhoneの 設定 → アクセシビリティ → 読み上げコンテンツ → 声 → 日本語 → 「Otoya」をダウンロード</div>':'');}
 function rdStartListen(i){const L=rdItems();if(!L[i])return;ttStop();TT.kind='rd';TT.i=i;TT.q=rdTtsQueue(L[i]);TT.k=0;TT.heard=new Set();TT.miss=null;TT.done=()=>rdHeard(i);ttRun();render();setTimeout(()=>ttHi((TT.q[TT.k]||{}).q),80);}
 function rdListen(){if(TT.kind==='rd'&&TT.i===rdCur){if(TT.on){ttStop(true);render();return;}ttRun();render();setTimeout(()=>ttHi((TT.q[TT.k]||{}).q),80);return;}rdStartListen(rdCur);}
-function rdHeard(i){try{const L=rdItems(),d=rdDayKey(),sl=rdSlotNow(),s=rdShort((L[i]||{}).nm);TT.kind='';TT.i=-1;
+function rdHeard(i){try{const L=rdItems(),d=rdDayKey(),sl=rdTarget(),s=rdShort((L[i]||{}).nm);TT.kind='';TT.i=-1;
 if(!rdDay(d)[sl+'#'+i]){rdPop=i;mutate(()=>{state.rdin=state.rdin||{};state.rdin[d]=Object.assign({},rdDay(d),{[sl+'#'+i]:nowHM(),ts:Date.now()});});toast('㊞ '+s.n+'さん 済！（聞き終えた）');}
 const D=rdDay(d),nx=L.findIndex((x,k)=>!D[sl+'#'+k]);
 if(nx>=0&&!D[sl]){rdCur=nx;render();rdScrollCard();setTimeout(()=>rdStartListen(nx),900);}
@@ -7715,19 +7715,19 @@ function ernGate(){try{if(!gateDay()||ernDone()||openMove())return false;ernWant
 function ernMark(id){const d=ernDayKey(),sl=ernTarget();mutate(()=>{state.ernin=state.ernin||{};state.ernin[d]=Object.assign({},ernDay(d),{[sl+'#'+id]:nowHM(),ts:Date.now()});});}
 function ernSlotDo(){const d=ernDayKey(),sl=ernTarget();mutate(()=>{state.ernin=state.ernin||{};state.ernin[d]=atoMark(Object.assign({},ernDay(d),{[sl]:nowHM(),ts:Date.now()}),sl,ernSlotNow());});}
 function ernIdeas(){const m=state.memos||{};return Object.keys(m).filter(k=>m[k]&&!m[k].del&&m[k].idea&&m[k].ln).map(k=>m[k]).sort((a,b)=>(b.at||b.ts||0)-(a.at||a.ts||0));}
-function ernChipHtml(){try{const sl=ernSlotNow(),D=ernDay(ernDayKey()),L=ernLines(),n=L.filter(x=>D[sl+'#'+x.id]).length;return '<button class="gs'+(D[sl]?' ok':'')+'" data-gs="earn">💰 '+esc(sl)+' <b>'+n+'</b>/'+L.length+(D[sl]?' ✓':'')+'</button>';}catch(e){return '';}}
-function ernCardHtml(){try{const L=ernLines(),d=ernDayKey(),sl=ernSlotNow(),D=ernDay(d),dn=!!D[sl],pd=x=>!!D[sl+'#'+x.id];
+function ernChipHtml(){try{const sl=ernTarget(),D=ernDay(ernDayKey()),L=ernLines(),n=L.filter(x=>D[sl+'#'+x.id]).length;return '<button class="gs'+(D[sl]?' ok':'')+'" data-gs="earn">💰 '+esc(sl)+' <b>'+n+'</b>/'+L.length+(D[sl]?' ✓':'')+'</button>';}catch(e){return '';}}
+function ernCardHtml(){try{const L=ernLines(),d=ernDayKey(),sl=ernTarget(),D=ernDay(d),MIS=ernMiss(),dn=!!D[sl],pd=x=>!!D[sl+'#'+x.id];
 const mine=L.filter(x=>ernSlotOf(x)===sl),nDone=L.filter(pd).length;
 if(ernCur==null||!L.some(x=>x.id===ernCur)){const f=mine.find(x=>!pd(x))||mine[0]||L[0];ernCur=f?f.id:null;}
 const it=L.find(x=>x.id===ernCur)||L[0];
-const slots='<div class="rd-sl">'+ERN_SL.map(x=>'<div class="'+(D[x[0]]?'ok':(x[0]===sl?'rd-now':''))+'"><small>'+x[0]+' '+L.filter(y=>ernSlotOf(y)===x[0]).map(y=>esc(y.ic||'💰')).join('')+'</small><b>'+(D[x[0]]?esc(D[x[0]]):'—')+'</b></div>').join('')+'</div>';
+const slots='<div class="rd-sl">'+ERN_SL.map(x=>{const mi=MIS.indexOf(x[0])>=0;return '<div class="'+(D[x[0]]?'ok':(mi?'miss':(x[0]===sl?'rd-now':'')))+'"><small>'+x[0]+' '+L.filter(y=>ernSlotOf(y)===x[0]).map(y=>esc(y.ic||'💰')).join('')+'</small><b>'+(D[x[0]]?esc(D[x[0]]):(mi?'未':'—'))+'</b>'+(D['後'+x[0]]?'<i class="ato">後</i>':'')+'</div>';}).join('')+'</div>';
 const tabs='<div class="rd-tabs ern-tabs">'+L.map(x=>'<button type="button" class="rd-tab'+(x.id===ernCur?' cur':'')+(pd(x)?' sumi':'')+(ernSlotOf(x)!==sl?' ern-dim':'')+'" data-erni="'+esc(x.id)+'"><span class="ic">'+esc(x.ic||'💰')+'</span><b>'+esc(x.nm)+'</b>'+(pd(x)?'<span class="rd-stamp">済</span>':'')+'</button>').join('')+'</div>';
 let ideas='';if(it&&it.ic==='💡'){const I=ernIdeas();if(I.length)ideas='<div class="ern-ideas">⭐ 線に入れたアイデア<br>'+I.slice(0,5).map(x=>'・'+esc(String(x.t||'').split('\n')[0])).join('<br>')+'</div>';}
 const box=it?'<div class="ern-box"><div class="ern-nm">'+esc(it.ic||'💰')+' '+esc(it.nm)+'</div>'+(it.cv?'<div class="ern-cv">'+esc(it.cv)+'</div>':'')+(it.dn?'<div class="ern-dn">できた＝'+esc(it.dn)+'</div>':'')+ideas+
 (pd(it)?'<button type="button" class="rd-one done" disabled>✓ '+esc(it.nm)+' はやった（'+esc(D[sl+'#'+it.id])+'）</button>':'<button type="button" class="rd-one" id="ernOne">'+esc(it.ic||'💰')+' '+esc(it.nm)+' をやった</button>')+'</div>':'';
 const end=nDone>=1?'<div class="rd-end">'+iosSw('ernSw',false,'✓ やった！','','')+'<button type="button" class="rd-go" id="ernGo" disabled>💰 '+esc(sl)+'のAIで稼ぐ：やった</button></div>':'<div class="rd-left">'+esc(sl)+'は '+(mine.length?mine:L).map(x=>esc((x.ic||'💰')+' '+x.nm)).join(' か ')+' のどれか1つでいい。1つやると「やった！」が出る</div>';
 const gate=(ernWant&&!dn)?'<div class="ck-gatebar">💰 1つやって「やった」を押すと、そのまま書ける</div>':'';
-return '<div class="ck-card rd-card ern-card'+(dn?' done':'')+'" id="ernCard"><div class="rd-top"><b>💰 '+esc(sl)+'のAIで稼ぐ</b><span>'+nDone+' / '+L.length+'</span></div>'+slots+
+return '<div class="ck-card rd-card ern-card'+(dn?' done':'')+'" id="ernCard"><div class="rd-top"><b>💰 '+esc(sl)+'のAIで稼ぐ'+(sl!==ernSlotNow()?'（後追い）':'')+'</b><span>'+nDone+' / '+L.length+'</span></div>'+slots+
 (dn?'<div class="rd-left">✓ '+esc(sl)+'は済（'+esc(D[sl])+'）。もう1つやるなら下から</div>'+tabs+box:gate+tabs+box+end)+'</div>';}catch(e){return '';}}
 function renderEarnPage(){pageMode='earn';const p=$('page');let y0=0;try{const ob=p.querySelector('.page-body');if(ob&&p.classList.contains('open'))y0=ob.scrollTop;}catch(e){}
 p.innerHTML='<div class="page-head"><button class="bk" id="pgBk">‹ 戻る</button><span class="tt">💰 AIで稼ぐ</span><span style="width:36px"></span></div><div class="page-body">'+ernCardHtml()+'<div class="ern-note">朝＝PCの線・夜＝スマホでもいい線。AIの種類は会話が覚えている。1回に1つやれば「済」</div></div>';
@@ -7735,7 +7735,7 @@ p.classList.add('open');$('pgBk').onclick=()=>{ernWant=false;closePage();};ernBi
 function ernBind(p){p.querySelectorAll('[data-erni]').forEach(b=>b.onclick=()=>{ernCur=b.dataset.erni;renderEarnPage();});
 {const o=p.querySelector('#ernOne');if(o)o.onclick=ev=>{const it=ernLines().find(x=>x.id===ernCur);if(!it)return;ckBurst(ev.clientX,ev.clientY,'㊞ 済');ernMark(it.id);toast('㊞ '+it.nm+' 済！');renderEarnPage();try{gstripPaint();}catch(e){}};}
 {const sw=p.querySelector('#ernSw'),go=p.querySelector('#ernGo');if(sw&&go){sw.onclick=()=>{const on=!sw.classList.contains('on');iosSet(sw,on);go.disabled=!on;};
-go.onclick=ev=>{if(go.disabled)return;const sl=ernSlotNow();ckBurst(ev.clientX,ev.clientY,'💰 ✓');ernSlotDo();toast('💰 '+sl+'のAIで稼ぐ：やった');try{gstripPaint();}catch(e){}
+go.onclick=ev=>{if(go.disabled)return;const sl=ernTarget();ckBurst(ev.clientX,ev.clientY,'💰 ✓');ernSlotDo();toast('💰 '+sl+'のAIで稼ぐ：やった');try{gstripPaint();}catch(e){}
 if(ernWant){ernWant=false;closePage();if(!ckGate()&&!rdGate()&&!numGate())setTimeout(()=>openEntrySheet(ui.date,{hour:new Date().getHours(),wr:true}),350);}else renderEarnPage();};}}}
 function gateClear(){try{ckWant=false;rdWant=false;numWant=false;ernWant=false;}catch(e){}}
 function gateDay(){const hh=new Date().getHours();return ui.date===todayStr()&&(hh>=13||hh<5);}
@@ -7817,7 +7817,7 @@ if(id==='dream'){const GC=goalCfg(),got=incSum('in',GC.from,t),cash=cashLatest()
 return {html:'あと <b>'+days+'</b>日<i>・</i><b>'+esc(ckMan(left))+'</b>万<i>・</i>今日 <b>'+esc(ckMan(per))+'</b>万'};}
 if(id==='pins'){const P=pinnedDreams().slice(0,2);if(!P.length)return null;return {html:P.map(g=>{const n=stepStat(g).n;return pinIcon(g.t)+' '+(n===null?'期限なし':n<0?'<b>'+(-n)+'</b>日超過':'あと <b>'+n+'</b>日');}).join('<i>・</i>')};}
 const chips=(SL,D,sl)=>'<span class="sl4">'+SL.map(x=>'<em class="'+(D[x[0]]?'d':'')+(x[0]===sl?' now':'')+'">'+x[0]+' '+(D[x[0]]?'✓':'—')+'</em>').join('')+'</span>';
-if(id==='rd'){const L=rdItems();if(!L.length)return null;const d=rdDayKey(),sl=rdSlotNow(),D=rdDay(d),n=L.filter((x,i)=>D[sl+'#'+i]).length,dn=!!D[sl];
+if(id==='rd'){const L=rdItems();if(!L.length)return null;const d=rdDayKey(),sl=rdTarget(),D=rdDay(d),n=L.filter((x,i)=>D[sl+'#'+i]).length,dn=!!D[sl];
 return {html:esc(sl)+' <b>'+n+'</b>/'+L.length+' 人'+chips(RD_SL,D,sl),badge:dn?'<span class="st ok">✓ 済</span>':'<span class="st todo">まだ</span>',ok:dn,todo:!dn,auto:dn?'':(d+'#'+sl)};}
 if(id==='num'){const d=numDayKey(),sl=numTarget(),D=numDay(d),n=[0,1,2].filter(i=>D[sl+'#'+i]).length,dn=!!D[sl];
 return {html:esc(sl)+' <b>'+n+'</b>/3 表'+chips(RD_SL,D,sl),badge:dn?'<span class="st ok">✓ 済</span>':'<span class="st todo">まだ</span>',ok:dn,todo:!dn,auto:dn?'':(d+'#'+sl)};}
