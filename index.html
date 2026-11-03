@@ -4799,7 +4799,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c41.9）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c42.0）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -7944,7 +7944,8 @@ const dk=ckDayKey(),cd=ckDay(dk),now=ckSlotNow(),nd=CK_SL.filter(s=>cd[s[0]]).le
 const xCk='<div class="ck-sec">📒 手帳チェックイン（見たらここで押す）<i></i></div><div class="ck-card ck-ci"><div class="t">📒 手帳チェックイン<small>'+nd+' / 5</small></div><div class="row">'+CK_SL.map(s=>{const mi=ckMiss().indexOf(s[0])>=0,op=slOpen(CK_SL,cd,now,s[0]);return '<div class="slot'+(cd[s[0]]?' done':'')+(mi?' miss':'')+(s[0]===ckTarget()&&!cd[s[0]]?' now':'')+(op?' tap':'')+'"'+(op?' data-ckp="'+s[0]+'"':'')+'>'+s[0]+'<b>'+esc(cd[s[0]]||(mi?'未':'—'))+'</b>'+(cd['後'+s[0]]?'<i class="ato">後</i>':'')+'</div>';}).join('')+'</div>'+
 '<button type="button" class="go'+(ckDone()?' ok':'')+'" id="ckGo">'+(ckMiss().length?'🔁 後追い：'+ckMiss()[0]+' を入れる（あと'+slLeft(CK_SL,cd,now)+'つ）':(cd[now]?'✓ '+now+'のチェックイン済み':'📒 '+now+'のチェックイン：見た ✓'+(ckWant?' → 書く':'')))+'</button></div>';
 bk('ck',null,xCk);
-const DEF=['dream','pins','rd','num','daily','todo','report','road','wish','f_pay','f_slp','f_band','f_money','rest','f_set','ck'];
+bk('seme',null,semeTopHtml());
+const DEF=['ck','seme','dream','pins','rd','num','daily','todo','report','road','wish','f_pay','f_slp','f_band','f_money','rest','f_set'];
 const ord=layOrder('top',DEF.concat(BK.map(x=>x.id).filter(id=>DEF.indexOf(id)<0)));
 const MISC={daily:1,report:1,road:1,wish:1,f_pay:1,f_slp:1,f_money:1,rest:1,f_set:1};const use=ord.filter(id=>P.misc?MISC[id]:!MISC[id]);
 if(P.misc)h+='<div class="ck-sec misc-ttl">📂 各種（記録と設定）<i></i></div>';
@@ -9346,14 +9347,7 @@ p.classList.add('open');
 $('pgBk').onclick=closePage;
 }
 
-const RULE_DEFS=[
-{id:'memo',icon:'📒',label:'手帳を1日5回以上見る',type:'count',target:5,btn:'📒 手帳見た'},
-{id:'bath',icon:'🛁',label:'22時までに入浴を始める',type:'time',btn:'🛁 風呂＋歯磨き'},
-{id:'wake',icon:'☀',label:'9時までに起床',type:'auto'},
-{id:'out',icon:'🚪',label:'起床後30分以内に外出',type:'time',btn:'🚪 外に出た'},
-{id:'ai',icon:'🤖',label:'AIの仕事に集中する',type:'auto'},
-{id:'rest',icon:'☕',label:'1時間作業して15分休憩',type:'count',target:3,btn:'☕ 休憩した'}
-];
+const RULE_DEFS=[ {id:'memo',icon:'📒',label:'手帳を1日5回以上見る',type:'count',target:5,btn:'📒 手帳見た'}, {id:'bed',icon:'🌙',label:'1時に寝る',type:'auto'}, {id:'out',icon:'🚪',label:'起きて30分以内に外へ',type:'time',btn:'🚪 外に出た'}, {id:'seme',icon:'⚔️',label:'攻め6時間',type:'auto'}, {id:'play',icon:'🎯',label:'遊びは攻め3時間の後',type:'auto'} ];
 let FLASH_RULES=RULE_DEFS.map(r=>r.label);
 function cfgApply(){try{const c=(state&&state._cfg)||null;if(!c)return;
 if(Array.isArray(c.pinPlaces))PIN_PLACES=c.pinPlaces.slice();if(Array.isArray(c.payC))PAY_C_PRESETS=c.payC.slice();if(Array.isArray(c.payN))PAY_N_PRESETS=c.payN.slice();
@@ -9370,6 +9364,10 @@ r.ts=Date.now();state.rules[d]=r;});
 const r=state.rules[d];
 toast(id==='memo'?('📒 手帳 '+r.memo+'/5回'):id==='rest'?('☕ 休憩 '+r.rest+'回目'):id==='bath'?('🛁 '+r.bath+(r.bath<='22:30'?' ✅ 22時ルール達成':' △ 遅め')):('🚪 外出 '+r.out));
 }
+const SEME_ADD={bizcall:1,errand:1,relb:1,post:1,m_atm:1,aibiz:1},SEME_NO={c_snsc:1}; /* c42.0：攻め＝中古車の実務（SNS閲覧＋コメントを除く）＋仕事の連絡・用事＋AIビジネス。HIBIKI・SNS・動画・移動は入れない（本人 2026-11-03） */
+function semeMudaDay(d){let seme=0,muda=0;try{const c=anaCount(anaRange('day',d));const S1=(c&&(c.sum1||c.sum))||{};for(const k in S1){if(k==='_none'||!(S1[k]>0))continue;const q=kindOf(k)||{};if((q.g==='V'&&!SEME_NO[k])||SEME_ADD[k])seme+=S1[k];}muda=(c&&c.muda&&c.muda.total)||0;}catch(e){}return {seme,muda};}
+function semeTopHtml(){const t=todayStr(),x=semeMudaDay(t),G=(ckGoalExtra().biz)||360,H=m=>(Math.round(m/6)/10).toFixed(1)+'h';
+return '<div class="ck-sec">⚔️ 今日の攻めとムダ（日記から自動）<i></i></div><div class="ck-card"><div class="rd-left" style="font-weight:800;font-size:16px">⚔️ 攻め '+H(x.seme)+' ／ '+H(G)+(x.seme>=G?' ✓':' ⚠')+'</div><div class="rd-left" style="font-weight:800;font-size:16px">🕳️ ムダ '+H(x.muda)+' ／ 2.0h'+(x.muda>120?' ⚠':' ✓')+'</div><div class="rd-left">攻めに HIBIKI・SNS・動画・移動は入れない。遊び・サウナは攻め3時間の後</div></div>';}
 function rulesDay(d,by){
 const r=(state.rules||{})[d]||{};
 const isT=d===todayStr();const nh=isT?nowHM():'24:00';
@@ -9383,14 +9381,17 @@ if(en.mv&&en.s&&wake&&en.s>=wake&&(!firstMv||en.s<firstMv))firstMv=en.s;}
 if(!outT&&firstMv)outT=firstMv;
 const hasRec=!!(state.rules||{})[d];
 const st=(ok,mid,pend)=>ok?'ok':mid?'mid':(isT&&pend)?'pend':((isT||hasRec)?'ng':'none');
-const memoN=r.memo||0;
+let ckN=0;try{const cd=ckDay(d);ckN=CK_SL.filter(x=>cd[x[0]]).length;}catch(e){}
+const memoN=Math.max(r.memo||0,ckN);
+let bedS='none',bedTx='記録なし';try{if(sd&&sd.main&&sd.main.s){const bs=sd.main.s,same=sd.main.date===d;const ok=!same||bs<='01:00',mid=!same||bs<='02:00';bedS=ok?'ok':mid?'mid':'ng';bedTx=(same?'':'前日 ')+bs+'に就寝';}else if(isT)bedS='pend';}catch(e){}
+const SM=semeMudaDay(d),H=m=>(Math.round(m/6)/10).toFixed(1)+'h';
+const semeS=SM.seme>=360?'ok':SM.seme>=180?'mid':(isT&&nh<'22:00')?'pend':(SM.seme>0||hasRec||isT)?'ng':'none';
 return [
 {id:'memo',s:st(memoN>=5,memoN>0,nh<'22:00'),detail:memoN+'/5回'},
-{id:'bath',s:st(!!r.bath&&r.bath<='22:30',!!r.bath,nh<'22:30'),detail:r.bath?(r.bath+'に入浴'):'未'},
-{id:'wake',s:wake?(wake<='09:00'?'ok':wake<='10:00'?'mid':'ng'):(isT?'pend':'none'),detail:wake?(wake+'に起床'):'記録なし'},
+{id:'bed',s:bedS,detail:bedTx},
 {id:'out',s:st(!!(outT&&wake&&durMin(wake,outT,0)<=30),!!outT,!wake||nh<'14:00'),detail:outT?(outT+'に外出'+(wake?'（起床'+durMin(wake,outT,0)+'分後）':'')):'未'},
-{id:'ai',s:st(aiHit,false,nh<'20:00'),detail:aiHit?'AIの記録あり':'記録なし'},
-{id:'rest',s:st(restN>=3,restN>0,nh<'20:00'),detail:restN+'回'}
+{id:'seme',s:semeS,detail:'攻め '+H(SM.seme)+'／6h'},
+{id:'play',s:'none',detail:'自分で見る（自動の採点なし）'}
 ];
 }
 function ruleChipsHtml(h){
@@ -12665,7 +12666,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c41.9";
+const CL_APPVER="c42.0";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
