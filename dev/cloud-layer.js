@@ -209,8 +209,9 @@ async function clRpc(name,body){return clRpcJson(name,body);}   /* 旧版と同�
 
 /* ---------- state ⇄ 項目（1行） ---------- */
 const CL_ID=['dreams','memos','pays','aims','moves','pins','steps','payrep','rtn','rlog','payppl','pha','kinds','tools','places','projects','marks','bedp','arp','todos','plreg','plgrp','kgrp','trs','srr','tdq','ksub','dlg','dgoal','aip','msx','inc','cash','rtm','dep','tbox','wish'];   /* c31.2：wish＝欲しい物 */   /* c7.9：todos＝📋やる事 */   /* c4.8：arp＝場所ごとの区・市町村 */   /* c4.7：marks＝🕳️😤😫の申告、bedp＝場所ごとの🛏️/🪑 */
-const CL_DAY=['ai','rules','scr','cond','prep','ckin','ckcnt','rdin'];   /* c34.0：rdin＝1日3回の読み物 */   /* c31.0：ckin＝手帳チェックイン */   /* c11.5：cond＝体調（日ごと） */   /* c4.7：scr＝夜に入れる📲📞の数字（日ごと） */
+const CL_DAY=['ai','rules','scr','cond','prep','ckin','ckcnt','rdin','ernin','nmin'];   /* c37.2：ernin＝💰 AIで稼ぐ */   /* c34.0：rdin＝1日3回の読み物 */   /* c31.0：ckin＝手帳チェックイン */   /* c11.5：cond＝体調（日ごと） */   /* c4.7：scr＝夜に入れる📲📞の数字（日ごと） */
 const CL_DAY2=['entries','plans'];
+const CL_UNION={ckin:1,rdin:1,ernin:1,nmin:1};   /* c37.3d：枠ごとの和で合わせる物＝同点ルール（同じts・違う中身＝影）を使わない。端末の方が多ければ送る */
 const CL_SKIP={updatedAt:1,photos:1};
 function clItems(st){
   /* state を {coll,k,ts,data} の並びにする。photos（端末の写真の実体）は送らない。pha は「写真id→保管番号」で ts が無いので 1 固定 */
@@ -387,9 +388,9 @@ function clOutboxPrune(){
 
 /* ---------- 影の保存（IndexedDB）と読み込み ---------- */
 async function clLoadShadow(uid){
-  CL.uid=uid;CL.shadowFor=uid;CL.shadow={};CL.seq=0;CL.shadowOk=false;CL.full=null;CL.pushedDuring={};CL.bad={};
+  CL.uid=uid;CL.shadowFor=uid;CL.shadow={};CL.skip={};CL.seq=0;CL.shadowOk=false;CL.full=null;CL.pushedDuring={};CL.bad={};
   const rec=await clStore.get('shadow:'+uid);
-  if(rec&&rec.ver===CL_SHVER&&rec.uid===uid&&rec.map&&typeof rec.map==='object'&&Number(rec.seq)>0){CL.shadow=rec.map;CL.seq=Number(rec.seq);CL.shadowOk=true;}
+  if(rec&&rec.ver===CL_SHVER&&rec.uid===uid&&rec.map&&typeof rec.map==='object'&&Number(rec.seq)>0){CL.shadow=rec.map;CL.skip=(rec.skip&&typeof rec.skip==='object')?rec.skip:{};CL.seq=Number(rec.seq);CL.shadowOk=true;}
   CL.shadowLoadedAt=Date.now();
   if(CL.shadowOk){
     /* 影にあって端末に無い項目＝受信した中身を本文に保存できなかった → 全件受信で取り直す */
@@ -405,12 +406,12 @@ async function clPersist(){
   if(typeof localSaveFail!=='undefined'&&localSaveFail){   /* 本文が置けていない＝受信位置を進めて保存すると、その行を二度と取りに来ない */
     if(!CL.persistWarned){CL.persistWarned=1;clNote('shadow','端末保存に失敗中のため、影と受信位置は保存しない');}return false;}
   CL.persistWarned=0;
-  const uid=CL.uid,map=CL.shadow,seq=CL.seq,loaded=CL.shadowLoadedAt,me=CL.tabId;
+  const uid=CL.uid,map=CL.shadow,seq=CL.seq,loaded=CL.shadowLoadedAt,me=CL.tabId,skip=CL.skip||{};
   return clStore.upd('shadow:'+uid,cur=>{
     let m=map,s=seq;
     /* 別タブが後から書いていた：両方で一致する所だけ残す（影は「クラウドにある」と確かな物だけ＝足りない分は送り直すだけで安全） */
     if(cur&&cur.ver===CL_SHVER&&cur.writer&&cur.writer!==me&&(cur.savedAt||0)>loaded&&cur.map){m={};for(const k in map)if(cur.map[k]===map[k])m[k]=map[k];s=Math.min(seq,Number(cur.seq)||0);}
-    return {ver:CL_SHVER,uid,seq:s,map:m,writer:me,savedAt:Date.now()};
+    return {ver:CL_SHVER,uid,seq:s,map:m,skip,writer:me,savedAt:Date.now()};
   });
 }
 
@@ -470,7 +471,9 @@ async function clPushStep(ep,sig){
 /* 受け取った行を影に入れて state へ合流。端末の中身が変わったかを返す（JSON.stringify(state) の前後比較はしない） */
 function clMergeRows(rows,full){
   const tgt=full?CL.full.nsh:CL.shadow,use=[],echo={};
-  for(const r of rows){if(!r||!r.coll||!clRowUsable(r))continue;const k=clKey(r),sg=clSigOf({ts:r.ts,data:r.data},true);
+  const skp=full?(CL.full.nskip||(CL.full.nskip={})):(CL.skip||(CL.skip={}));   /* c36.8：使わない行を覚える（整合の数え用） */
+  for(const r of rows){if(r&&r.coll){const k=clKey(r);if(clRowUsable(r))delete skp[k];else skp[k]=Number(r.ts)||0;}
+    if(!r||!r.coll||!clRowUsable(r))continue;const k=clKey(r),sg=clSigOf({ts:r.ts,data:r.data},true);
     if(CL.shadowOk&&CL.shadow[k]===sg)echo[k]=1;   /* クラウドの中身は知っている通り（自分の送信のこだま等）＝新しい事は何も無い */
     tgt[k]=sg;use.push(r);}
   if(!use.length)return false;
@@ -484,7 +487,7 @@ function clMergeRows(rows,full){
   use.forEach((r,i)=>{
     const now=clLocalRef(r.coll,r.k);if(now!==refs[i])changed=true;
     /* 同じ ts で中身が違う（払った印などの合流が要る pays・steps 以外）＝送り合いにしない。端末の中身を影とみなす */
-    if(r.coll!=='pays'&&r.coll!=='steps'){const k=clKey(r),it=clItemByKey(k);
+    if(r.coll!=='pays'&&r.coll!=='steps'&&!CL_UNION[r.coll]){const k=clKey(r),it=clItemByKey(k);
       if(it&&clTsOf(it.ts)===clTsOf(r.ts)&&!echo[k]){const h=clSigOf(it,false);if(h!==tgt[k]){tgt[k]=h;tie++;}}}   /* こだまの時は端末の書き換えを未送信のまま残す */
   });
   if(tie)CL.tieN=(CL.tieN||0)+tie;
@@ -508,7 +511,7 @@ async function clPullStep(ep,sig,ms){
   }
   let fullDone=false;
   if(full){   /* 最後まで読めた時だけ影を差し替える（途中で失敗したら続きから） */
-    CL.shadow=Object.assign(CL.full.nsh,CL.pushedDuring);CL.pushedDuring={};CL.seq=Math.max(CL.seq,since);
+    CL.shadow=Object.assign(CL.full.nsh,CL.pushedDuring);CL.skip=CL.full.nskip||{};CL.pushedDuring={};CL.seq=Math.max(CL.seq,since);
     const rb=CL.full.rebuild;CL.full=null;CL.shadowOk=true;fullDone=true;
     clNote('pull','全件受信 完了 '+got+'件'+(rb?'（照合し直し）':''));
   }else if(got)clNote('pull','受信 '+got+'件');
@@ -555,7 +558,9 @@ async function clIntegrity(ep,sig){
   const srv={};for(const m of String(txt).match(/\{[^{}]*\}/g)||[]){const c=/"coll"\s*:\s*"((?:[^"\\]|\\.)*)"/.exec(m),n=/"n"\s*:\s*(\d+)/.exec(m),t=/"tsum"\s*:\s*(-?\d+)/.exec(m);
     if(c&&n&&t){let name;try{name=JSON.parse('"'+c[1]+'"');}catch(e){name=c[1];}srv[name]={n:Number(n[1]),t:BigInt(t[1])};}}
   const lim=Date.now()+3600000,loc={};
-  for(const it of clItems(state)){const k=clKey(it);if(CL.bad[k])continue;const c=loc[it.coll]||(loc[it.coll]={n:0,t:0n});c.n++;c.t+=BigInt(Math.min(clTsOf(it.ts),lim));}
+  const haveK=new Set();
+  for(const it of clItems(state)){const k=clKey(it);haveK.add(k);if(CL.bad[k])continue;const c=loc[it.coll]||(loc[it.coll]={n:0,t:0n});c.n++;c.t+=BigInt(Math.min(clTsOf(it.ts),lim));}
+  for(const k in (CL.skip||{})){if(haveK.has(k))continue;const cn=k.slice(0,k.indexOf('\u0000')),c=loc[cn]||(loc[cn]={n:0,t:0n});c.n++;c.t+=BigInt(Math.min(clTsOf(CL.skip[k]),lim));}   /* c36.8：クラウドにあるがアプリが使わない古い行も数える */
   const bad=[];
   for(const c of new Set(Object.keys(srv).concat(Object.keys(loc)))){if(!CL_COLLS.has(c))continue;const a=srv[c]||{n:0,t:0n},b=loc[c]||{n:0,t:0n};
     if(a.n!==b.n||a.t!==b.t)bad.push(c+'(雲'+a.n+'/端'+b.n+')');}
