@@ -4799,7 +4799,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c41.8）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c41.9）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -7721,7 +7721,7 @@ function ernMark(id){const d=ernDayKey(),sl=ernTarget();mutate(()=>{state.ernin=
 function ernSlotDo(){const d=ernDayKey(),sl=ernTarget();mutate(()=>{state.ernin=state.ernin||{};state.ernin[d]=atoMark(Object.assign({},ernDay(d),{[sl]:nowHM(),ts:Date.now()}),sl,ernSlotNow());});}
 function ernIdeas(){const m=state.memos||{};return Object.keys(m).filter(k=>m[k]&&!m[k].del&&m[k].idea&&m[k].ln).map(k=>m[k]).sort((a,b)=>(b.at||b.ts||0)-(a.at||a.ts||0));}
 function ernChipHtml(){try{const sl=ernTarget(),D=ernDay(ernDayKey()),L=ernLines(),n=L.filter(x=>D[sl+'#'+x.id]).length;return '<button class="gs'+(D[sl]?' ok':'')+'" data-gs="earn">💰 '+esc(sl)+' <b>'+n+'</b>/'+L.length+(D[sl]?' ✓':'')+'</button>';}catch(e){return '';}}
-function aibizLine(){let m=0;try{const c=anaCount(anaRange('day',todayStr()));m=((c&&(c.sum1||c.sum))||{}).aibiz||0;}catch(e){}return '<div class="rd-left" style="font-weight:800">📓 日記の 💡AIビジネス：今日 '+m+'分'+(m>0?' ✓':' ⚠ まだ0分')+'</div>';} /* c41.8：押したかでなく、日記に付いた本当の時間を出す（本人 2026-11-04） */ function ernCardHtml(){try{const L=ernLines(),d=ernDayKey(),sl=ernTarget(),D=ernDay(d),MIS=ernMiss(),dn=!!D[sl],pd=x=>!!D[sl+'#'+x.id];
+const ERN_GOAL_MIN=120; /* c41.9：AIで稼ぐの1日の線（本人 2026-11-04） */ function aibizRun(){try{return openKindRec(['aibiz']);}catch(e){return null;}} function aibizRunMin(o){try{return o?Math.max(0,durMin(o.en.s,nowMin(),o.d!==todayStr()?1:0)):0;}catch(e){return 0;}} function aibizLine(){let m=0;try{const c=anaCount(anaRange('day',todayStr()));m=((c&&(c.sum1||c.sum))||{}).aibiz||0;}catch(e){}const o=aibizRun();return '<div class="rd-left" style="font-weight:800">📓 日記の 💡AIビジネス：今日 '+m+'分／'+ERN_GOAL_MIN+'分'+(m>=ERN_GOAL_MIN?' ✓':' ⚠')+(o?'（▶ 計っている途中 '+aibizRunMin(o)+'分）':'')+'</div>';} /* c41.8：押したかでなく、日記に付いた本当の時間を出す（本人 2026-11-04） */ function ernCardHtml(){try{const L=ernLines(),d=ernDayKey(),sl=ernTarget(),D=ernDay(d),MIS=ernMiss(),dn=!!D[sl],pd=x=>!!D[sl+'#'+x.id];
 const mine=L.filter(x=>ernSlotOf(x)===sl),nDone=L.filter(pd).length;
 if(ernCur==null||!L.some(x=>x.id===ernCur)){const f=mine.find(x=>!pd(x))||mine[0]||L[0];ernCur=f?f.id:null;}
 const it=L.find(x=>x.id===ernCur)||L[0];
@@ -7729,8 +7729,8 @@ const slots='<div class="rd-sl">'+ERN_SL.map(x=>{const mi=MIS.indexOf(x[0])>=0,o
 const tabs='<div class="rd-tabs ern-tabs">'+L.map(x=>'<button type="button" class="rd-tab'+(x.id===ernCur?' cur':'')+(pd(x)?' sumi':'')+(ernSlotOf(x)!==sl?' ern-dim':'')+'" data-erni="'+esc(x.id)+'"><span class="ic">'+esc(x.ic||'💰')+'</span><b>'+esc(x.nm)+'</b>'+(pd(x)?'<span class="rd-stamp">済</span>':'')+'</button>').join('')+'</div>';
 let ideas='';if(it&&it.ic==='💡'){const I=ernIdeas();if(I.length)ideas='<div class="ern-ideas">⭐ 線に入れたアイデア<br>'+I.slice(0,5).map(x=>'・'+esc(String(x.t||'').split('\n')[0])).join('<br>')+'</div>';}
 const box=it?'<div class="ern-box"><div class="ern-nm">'+esc(it.ic||'💰')+' '+esc(it.nm)+'</div>'+(it.cv?'<div class="ern-cv">'+esc(it.cv)+'</div>':'')+(it.dn?'<div class="ern-dn">できた＝'+esc(it.dn)+'</div>':'')+ideas+
-(pd(it)?'<button type="button" class="rd-one done" disabled>✓ '+esc(it.nm)+' はやった（'+esc(D[sl+'#'+it.id])+'）</button>':'<button type="button" class="rd-one" id="ernOne">'+esc(it.ic||'💰')+' '+esc(it.nm)+' をやった</button>')+'</div>':'';
-const end=nDone>=1?'<div class="rd-end">'+iosSw('ernSw',false,'✓ やった！','','')+'<button type="button" class="rd-go" id="ernGo" disabled>💰 '+esc(sl)+'のAIで稼ぐ：やった</button></div>':'<div class="rd-left">'+esc(sl)+'は '+(mine.length?mine:L).map(x=>esc((x.ic||'💰')+' '+x.nm)).join(' か ')+' のどれか1つでいい。1つやると「やった！」が出る</div>';
+(aibizRun()?'<button type="button" class="rd-one" id="ernStop">■ 終わる（'+esc(String(aibizRun().en.t||'💡 AIビジネス'))+' '+aibizRunMin(aibizRun())+'分）</button>':'<button type="button" class="rd-one" id="ernStart">▶ '+esc(it.ic||'💰')+' '+esc(it.nm)+' を始める</button>')+(pd(it)?'<div class="rd-left">✓ '+esc(it.nm)+' は今日やった（'+esc(D[sl+'#'+it.id])+'）</div>':'')+'</div>':'';
+const end='<div class="rd-left">▶ で始めて ■ で終わると、日記に 💡AIビジネス の時間が入り、'+esc(sl)+'の枠も済になる。押しただけでは進まない</div>';
 const gate=(ernWant&&!dn)?'<div class="ck-gatebar">💰 1つやって「やった」を押すと、そのまま書ける</div>':'';
 return '<div class="ck-card rd-card ern-card'+(dn?' done':'')+'" id="ernCard"><div class="rd-top"><b>💰 '+esc(sl)+'のAIで稼ぐ</b><span>'+nDone+' / '+L.length+'</span></div>'+aibizLine()+slots+
 (dn?'<div class="rd-left">✓ '+esc(sl)+'は済（'+esc(D[sl])+'）。もう1つやるなら下から</div>'+tabs+box:gate+tabs+box+end)+'</div>';}catch(e){return '';}}
@@ -7739,7 +7739,8 @@ p.innerHTML='<div class="page-head"><button class="bk" id="pgBk">‹ 戻る</but
 p.classList.add('open');$('pgBk').onclick=()=>{ernWant=false;closePage();};ernBind(p);try{const nb=p.querySelector('.page-body');if(nb&&y0)nb.scrollTop=y0;}catch(e){}}
 function ernBind(p){p.querySelectorAll('[data-erni]').forEach(b=>b.onclick=()=>{ernCur=b.dataset.erni;renderEarnPage();});
 p.querySelectorAll('[data-ernp]').forEach(b=>b.onclick=()=>{ernPick=b.dataset.ernp;renderEarnPage();});
-{const o=p.querySelector('#ernOne');if(o)o.onclick=ev=>{const it=ernLines().find(x=>x.id===ernCur);if(!it)return;ckBurst(ev.clientX,ev.clientY,'㊞ 済');ernMark(it.id);toast('㊞ '+it.nm+' 済！');renderEarnPage();try{gstripPaint();}catch(e){}};}
+{const o=p.querySelector('#ernStart');if(o)o.onclick=()=>{const it=ernLines().find(x=>x.id===ernCur);if(!it)return;if(aibizRun()){toast('もう計っている。終わったら■');return;}quickKindStart('aibiz','💡','AIビジネス',(it.ic||'💰')+' '+it.nm,1);renderEarnPage();try{gstripPaint();}catch(e){}};}
+{const o=p.querySelector('#ernStop');if(o)o.onclick=ev=>{const r=aibizRun();if(!r)return;const mn=quickKindEnd(r);const tx=String(r.en.t||'');const it=ernLines().find(x=>tx===((x.ic||'💰')+' '+x.nm))||ernLines().find(x=>x.id===ernCur);ckBurst(ev.clientX,ev.clientY,'💡 '+(durText(mn)||'1分未満'));if(it)ernMark(it.id);ernSlotDo();ernPick=null;toast('💡 AIビジネス '+(durText(mn)||'1分未満')+' を日記に入れた');renderEarnPage();try{gstripPaint();}catch(e){}};}
 {const sw=p.querySelector('#ernSw'),go=p.querySelector('#ernGo');if(sw&&go){sw.onclick=()=>{const on=!sw.classList.contains('on');iosSet(sw,on);go.disabled=!on;};
 go.onclick=ev=>{if(go.disabled)return;const sl=ernTarget();ckBurst(ev.clientX,ev.clientY,'💰 ✓');ernSlotDo();ernPick=null;toast('💰 '+sl+'のAIで稼ぐ：やった');try{gstripPaint();}catch(e){}
 if(ernWant){ernWant=false;closePage();if(!ckGate()&&!rdGate()&&!numGate())setTimeout(()=>openEntrySheet(ui.date,{hour:new Date().getHours(),wr:true}),350);}else renderEarnPage();};}}}
@@ -12664,7 +12665,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c41.8";
+const CL_APPVER="c41.9";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
