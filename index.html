@@ -7651,7 +7651,7 @@ let pk=0;const body='<div class="rd-p"><div class="rd-nm">'+rdIc(it)+' '+esc(Str
 const one=pd(rdCur)?'<button type="button" class="rd-one done" disabled>✓ '+esc(s0.n)+'さんは読んだ（'+esc(D[sl+'#'+rdCur])+'）</button>':'<button type="button" class="rd-one" id="rdOne">'+rdIc(it)+' '+esc(s0.n)+'さんを読んだ'+(nx>=0?'　→ 次は'+esc(rdShort(L[nx].nm).n)+'さん':'')+'</button>';
 const end=all?'<div class="rd-end">'+iosSw('rdSw',false,'✓ 全部読んだ！','','')+'<button type="button" class="rd-go" id="rdGo" disabled>📖 '+esc(sl)+'の読み物：読んだ</button></div>':'<div class="rd-left">あと '+left+'人。'+L.length+'人とも「済」になると「全部読んだ！」が出る</div>';
 rdPop=-1;
-return '<div class="ck-sec">📖 '+esc(ttl)+'<i></i></div><div class="ck-card rd-card'+(dn?' done':'')+'" id="rdCard"><div class="rd-top"><b>📖 '+esc(sl)+'の読み物'+(sl!==rdSlotNow()?'（後追い）':'')+'</b><span>'+cnt+' / 3</span></div>'+goal+slRow(D,sl,MIS)+
+return '<div class="ck-sec">📖 '+esc(ttl)+'<i></i></div><div class="ck-card rd-card'+(dn?' done':'')+'" id="rdCard"><div class="rd-top"><b>📖 '+esc(sl)+'の読み物</b><span>'+cnt+' / 3</span></div>'+goal+slRow(D,sl,MIS)+
 (dn?'<details class="rd-again"><summary>✓ '+esc(sl)+'は読んだ（'+esc(D[sl])+'）　もう一度読む ▾</summary>'+tabs+rdListenBtn(it)+'<div class="rd-scroll">'+body+'</div></details>'
 :(rdWant?'<div class="ck-gatebar">📖 '+L.length+'人とも読んで「全部読んだ！」を押すと、そのまま書ける</div>':'')+tabs+rdListenBtn(it)+'<div class="rd-scroll" id="rdScr">'+body+one+end+'</div>')+'</div>';}catch(e){return '';}}
 function numSlotNow(){return rdSlotNow();}
@@ -7697,7 +7697,7 @@ const me=TT.kind==='num'&&TT.i===numCur&&TT.on;
 const body='<div class="num-list">'+it.rows.map(r=>'<div class="num-row"><i>'+r.ic+'</i><span>'+esc(r.lb)+'</span><b>'+esc(r.v)+'</b></div>').join('')+'</div>'+'<button type="button" class="rd-listen'+(me?' on':'')+'" id="numListen">'+(me?'⏸ 止める':'🔊 '+esc(it.nm)+'の数字を聞く')+'</button>';
 const one=pd(numCur)?'<button type="button" class="rd-one done" disabled>✓ '+esc(it.nm)+'の数字は見た（'+esc(D[sl+'#'+numCur])+'）</button>':'<button type="button" class="rd-one" id="numOne">'+it.ic+' '+esc(it.nm)+'の数字を見た'+(nx!=null?'　→ 次は'+esc(T[nx].nm):'')+'</button>';
 const end=all?'<div class="rd-end">'+iosSw('numSw',false,'✓ 全部見た！','','')+'<button type="button" class="rd-go" id="numGo" disabled>📊 '+esc(sl)+'の数字：見た</button></div>':'<div class="rd-left">あと '+left+'つ。3つとも「済」になると「全部見た！」が出る</div>';
-return '<div class="ck-sec">📊 数字（今日・今週・今月）<i></i></div><div class="ck-card rd-card num-card'+(dn?' done':'')+'" id="numCard"><div class="rd-top"><b>📊 '+esc(sl)+'の数字'+(sl!==numSlotNow()?'（後追い）':'')+'</b><span>'+cnt+' / 3</span></div>'+slRow(D,sl,MIS)+
+return '<div class="ck-sec">📊 数字（今日・今週・今月）<i></i></div><div class="ck-card rd-card num-card'+(dn?' done':'')+'" id="numCard"><div class="rd-top"><b>📊 '+esc(sl)+'の数字</b><span>'+cnt+' / 3</span></div>'+slRow(D,sl,MIS)+
 (dn?'<details class="rd-again"><summary>✓ '+esc(sl)+'は見た（'+esc(D[sl])+'）　もう一度見る ▾</summary>'+tabs+body+'</details>'
 :(numWant?'<div class="ck-gatebar">📊 3つとも見て「全部見た！」を押すと、そのまま書ける</div>':'')+tabs+body+one+end)+'</div>';}catch(e){return '';}}
 const ERN_SL=[['朝',5,15],['夜',15,29]];
@@ -7727,7 +7727,7 @@ const box=it?'<div class="ern-box"><div class="ern-nm">'+esc(it.ic||'💰')+' '+
 (pd(it)?'<button type="button" class="rd-one done" disabled>✓ '+esc(it.nm)+' はやった（'+esc(D[sl+'#'+it.id])+'）</button>':'<button type="button" class="rd-one" id="ernOne">'+esc(it.ic||'💰')+' '+esc(it.nm)+' をやった</button>')+'</div>':'';
 const end=nDone>=1?'<div class="rd-end">'+iosSw('ernSw',false,'✓ やった！','','')+'<button type="button" class="rd-go" id="ernGo" disabled>💰 '+esc(sl)+'のAIで稼ぐ：やった</button></div>':'<div class="rd-left">'+esc(sl)+'は '+(mine.length?mine:L).map(x=>esc((x.ic||'💰')+' '+x.nm)).join(' か ')+' のどれか1つでいい。1つやると「やった！」が出る</div>';
 const gate=(ernWant&&!dn)?'<div class="ck-gatebar">💰 1つやって「やった」を押すと、そのまま書ける</div>':'';
-return '<div class="ck-card rd-card ern-card'+(dn?' done':'')+'" id="ernCard"><div class="rd-top"><b>💰 '+esc(sl)+'のAIで稼ぐ'+(sl!==ernSlotNow()?'（後追い）':'')+'</b><span>'+nDone+' / '+L.length+'</span></div>'+slots+
+return '<div class="ck-card rd-card ern-card'+(dn?' done':'')+'" id="ernCard"><div class="rd-top"><b>💰 '+esc(sl)+'のAIで稼ぐ</b><span>'+nDone+' / '+L.length+'</span></div>'+slots+
 (dn?'<div class="rd-left">✓ '+esc(sl)+'は済（'+esc(D[sl])+'）。もう1つやるなら下から</div>'+tabs+box:gate+tabs+box+end)+'</div>';}catch(e){return '';}}
 function renderEarnPage(){pageMode='earn';const p=$('page');let y0=0;try{const ob=p.querySelector('.page-body');if(ob&&p.classList.contains('open'))y0=ob.scrollTop;}catch(e){}
 p.innerHTML='<div class="page-head"><button class="bk" id="pgBk">‹ 戻る</button><span class="tt">💰 AIで稼ぐ</span><span style="width:36px"></span></div><div class="page-body">'+ernCardHtml()+'<div class="ern-note">朝＝PCの線・夜＝スマホでもいい線。AIの種類は会話が覚えている。1回に1つやれば「済」</div></div>';
@@ -11789,9 +11789,9 @@ if((b.st==='done'||b.st==='cut')&&Number(b.fz)>0)add('tb|'+b.id+'|break',Number(
 if(on.hito&&hitoMust()){try{const eo=(state.entries||{})[t]||{};let n=0;for(const k in eo){const en=eo[k];if(!en||en.del||en.noT||en.mv||!en.s)continue;if(!hitoHas(en))n++;}
 if(n>0)add('hito|'+t,ntfAt(t,'22:00').getTime(),'💬 今日、文の無い記録が '+n+'件','コメントだけ。押すと赤い💬の行が並ぶ');}catch(e){}}
 if(on.ck){try{const W=alarmCfg().wake||'09:00',TM=[['朝',W],['昼前','10:30'],['昼','12:30'],['夕','15:30'],['夜','19:30']];
-for(const d of [t,d1]){const cd=ckDay(d);for(const s of TM){if(d===t&&cd[s[0]])continue;add('ck|'+d+'|'+s[0],ntfAt(d,s[1]),'📒 '+s[0]+'のチェックイン','トップで数字と目標を見て「見た ✓」。夢まで あと'+goalDays()+'日');}}}catch(e){}}
-if(on.ern){try{const TM=[['朝','09:30'],['夜','20:00']];for(const d of [t,d1]){const D=ernDay(d);for(const s of TM){if(d===t&&D[s[0]])continue;const L=ernLines().filter(x=>ernSlotOf(x)===s[0]),f=L.find(x=>!(d===t&&D[s[0]+'#'+x.id]))||L[0];
-add('ern|'+d+'|'+s[0],ntfAt(d,s[1]),'💰 '+s[0]+'のAIで稼ぐ',(f?(f.ic||'💰')+' '+f.nm+'。':'')+'会話を開いて「続き」→ やった');}}}catch(e){}}
+for(const d of [t,d1]){const cd=ckDay(d);TM.forEach((s,si)=>{if(d===t&&cd[s[0]])return;const cm=d===t?TM.slice(0,si).filter(x=>!cd[x[0]]).length:0;add('ck|'+d+'|'+s[0],ntfAt(d,s[1]),'📒 '+s[0]+'のチェックイン'+(cm?'（未が'+cm+'つ）':''),(cm?'飛ばした'+cm+'つも古い順に後追いできる。':'')+'トップで数字と目標を見て「見た ✓」。夢まで あと'+goalDays()+'日');});}}catch(e){}}
+if(on.ern){try{const TM=[['朝','09:30'],['夜','20:00']];for(const d of [t,d1]){const D=ernDay(d);TM.forEach((s,si)=>{if(d===t&&D[s[0]])return;const L=ernLines().filter(x=>ernSlotOf(x)===s[0]),f=L.find(x=>!(d===t&&D[s[0]+'#'+x.id]))||L[0],em=d===t?TM.slice(0,si).filter(x=>!D[x[0]]).length:0;
+add('ern|'+d+'|'+s[0],ntfAt(d,s[1]),'💰 '+s[0]+'のAIで稼ぐ'+(em?'（未が'+em+'つ）':''),(em?'飛ばした'+em+'つも古い順に後追いできる。':'')+(f?(f.ic||'💰')+' '+f.nm+'。':'')+'会話を開いて「続き」→ やった');});}}catch(e){}}
 if(on.pln){try{for(const d of [t,d1])plnOpen(d).forEach(o=>{const x=o.x;if(!x.hh)return;const P=ntfAt(d,x.hh).getTime();add('pln|'+d+'|'+o.k,P-15*60000,'📅 あと15分 '+Array.from(String(x.t)).slice(0,20).join(''),(x.pl?'📍 '+x.pl+'。':'')+'時刻が来たら ✓ 始まった');});}catch(e){}}
 if(on.gap){try{const t0=todayStr(),y0=addDays(t0,-1);let E=0,EP='';
 const scan=(d,off)=>{const eo=(state.entries||{})[d]||{};for(const k in eo){const en=eo[k];if(!en||en.del||en.noT||!en.s)continue;const sm=hmMin(en.s)+off,em=en.e?(hmMin(en.e)+(en.ed?1440:0)+off):null;
