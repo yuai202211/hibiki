@@ -1960,7 +1960,13 @@ body.cardvis .fab{display:none!important}
 .hdr1 .mlchip,.hdr1 .streak{font-size:11.5px!important;padding:2px 7px!important}.hdr1 .syncdot{font-size:11px}
 #app #kakuTop>.hour.gap.wr.wrbig{padding:4px 9px!important}#app #kakuTop>.hour.gap.wr.wrbig .body,#app #kakuTop>.hour.gap.wr.wrbig .hh{font-size:12.5px!important}
 #app #kakuTop .wr-dfto{font-size:10.5px!important;padding:2px 6px!important;height:auto!important;min-height:0!important;white-space:nowrap}
-#app #kakuTop>.hour.gap.wr.wrbig:has(#bedPill){flex-wrap:wrap}
+#app #kakuTop>.hour.gap.wr.wrbig:has(#bedPill){flex-wrap:nowrap!important;padding:4px 7px!important;row-gap:0;gap:3px}
+#app #kakuTop>.hour.gap.wr.wrbig:has(#bedPill) .wr-r{flex:none!important;display:inline-flex;min-width:0}
+#app #kakuTop #bedPill,#app #kakuTop #bedPill *{white-space:nowrap}
+#app #kakuTop #bedPill{display:inline-flex;align-items:center;gap:2px;font-size:0!important;padding:2px 5px!important;line-height:1.3;max-width:none}
+#app #kakuTop #bedPill .nw,#app #kakuTop #bedPill .nwi{display:none!important}
+#app #kakuTop #bedPill::before{content:"💤";font-size:11px}
+#app #kakuTop #bedPill b,#app #kakuTop #bedPill b .nw,#app #kakuTop #bedPill b .nwi{display:inline!important;font-size:11px!important;margin:0;padding:0;background:none}
 #app.topck .seg,#app.topck #decade,#app.topck .dreamrow,#app.topck #ftk{display:none!important}
 .hdr0 .topsrch{order:-1;justify-self:start;display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line);background:#fff;color:#14275a;border-radius:999px;padding:6px 12px;font-size:13px;font-weight:800;white-space:nowrap;cursor:pointer}
 .dband{background:#14275a;color:#fff;padding:5px 10px;font-size:12.5px;font-weight:700;line-height:1.5;font-variant-numeric:tabular-nums;flex:none;border-radius:10px;margin:4px 8px 0}
@@ -4866,7 +4872,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c44.3）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c44.4）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -5002,9 +5008,11 @@ function entDraft(d,v){const K='hibiki-ent-draft',M=entDraftAll();if(v===undefin
 const put=()=>{if(Object.keys(M).length)localStorage.setItem(K,JSON.stringify(M));else localStorage.removeItem(K);};
 let st={ok:true,cut:0};try{put();}catch(e){st={ok:false,cut:0};try{if(M[d]&&M[d].phd){const lost=Object.keys(M[d].phd);delete M[d].phd;const rm=a=>(a||[]).filter(id=>lost.indexOf(id)<0);M[d].e.ph=rm(M[d].e.ph);(M[d].e.acts||[]).forEach(a=>{if(a.ph){a.ph=rm(a.ph);if(!a.ph.length)delete a.ph;}});put();st={ok:true,cut:1};}}catch(e2){st={ok:false,cut:0};}}
 entDraft.st=st;try{entDraftBadge();}catch(e){}return v;}
-function entDraftBadge(){const M=entDraftAll();document.querySelectorAll('.hour.wr .body').forEach(w=>{const b=w.querySelector('.wr-dft'),has=!!(M[ui.date]&&M[ui.date].e);if(has&&!b)w.insertAdjacentHTML('beforeend','<span class="wr-dft">📝 下書きあり</span>');else if(!has&&b)b.remove();
+function entDraftTidy(){try{const T=todayStr(),M=entDraftAll(),old={};for(const k in M){const g=M[k],e=g&&g.e;if(k>=T)continue;const only=!e||(e.acts||[]).every(a=>{const z=kindOf(a.k)||toolOf(a.d);return z&&a.t===z.lb&&!a.c&&!a.s&&!a.e&&!(a.ph&&a.ph.length);});if(only&&(!e||(!String(e.t||'').trim()&&!(e.ph||[]).length&&!e.rt))){old[k]=g;delete M[k];}}
+if(Object.keys(old).length){let B={};try{B=JSON.parse(localStorage.getItem('hibiki-ent-draft-old')||'{}')||{};}catch(e){}localStorage.setItem('hibiki-ent-draft-old',JSON.stringify(Object.assign(B,old)));if(Object.keys(M).length)localStorage.setItem('hibiki-ent-draft',JSON.stringify(M));else localStorage.removeItem('hibiki-ent-draft');}}catch(e){}}
+function entDraftBadge(){entDraftTidy();const M=entDraftAll();document.querySelectorAll('.hour.wr .body').forEach(w=>{const b=w.querySelector('.wr-dft'),has=!!(M[ui.date]&&M[ui.date].e);if(has&&!b)w.insertAdjacentHTML('beforeend','<span class="wr-dft">📝 下書きあり</span>');else if(!has&&b)b.remove();
 let o=w.querySelector('.wr-dfts');const ks=Object.keys(M).filter(k=>k!==ui.date&&M[k]&&M[k].e).sort();if(!ks.length){if(o)o.remove();return;}if(!o){w.insertAdjacentHTML('beforeend','<span class="wr-dfts"></span>');o=w.querySelector('.wr-dfts');}
-o.innerHTML=ks.map(k=>'<button type="button" class="chip wr-dfto" data-dftd="'+esc(k)+'" aria-label="'+esc(payMD(k))+' の下書き">📝'+esc(payMD(k))+'</button>').join('');
+o.innerHTML=ks.map(k=>'<button type="button" class="chip wr-dfto" data-dftd="'+esc(k)+'" aria-label="'+esc(payMD(k))+' の下書き">📝'+esc(payMD(k))+' 下書き</button>').join('');
 o.querySelectorAll('[data-dftd]').forEach(bt=>bt.onclick=ev=>{ev.stopPropagation();const k=bt.dataset.dftd,g=entDraft(k);openEntrySheet(k,{wr:true,hour:(g&&g.e&&g.e.s)?Number(String(g.e.s).slice(0,2)):new Date().getHours()});});});}
 function openEntrySheet(date,ref){gateClear();
 let dft0=null;if(ref&&ref.wr&&ref.key==null){const g=entDraft(date);if(g&&g.e){dft0=g;if(g.phd)for(const id in g.phd)if(!PH.mem[id])PH.mem[id]=g.phd[id];}}
@@ -12820,7 +12828,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c44.3";
+const CL_APPVER="c44.4";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
