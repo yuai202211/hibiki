@@ -4853,7 +4853,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c44.0）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c44.1）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -6116,8 +6116,9 @@ openSub('<div class="sh-time"><span>💰 必要額（'+esc(d0.t)+'）</span></di
 $('dyNo').onclick=closeSub;
 $('dyOk').onclick=()=>{
 const amt=Math.round(Number($('dyAmt').value)||0),memo=($('dyMemo').value||'').trim().slice(0,2000);
-mutate(()=>{const c=(state.dreams||{})[id];if(!c||c.del)return;const nx=Object.assign({},c,{yenMemo:memo,ts:Date.now()});if(amt>0)nx.yen=amt;else delete nx.yen;state.dreams[id]=nx;});
-closeSub();
+const sv=why=>{mutate(()=>{const c=(state.dreams||{})[id];if(!c||c.del)return;const nx=Object.assign({},c,{yenMemo:memo,ts:Date.now()});if(amt>0)nx.yen=amt;else delete nx.yen;state.dreams[id]=nx;if(why)dreamLog({what:'夢を変えた',id,t:c.t,ch,why});});closeSub();};
+const ch=[];if(amt!==y)ch.push({l:'必要な金額',a:y?dmYen(y):'',b:amt?dmYen(amt):''});if((d0.yenMemo||'')!==memo)ch.push({l:'金額の内訳',a:d0.yenMemo||'',b:memo});
+if(ch.length&&(y||d0.yenMemo))askWhy('何で変えた？（'+ch.map(c=>c.l).join('・')+'）',sv);else sv('');
 };
 }
 let dnArm=-1;
@@ -6139,7 +6140,7 @@ mutate(()=>{const c=(state.dreams||{})[id];if(!c||c.del||!Array.isArray(c.need)|
 dnArm=-1;paint();});
 s.querySelectorAll('[data-nx]').forEach(b=>b.onclick=()=>{const i=Number(b.dataset.nx);
 if(dnArm!==i){dnArm=i;paint();return;}
-mutate(()=>{const c=(state.dreams||{})[id];if(!c||c.del||!Array.isArray(c.need)||!c.need[i])return;const nd=c.need.slice();nd[i]=Object.assign({},nd[i],{del:1,ts:Date.now()});state.dreams[id]=Object.assign({},c,{need:nd,ts:Date.now()});});
+mutate(()=>{const c=(state.dreams||{})[id];if(!c||c.del||!Array.isArray(c.need)||!c.need[i])return;const nd=c.need.slice();const nm=nd[i].t;nd[i]=Object.assign({},nd[i],{del:1,ts:Date.now()});state.dreams[id]=Object.assign({},c,{need:nd,ts:Date.now()});dreamLog({what:'必要なものを消した',id,t:c.t,ch:[{l:'必要なもの',a:nm,b:''}]});});
 dnArm=-1;paint();});
 const add=()=>{const v=inp.value.replace(/\s+/g,' ').trim().slice(0,40);if(!v){toast('1行だけ書いてくれ');return;}
 mutate(()=>{const c=(state.dreams||{})[id];if(!c||c.del)return;const nd=(Array.isArray(c.need)?c.need:[]).concat([{t:v,ok:0,ts:Date.now()}]);state.dreams[id]=Object.assign({},c,{need:nd,ts:Date.now()});});
@@ -6169,7 +6170,7 @@ $('dsNo').onclick=closeSub;
 s.querySelectorAll('[data-sok]').forEach(b=>b.onclick=()=>{dsArm='';stepDone(b.dataset.sok);paint();});
 s.querySelectorAll('[data-sx]').forEach(b=>b.onclick=()=>{const sid=b.dataset.sx;
 if(dsArm!==sid){dsArm=sid;paint();return;}
-mutate(()=>{const c=(state.steps||{})[sid];if(c&&!c.del)state.steps[sid]=Object.assign({},c,{del:1,ts:Date.now()});});
+mutate(()=>{const c=(state.steps||{})[sid];if(c&&!c.del){state.steps[sid]=Object.assign({},c,{del:1,ts:Date.now()});dmStepLog(c,'手順を消した',c.t,'');}});
 dsArm='';paint();});
 const add=()=>{const v=inp.value.replace(/\s+/g,' ').trim().slice(0,60);if(!v){toast('1行だけ書いてくれ');return;}
 const mx=stepsOf(id).reduce((m,x)=>Math.max(m,Number(x.o)||0),0);
@@ -6243,8 +6244,9 @@ return html;
 
 function snToggleBind(){const p=$('page');if(!p||p.__snb)return;p.__snb=1;p.addEventListener('click',ev=>{const b=ev.target.closest&&ev.target.closest('[data-snt]');if(!b)return;ev.stopPropagation();ev.preventDefault();const id=b.dataset.snt;mutate(()=>{const d=state.dreams[id];if(!d)return;if(d.sn)delete d.sn;else d.sn=1;d.ts=Date.now();});renderPage();},true);}
 function ageAt(due){const L=state.life;if(!L||!L.bd||!due)return null;const b=parseD(L.bd),d=parseD(due);let a=d.getFullYear()-b.getFullYear();if(d.getMonth()<b.getMonth()||(d.getMonth()===b.getMonth()&&d.getDate()<b.getDate()))a--;return a;}
+function dmStepLog(s,what,a,b){try{const d=(state.dreams||{})[s&&s.dr];dreamLog({what,id:s&&s.dr,t:(d&&d.t)||'',ch:[{l:'手順',a:a||'',b:b||''}]});}catch(e){}}
 function dreamLog(o){state.dream=Object.assign({},state.dream||{});state.dream.log=(state.dream.log||[]).concat([Object.assign({at:Date.now()},o)]);state.dream.ts=Date.now();}
-function askWhy(ttl,done){openSub('<div class="sh-time"><span>'+esc(ttl)+'</span></div><div class="set-row" style="margin-top:8px"><div class="sh-label">理由（ずっと残る。あとで自分で見返す）</div><div class="sh-ta-wrap"><textarea id="awT" style="min-height:76px" placeholder="人や環境のせいにせず、自分の言葉で"></textarea></div></div><div class="sh-btns" style="margin-top:12px"><button class="delbtn" id="awNo" style="flex:0 0 auto">やめる</button><button class="savebtn" id="awOk">記　録</button></div>',null);$('awNo').onclick=closeSub;$('awOk').onclick=()=>{const w=$('awT').value.trim();if(!w){toast('理由を書いてくれ');$('awT').focus();return;}closeSub();done(w);};}
+function askWhy(ttl,done,no){openSub('<div class="sh-time"><span>'+esc(ttl)+'</span></div><div class="set-row" style="margin-top:8px"><div class="sh-label">理由（ずっと残る。あとで自分で見返す）</div><div class="sh-ta-wrap"><textarea id="awT" style="min-height:76px" placeholder="人や環境のせいにせず、自分の言葉で"></textarea></div></div><div class="sh-btns" style="margin-top:12px"><button class="delbtn" id="awNo" style="flex:0 0 auto">やめる</button><button class="savebtn" id="awOk">記　録</button></div>',null);$('awNo').onclick=()=>{closeSub();if(no)no();};$('awOk').onclick=()=>{const w=$('awT').value.trim();if(!w){toast('理由を書いてくれ');$('awT').focus();return;}closeSub();done(w);};}
 function dmYen(y){y=Number(y)||0;return y>=1e8?(Math.round(y/1e7)/10)+'億円':manY(y)+'円';}
 function dmPhs(d){return [].concat((d&&d.ph)||[]).filter(Boolean);}
 function dmCard(d){const c=catOf(d.cat),du=dreamDue(d),n=du?daysTo(du):null,ph=dmPhs(d)[0],ag=du?ageAt(du):null,y=Number(d.yen)||0,hv=Number(d.have)||0;let m='';if(d.pr)m+='<span class="dm-t pr">'+esc(d.pr)+'</span>';
@@ -6255,7 +6257,7 @@ function dmPyrSvg(arr){const n=ids=>arr.filter(d=>ids.indexOf(Number(d.cat))>=0)
 function dmBoard(){const b=state.dream&&state.dream.board;return Array.isArray(b)?b:[{id:'pyr',t:'夢・人生ピラミッド',pyr:1}];}
 function dmBoardSave(L){state.dream=Object.assign({},state.dream||{},{board:L,ts:Date.now()});}
 function dmBoardHtml(){const arr=dreamsActive(),L=dmBoard();return '<label class="dm-add" for="dmBdF">📷 写真・図を足す</label><input type="file" id="dmBdF" accept="image/*" multiple hidden>'+L.map((b,i)=>'<div class="dm-bd"><input data-bdt="'+i+'" value="'+esc(b.t||'')+'" aria-label="名前" placeholder="名前">'+(b.pyr?dmPyrSvg(arr):'<img src="'+esc(phUrl(b.ph))+'" alt="'+esc(b.t||'')+'" loading="lazy">')+'<div class="dm-bb"><button type="button" data-bdu="'+i+'">↑ 上へ</button><button type="button" data-bdd="'+i+'">↓ 下へ</button><button type="button" data-bdx="'+i+'">消す</button></div></div>').join('');}
-function dmLogHtml(){const L=((state.dream&&state.dream.log)||[]).slice().reverse();if(!L.length)return '<div class="empty-hint">変えた物・消した物と、その理由がここに残る</div>';const n=(state.dream.log||[]).length;return L.map((x,i)=>{const dt=new Date(x.at),ds=dt.getFullYear()+'/'+(dt.getMonth()+1)+'/'+dt.getDate();return '<div class="dm-lg"><div class="dm-lh"><b>'+esc(x.what||'')+'</b><small>'+esc(ds)+'</small></div><div class="dm-lt">'+esc(x.t||'')+'</div>'+((x.ch||[]).map(c=>'<div class="dm-lc">'+esc(c.l)+'：'+esc(c.a||'（なし）')+' → '+esc(c.b||'（なし）')+'</div>').join(''))+(x.why?'<div class="dm-lw">理由：'+esc(x.why)+'</div>':'')+((x.snap||x.bd)&&!x.back?'<button type="button" class="dm-lb" data-lgb="'+(n-1-i)+'">↩ 元に戻す</button>':'')+'</div>';}).join('');}
+function dmLogHtml(){const L=((state.dream&&state.dream.log)||[]).slice().reverse();if(!L.length)return '<div class="empty-hint">変えた物・消した物と、その理由がここに残る</div>';const n=(state.dream.log||[]).length;return L.map((x,i)=>{const dt=new Date(x.at),ds=dt.getFullYear()+'年'+(dt.getMonth()+1)+'月'+dt.getDate()+'日 '+dt.getHours()+'時'+String(dt.getMinutes()).padStart(2,'0')+'分';return '<div class="dm-lg"><div class="dm-lh"><b>'+esc(x.what||'')+'</b><small>'+esc(ds)+'</small></div><div class="dm-lt">'+esc(x.t||'')+'</div>'+((x.ch||[]).map(c=>'<div class="dm-lc">'+esc(c.l)+'：'+esc(c.a||'（なし）')+' → '+esc(c.b||'（なし）')+'</div>').join(''))+(x.why?'<div class="dm-lw">理由：'+esc(x.why)+'</div>':'')+((x.snap||x.bd)&&!x.back?'<button type="button" class="dm-lb" data-lgb="'+(n-1-i)+'">↩ 元に戻す</button>':'')+'</div>';}).join('');}
 function dmYearHtml(){const Y0=new Date().getFullYear(),arr=dreamsActive(),by={},bd=state.life&&state.life.bd,fam=(state.dream&&state.dream.fam)||[];const add=(y,o)=>{(by[y]=by[y]||[]).push(o);};
 arr.forEach(d=>{const du=dreamDue(d);if(du)add(Number(du.slice(0,4)),{d});String(d.plan||'').split('\n').forEach(l=>{const m=l.match(/^\s*(\d{4})[：:\s]+(.+)/);if(m)add(Number(m[1]),{d,act:m[2]});});});
 const mx=Math.max(Y0+10,...Object.keys(by).map(Number));let h='<div class="dm-note">年ごとの行動は、夢を押して「年ごとの行動」に書くとここに出る。家族の年齢は上の★を押して入れる</div>';
@@ -6263,7 +6265,7 @@ for(let y=Y0;y<=mx;y++){const L=by[y]||[];if(y>Y0+10&&!L.length)continue;const a
 h+='<div class="dm-yr"><div class="dm-yh"><b>'+y+'年</b><small>'+esc(ag.join('・'))+'</small></div>'+(L.length?L.map(o=>o.act?'<button class="dm-ya" data-de="'+esc(o.d.id)+'">▶ '+esc(o.d.t)+'：'+esc(o.act)+'</button>':'<button class="dm-yd" data-de="'+esc(o.d.id)+'">'+esc(o.d.t)+'</button>').join(''):'<div class="dm-ye">この年の夢はまだない</div>')+'</div>';}
 const nd=arr.filter(d=>!dreamDue(d));if(nd.length)h+='<div class="dm-note">期限が入っていない夢：'+nd.map(d=>'<button class="dm-yn" data-de="'+esc(d.id)+'">'+esc(d.t)+'</button>').join('')+'</div>';return h;}
 function dmBind(p){const f=p.querySelector('#dmBdF');if(f)f.onchange=async ev=>{const fs=ev.target.files;if(!fs||!fs.length)return;const names=Array.from(fs).map(x=>String(x.name||'').replace(/\.[^.]+$/,''));const ids=await phAddFiles(fs);if(ids.length){mutate(()=>{ids.forEach(i=>phKeep(i));dmBoardSave(dmBoard().concat(ids.map((id,i)=>({id:'b'+Date.now()+i,t:names[i]||'図・写真',ph:id}))));});renderDreamPage();toast('✓ 貼った');}};
-p.querySelectorAll('[data-bdt]').forEach(e=>e.onchange=()=>{const L=dmBoard().slice(),i=+e.dataset.bdt;L[i]=Object.assign({},L[i],{t:e.value});mutate(()=>dmBoardSave(L));});
+p.querySelectorAll('[data-bdt]').forEach(e=>e.onchange=()=>{const L=dmBoard().slice(),i=+e.dataset.bdt,a=L[i].t||'',b=e.value;if(a===b)return;askWhy('名前を変える。何で？',why=>{L[i]=Object.assign({},L[i],{t:b});mutate(()=>{dmBoardSave(L);dreamLog({what:'図・写真の名前を変えた',t:b,ch:[{l:'名前',a,b}],why});});renderDreamPage();},()=>renderDreamPage());});
 const mv=(i,j)=>{const L=dmBoard().slice();if(j<0||j>=L.length)return;const x=L[i];L[i]=L[j];L[j]=x;mutate(()=>dmBoardSave(L));renderDreamPage();};
 p.querySelectorAll('[data-bdu]').forEach(b=>b.onclick=()=>mv(+b.dataset.bdu,+b.dataset.bdu-1));p.querySelectorAll('[data-bdd]').forEach(b=>b.onclick=()=>mv(+b.dataset.bdd,+b.dataset.bdd+1));
 p.querySelectorAll('[data-bdx]').forEach(b=>b.onclick=()=>{const i=+b.dataset.bdx,L=dmBoard().slice(),x=L[i];askWhy('「'+(x.t||'図・写真')+'」を消す',why=>{L.splice(i,1);mutate(()=>{dmBoardSave(L);dreamLog({what:'図・写真を消した',t:x.t||'',bd:x,why});});renderDreamPage();toast('消した（変更の記録に残る）');});});
@@ -6335,12 +6337,13 @@ const ls=$('lcSave');
 if(ls)ls.onclick=()=>{
 const bd=$('lcBd').value,g=Number($('lcGoal').value)||120;
 if(!bd){toast('生年月日を入れてくれ');return;}
-mutate(()=>{state.life={bd,goal:g,ts:Date.now()};});
-renderDreamPage();toast('⏳ 人生時計が動き出した');
+const L0=state.life||{},ch=[];if(L0.prev&&L0.prev!==bd)ch.push({l:'生年月日',a:L0.prev,b:bd});if(L0.prevG&&Number(L0.prevG)!==g)ch.push({l:'目標寿命',a:String(L0.prevG),b:String(g)});
+const sv=why=>{mutate(()=>{state.life={bd,goal:g,ts:Date.now()};if(ch.length)dreamLog({what:'人生時計を変えた',t:bd,ch,why});});renderDreamPage();toast('⏳ 人生時計が動き出した');};
+if(ch.length)askWhy('何で変えた？（'+ch.map(c=>c.l).join('・')+'）',sv);else sv('');
 };
 const le=$('lcEdit');
 if(le)le.onclick=()=>{
-mutate(()=>{state.life={bd:'',goal:(state.life&&state.life.goal)||120,ts:Date.now()};});
+mutate(()=>{const L=state.life||{};state.life={bd:'',goal:L.goal||120,prev:L.bd||L.prev||'',prevG:L.goal||120,ts:Date.now()};});
 renderDreamPage();
 };
 }
@@ -6422,7 +6425,7 @@ const due=$('dDue').value||null;
 const prog=Number($('dProg').value)||0;
 const memo=$('dMemo').value.trim();
 const yen=Math.round((Number($('dYen').value)||0)*1e4),have=Math.round((Number($('dHave').value)||0)*1e4),nGoal=$('dNG').value.trim(),nUnit=$('dNU').value.trim(),nNow=$('dNN').value.trim(),now=$('dNow').value.trim(),plan=$('dPlan').value.trim();
-const ch=[];if(ex){const c0=(l,a,b)=>{if(String(a==null?'':a)!==String(b==null?'':b))ch.push({l,a:String(a==null?'':a),b:String(b==null?'':b)});};c0('タイトル',ex.t,t);c0('期限',dreamDue(ex),due);c0('必要な金額',Number(ex.yen)>0?dmYen(ex.yen):'',yen>0?dmYen(yen):'');c0('目標の数字',(ex.nGoal||'')+(ex.nUnit||''),nGoal+nUnit);c0('分野',catOf(ex.cat).n,catOf(cat).n);c0('優先順位',ex.pr,pr);}
+const ch=[];if(ex){const c0=(l,a,b)=>{if(String(a==null?'':a)!==String(b==null?'':b))ch.push({l,a:String(a==null?'':a),b:String(b==null?'':b)});};c0('タイトル',ex.t,t);c0('期限',dreamDue(ex),due);c0('必要な金額',Number(ex.yen)>0?dmYen(ex.yen):'',yen>0?dmYen(yen):'');c0('目標の数字',ex.nGoal,nGoal);c0('分野',catOf(ex.cat).n,catOf(cat).n);c0('優先順位',ex.pr,pr);c0('今ある金額',Number(ex.have)>0?dmYen(ex.have):'',have>0?dmYen(have):'');c0('単位',ex.nUnit,nUnit);c0('今の数字',ex.nNow,nNow);c0('今の状況',ex.now,now);c0('年ごとの行動',ex.plan,plan);c0('進み具合',((ex.prog|0))+'%',prog+'%');c0('メモ',ex.memo,memo);c0('写真',dmPhs(ex).length+'枚',dPhs.length+'枚');}
 const sv=why=>{mutate(()=>{dPhs.forEach(x=>phKeep(x));state.dreams=state.dreams||{};
 {const o0=state.dreams[did]||{};state.dreams[did]=Object.assign({},o0,{t,cat,pr,due,prog,memo,ph:dPhs.length?dPhs:null,ach:(ex&&ex.ach)||null,sn:(ex&&ex.sn)||0,created:(ex&&ex.created)||todayStr(),yen,have,nGoal,nUnit,nNow,now,plan,ts:Date.now()});}
 if(ch.length)dreamLog({what:'夢を変えた',id:did,t,ch,why});
@@ -8001,7 +8004,7 @@ setTimeout(()=>{try{blkMoInit();}catch(e){}},0);
 function dphStrip(ph,key){const L=[].concat(ph||[]).filter(Boolean);return '<div class="ck-ph">'+L.slice(0,3).map(id=>'<button type="button" class="ck-phi" data-phv2="'+esc(id)+'" data-phk2="'+esc(key)+'" aria-label="写真を大きく"><img src="'+esc(phUrl(id))+'" alt="" loading="lazy"></button>').join('')+(L.length>3?'<span class="ck-phmore">+'+(L.length-3)+'</span>':'')+'<button type="button" class="ck-phadd" data-dph="'+esc(key)+'">📷 '+(L.length?'足す':'写真を足す')+'</button></div>';}
 function dphAdd(key,pid){mutate(()=>{phKeep(pid);if(key==='_dream'){state.dream=Object.assign({},state.dream||{},{ph:((state.dream&&state.dream.ph)||[]).concat(pid),ts:Date.now()});}else{const d=(state.dreams||{})[key];if(d&&!d.del){d.ph=[].concat(d.ph||[]).concat(pid);d.ts=Date.now();}}});}
 function dphView(id,key){openSub('<div class="mvq"><img class="dph-big" src="'+esc(phUrl(id))+'" alt=""><div class="sh-btns" style="margin-top:10px"><button class="delbtn" id="dphX" style="flex:1">✕ この写真を外す</button><button class="savebtn" id="dphOk" style="flex:1.3">閉じる</button></div></div>',null);
-$('dphOk').onclick=closeSub;$('dphX').onclick=()=>{mutate(()=>{if(key==='_dream'){state.dream=Object.assign({},state.dream||{},{ph:((state.dream&&state.dream.ph)||[]).filter(x=>x!==id),ts:Date.now()});}else{const d=(state.dreams||{})[key];if(d&&!d.del){d.ph=[].concat(d.ph||[]).filter(x=>x!==id);d.ts=Date.now();dreamLog({what:'写真を外した',id:key,t:d.t});}}});closeSub();toast('写真を外した（写真そのものは残る）');render();};}
+$('dphOk').onclick=closeSub;$('dphX').onclick=()=>{askWhy('この写真を外す。何で？',why=>{mutate(()=>{if(key==='_dream'){state.dream=Object.assign({},state.dream||{},{ph:((state.dream&&state.dream.ph)||[]).filter(x=>x!==id),ts:Date.now()});dreamLog({what:'写真を外した',t:'究極の目標',why});}else{const d=(state.dreams||{})[key];if(d&&!d.del){d.ph=[].concat(d.ph||[]).filter(x=>x!==id);d.ts=Date.now();dreamLog({what:'写真を外した',id:key,t:d.t,why});}}});toast('写真を外した（写真そのものは残る）');render();});};}
 function ckTopHtml(P){const t=todayStr(),GC=goalCfg(),got=incSum('in',GC.from,t),cash=cashLatest(),left=Math.max(0,GC.yen-got-cash),days=goalDays(),per=days?Math.ceil(left/days):left;let h='';const BK=[];const bk=(id,title,html,o)=>{if(html&&String(html).trim())BK.push(Object.assign({id,title,html},o||{}));};
 if(!P.misc)h+=dmAskHtml();
 const xDream='<button type="button" class="ck-hero" id="ckDream"><div class="hk">'+((state.dream&&state.dream.logo)?'<img class="dm-logo" src="'+esc(phUrl(state.dream.logo))+'" alt="">':'')+'⭐ 夢</div><div class="ht">'+esc(((state.dream&&state.dream.name)||'（夢を設定する）').split('\n')[0])+'</div>'+
@@ -10112,7 +10115,7 @@ const all=stepsOf(s.dr),ix=all.findIndex(x=>x.id===sid);
 const o0=Number(s.o)||0,o1=(ix>=0&&all[ix+1])?(Number(all[ix+1].o)||(o0+1)):(o0+1);
 const gap=(o1>o0?(o1-o0):1)/(list.length+1);
 mutate(()=>{
-state.steps[sid]=Object.assign({},s,{del:1,ts:Date.now()});
+state.steps[sid]=Object.assign({},s,{del:1,ts:Date.now()});dmStepLog(s,'手順を消した',s.t,'');
 list.forEach((t,i)=>{state.steps[stepNewId(i)]={dr:s.dr,t:t,o:o0+gap*i,d:0,c:Date.now()+i,by:'ai',ts:Date.now()};});
 });
 toast('🔬 '+list.length+'個に分けた。1個目からでいい');
@@ -10257,7 +10260,7 @@ if(v===ex.t){back();toast('この手順は入れ替わっていた');return;}
 mutate(()=>{state.steps=state.steps||{};state.steps[stepNewId(0)]={dr:dr,t:v,o:(Number(ex.o)||0)-0.0001,d:0,c:Date.now(),by:'me',ts:Date.now()};});
 back();toast('✓ 手順が入れ替わっていたので、新しい手順として足した');return;
  }
-if(ex){if(v!==ex.t)mutate(()=>{state.steps[sid]=Object.assign({},state.steps[sid],{t:v,ts:Date.now()});});}
+if(ex){if(v!==ex.t)mutate(()=>{state.steps[sid]=Object.assign({},state.steps[sid],{t:v,ts:Date.now()});dmStepLog(ex,'手順を変えた',ex.t,v);});}
 else{
 const l=stepsOf(dr),mx=l.reduce((m,x)=>Math.max(m,Number(x.o)||0),0);
 mutate(()=>{state.steps=state.steps||{};state.steps[stepNewId(0)]={dr:dr,t:v,o:mx+1,d:0,c:Date.now(),by:'me',ts:Date.now()};});
@@ -10269,7 +10272,7 @@ if(dl)dl.onclick=()=>{
 if(!dl.classList.contains('arm')){dl.classList.add('arm');dl.textContent='本当に削除？';
 setTimeout(()=>{if(dl.isConnected){dl.classList.remove('arm');dl.textContent='削除';}},2500);return;}
 if(gone()){back();toast('この手順は入れ替わっていた');return;}
-mutate(()=>{state.steps[sid]=Object.assign({},state.steps[sid],{del:1,ts:Date.now()});});
+mutate(()=>{const s0=state.steps[sid];state.steps[sid]=Object.assign({},s0,{del:1,ts:Date.now()});dmStepLog(s0,'手順を消した',s0&&s0.t,'');});
 back();toast('削除した');
 };
 const un=$('seUndo');
@@ -10763,7 +10766,7 @@ openSub('<div class="sh-time"><span>🏆 究極の目標と期限</span></div>'+
 $('gdName').value=(state.dream&&state.dream.name)||'';$('gdDue').value=(state.dream&&state.dream.due)||'';$('gdFam').value=((state.dream&&state.dream.fam)||[]).map(f=>f.n+' '+(Number(f.age)+(new Date().getFullYear()-Number(f.y)))).join('\n');
 $('gdNo').onclick=closeSub;
 $('gdOk').onclick=()=>{const n=$('gdName').value.trim(),due=$('gdDue').value,Y=new Date().getFullYear(),fam=$('gdFam').value.split('\n').map(l=>{const m=l.trim().match(/^(.+?)\s+(\d+)$/);return m?{n:m[1],age:Number(m[2]),y:Y}:null;}).filter(Boolean),o=state.dream||{},ch=[];
-if((o.name||'')!==n)ch.push({l:'究極の目標',a:o.name||'',b:n});if((o.due||'')!==due)ch.push({l:'期限',a:o.due||'',b:due});
+if((o.name||'')!==n)ch.push({l:'究極の目標',a:o.name||'',b:n});if((o.due||'')!==due)ch.push({l:'期限',a:o.due||'',b:due});{const fs0=(o.fam||[]).map(f=>f.n+' '+(Number(f.age)+(Y-Number(f.y)))).join('・'),fs1=fam.map(f=>f.n+' '+f.age).join('・');if(fs0!==fs1)ch.push({l:'家族の年齢',a:fs0,b:fs1});}
 const sv=why=>{mutate(()=>{state.dream=Object.assign({},state.dream||{},{name:n||DEF_DREAM.name,due,fam,ts:Date.now()});if(ch.length)dreamLog({what:'究極の目標を変えた',t:n.split('\n')[0],ch,why});});closeSub();toast('✓ 保存した');try{renderPage();}catch(e){}};
 if(ch.length&&o.name)askWhy('何で変えた？',sv);else sv('');};}
 function openCashList(){
@@ -12802,7 +12805,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c44.0";
+const CL_APPVER="c44.1";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
