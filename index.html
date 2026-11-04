@@ -4232,10 +4232,10 @@ const a=actsSort(Array.isArray(en&&en.acts)?en.acts.filter(x=>x&&x.t&&actRowOk(e
 if(!a.length)return '';
 const stay=(en.e&&!en.noT)?durMin(en.s,en.e,en.ed):0;
 const sum=a.reduce((s,x)=>s+(Number(x.m)||0),0);
-let h='<span class="acts">'+a.map(x=>{const m=Number(x.m)||0;
+let h='<span class="acts">'+a.map((x,xi)=>{const m=Number(x.m)||0;
 const kk=x.k?(kindOf(x.k)||{ic:'❓',lb:String(x.k).slice(0,4),co:'#9aa3b5'}):null,dv=x.d?(toolOf(x.d)||{ic:'❓',lb:String(x.d).slice(0,4)}):null;
 const kst=(kk&&x.k!=='ai'&&x.k!=='work')?' style="background:'+esc(kk.co)+';color:#fff"':'';
-const hh=(kk?'<em class="a-kl"'+kst+'>'+esc(kk.lb)+'</em>':'')+(x.kx||[]).map(id=>{const q=kindOf(id);return q?'<em class="a-kl" style="background:'+esc(q.co)+';color:#fff">'+esc(q.ic)+esc(q.lb)+'</em>':'';}).join('')+(dv?'<i class="a-dv" title="'+esc(x.dx||dv.lb)+'">'+esc(dv.ic)+(x.d==='_other'&&x.dx&&String(x.t).trim()!==x.dx?'<b class="a-dx">'+esc(x.dx)+'</b>':'')+'</i>':'')+(x.sk?'<span class="a-r a-sk">🧩 スキマ時間</span>':(x.s&&x.e&&!(en&&x.s===en.s&&x.e===en.e))?'<span class="a-r">'+esc(x.s)+' – '+esc(x.e)+'</span>':(x.w||(en&&x.s&&x.s===en.s&&x.e===en.e))?'<span class="a-r">ずっと</span>':(x.s?'<span class="a-r">'+esc(x.s)+' –</span>':''));
+const hh=(kk?'<em class="a-kl"'+kst+'>'+esc(kk.lb)+'</em>':'')+(x.kx||[]).map(id=>{const q=kindOf(id);return q?'<em class="a-kl" style="background:'+esc(q.co)+';color:#fff">'+esc(q.ic)+esc(q.lb)+'</em>':'';}).join('')+(dv?'<i class="a-dv" title="'+esc(x.dx||dv.lb)+'">'+esc(dv.ic)+(x.d==='_other'&&x.dx&&String(x.t).trim()!==x.dx?'<b class="a-dx">'+esc(x.dx)+'</b>':'')+'</i>':'')+(x.sk?'<span class="a-r a-sk">🧩 スキマ時間</span>':(xi>0&&x.s&&x.s===a[xi-1].s&&x.e===a[xi-1].e&&kk&&String(x.t||'').trim()===kk.lb&&!x.c)?'':(x.s&&x.e&&!(en&&x.s===en.s&&x.e===en.e))?'<span class="a-r">'+esc(x.s)+' – '+esc(x.e)+'</span>':(x.w||(en&&x.s&&x.s===en.s&&x.e===en.e))?'<span class="a-r">ずっと</span>':(x.s?'<span class="a-r">'+esc(x.s)+' –</span>':''));
 const tx=(kk&&String(x.t).trim()===kk.lb)?'':String(x.t||'').trim();
 const asw=actSwHtml(en,x);
 return '<span class="act'+(m?' tm':'')+(x.md?' mdx':'')+((x.k&&/^[a-z0-9_]+$/i.test(x.k))?' k-'+x.k:'')+'">'+(kk?'<i class="a-k">'+esc(kk.ic)+'</i>':'<i class="a-d"></i>')+(hh?'<span class="a-h">'+hh+'</span>':(tx?'':'<span class="a-h"></span>'))+
@@ -4799,7 +4799,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c42.0）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c42.1）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -5145,6 +5145,9 @@ const acKVis=r=>{const st=r.querySelector('.ac-k');if(!st||!st.clientWidth)retur
 if(b){const br=b.getBoundingClientRect(),sr=st.getBoundingClientRect();if(br.left<sr.left)st.scrollLeft+=br.left-sr.left-8;else if(br.right>sr.right-24)st.scrollLeft+=br.right-sr.right+32;}
 acKEnd(st);};
 const acQL=()=>{const drv=(!trSel||trSel==='car'||trSel==='carrier'||trSel==='walk'),isCar=(eType==='incar'),isStay=(eType==='stay');return {q:qgList(isCar?['rest','pcwork','spwork','ai','bizcall','famcall','nap','sleep','spplay','chat']:isStay?['sleep','nap','ai','work','meal','rest','pcwork','spwork','spplay']:(eType!=='move')?[]:['audio','bizcall','famcall','think','ai','work','pcwork','spwork','meal','rest','spplay','read','doc','vstudy','chat','nap']),drv,mvMin:false};};
+const acSig=A=>JSON.stringify((A||[]).map(a=>a?[a.k||'',(a.kx||[]).join(),a.s||'',a.e||'',String(a.t||'').trim(),String(a.c||'').trim(),(a.ph||[]).join()]:0));
+const acTgl=f=>{const g=sheetSt._tgl,bak=JSON.stringify(acts),back=!!g&&g.sig===acSig(acts);acts=back?JSON.parse(g.bak):f(acts);sheetSt._tgl=back?null:{bak,sig:acSig(acts)};};
+const acKeepT=()=>{const z=acts[0]||{},s=z.s||'',e=z.e||'',m=Number(z.m)||0;return ()=>{if(!(s||e)||!acts[0])return;const r=acts[0];if(r!==z){z.s='';z.e='';z.m=0;acts=acts.filter(a=>a!==z||a.k||a.c||(a.ph&&a.ph.length));}r.s=s;r.e=e;r.m=m;};};
 const acU=()=>!!(sheetSt&&!sheetSt.one&&(eType==='stay'||eType==='incar'||eType==='move'));
 const acUi=a=>{if(!a)return {more:false,tm:false};if(!a._ui)Object.defineProperty(a,'_ui',{value:{more:!!((a.c&&String(a.c).trim())||(a.ph&&a.ph.length)||a.md||a.st||a.sp||a.d||(a.dd&&a.dd.length)),tm:!!(a.s||a.e)},enumerable:false,writable:true,configurable:true});return a._ui;};
 const acTmLb=a=>'🕐 '+((a&&(a.s||a.e))?((a.s||'--:--')+' → '+(a.e||'--:--')):'時間：記録と同じ')+' ▾';
@@ -5334,8 +5337,8 @@ const qFlat=(eType==='move'&&drv&&!qMore);
 const qh=qOrgHtml(q,'data-qg',(id,y)=>{const k=kindOf(id);if(!k||k.off)return '';const on=onW(id),on2=!on&&(isCar||isStay)&&onR(id);return y?'<button'+(on?' class="sel"':on2?' class="on2"':'')+' data-aq="'+id+'" style="--kc:'+k.co+'">'+'<i class="kic">'+esc(k.ic)+'</i><span>'+esc(k.lb)+'</span></button>':'<button class="chip ac-q'+(on?' sel':(on2?' on2':''))+'" data-aq="'+id+'" style="--kc:'+k.co+'">'+'<i class="kic">'+esc(k.ic)+'</i> '+esc(k.lb)+'</button>';},acts.filter(a=>a&&a.k).map(a=>a.k),qFlat?'sec':false)+((eType==='move'&&drv&&(qFlat||!qgOn(q)))?'<button class="chip ac-qm" id="acQm">'+(qMore?'－ たたむ':'＋ ほか')+'</button>':'');
 if(qe){qe.innerHTML=(isCar||isStay||mv1)?'':qh;const w=$('acQw');(w||qe).style.display=(qh&&!isCar&&!isStay&&!mv1)?'':'none';}
 {const cs=$('cntSw');if(cs){cs.style.display=(isCar||isStay||eType==='move')?'':'none';cs.querySelectorAll('[data-cn]').forEach(b=>{b.classList.toggle('sel',(b.dataset.cn==='1')===!!sheetSt.one);b.onclick=()=>{
-if(b.dataset.cn==='1'){if(sheetSt.one)return;acRead();for(let i=frs.length-1;i>=0;i--)if(!String(frs[i]||'').trim())frs.splice(i,1);try{frSync&&frSync();}catch(e){}acts=acOneFromRows(acts);sheetSt.one=true;}
-else{if(!sheetSt.one)return;acRead();acts=acRowsFromOne(acts);sheetSt.one=false;}
+if(b.dataset.cn==='1'){if(sheetSt.one)return;acRead();for(let i=frs.length-1;i>=0;i--)if(!String(frs[i]||'').trim())frs.splice(i,1);try{frSync&&frSync();}catch(e){}acTgl(acOneFromRows);sheetSt.one=true;}
+else{if(!sheetSt.one)return;acRead();acTgl(acRowsFromOne);sheetSt.one=false;}
 acPaint();cPaint();};});}}
 if((isCar||isStay||eType==='move')&&sheetSt.one){const rd=$('recDo');if(rd){acRead();acts.forEach(a=>{if(a&&a.k&&Array.isArray(a.wc)&&a.wc.length&&!a.w)a.w=1;});const a0=acts.find(a=>a&&(String(a.t||'').trim()||a.k))||null;const k0=a0&&a0.k;const k0o=k0&&kindOf(k0);
 const wk=acts.filter(a=>a&&a.w&&a.k).map(a=>a.k);const mvMin=false,qgH=x=>mvMin?false:qgIn(x,q);const extra=wk.filter(x=>q.indexOf(x)<0&&!qgH(x));if(k0&&wk.indexOf(k0)<0&&q.indexOf(k0)<0&&!qgH(k0))extra.push(k0);
@@ -5350,27 +5353,27 @@ const doTop='<div class="sh-label">🏷️ '+(isCar?'車内で':eType==='move'?'
 const mvSel=(wk.length?wk:(k0?[k0]:[])).map(x=>{const k=kindOf(x);return k?k.ic+' '+k.lb:'';}).filter(Boolean);
 rd.style.display='';rd.innerHTML=(eType==='move'?'<details class="mv-do" id="mvDo"'+(sheetSt.mvDoOpen?' open':'')+'><summary><b>🏷️ 移動中に何をした</b><span class="s">'+(mvSel.length?esc(mvSel.join('・')):'押すと開く（AI・仕事・電話など）')+'</span></summary>'+doTop+'</details>':doTop)+hitoBox+aiH+(()=>{const mA=acts.find(a=>a&&a.w&&isMkRow(a));return mA?mpChips(Array.isArray(mA.mp)?mA.mp:[],'data-o1mp')+bzBox(mA.bz,'data-o1bz'):'';})()+
 ''+(()=>{const sr=acts.filter(a=>a&&a.w&&[a.k].concat(a.kx||[]).some(x=>x==='sleep'||x==='nap'));if(!sr.length)return '';return '<div style="margin-top:6px">'+bdPair(sr[0],'data-o1bd')+'</div>';})();
-const setOne=(id,d)=>{acRead();const k=kindOf(id);if(!k)return;const t1=($('o1t').value||'').trim();
+const setOne=(id,d)=>{acRead();const k=kindOf(id);if(!k)return;const kt=acKeepT();const t1=($('o1t').value||'').trim();
 const W=acts.filter(a=>a&&a.w&&a.k),O=acts.filter(a=>a&&!(a.w&&a.k)&&(a.k||a.s||a.e||a.c||(a.ph&&a.ph.length)));
 const i=W.findIndex(a=>a.k===id);
 if(i>=0)W.splice(i,1);else{const row={t:k.lb,k:id,m:0,s:'',e:'',w:1};if(d)row.d=d;
 if(id==='sleep'||id==='nap'){if(isCar||eType==='move')row.bd=0;else{const b=bedOfPlace((($('shPlace')||{}).value||'').trim());if(b!=null)row.bd=b;}}W.push(row);}
 W.forEach((a,j)=>{const kk=kindOf(a.k);if(j===0)a.t=t1||(kk?kk.lb:a.t);else if(kk&&String(a.t||'').trim()===t1)a.t=kk.lb;});
-acts=W.length?W.concat(O):[{t:t1,m:0,s:'',e:''}].concat(O);acPaint();};
+acts=W.length?W.concat(O):[{t:t1,m:0,s:'',e:''}].concat(O);kt();acPaint();};
 rd.querySelectorAll('[data-o1]').forEach(b=>b.onclick=()=>{const id=b.dataset.o1,w2=acts.filter(a=>a&&a.w&&a.k).map(a=>a.k);if(acts.some(a=>a&&a.w&&Array.isArray(a.wc)&&a.wc.length&&a.k===id)){toast('💼 仕事の流れで入っている種類。外すなら流れの最初の段をもう一度');return;}
 if(id==='meal'&&w2.indexOf('mealto')>=0){setOne('mealto','');return;}if(id==='meal'&&w2.indexOf('meal')<0){mealAsk(v=>setOne(v,''));return;}
-if(!w2.length&&k0===id){acRead();const t1=($('o1t').value||'').trim();acts=[{t:t1,m:0,s:'',e:''}];acPaint();return;}setOne(id,'');});
+if(!w2.length&&k0===id){acRead();const kt=acKeepT(),t1=($('o1t').value||'').trim();acts=[{t:t1,m:0,s:'',e:''}];kt();acPaint();return;}setOne(id,'');});
 
 {const qm=$('o1Qm');if(qm)qm.onclick=()=>{acRead();qMore=!qMore;acPaint();};}if($('o1all'))$('o1all').onclick=()=>openKindAll((id,d)=>setOne(id,d),'🏷️ ここで何をした？','分野を押すと中身が出る。押した物を足す（もう一度で外す）');
 {const md=$('mvDo');if(md)md.ontoggle=()=>{sheetSt.mvDoOpen=md.open;};}
 taGrow($('o1t'));
 $('o1t').oninput=()=>{const v=$('o1t').value;const r=$('acRows').querySelector('.actrow .ac-t');const k=k0o;if(r){r.value=(v.trim()||(k?k.lb:''));r.dataset.full=v.trim()||(k?k.lb:'');}};{const s=$('hitoSw1');if(s)s.onclick=hitoToggle;}
 rd.querySelectorAll('[data-wkb]').forEach(b=>b.onclick=()=>{acRead();const r0=acts.find(a=>a&&a.w&&Array.isArray(a.wc)&&a.wc.length);if(!r0)sheetSt.wkOpen=!sheetSt.wkOpen;WK_SCR=(r0||sheetSt.wkOpen)?'o1:0':null;acPaint();wkScroll();});
-rd.querySelectorAll('[data-wksite="o1"] [data-wks]').forEach(b=>b.onclick=()=>{acRead();const i=+b.dataset.wks,v=b.dataset.wv;let r0=acts.find(a=>a&&a.w&&Array.isArray(a.wc)&&a.wc.length);
+rd.querySelectorAll('[data-wksite="o1"] [data-wks]').forEach(b=>b.onclick=()=>{acRead();const kt=acKeepT(),i=+b.dataset.wks,v=b.dataset.wv;let r0=acts.find(a=>a&&a.w&&Array.isArray(a.wc)&&a.wc.length);
 if(!r0){if(i!==0)return;r0={t:'',m:0,s:'',e:'',w:1};const W=acts.filter(a=>a&&a.w&&a.k),O=acts.filter(a=>a&&!(a.w&&a.k)&&(a.k||a.s||a.e||a.c||(a.ph&&a.ph.length)));acts=W.concat([r0]).concat(O);}
 const t1=(($('o1t')||{}).value||'').trim();if(wkApply(r0,i,v,'o1')==='del'){acts=acts.filter(a=>a!==r0);sheetSt.wkOpen=false;if(!acts.some(a=>a&&a.w&&a.k)&&(t1||!acts.length))acts=[{t:t1,m:0,s:'',e:''}].concat(acts);}
 {const W=acts.filter(a=>a&&a.w&&a.k);if(W[0]){const kk=kindOf(W[0].k);W[0].t=t1||(kk?kk.lb:W[0].t);}}
-acPaint();wkScroll();});
+kt();acPaint();wkScroll();});
 rd.querySelectorAll('[data-o1bd]').forEach(b=>b.onclick=()=>{acRead();const v=Number(b.dataset.o1bd);acts.filter(a=>a&&a.w&&[a.k].concat(a.kx||[]).some(y=>y==='sleep'||y==='nap')).forEach(a=>a.bd=v);acPaint();});
 {const bi=rd.querySelector('[data-o1bz]');if(bi)bi.oninput=()=>{const a=acts.find(x=>x&&x.w&&isMkRow(x));if(!a)return;a.bz=bi.value.trim();const rows=$('acRows').querySelectorAll('.actrow');const ix=acts.indexOf(a);if(rows[ix])rows[ix].dataset.bz=a.bz;};}
 rd.querySelectorAll('[data-o1bzc]').forEach(b=>b.onclick=()=>{acRead();const a=acts.find(x=>x&&x.w&&isMkRow(x));if(!a)return;a.bz=(a.bz===b.dataset.o1bzc)?'':b.dataset.o1bzc;acPaint();});
@@ -5400,8 +5403,10 @@ if((id==='sleep'||id==='nap')){if(isCar||eType==='move')row.bd=0;else{const b=be
 const last=acts[acts.length-1];if(last&&!last.t.trim()&&!last.s&&!last.e&&!last.k&&!last.d&&!(last.c&&last.c.trim()))acts[acts.length-1]=row;else acts.push(row);acPaint();});};}
 {const fa=$('frAdd2');if(fa)fa.onclick=()=>{frs.push('');frPaint(true);cPaint();};}
 {const qm=$('acQm');if(qm)qm.onclick=()=>{qMore=!qMore;acCh();};}};
-{const ne0=acts.filter(a=>a&&(String(a.t||'').trim()||a.k));{const z=ne0[0];if(ne0.length===1&&z.kx&&z.kx.length&&!z.s&&!z.e&&!(z.c&&String(z.c).trim())&&!(z.ph&&z.ph.length)&&!z.st&&!frs.some(x=>String(x||'').trim()))acts=acOneFromRows(acts);}}
-{const ne=acts.filter(a=>a&&(String(a.t||'').trim()||a.k));sheetSt.one=!((ne.length>1&&!ne.every(a=>a.w&&a.k))||frs.some(x=>String(x||'').trim())||(ne.length>1&&ne.some(a=>a.s||a.e||(a.c&&a.c.trim())||(a.ph&&a.ph.length)||a.st)));}
+{const ne0=acts.filter(a=>a&&(String(a.t||'').trim()||a.k));{const z=ne0[0];if(ne0.length===1&&z.kx&&z.kx.length&&!(z.c&&String(z.c).trim())&&!(z.ph&&z.ph.length)&&!z.st&&!frs.some(x=>String(x||'').trim()))acts=acOneFromRows(acts);}}
+{const ne=acts.filter(a=>a&&(String(a.t||'').trim()||a.k)),z=ne[0],same=ne.length>1&&!!z&&!!(z.s||z.e)&&!frs.some(x=>String(x||'').trim())&&ne.every((a,i)=>a.k&&!a.st&&(!i||(((a.s===z.s&&a.e===z.e)||(a.w&&!a.s&&!a.e))&&String(a.t||'').trim()===acLbOf(a.k)&&!(a.c&&a.c.trim())&&!(a.ph&&a.ph.length)&&!a.p&&!a.car)));
+if(same){acts=ne;ne.forEach((a,i)=>{a.w=1;if(i){a.s='';a.e='';a.m=0;}});}
+sheetSt.one=same||!((ne.length>1&&!ne.every(a=>a.w&&a.k))||frs.some(x=>String(x||'').trim())||(ne.length>1&&ne.some(a=>a.s||a.e||(a.c&&a.c.trim())||(a.ph&&a.ph.length)||a.st)));}
 acPaint();
 {const w=$('contW');if(w){w.innerHTML='';if(!ex&&date===todayStr()){const nw=new Date(),nowA=nw.getHours()*60+nw.getMinutes();let best=null;
 for(const [dd,off] of [[date,0],[addDays(date,-1),-1440]]){const eo2=state.entries[dd]||{};for(const k2 in eo2){const x=eo2[k2];if(!x||x.del||x.noT||!x.s||!x.e)continue;const s2=hmMin(x.s)+off;let e2=hmMin(x.e)+off+1440*(Number(x.ed)||0);if(e2<s2)e2+=1440;if(e2>nowA+5)continue;const rows=(x.acts||[]).filter(a=>a&&a.k);if(!rows.length)continue;if(!best||e2>best.e2)best={e2,x,k2,row:rows[rows.length-1]};}}
@@ -5553,7 +5558,8 @@ acts.forEach(a=>{if(!a.t.trim()&&!a.k&&!a.d&&!a.m&&!(a.c&&a.c.trim())&&!(a.ph&&a
 if(bad>=0){cMode='list';cPaint();
 try{$('acRows').querySelectorAll('.ac-t')[bad].focus();}catch(e){}
 toast('時間だけ選んで、文字が空の行がある。書くか ✕ で消してくれ');return;}}
-const actsS=acts.map(a=>{const o={t:a.t.trim(),m:Number(a.m)||0};if(a.md)o.md=1;if(a.car)o.car=1;if(a.p&&String(a.p).trim())o.p=String(a.p).trim();if(a.mvp)o.mvp=1;if(a.ntr)o.ntr=a.ntr;if(Array.isArray(a.pk)&&a.pk.length)o.pk=a.pk.slice();if(Array.isArray(a.ap)&&a.ap.length)o.ap=a.ap.slice();if(Array.isArray(a.mp)&&a.mp.length)o.mp=a.mp.slice();if(Number(a.n)>0)o.n=Math.min(Math.round(Number(a.n)),999);if(a.bz)o.bz=String(a.bz);if(Array.isArray(a.wc)&&a.wc.length)o.wc=a.wc.slice();if(a.ws)o.ws=a.ws;if(a.wy&&(!Array.isArray(a.wy)||a.wy.length))o.wy=Array.isArray(a.wy)?a.wy.slice():a.wy;if(a.hw)o.hw=a.hw;if(a.kx&&a.kx.length&&a.k)o.kx=a.kx.slice();if(a.dd&&a.dd.length&&a.d)o.dd=a.dd.slice();const oneW=!!(sheetSt&&sheetSt.one&&a.k);if(oneW){o.m=0;o.w=1;}if(a.sk){o.sk=1;o.m=0;}if(a.s&&!oneW&&!a.sk)o.s=a.s;if(a.e&&!oneW&&!a.sk)o.e=a.e;if(a.k)o.k=a.k;if(a.d)o.d=a.d;if(a.d==='_other'&&a.dx)o.dx=String(a.dx);if(a.c&&a.c.trim())o.c=a.c.trim();if(a.ph&&a.ph.length)o.ph=a.ph.slice();if(a.nk&&!a.k)o.nk=1;if(a.w&&!a.s&&!a.e)o.w=1;if(a.bd===0||a.bd===1)o.bd=a.bd;if(a.st==='done'||a.st==='wip'){o.st=a.st;if(a.st==='wip'&&a.due)o.due=a.due;if(a.st==='done')o.dn=a.dn||todayStr();}if(a.k&&AI_KINDS[a.k]){const v=Array.isArray(a.ai)?a.ai:aiGuess(a.t);if(v.length)o.ai=v.slice(0,5);}if(a.td)o.td=a.td;if(a.sp&&a.s&&a.e)o.sp=a.sp;return o;}).filter(a=>a.t);
+const oneRow=(sheetSt&&sheetSt.one&&acts[0]&&(acts[0].s||acts[0].e))?acts[0]:null;
+const actsS=acts.map(a=>{const o={t:a.t.trim(),m:Number(a.m)||0};if(a.md)o.md=1;if(a.car)o.car=1;if(a.p&&String(a.p).trim())o.p=String(a.p).trim();if(a.mvp)o.mvp=1;if(a.ntr)o.ntr=a.ntr;if(Array.isArray(a.pk)&&a.pk.length)o.pk=a.pk.slice();if(Array.isArray(a.ap)&&a.ap.length)o.ap=a.ap.slice();if(Array.isArray(a.mp)&&a.mp.length)o.mp=a.mp.slice();if(Number(a.n)>0)o.n=Math.min(Math.round(Number(a.n)),999);if(a.bz)o.bz=String(a.bz);if(Array.isArray(a.wc)&&a.wc.length)o.wc=a.wc.slice();if(a.ws)o.ws=a.ws;if(a.wy&&(!Array.isArray(a.wy)||a.wy.length))o.wy=Array.isArray(a.wy)?a.wy.slice():a.wy;if(a.hw)o.hw=a.hw;if(a.kx&&a.kx.length&&a.k)o.kx=a.kx.slice();if(a.dd&&a.dd.length&&a.d)o.dd=a.dd.slice();const oneW=!!(sheetSt&&sheetSt.one&&a.k),oneT=oneW&&!!oneRow&&!a.sk;if(oneW&&!oneT){o.m=0;o.w=1;}if(oneT){if(oneRow.s)o.s=oneRow.s;if(oneRow.e)o.e=oneRow.e;o.m=a===oneRow?(Number(oneRow.m)||0):0;}if(a.sk){o.sk=1;o.m=0;}if(a.s&&!oneW&&!a.sk)o.s=a.s;if(a.e&&!oneW&&!a.sk)o.e=a.e;if(a.k)o.k=a.k;if(a.d)o.d=a.d;if(a.d==='_other'&&a.dx)o.dx=String(a.dx);if(a.c&&a.c.trim())o.c=a.c.trim();if(a.ph&&a.ph.length)o.ph=a.ph.slice();if(a.nk&&!a.k)o.nk=1;if(a.w&&!o.s&&!o.e)o.w=1;if(a.bd===0||a.bd===1)o.bd=a.bd;if(a.st==='done'||a.st==='wip'){o.st=a.st;if(a.st==='wip'&&a.due)o.due=a.due;if(a.st==='done')o.dn=a.dn||todayStr();}if(a.k&&AI_KINDS[a.k]){const v=Array.isArray(a.ai)?a.ai:aiGuess(a.t);if(v.length)o.ai=v.slice(0,5);}if(a.td)o.td=a.td;if(a.sp&&a.s&&a.e)o.sp=a.sp;return o;}).filter(a=>a.t);
 if(isMv){if(!rt&&!t&&!sheetSt.ph.length){toast('どこから→どこまでを入れてくれ');return;}}
 else if(eType==='stay'||eType==='incar'){if(eType==='stay'&&tE&&!t&&!p&&!sheetSt.ph.length&&!actsS.length){toast('場所・内容・写真、どれかは入れてくれ');return;}}
 
@@ -7790,14 +7796,16 @@ function ckBurst(x,y,txt){const E=['🎉','✨','⭐','🔥','💥'];for(let k=0
 const p=document.createElement('div');p.className='ck-plus';p.textContent=txt||'＋1！';p.style.left=(x-30)+'px';p.style.top=(y-30)+'px';document.body.appendChild(p);setTimeout(()=>p.remove(),1100);}
 function ckMan(n){return manY(n).replace('万','');}
 function acLbOf(k){const o=k&&kindOf(k);return o?o.lb:'';}
-function acRowsFromOne(A){try{const hasWc=a=>Array.isArray(a.wc)&&a.wc.length>0;const W=A.filter(a=>a&&a.w&&a.k&&!hasWc(a)),WC=A.filter(a=>a&&a.w&&a.k&&hasWc(a)),O=A.filter(a=>a&&!(a.w&&a.k));if(W.length<=1)return A;
+function acRowsFromOne(A){const z=(A&&A[0])||{},s=z.s||'',e=z.e||'',R=acRowsFromOne0(A);if(s||e)R.forEach(a=>{if(a&&a.w&&a.k&&!a.s&&!a.e){a.s=s;a.e=e;a.m=(s&&e)?durMin(s,e,0):0;}});return R;}
+function acRowsFromOne0(A){try{const hasWc=a=>Array.isArray(a.wc)&&a.wc.length>0;const W=A.filter(a=>a&&a.w&&a.k&&!hasWc(a)),WC=A.filter(a=>a&&a.w&&a.k&&hasWc(a)),O=A.filter(a=>a&&!(a.w&&a.k));if(W.length<=1)return A;
 const prim=W.find(a=>a.d)||W[0],base=Object.assign({},W[0]),t1=String(W[0].t||'').trim(),cm=(t1&&t1!==acLbOf(W[0].k))?t1:'';
 base.k=prim.k;if(prim.d)base.d=prim.d;else delete base.d;const kx=[],keep=[];
 W.forEach(a=>{if(a===prim)return;if(a.d){keep.push(a);return;}[a.k].concat(a.kx||[]).forEach(k=>{if(k&&k!==base.k&&kx.indexOf(k)<0)kx.push(k);});});
 (prim.kx||[]).forEach(k=>{if(k&&k!==base.k&&kx.indexOf(k)<0)kx.push(k);});
 if(kx.length)base.kx=kx;else delete base.kx;base.t=cm||acLbOf(base.k)||t1;
 return [base].concat(keep).concat(WC).concat(O);}catch(e){return A;}}
-function acOneFromRows(A){try{const hasWc=a=>Array.isArray(a.wc)&&a.wc.length>0;const WC=A.filter(a=>a&&hasWc(a)).map(a=>{a.w=1;a.s='';a.e='';a.m=0;return a;});const ne=A.filter(a=>a&&!hasWc(a)&&(String(a.t||'').trim()||a.k));if(!ne.length)return WC.length?WC:A;if(ne.length===1&&!(ne[0].kx&&ne[0].kx.length))return WC.length?[ne[0]].concat(WC):A;
+function acOneFromRows(A){let S=-1,E=-1,sv='',ev='';(A||[]).forEach(a=>{if(!a||a.sk)return;if(a.s){const x=hmMin(a.s);if(S<0||x<S){S=x;sv=a.s;}}if(a.e){let y=hmMin(a.e);if(a.s&&y<hmMin(a.s))y+=1440;if(E<0||y>E){E=y;ev=a.e;}}});const R=acOneFromRows0(A),r0=R&&R[0];if(r0&&(sv||ev)){r0.s=sv;r0.e=ev;r0.m=(sv&&ev)?durMin(sv,ev,0):0;}return R;}
+function acOneFromRows0(A){try{const hasWc=a=>Array.isArray(a.wc)&&a.wc.length>0;const WC=A.filter(a=>a&&hasWc(a)).map(a=>{a.w=1;a.s='';a.e='';a.m=0;return a;});const ne=A.filter(a=>a&&!hasWc(a)&&(String(a.t||'').trim()||a.k));if(!ne.length)return WC.length?WC:A;if(ne.length===1&&!(ne[0].kx&&ne[0].kx.length))return WC.length?[ne[0]].concat(WC):A;
 const kinds=[],dOf={};ne.forEach(a=>{[a.k].concat(a.kx||[]).forEach(k=>{if(k&&kinds.indexOf(k)<0)kinds.push(k);});if(a.k&&a.d&&!dOf[a.k])dOf[a.k]=a.d;});
 const cms=[];ne.forEach(a=>{const t=String(a.t||'').trim();if(t&&t!==acLbOf(a.k)&&cms.indexOf(t)<0)cms.push(t);});
 const first=Object.assign({},ne[0]);first.s='';first.e='';first.m=0;
@@ -12666,7 +12674,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c42.0";
+const CL_APPVER="c42.1";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
