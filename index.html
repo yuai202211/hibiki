@@ -1948,6 +1948,7 @@ body.cardvis .fab{display:none!important}
 .ka-fav{background:#fff8e1;border-radius:12px;padding:4px 6px 6px}.ka-favnone{font-size:12px;font-weight:700;color:#b9a06a;padding:2px 4px}.ka-fav .ka-sub{color:#a8790a}.ka-fav .ka-sub small{margin-left:6px;font-weight:700;color:#b9a06a}
 .nearw{flex:1 0 100%;width:100%;display:flex;flex-direction:column;gap:6px;margin:2px 0 6px;padding:6px 8px;border-left:3px solid #7a6ef3;background:rgba(122,110,243,.07);border-radius:10px;box-sizing:border-box}.nearw>*{margin:0!important}
 #pinRow{display:none!important}
+[data-qfx]:not(.sel){background:#fff8e1!important;border:1.5px solid #e0b75a!important;color:#14275a!important}[data-qfx]{font-weight:800}.chip.qfx{font-weight:800}.chip.qfx:not(.sel){background:#fff8e1!important;border:1.5px solid #e0b75a!important;color:#14275a!important}
 .hdr1{flex-wrap:wrap;row-gap:4px;justify-content:flex-start;gap:6px}.hdr1 .syncdot{margin-right:0!important}
 #kakuTop{position:static!important;padding:0!important;background:none!important;margin-left:auto;flex:none;max-width:100%}
 #app #kakuTop>.hour.gap.wr.wrbig{position:static;min-height:0!important;width:auto;padding:5px 12px!important;margin:0!important;border-radius:999px!important;box-shadow:none;gap:4px;flex-wrap:nowrap}
@@ -4865,7 +4866,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c44.2）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c44.3）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -9060,6 +9061,7 @@ const h=it.filter(Boolean);let o=h.length?'<div class="qsec"><span class="qsec-h
 if(oG&&!put&&cats.some(c=>c.G===oG&&kSec(c.t)===s[0])){o+=qgOpenHtml(oG,attr,mk,ids);put=true;}return o;}).join('');
 return (oG&&!put?qgOpenHtml(oG,attr,mk,ids):'')+body;}
 function qTopStart(){const t=todayStr(),d=parseD(t);let y=d.getFullYear(),m=d.getMonth();if(d.getDate()<15){m--;if(m<0){m=11;y--;}}return y+'-'+pad(m+1)+'-01';}
+function qFixIds(){try{const L=((state._cfg||{}).qfix)||[];return Array.isArray(L)?L.filter(id=>{const k=kindOf(id);return k&&!k.off;}):[];}catch(e){return [];}}
 function qTopHtml(ids,attr,mk,onIds,cats,dirs){try{const t0=todayStr(),st=qTopStart(),c=kUseDays(Math.round((parseD(t0).getTime()-parseD(st).getTime())/864e5)+1),cand=[];let o=0;
 KSEC.forEach(s=>{cats.filter(x=>kSec(x.t)===s[0]).forEach(x=>{if(x.dir){cand.push({k:x.dir,s:s[0],n:c[x.dir]||0,o:o++,h:mk(x.dir,false)});return;}
 const t=qgNode(x.G),L=t?kLeaves(t.ch||[]):kindList().filter(k=>k.g===x.G).map(k=>k.id);
@@ -9067,13 +9069,13 @@ cand.push({k:'@'+x.G,G:x.G,s:s[0],n:L.reduce((a,id)=>a+(c[id]||0),0),o:o++,h:qgH
 ids.filter((id,i,a)=>a.indexOf(id)===i&&dirs.indexOf(id)<0&&qSec2(id)===s[0]).forEach(id=>{const kk=kindOf(id);if(kk&&!kk.off)cand.push({k:id,s:s[0],n:c[id]||0,o:o++,h:mk(id,false)});});});
 const on=new Set(onIds||[]),isOn=x=>x.G?qgKids(x.G).some(id=>on.has(id)):on.has(x.k),seen=new Set(),top=[];
 if(WK_SITE){top.push({k:'@WK',s:'w',n:1e9,o:-1,h:wkChipHtml()});seen.add('@WK');}
-cand.filter(x=>x.n>0&&!(WK_SITE&&wkHide(x))).sort((a,b)=>b.n-a.n||a.o-b.o).forEach(x=>{if(top.length<QTOP_N+(WK_SITE?1:0)&&!seen.has(x.k)){seen.add(x.k);top.push(x);}});
+cand.filter(x=>x.n>0&&!(WK_SITE&&wkHide(x))&&qFixIds().indexOf(x.k)<0).sort((a,b)=>b.n-a.n||a.o-b.o).forEach(x=>{if(top.length<QTOP_N+(WK_SITE?1:0)&&!seen.has(x.k)){seen.add(x.k);top.push(x);}});
 if(!top.length)return '';
 cand.forEach(x=>{if(!seen.has(x.k)&&isOn(x)){seen.add(x.k);top.push(x);}});
 const rest=cand.filter(x=>!seen.has(x.k)&&!x.it&&!(x.k[0]!=='@'&&cand.some(y=>y!==x&&y.k===x.k&&seen.has(y.k))));
 const tg=rest.length?'<button type="button" class="chip ac-qmore" data-qmore="1">'+(QMORE?'▴ たたむ（よく押す'+top.length+'個だけにする）':'▾ ほか '+rest.length+'個（あまり押さない物）')+'</button>':'';
 top.sort((a,b)=>a.o-b.o);
-let out='<div class="qsec qtop"><span class="qsec-h">⭐ よく押す<small>'+(()=>{const s=qTopStart();return Number(s.slice(5,7))+'月'+(Number(s.slice(5,7))!==Number(todayStr().slice(5,7))?'から':'')+'の上位';})()+QTOP_N+'個</small></span>'+top.map(x=>x.h).join('')+'</div>';
+let out='<div class="qsec qtop"><span class="qsec-h">⭐ よく押す<small>'+(()=>{const s=qTopStart();return Number(s.slice(5,7))+'月'+(Number(s.slice(5,7))!==Number(todayStr().slice(5,7))?'から':'')+'の上位';})()+QTOP_N+'個</small></span>'+qFixIds().map(id=>mk(id,false).replace('class="chip','class="chip qfx')).join('')+top.map(x=>x.h).join('')+'</div>';
 return out;}catch(e){return '';}}
 const KUSEN={};
 function kUseDays(n){const t=todayStr(),u=state.updatedAt||0,m=KUSEN[n];if(m&&m.t===t&&m.u===u)return m.c;const c={};
@@ -9089,8 +9091,9 @@ function kLeaves(ch){const o=[];(ch||[]).forEach(c=>{if(typeof c==='string')o.pu
 function kFavHtml(fav,btn){return '<div class="ka-subw ka-fav"><div class="ka-sub">⭐ よく使う<small>直近1週間で多い順</small></div>'+(fav.length?fav.map(btn).join(''):'<span class="ka-favnone">この1週間はまだ押していない。押すとここに並ぶ</span>')+'</div>';}
 function qgOpenHtml(G,attr,mk,top){const t=qgNode(G),g=KIND_GRP.find(x=>x[0]===G);if(!t||!g)return '';
 const ch=t.ch||kindList().filter(k=>k.g===G).map(k=>k.id);
-const favH=kFavHtml(kFavOf(kLeaves(ch),top),x=>mk(x,true));
-const lv=ch.map(c=>typeof c==='string'?mk(c,true):('<div class="ka-subw"><div class="ka-sub">'+c.ic+' '+esc(c.lb)+'</div>'+(c.ch||[]).map(x=>mk(x,true)).join('')+'</div>')).join('');
+const fixL=qFixIds().filter(x=>kLeaves(ch).indexOf(x)>=0),nf=x=>fixL.indexOf(x)<0,fixH=fixL.map(x=>mk(x,true).replace('<button','<button data-qfx="1"')).join('');
+const favH=fixH+kFavHtml(kFavOf(kLeaves(ch).filter(nf),top),x=>mk(x,true));
+const lv=ch.filter(c=>typeof c!=='string'||nf(c)).map(c=>typeof c==='string'?mk(c,true):((c.ch||[]).filter(nf).length?'<div class="ka-subw"><div class="ka-sub">'+c.ic+' '+esc(c.lb)+'</div>'+(c.ch||[]).filter(nf).map(x=>mk(x,true)).join('')+'</div>':'')).join('');
 const un=(attr==='data-qg'||attr==='data-rqg')?'<button type="button" class="ac-undo" data-acundo="1">↩ 1つ前に戻る</button>':'';
 return '<div class="ac-kgp qg-open"><div class="ac-kgr"><button class="ac-kgh" '+attr+'="'+G+'">'+esc(g[1])+'<span>'+esc(g[2])+'</span><i>‹ 分野へ戻る</i></button>'+un+'</div><div class="ac-kl">'+favH+lv+'</div></div>';}
 function phBtnHtml(k){return '<button type="button" class="hph" data-phadd="'+k+'" aria-label="写真を撮る・選ぶ">📷<small>写真</small></button>';}
@@ -12817,7 +12820,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c44.2";
+const CL_APPVER="c44.3";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
