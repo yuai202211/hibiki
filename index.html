@@ -1954,6 +1954,23 @@ body.cardvis .fab{display:none!important}
 .dband b{color:#ffd76a;font-weight:800;font-size:14px}
 .dband .db1,.dband .db2{display:flex;justify-content:space-between;gap:6px;white-space:nowrap}
 .page>.dband{margin:0 8px 6px}
+.dband{width:calc(100% - 16px)!important;box-sizing:border-box;align-self:center}
+.dm-cat{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:800;margin:12px 2px 6px}.dm-cat i{width:10px;height:10px;border-radius:50%}.dm-cat span{color:var(--sub);font-weight:700}
+.dm-c{display:flex;gap:10px;width:100%;text-align:left;background:#fff;border:1px solid var(--line);border-radius:14px;padding:9px;margin-bottom:8px}
+.dm-p{flex:none;width:64px;height:64px;border-radius:10px;object-fit:cover}.dm-p.e{display:flex;align-items:center;justify-content:center;text-align:center;color:#fff;font-size:10.5px;font-weight:800}
+.dm-b{flex:1;min-width:0;display:block}.dm-tt{display:block;font-size:15px;font-weight:800;line-height:1.35;word-break:break-word}.dm-m{display:flex;flex-wrap:wrap;gap:4px 6px;margin-top:4px;font-size:12px;font-weight:800}
+.dm-t{border-radius:999px;padding:1px 8px;background:#eef1f6;color:#4a5265}.dm-t.day{background:#fff3dc;color:#b45309}.dm-t.yen{background:#e4f6ec;color:#13864a}.dm-t.no{background:#ffe9ec;color:#e0405a}.dm-t.pr{background:#14275a;color:#ffd76a}
+.dm-bar{display:block;height:7px;border-radius:999px;background:#e6eaf2;overflow:hidden;margin-top:5px}.dm-bar i{display:block;height:100%;background:#13864a}.dm-b .yc-sn{margin:5px 0 0}
+.dm-pyr{display:block;width:100%;height:auto;margin:8px 0 10px;background:#fff;border:1px solid var(--line);border-radius:14px;box-sizing:border-box;padding:8px}
+.dm-add{display:block;text-align:center;background:#14275a;color:#ffd76a;border-radius:12px;padding:12px;font-size:15px;font-weight:800;cursor:pointer;margin:8px 0}
+.dm-bd{background:#fff;border:1px solid var(--line);border-radius:14px;padding:9px;margin-bottom:8px;display:flex;flex-direction:column;gap:7px}.dm-bd input{font-weight:800;width:100%;box-sizing:border-box}.dm-bd img{width:100%;border-radius:10px;display:block}.dm-bd .dm-pyr{margin:0;border:0;padding:0}.dm-bb{display:flex;gap:6px}.dm-bb button{flex:1;border:1px solid var(--line);background:#fff;border-radius:10px;padding:7px 0;font-size:12.5px;font-weight:800;color:#4a5265}
+.dm-note{font-size:12.5px;font-weight:700;color:#b45309;background:#fff6e5;border-radius:12px;padding:8px 12px;line-height:1.6;margin:8px 0}.dm-yn{display:inline-block;margin:2px 6px 2px 0;border:1px solid #e0b75a;border-radius:999px;padding:1px 8px;background:#fff;color:#b45309;font-weight:800;font-size:12px}
+.dm-yr{background:#fff;border:1px solid var(--line);border-radius:14px;padding:9px 12px;margin-bottom:8px}.dm-yh{display:flex;justify-content:space-between;gap:8px;color:#14275a;font-size:14.5px;margin-bottom:3px}.dm-yh small{color:var(--sub);font-size:11.5px;font-weight:700;text-align:right}
+.dm-yd{display:block;width:100%;text-align:left;font-size:13.5px;font-weight:800;padding:2px 0;line-height:1.5}.dm-ya{display:block;width:100%;text-align:left;font-size:12px;font-weight:700;color:var(--sub);padding:1px 0 1px 1em}.dm-ye{font-size:12.5px;color:#8a93a6}
+.dm-lg{background:#fff;border:1px solid var(--line);border-radius:14px;padding:9px 12px;margin-bottom:8px}.dm-lh{display:flex;justify-content:space-between;gap:8px;font-size:13px}.dm-lh small{color:var(--sub)}.dm-lt{font-size:14px;font-weight:800;margin-top:2px}.dm-lc{font-size:12px;color:#4a5265;margin-top:2px}.dm-lw{font-size:13px;font-weight:700;color:#b45309;margin-top:4px;white-space:pre-wrap}.dm-lb{margin-top:6px;border:1px solid var(--line);background:#fff;border-radius:10px;padding:6px 12px;font-size:12.5px;font-weight:800}
+.dm-ttl{display:inline-flex;align-items:center;gap:6px}.dm-logo{height:20px;width:auto;max-width:70px;object-fit:contain;background:#fff;border-radius:4px;padding:1px 3px;vertical-align:middle;margin-right:6px}.pseg button{white-space:nowrap}
+.dm-calc{font-size:13px;font-weight:800;color:#13864a;background:#e4f6ec;border-radius:10px;padding:7px 10px}
+.dm-th{position:relative;display:inline-block}.dm-thx{position:absolute;top:-5px;right:-5px;width:20px;height:20px;border-radius:50%;background:#e0405a;color:#fff;font-size:11px;font-weight:800;padding:0;line-height:20px;text-align:center}
 .blk-plain{margin-bottom:8px;padding:0 2px}
 .at-card{padding:10px 12px}
 .at-row{display:flex;align-items:center;gap:8px;padding:4px 0;font-weight:800;font-size:14px}
@@ -4836,7 +4853,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c43.0）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c44.0）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -6064,7 +6081,7 @@ if(!arr.length){el.style.display='none';el.innerHTML='';return;}
 el.innerHTML=arr.map(d=>{
 const st=stepStat(d),n=st.n,c=catOf(d.cat),hit=dreamHit(d.id);
 const left=(n===null)?'期限なし':n<0?('⚠<em>'+(-n)+'</em>日超過'):n===0?'<em>今日</em>まで':('あと<em>'+n+'</em>日');
-const cnt=(dreamDue(d)?'・'+Number(dreamDue(d).slice(5,7))+'/'+Number(dreamDue(d).slice(8,10)):'')+(st.tot?('・'+st.dn+'/'+st.tot+'手'):'');
+const cnt=(dreamDue(d)?'・'+Number(dreamDue(d).slice(5,7))+'/'+Number(dreamDue(d).slice(8,10))+(ageAt(dreamDue(d))!=null?'（'+ageAt(dreamDue(d))+'歳）':''):'')+(st.tot?('・'+st.dn+'/'+st.tot+'手'):'');
 return '<div class="pin'+(hit?' hit':'')+'" data-pin="'+esc(d.id)+'" style="background-color:'+((n!==null&&n<0)?'#e0405a':c.c)+'">'+
 '<div class="pin-h"><span class="pi">'+pinIcon(d.t)+'</span><span class="pt"><b>'+esc(d.t)+'</b><small>'+left+cnt+'</small></span></div>'+
 pinLow(d,hit)+(st.next?'<div class="pin-s"><button class="pin-ok lbl" data-ok="'+esc(st.next.id)+'" aria-label="やった">✓<small class="bn">やった</small></button><span class="pin-tx" data-ds="'+esc(d.id)+'">'+esc(st.next.t)+'</span></div>'
@@ -6225,6 +6242,32 @@ return html;
 }
 
 function snToggleBind(){const p=$('page');if(!p||p.__snb)return;p.__snb=1;p.addEventListener('click',ev=>{const b=ev.target.closest&&ev.target.closest('[data-snt]');if(!b)return;ev.stopPropagation();ev.preventDefault();const id=b.dataset.snt;mutate(()=>{const d=state.dreams[id];if(!d)return;if(d.sn)delete d.sn;else d.sn=1;d.ts=Date.now();});renderPage();},true);}
+function ageAt(due){const L=state.life;if(!L||!L.bd||!due)return null;const b=parseD(L.bd),d=parseD(due);let a=d.getFullYear()-b.getFullYear();if(d.getMonth()<b.getMonth()||(d.getMonth()===b.getMonth()&&d.getDate()<b.getDate()))a--;return a;}
+function dreamLog(o){state.dream=Object.assign({},state.dream||{});state.dream.log=(state.dream.log||[]).concat([Object.assign({at:Date.now()},o)]);state.dream.ts=Date.now();}
+function askWhy(ttl,done){openSub('<div class="sh-time"><span>'+esc(ttl)+'</span></div><div class="set-row" style="margin-top:8px"><div class="sh-label">理由（ずっと残る。あとで自分で見返す）</div><div class="sh-ta-wrap"><textarea id="awT" style="min-height:76px" placeholder="人や環境のせいにせず、自分の言葉で"></textarea></div></div><div class="sh-btns" style="margin-top:12px"><button class="delbtn" id="awNo" style="flex:0 0 auto">やめる</button><button class="savebtn" id="awOk">記　録</button></div>',null);$('awNo').onclick=closeSub;$('awOk').onclick=()=>{const w=$('awT').value.trim();if(!w){toast('理由を書いてくれ');$('awT').focus();return;}closeSub();done(w);};}
+function dmYen(y){y=Number(y)||0;return y>=1e8?(Math.round(y/1e7)/10)+'億円':manY(y)+'円';}
+function dmPhs(d){return [].concat((d&&d.ph)||[]).filter(Boolean);}
+function dmCard(d){const c=catOf(d.cat),du=dreamDue(d),n=du?daysTo(du):null,ph=dmPhs(d)[0],ag=du?ageAt(du):null,y=Number(d.yen)||0,hv=Number(d.have)||0;let m='';if(d.pr)m+='<span class="dm-t pr">'+esc(d.pr)+'</span>';
+m+=du?(n<0?'<span class="dm-t no">⚠ '+(-n)+'日超過・'+esc(du.replace(/-/g,'/'))+'</span>':'<span class="dm-t day">あと '+n+'日・'+esc(du.replace(/-/g,'/'))+(ag!=null?'（'+ag+'歳）':'')+'</span>'):'<span class="dm-t no">期限を入れる</span>';
+if(y>0)m+='<span class="dm-t yen">'+esc(dmYen(y))+(hv?'・あと '+esc(dmYen(Math.max(0,y-hv))):'')+'</span>';if(d.nGoal)m+='<span class="dm-t">目標 '+esc(d.nGoal)+esc(d.nUnit||'')+(d.nNow?'・今 '+esc(d.nNow)+esc(d.nUnit||''):'')+'</span>';
+return '<button class="dm-c" data-de="'+esc(d.id)+'">'+(ph?'<img class="dm-p" src="'+esc(phUrl(ph))+'" alt="" loading="lazy">':'<span class="dm-p e" style="background:'+c.c+'">📷<br>写真</span>')+'<span class="dm-b"><span class="dm-tt">'+esc(d.t)+'</span><span class="dm-m">'+m+'</span>'+((d.prog|0)>0?'<span class="dm-bar"><i style="width:'+(d.prog|0)+'%"></i></span>':'')+'<span class="yc-sn'+(d.sn?' on':'')+'" role="button" data-snt="'+esc(d.id)+'">🎁 '+(d.sn?'トップに出す ✓':'トップに出す')+'</span></span></button>';}
+function dmPyrSvg(arr){const n=ids=>arr.filter(d=>ids.indexOf(Number(d.cat))>=0).length;return '<svg class="dm-pyr" viewBox="0 0 340 190" role="img" aria-label="夢・人生ピラミッド"><polygon points="170,6 228,66 112,66" fill="#e0a814"/><polygon points="108,70 232,70 280,124 60,124" fill="#ff8f4d"/><polygon points="56,128 284,128 332,184 8,184" fill="#3ec97e"/><text x="170" y="44" text-anchor="middle" fill="#fff" font-size="13" font-weight="800">結果 '+n([6])+'</text><text x="170" y="102" text-anchor="middle" fill="#fff" font-size="14" font-weight="800">実現（家庭・仕事）'+n([4,5])+'</text><text x="170" y="161" text-anchor="middle" fill="#fff" font-size="14" font-weight="800">基礎（健康・心・教養）'+n([1,2,3])+'</text></svg>';}
+function dmBoard(){const b=state.dream&&state.dream.board;return Array.isArray(b)?b:[{id:'pyr',t:'夢・人生ピラミッド',pyr:1}];}
+function dmBoardSave(L){state.dream=Object.assign({},state.dream||{},{board:L,ts:Date.now()});}
+function dmBoardHtml(){const arr=dreamsActive(),L=dmBoard();return '<label class="dm-add" for="dmBdF">📷 写真・図を足す</label><input type="file" id="dmBdF" accept="image/*" multiple hidden>'+L.map((b,i)=>'<div class="dm-bd"><input data-bdt="'+i+'" value="'+esc(b.t||'')+'" aria-label="名前" placeholder="名前">'+(b.pyr?dmPyrSvg(arr):'<img src="'+esc(phUrl(b.ph))+'" alt="'+esc(b.t||'')+'" loading="lazy">')+'<div class="dm-bb"><button type="button" data-bdu="'+i+'">↑ 上へ</button><button type="button" data-bdd="'+i+'">↓ 下へ</button><button type="button" data-bdx="'+i+'">消す</button></div></div>').join('');}
+function dmLogHtml(){const L=((state.dream&&state.dream.log)||[]).slice().reverse();if(!L.length)return '<div class="empty-hint">変えた物・消した物と、その理由がここに残る</div>';const n=(state.dream.log||[]).length;return L.map((x,i)=>{const dt=new Date(x.at),ds=dt.getFullYear()+'/'+(dt.getMonth()+1)+'/'+dt.getDate();return '<div class="dm-lg"><div class="dm-lh"><b>'+esc(x.what||'')+'</b><small>'+esc(ds)+'</small></div><div class="dm-lt">'+esc(x.t||'')+'</div>'+((x.ch||[]).map(c=>'<div class="dm-lc">'+esc(c.l)+'：'+esc(c.a||'（なし）')+' → '+esc(c.b||'（なし）')+'</div>').join(''))+(x.why?'<div class="dm-lw">理由：'+esc(x.why)+'</div>':'')+((x.snap||x.bd)&&!x.back?'<button type="button" class="dm-lb" data-lgb="'+(n-1-i)+'">↩ 元に戻す</button>':'')+'</div>';}).join('');}
+function dmYearHtml(){const Y0=new Date().getFullYear(),arr=dreamsActive(),by={},bd=state.life&&state.life.bd,fam=(state.dream&&state.dream.fam)||[];const add=(y,o)=>{(by[y]=by[y]||[]).push(o);};
+arr.forEach(d=>{const du=dreamDue(d);if(du)add(Number(du.slice(0,4)),{d});String(d.plan||'').split('\n').forEach(l=>{const m=l.match(/^\s*(\d{4})[：:\s]+(.+)/);if(m)add(Number(m[1]),{d,act:m[2]});});});
+const mx=Math.max(Y0+10,...Object.keys(by).map(Number));let h='<div class="dm-note">年ごとの行動は、夢を押して「年ごとの行動」に書くとここに出る。家族の年齢は上の★を押して入れる</div>';
+for(let y=Y0;y<=mx;y++){const L=by[y]||[];if(y>Y0+10&&!L.length)continue;const ag=[];if(bd)ag.push(y-parseD(bd).getFullYear()+'歳');fam.forEach(f=>ag.push(f.n+' '+(Number(f.age)+(y-Number(f.y)))+'歳'));
+h+='<div class="dm-yr"><div class="dm-yh"><b>'+y+'年</b><small>'+esc(ag.join('・'))+'</small></div>'+(L.length?L.map(o=>o.act?'<button class="dm-ya" data-de="'+esc(o.d.id)+'">▶ '+esc(o.d.t)+'：'+esc(o.act)+'</button>':'<button class="dm-yd" data-de="'+esc(o.d.id)+'">'+esc(o.d.t)+'</button>').join(''):'<div class="dm-ye">この年の夢はまだない</div>')+'</div>';}
+const nd=arr.filter(d=>!dreamDue(d));if(nd.length)h+='<div class="dm-note">期限が入っていない夢：'+nd.map(d=>'<button class="dm-yn" data-de="'+esc(d.id)+'">'+esc(d.t)+'</button>').join('')+'</div>';return h;}
+function dmBind(p){const f=p.querySelector('#dmBdF');if(f)f.onchange=async ev=>{const fs=ev.target.files;if(!fs||!fs.length)return;const names=Array.from(fs).map(x=>String(x.name||'').replace(/\.[^.]+$/,''));const ids=await phAddFiles(fs);if(ids.length){mutate(()=>{ids.forEach(i=>phKeep(i));dmBoardSave(dmBoard().concat(ids.map((id,i)=>({id:'b'+Date.now()+i,t:names[i]||'図・写真',ph:id}))));});renderDreamPage();toast('✓ 貼った');}};
+p.querySelectorAll('[data-bdt]').forEach(e=>e.onchange=()=>{const L=dmBoard().slice(),i=+e.dataset.bdt;L[i]=Object.assign({},L[i],{t:e.value});mutate(()=>dmBoardSave(L));});
+const mv=(i,j)=>{const L=dmBoard().slice();if(j<0||j>=L.length)return;const x=L[i];L[i]=L[j];L[j]=x;mutate(()=>dmBoardSave(L));renderDreamPage();};
+p.querySelectorAll('[data-bdu]').forEach(b=>b.onclick=()=>mv(+b.dataset.bdu,+b.dataset.bdu-1));p.querySelectorAll('[data-bdd]').forEach(b=>b.onclick=()=>mv(+b.dataset.bdd,+b.dataset.bdd+1));
+p.querySelectorAll('[data-bdx]').forEach(b=>b.onclick=()=>{const i=+b.dataset.bdx,L=dmBoard().slice(),x=L[i];askWhy('「'+(x.t||'図・写真')+'」を消す',why=>{L.splice(i,1);mutate(()=>{dmBoardSave(L);dreamLog({what:'図・写真を消した',t:x.t||'',bd:x,why});});renderDreamPage();toast('消した（変更の記録に残る）');});});
+p.querySelectorAll('[data-lgb]').forEach(b=>b.onclick=()=>{const i=+b.dataset.lgb;mutate(()=>{const L=(state.dream.log||[]).slice(),x=Object.assign({},L[i]);if(x.snap&&x.id){state.dreams[x.id]=Object.assign({},x.snap,{ts:Date.now()});}if(x.bd)dmBoardSave(dmBoard().concat([x.bd]));x.back=1;L[i]=x;state.dream=Object.assign({},state.dream,{log:L,ts:Date.now()});dreamLog({what:'元に戻した',t:x.t||''});});renderDreamPage();toast('↩ 元に戻した');});}
 function renderDreamPage(){
 snToggleBind();
 const p=$('page');
@@ -6237,20 +6280,10 @@ if(dseg==='clock'){
 bodyHtml=renderClock();
 }else if(dseg==='list'){
 const arr=dSort(dreamsActive());
-bodyHtml=arr.length?arr.map(d=>{
-const c=catOf(d.cat);
-const du=dreamDue(d);
-return '<button class="drow" data-de="'+esc(d.id)+'"><span class="cdot" style="background:'+c.c+'"></span>'+
-'<span class="dt"><span class="dtt">'+esc(d.t)+'</span><span class="dmeta">'+
-'<span class="badge" style="color:'+c.c+'">'+esc(c.n)+'</span>'+
-(d.pr?'<span class="badge pr">'+esc(d.pr)+'</span>':'')+
-(du?'<span class="badge">'+esc(du.replace(/-/g,'/'))+'・'+dLeft(d)+'</span>':'')+
-((d.prog|0)>0?'<span class="badge" style="color:#0a9a54">'+(d.prog|0)+'%</span>':'')+
-'</span></span></button>';
-}).join(''):'<div class="empty-hint">まだ夢がない。＋で書く。<br>無理と思う夢もOK、全部書く（熊谷式）</div>';
+bodyHtml=arr.length?CATS.map(c=>{const L=arr.filter(d=>Number(d.cat)===c.id);return '<div class="dm-cat"><i style="background:'+c.c+'"></i>'+esc(c.n)+' <span>'+L.length+'件</span></div>'+L.map(dmCard).join('');}).join(''):'<div class="empty-hint">まだ夢がない。＋で書く。<br>無理と思う夢もOK、全部書く（熊谷式）</div>';
 }else if(dseg==='pyr'){
 const arr=dreamsActive();
-bodyHtml='<div class="pyr">'+LEVELS.map(lv=>{
+bodyHtml=dmPyrSvg(arr)+'<div class="pyr">'+LEVELS.map(lv=>{
 return '<div class="plevel"><span class="pl">'+lv.n+'</span><span class="plh">'+lv.hint+'</span>'+
 lv.cats.map(cid=>{
 const c=catOf(cid);
@@ -6263,7 +6296,11 @@ return '<div class="pcat" style="background:'+c.c+'14"><div class="pcn" style="c
 }).join('')+'</div>'+
 '<div class="sh-note" style="margin-top:10px">土台（基礎）が満ちれば実現し、結果はあとからついてくる</div>';
 }else if(dseg==='year'){
-bodyHtml=renderYearTable();
+bodyHtml=dmYearHtml();
+}else if(dseg==='board'){
+bodyHtml=dmBoardHtml();
+}else if(dseg==='log'){
+bodyHtml=dmLogHtml();
 }else{
 const arr=dreamsWon();
 bodyHtml=arr.length?arr.map(d=>{
@@ -6272,14 +6309,16 @@ return '<button class="drow" data-de="'+esc(d.id)+'"><span class="cdot" style="b
 '<span class="dt"><span class="dtt">🎉 '+esc(d.t)+'</span><span class="dmeta"><span class="badge won">'+(d.ach>1000?fmt(new Date(d.ach))+' ':'')+'実現</span></span></span></button>';
 }).join(''):'<div class="empty-hint">かなった夢はここに殿堂入りする。<br>消さない——見返すたびに自信になる</div>';
  }
-p.innerHTML='<div class="page-head"><button class="bk" id="pgBk">‹ 戻る</button><span class="tt">⭐ 夢手帳</span><button class="padd tx" id="pgAdd">＋ 夢</button></div>'+
+p.innerHTML='<div class="page-head"><button class="bk" id="pgBk">‹ 戻る</button><span class="tt dm-ttl">'+((state.dream&&state.dream.logo)?'<img class="dm-logo" src="'+esc(phUrl(state.dream.logo))+'" alt="">':'')+'⭐ 夢手帳</span><button class="padd tx" id="pgAdd">＋ 夢</button></div>'+
 goal+
 '<div class="pseg" style="flex-wrap:wrap">'+
-'<button data-ds="clock"'+(dseg==='clock'?' class="on"':'')+'>人生時計</button>'+
-'<button data-ds="list"'+(dseg==='list'?' class="on"':'')+'>やりたいこと</button>'+
-'<button data-ds="pyr"'+(dseg==='pyr'?' class="on"':'')+'>ピラミッド</button>'+
-'<button data-ds="year"'+(dseg==='year'?' class="on"':'')+'>未来年表</button>'+
-'<button data-ds="won"'+(dseg==='won'?' class="on"':'')+'>殿堂</button></div>'+
+'<button data-ds="clock"'+(dseg==='clock'?' class="on"':'')+'>⏳ 人生時計</button>'+
+'<button data-ds="list"'+(dseg==='list'?' class="on"':'')+'>📝 やりたいこと</button>'+
+'<button data-ds="pyr"'+(dseg==='pyr'?' class="on"':'')+'>🔺 ピラミッド</button>'+
+'<button data-ds="year"'+(dseg==='year'?' class="on"':'')+'>📅 未来年表</button>'+
+'<button data-ds="board"'+(dseg==='board'?' class="on"':'')+'>🖼 図・写真</button>'+
+'<button data-ds="won"'+(dseg==='won'?' class="on"':'')+'>🎉 殿堂</button>'+
+'<button data-ds="log"'+(dseg==='log'?' class="on"':'')+'>📜 変更の記録</button></div>'+
 '<div class="page-body">'+bodyHtml+'</div>';
 p.classList.add('open');
 $('pgBk').onclick=closePage;
@@ -6288,6 +6327,7 @@ $('gGoal').onclick=openGoalDue;
 p.querySelectorAll('[data-ds]').forEach(b=>b.onclick=()=>{dseg=b.dataset.ds;renderDreamPage();});
 p.querySelectorAll('[data-de]').forEach(b=>b.onclick=()=>openDreamSheet(b.dataset.de,null));
 p.querySelectorAll('[data-dc]').forEach(b=>b.onclick=()=>openDreamSheet(null,Number(b.dataset.dc)));
+try{dmBind(p);}catch(e){}
 const yp=$('ytPrev'),yn=$('ytNext');
 if(yp)yp.onclick=()=>{ytYear--;renderDreamPage();};
 if(yn)yn.onclick=()=>{ytYear++;renderDreamPage();};
@@ -6309,7 +6349,7 @@ function openDreamSheet(id,presetCat){
 const ex=id?state.dreams[id]:null;
 let cat=ex?Number(ex.cat):(presetCat||null);
 let pr=ex?(ex.pr||null):null;
-let dPh=(ex&&ex.ph)||null;
+let dPhs=dmPhs(ex);
 const pin0=!!(id&&pinnedDreams().some(d=>d.id===id));
 let pin=pin0;
 $('sheet').innerHTML=
@@ -6324,6 +6364,11 @@ CATS.map(c=>'<button data-c="'+c.id+'">'+esc(c.n)+'</button>').join('')+'</div><
 '<div style="flex:1"><div class="sh-label">実現予定日</div><input type="date" id="dDue" lang="ja-JP"></div>'+
 '<div style="width:132px;flex-shrink:0"><div class="sh-label">優先度</div><div class="prbtns" id="dPrs">'+
 ['A','B','C'].map(x=>'<button data-pr="'+x+'">'+x+'</button>').join('')+'</div></div></div>'+
+'<div style="display:flex;gap:8px"><div style="flex:1"><div class="sh-label">💰 必要な金額（万円）</div><input id="dYen" inputmode="decimal" placeholder="125"></div><div style="flex:1"><div class="sh-label">🏦 今ある金額（万円）</div><input id="dHave" inputmode="decimal" placeholder="0"></div></div><div class="dm-calc" id="dDiff"></div>'+
+'<div style="display:flex;gap:8px"><div style="flex:1"><div class="sh-label">🎯 目標の数字（金額以外）</div><input id="dNG" placeholder="70"></div><div style="flex:1"><div class="sh-label">📏 単位</div><input id="dNU" placeholder="kg・億円・人"></div></div>'+
+'<div><div class="sh-label">📍 今の数字</div><input id="dNN" placeholder="78"></div>'+
+'<div><div class="sh-label">🧭 今の状況（文章で）</div><div class="sh-ta-wrap"><textarea id="dNow" style="min-height:52px" placeholder="例：売上ゼロ。株主は自分1人"></textarea></div></div>'+
+'<div><div class="sh-label">📅 年ごとの行動（1行に1年・未来年表に出る）</div><div class="sh-ta-wrap"><textarea id="dPlan" style="min-height:64px" placeholder="2027：法人化&#10;2028：売上1億円"></textarea></div></div>'+
 '<div><div class="sh-label">夢の進捗率</div><div class="progline"><input type="range" class="prog" id="dProg" min="0" max="100" step="5"><b id="dProgV">0%</b></div></div>'+
 '<div><div class="sh-label">📷 夢の写真（貼ると叶いやすくなる・熊谷式）</div><div class="phrow" id="dPhRow"></div></div>'+
 '<div><div class="sh-label">メモ</div><div class="sh-ta-wrap"><textarea id="dMemo" style="min-height:52px" placeholder="具体的に。数字・色・場所まで"></textarea></div></div>'+
@@ -6335,6 +6380,8 @@ $('dDue').value=(ex&&(ex.due||(ex.yr?ex.yr+'-12-31':'')))||'';
 $('dProg').value=(ex&&ex.prog)||0;
 $('dProgV').textContent=(((ex&&ex.prog)||0))+'%';
 $('dMemo').value=(ex&&ex.memo)||'';
+{const en=(id,v)=>{$(id).value=v==null?'':v;};en('dYen',ex&&Number(ex.yen)>0?ex.yen/1e4:'');en('dHave',ex&&Number(ex.have)>0?ex.have/1e4:'');en('dNG',ex&&ex.nGoal);en('dNU',ex&&ex.nUnit);en('dNN',ex&&ex.nNow);en('dNow',ex&&ex.now);en('dPlan',ex&&ex.plan);
+const df=()=>{const y=(Number($('dYen').value)||0)*1e4,hv=(Number($('dHave').value)||0)*1e4;$('dDiff').textContent=y?'あと '+dmYen(Math.max(0,y-hv)):'金額を入れると「あと◯万」が自動で出る';};df();$('dYen').oninput=df;$('dHave').oninput=df;}
 $('dProg').oninput=()=>{$('dProgV').textContent=$('dProg').value+'%';};
 $('dMic').onclick=()=>micToggle($('dMic'),$('dTt'));
 const pinPaint=()=>iosSet($('dPin'),pin);
@@ -6346,16 +6393,16 @@ toast(pin?'📌 トップに大きく出す（「記録」で確定）':'📌 �
 };
 function renderDPh(){
 const w=$('dPhRow');
-w.innerHTML=(dPh?'<img class="phth" id="dPhImg" src="'+esc(phUrl(dPh))+'" alt="" onerror="this.style.visibility=\'hidden\'">':'')+
-'<button class="phadd lbl" id="dPhAdd" aria-label="写真">'+(dPh?'⟳<small class="bn">替える</small>':'＋<small class="bn">写真</small>')+'</button>';
-const im=$('dPhImg');
-if(im)im.onclick=()=>openViewerRaw(im.src);
+w.innerHTML=dPhs.map((ph,i)=>'<span class="dm-th"><img class="phth" data-pi="'+i+'" src="'+esc(phUrl(ph))+'" alt="" onerror="this.style.visibility=\'hidden\'"><button type="button" class="dm-thx" data-px="'+i+'" aria-label="この写真を外す">✕</button></span>').join('')+
+'<button class="phadd lbl" id="dPhAdd" aria-label="写真">＋<small class="bn">写真</small></button>';
+w.querySelectorAll('[data-pi]').forEach(im=>im.onclick=()=>openViewerRaw(im.src));
+w.querySelectorAll('[data-px]').forEach(b=>b.onclick=()=>{dPhs.splice(+b.dataset.px,1);renderDPh();});
 $('dPhAdd').onclick=()=>{
-const pi=$('phInput');pi.value='';
+const pi=$('phInput');pi.value='';try{pi.multiple=true;}catch(e){}
 pi.onchange=async ev=>{
 const fs=ev.target.files;if(!fs||!fs.length)return;
-const ids=await phAddFiles([fs[0]]);
-if(ids.length){dPh=ids[0];renderDPh();toast('✓ 写真を付けた（「記録」で確定）');}
+const ids=await phAddFiles(fs);
+if(ids.length){dPhs=dPhs.concat(ids);renderDPh();toast('✓ 写真を付けた（「記録」で確定）');}
 };
 pi.click();
 };
@@ -6374,23 +6421,23 @@ const did=id||String(Date.now())+Math.floor(Math.random()*1e4);
 const due=$('dDue').value||null;
 const prog=Number($('dProg').value)||0;
 const memo=$('dMemo').value.trim();
-mutate(()=>{if(dPh)phKeep(dPh);state.dreams=state.dreams||{};
-{const o0=state.dreams[did]||{};state.dreams[did]={t,cat,pr,due,prog,memo,ph:dPh||null,ach:(ex&&ex.ach)||null,sn:(ex&&ex.sn)||0,created:(ex&&ex.created)||todayStr(),ts:Date.now()};
-if(o0.yen!==undefined)state.dreams[did].yen=o0.yen;if(o0.yenMemo!==undefined)state.dreams[did].yenMemo=o0.yenMemo;if(o0.need!==undefined)state.dreams[did].need=o0.need;}
+const yen=Math.round((Number($('dYen').value)||0)*1e4),have=Math.round((Number($('dHave').value)||0)*1e4),nGoal=$('dNG').value.trim(),nUnit=$('dNU').value.trim(),nNow=$('dNN').value.trim(),now=$('dNow').value.trim(),plan=$('dPlan').value.trim();
+const ch=[];if(ex){const c0=(l,a,b)=>{if(String(a==null?'':a)!==String(b==null?'':b))ch.push({l,a:String(a==null?'':a),b:String(b==null?'':b)});};c0('タイトル',ex.t,t);c0('期限',dreamDue(ex),due);c0('必要な金額',Number(ex.yen)>0?dmYen(ex.yen):'',yen>0?dmYen(yen):'');c0('目標の数字',(ex.nGoal||'')+(ex.nUnit||''),nGoal+nUnit);c0('分野',catOf(ex.cat).n,catOf(cat).n);c0('優先順位',ex.pr,pr);}
+const sv=why=>{mutate(()=>{dPhs.forEach(x=>phKeep(x));state.dreams=state.dreams||{};
+{const o0=state.dreams[did]||{};state.dreams[did]=Object.assign({},o0,{t,cat,pr,due,prog,memo,ph:dPhs.length?dPhs:null,ach:(ex&&ex.ach)||null,sn:(ex&&ex.sn)||0,created:(ex&&ex.created)||todayStr(),yen,have,nGoal,nUnit,nNow,now,plan,ts:Date.now()});}
+if(ch.length)dreamLog({what:'夢を変えた',id:did,t,ch,why});
 if(pin!==pin0){state.pins=state.pins||{};state.pins[did]={on:pin?1:0,ts:Date.now()};}});
-closeSheet();renderPage();toast('✓ 夢を書いた');
+closeSheet();renderPage();toast('✓ 夢を書いた');};
+if(ch.length)askWhy('何で変えた？（'+ch.map(c=>c.l).join('・')+'）',sv);else sv('');
 };
 if(ex){
 $('dWon').onclick=()=>{
-mutate(()=>{state.dreams[id]=Object.assign({},state.dreams[id],{ach:Date.now(),ts:Date.now()});});
+mutate(()=>{state.dreams[id]=Object.assign({},state.dreams[id],{ach:Date.now(),ts:Date.now()});dreamLog({what:'かなった',id,t:ex.t});});
 closeSheet();dseg='won';renderPage();toast('🎉 殿堂入り！おめでとう');
 };
 $('dDel').onclick=()=>{
-const del=$('dDel');
-if(!del.classList.contains('arm')){del.classList.add('arm');del.textContent='本当に削除？';
-setTimeout(()=>{if(del.isConnected){del.classList.remove('arm');del.textContent='削除';}},2500);return;}
-mutate(()=>{state.dreams[id]={del:1,ts:Date.now()};});
-closeSheet();renderPage();toast('削除した');
+askWhy('「'+ex.t+'」を消す。何で？',why=>{mutate(()=>{dreamLog({what:'夢を消した',id,t:ex.t,snap:Object.assign({},state.dreams[id]),why});state.dreams[id]={del:1,ts:Date.now()};});
+closeSheet();renderPage();toast('消した（変更の記録に残る・戻せる）');});
 };
  }
 openOvl();
@@ -7951,14 +7998,14 @@ function blkAutoScan(){if(blkBusy)return;blkBusy=true;try{const pg=$('page');if(
 if(topView==='diary'){const p=$('pane');if(p)blkAuto(p,'diary',BLK_CFG._diary);}}catch(e){}finally{blkBusy=false;}}
 function blkMoInit(){if(blkMoInit.d)return;const pg=$('page'),pn=$('pane');if(!pg||!pn)return;blkMoInit.d=1;const mo=new MutationObserver(()=>blkAutoScan());mo.observe(pg,{childList:true,subtree:true});mo.observe(pn,{childList:true});blkInit(pg);blkInit(pn);blkAutoScan();}
 setTimeout(()=>{try{blkMoInit();}catch(e){}},0);
-function dphStrip(ph,key){const L=Array.isArray(ph)?ph.filter(Boolean):[];return '<div class="ck-ph">'+L.slice(0,3).map(id=>'<button type="button" class="ck-phi" data-phv2="'+esc(id)+'" data-phk2="'+esc(key)+'" aria-label="写真を大きく"><img src="'+esc(phUrl(id))+'" alt="" loading="lazy"></button>').join('')+(L.length>3?'<span class="ck-phmore">+'+(L.length-3)+'</span>':'')+'<button type="button" class="ck-phadd" data-dph="'+esc(key)+'">📷 '+(L.length?'足す':'写真を足す')+'</button></div>';}
-function dphAdd(key,pid){mutate(()=>{phKeep(pid);if(key==='_dream'){state.dream=Object.assign({},state.dream||{},{ph:((state.dream&&state.dream.ph)||[]).concat(pid),ts:Date.now()});}else{const d=(state.dreams||{})[key];if(d&&!d.del){d.ph=(d.ph||[]).concat(pid);d.ts=Date.now();}}});}
+function dphStrip(ph,key){const L=[].concat(ph||[]).filter(Boolean);return '<div class="ck-ph">'+L.slice(0,3).map(id=>'<button type="button" class="ck-phi" data-phv2="'+esc(id)+'" data-phk2="'+esc(key)+'" aria-label="写真を大きく"><img src="'+esc(phUrl(id))+'" alt="" loading="lazy"></button>').join('')+(L.length>3?'<span class="ck-phmore">+'+(L.length-3)+'</span>':'')+'<button type="button" class="ck-phadd" data-dph="'+esc(key)+'">📷 '+(L.length?'足す':'写真を足す')+'</button></div>';}
+function dphAdd(key,pid){mutate(()=>{phKeep(pid);if(key==='_dream'){state.dream=Object.assign({},state.dream||{},{ph:((state.dream&&state.dream.ph)||[]).concat(pid),ts:Date.now()});}else{const d=(state.dreams||{})[key];if(d&&!d.del){d.ph=[].concat(d.ph||[]).concat(pid);d.ts=Date.now();}}});}
 function dphView(id,key){openSub('<div class="mvq"><img class="dph-big" src="'+esc(phUrl(id))+'" alt=""><div class="sh-btns" style="margin-top:10px"><button class="delbtn" id="dphX" style="flex:1">✕ この写真を外す</button><button class="savebtn" id="dphOk" style="flex:1.3">閉じる</button></div></div>',null);
-$('dphOk').onclick=closeSub;$('dphX').onclick=()=>{mutate(()=>{if(key==='_dream'){state.dream=Object.assign({},state.dream||{},{ph:((state.dream&&state.dream.ph)||[]).filter(x=>x!==id),ts:Date.now()});}else{const d=(state.dreams||{})[key];if(d&&!d.del){d.ph=(d.ph||[]).filter(x=>x!==id);d.ts=Date.now();}}});closeSub();toast('写真を外した（写真そのものは残る）');render();};}
+$('dphOk').onclick=closeSub;$('dphX').onclick=()=>{mutate(()=>{if(key==='_dream'){state.dream=Object.assign({},state.dream||{},{ph:((state.dream&&state.dream.ph)||[]).filter(x=>x!==id),ts:Date.now()});}else{const d=(state.dreams||{})[key];if(d&&!d.del){d.ph=[].concat(d.ph||[]).filter(x=>x!==id);d.ts=Date.now();dreamLog({what:'写真を外した',id:key,t:d.t});}}});closeSub();toast('写真を外した（写真そのものは残る）');render();};}
 function ckTopHtml(P){const t=todayStr(),GC=goalCfg(),got=incSum('in',GC.from,t),cash=cashLatest(),left=Math.max(0,GC.yen-got-cash),days=goalDays(),per=days?Math.ceil(left/days):left;let h='';const BK=[];const bk=(id,title,html,o)=>{if(html&&String(html).trim())BK.push(Object.assign({id,title,html},o||{}));};
 if(!P.misc)h+=dmAskHtml();
-const xDream='<button type="button" class="ck-hero" id="ckDream"><div class="hk">⭐ 夢</div><div class="ht">'+esc(((state.dream&&state.dream.name)||'（夢を設定する）').split('\n')[0])+'</div>'+
-'<div class="ck-cd"><div><b>'+days+'</b><span>日</span><small>'+esc(GC.until.slice(5).replace('-','/'))+'まで</small></div><div><b>'+esc(ckMan(left))+'</b><span>万</span><small>あと</small></div><div><b>'+esc(ckMan(per))+'</b><span>万</span><small>今日の目標</small></div></div></button>';
+const xDream='<button type="button" class="ck-hero" id="ckDream"><div class="hk">'+((state.dream&&state.dream.logo)?'<img class="dm-logo" src="'+esc(phUrl(state.dream.logo))+'" alt="">':'')+'⭐ 夢</div><div class="ht">'+esc(((state.dream&&state.dream.name)||'（夢を設定する）').split('\n')[0])+'</div>'+
+'<div class="ck-cd">'+(()=>{const du=state.dream&&state.dream.due;if(!du)return '<div><b>—</b><small>期限を入れる</small></div>';const ag=ageAt(du);return '<div><b>'+daysTo(du)+'</b><span>日</span><small>'+esc(du.replace(/-/g,'/'))+(ag!=null?'（'+ag+'歳）':'')+'</small></div>';})()+'<div><b>'+esc(ckMan(left))+'</b><span>万</span><small>🧱 '+esc(GC.until.slice(5).replace('-','/'))+'までの壁</small></div><div><b>'+esc(ckMan(per))+'</b><span>万</span><small>今日の目標</small></div></div></button>';
 bk('dream','⭐ 夢',xDream+dphStrip(state.dream&&state.dream.ph,'_dream')+((state.dream&&String(state.dream.memo||'').trim())?'<details class="dr-memo2"><summary>📜 上場の条件を見る</summary><div class="ck-memo">'+esc(String(state.dream.memo)).replace(/\n/g,'<br>')+'</div></details>':''),{plain:1});
 bk('wish',null,wishHtml(),{fold:1,wish:1});
 let xRoad='';  try{const D=state.dreams||{},dd=(id,y0,u0)=>{const d=D[id];return (d&&!d.del)?{y:Number(d.yen)>0?Number(d.yen):y0,u:dreamDue(d)||u0}:{y:y0,u:u0};},c=dd('g12',1250000,'2027-03-31'),m=dd('g11',1000000,'2027-09-30');
@@ -9435,7 +9482,7 @@ const rows=keys.slice(0,5).map(k=>{let d='';if(P){const x=(S[k]/n-(Number(P[k])|
 return up+down+'<div class="tm-cap">'+(u==='day'?'今日':u==='week'?'今週・1日あたり':'今月・1日あたり')+(P?'（'+(u==='day'?'前日':u==='week'?'先週':'先月')+'と比べて）':'')+'</div>'+rows;}catch(e){return '';}}
 function tmTopHtml(){return '<div class="tm-h">⏱ 時間の使い方</div><div class="tm-tabs">'+[['day','今日'],['week','今週'],['month','今月']].map(x=>'<button type="button" data-tmu="'+x[0]+'"'+(tmU===x[0]?' class="on"':'')+'>'+x[1]+'</button>').join('')+'</div><div id="tmBody" style="min-height:190px"></div>';}
 function soonHtml(){try{const L=dreamsActive().filter(d=>d.sn).sort((a,b)=>String(dreamDue(a)||'9').localeCompare(String(dreamDue(b)||'9')));if(!L.length)return '';
-return '<div class="tm-h">🎁 もうすぐ叶う夢</div><div class="sn-row">'+L.map(d=>{const n=stepStat(d).n,ph=(Array.isArray(d.ph)?d.ph.filter(Boolean):[])[0],du=dreamDue(d);return '<div class="sn" role="button" tabindex="0" data-snid="'+esc(d.id)+'">'+(ph?'<img class="sn-p" src="'+esc(phUrl(ph))+'" alt="" loading="lazy">':'<button type="button" class="sn-p" data-dph="'+esc(d.id)+'">🎁<small>📷 写真を足す</small></button>')+'<b>'+esc(d.t)+'</b><small>'+(n===null?'期限なし':n<0?'⚠ '+(-n)+'日超過':'あと <i>'+n+'日</i>')+(du?'・'+esc(du.slice(5).replace('-','/')):'')+'</small></div>';}).join('')+'</div>';}catch(e){return '';}}
+return '<div class="tm-h">🎁 もうすぐ叶う夢</div><div class="sn-row">'+L.map(d=>{const n=stepStat(d).n,ph=dmPhs(d)[0],du=dreamDue(d);return '<div class="sn" role="button" tabindex="0" data-snid="'+esc(d.id)+'">'+(ph?'<img class="sn-p" src="'+esc(phUrl(ph))+'" alt="" loading="lazy">':'<button type="button" class="sn-p" data-dph="'+esc(d.id)+'">🎁<small>📷 写真を足す</small></button>')+'<b>'+esc(d.t)+'</b><small>'+(n===null?'期限なし':n<0?'⚠ '+(-n)+'日超過':'あと <i>'+n+'日</i>')+(du?'・'+esc(du.slice(5).replace('-','/')):'')+'</small></div>';}).join('')+'</div>';}catch(e){return '';}}
 function dbandHtml(){try{const t=todayStr(),GC=goalCfg(),left=Math.max(0,GC.yen-incSum('in',GC.from,t)-cashLatest()),days=goalDays(),per=days?Math.ceil(left/days):left,got=incSum('in',t,t);
 const cell=(ic,n,y)=>'<span>'+ic+' <b>'+n+'</b>日'+(y?' <b>'+esc(y)+'</b>':'')+'</span>';
 const P=pinnedDreams().slice(0,2).map(d=>{const n=stepStat(d).n;return cell(pinIcon(d.t),n===null?'—':n,Number(d.yen)>0?manY(Number(d.yen)):'');}).join('');
@@ -10711,12 +10758,14 @@ function openGoalDue(){
 openSub('<div class="sh-time"><span>🏆 究極の目標と期限</span></div>'+
 '<div class="set-row" style="margin-top:8px"><div class="sh-label">人生の究極の目標（複数行OK）</div><div class="sh-ta-wrap"><textarea id="gdName" style="min-height:76px"></textarea></div></div>'+
 '<div class="set-row" style="margin-top:8px"><div class="sh-label">期限</div><input type="date" id="gdDue" lang="ja-JP"></div>'+
+'<div class="set-row" style="margin-top:8px"><div class="sh-label">家族の年齢（名前 年齢・1行に1人。未来年表に出る）</div><div class="sh-ta-wrap"><textarea id="gdFam" style="min-height:52px" placeholder="息子 12"></textarea></div></div>'+
 '<div class="sh-btns" style="margin-top:12px"><button class="delbtn" id="gdNo" style="flex:0 0 auto">やめる</button><button class="savebtn" id="gdOk">保　存</button></div>',null);
-$('gdName').value=(state.dream&&state.dream.name)||'';$('gdDue').value=(state.dream&&state.dream.due)||'';
+$('gdName').value=(state.dream&&state.dream.name)||'';$('gdDue').value=(state.dream&&state.dream.due)||'';$('gdFam').value=((state.dream&&state.dream.fam)||[]).map(f=>f.n+' '+(Number(f.age)+(new Date().getFullYear()-Number(f.y)))).join('\n');
 $('gdNo').onclick=closeSub;
-$('gdOk').onclick=()=>{const n=$('gdName').value.trim(),due=$('gdDue').value;
-mutate(()=>{state.dream={name:n||DEF_DREAM.name,due,ts:Date.now()};});
-closeSub();toast('✓ 保存した');};}
+$('gdOk').onclick=()=>{const n=$('gdName').value.trim(),due=$('gdDue').value,Y=new Date().getFullYear(),fam=$('gdFam').value.split('\n').map(l=>{const m=l.trim().match(/^(.+?)\s+(\d+)$/);return m?{n:m[1],age:Number(m[2]),y:Y}:null;}).filter(Boolean),o=state.dream||{},ch=[];
+if((o.name||'')!==n)ch.push({l:'究極の目標',a:o.name||'',b:n});if((o.due||'')!==due)ch.push({l:'期限',a:o.due||'',b:due});
+const sv=why=>{mutate(()=>{state.dream=Object.assign({},state.dream||{},{name:n||DEF_DREAM.name,due,fam,ts:Date.now()});if(ch.length)dreamLog({what:'究極の目標を変えた',t:n.split('\n')[0],ch,why});});closeSub();toast('✓ 保存した');try{renderPage();}catch(e){}};
+if(ch.length&&o.name)askWhy('何で変えた？',sv);else sv('');};}
 function openCashList(){
 const paint=()=>{
 const S0=$('sheet2'),keep=S0?S0.scrollTop:0,L=cashList();
@@ -12753,7 +12802,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c43.0";
+const CL_APPVER="c44.0";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
