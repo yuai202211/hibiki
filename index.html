@@ -1948,6 +1948,7 @@ body.cardvis .fab{display:none!important}
 .ka-fav{background:#fff8e1;border-radius:12px;padding:4px 6px 6px}.ka-favnone{font-size:12px;font-weight:700;color:#b9a06a;padding:2px 4px}.ka-fav .ka-sub{color:#a8790a}.ka-fav .ka-sub small{margin-left:6px;font-weight:700;color:#b9a06a}
 .nearw{flex:1 0 100%;width:100%;display:flex;flex-direction:column;gap:6px;margin:2px 0 6px;padding:6px 8px;border-left:3px solid #7a6ef3;background:rgba(122,110,243,.07);border-radius:10px;box-sizing:border-box}.nearw>*{margin:0!important}
 #pinRow{display:none!important}
+.hdr1 .nowjump{margin-left:auto;flex:none;border:0;border-radius:999px;padding:4px 9px;background:#14275a;color:#fff;font-weight:800;font-size:12px;line-height:1.3;white-space:nowrap}.hdr1 .nowjump:active{background:#22397a}#kakuTop{margin-left:6px!important}
 #nvw{touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}#nvw .nb{touch-action:none;-webkit-touch-callout:none;user-select:none;-webkit-user-select:none}#nvw .nb.nb-off{display:none!important}#nvw .nb.nb-pk{opacity:.18}#nvw.nv-ed .nb{animation:nbWg .26s infinite alternate ease-in-out}#nvw.nv-ed .nb:nth-child(even){animation-delay:-.13s}@keyframes nbWg{from{transform:rotate(-2.4deg)}to{transform:rotate(2.4deg)}}
 #nvw.nv-p2 .nb span{font-size:8.5px}#yaX{width:auto;border-radius:999px;padding:0 10px}
 #nav{position:relative}#navEdBar{position:absolute;left:0;right:0;bottom:100%;z-index:40;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:5px 10px;background:#fff8e1;border-top:1px solid #e0b75a;font-size:12px;font-weight:700;color:#7a5a00}#navEdBar button{flex:none;border:0;background:var(--green);color:#fff;font-weight:800;font-size:13px;padding:4px 16px;border-radius:999px}
@@ -2438,6 +2439,7 @@ input.pin,textarea.pin{color:#14181f!important;-webkit-text-fill-color:#14181f!i
 <button class="mlchip" id="mlChip" style="display:none"></button>
 <span class="streak" id="streak" style="display:none"></span>
 <span class="syncdot" id="syncdot" title="" role="button" aria-label="同期"></span>
+<button class="nowjump" id="nowJump" type="button">🕐 いま</button>
 </div>
 <div class="datebar">
 <button class="chev lbl" id="prevD" aria-label="前の日">‹<small class="bn">前の日</small></button>
@@ -4899,7 +4901,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c46.0）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c46.1）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -11799,6 +11801,7 @@ if(typeof MutationObserver!=='undefined')new MutationObserver(kt).observe(pn,{ch
 const navGo=fn=>{gateClear();if($('page').classList.contains('open'))closePage();fn();};
 $('navHome').onclick=()=>{closePage();ui.date=todayStr();ui.tab='di';topView='top';render();try{$('scr').scrollTop=0;}catch(e){}};
 $('navDiary').onclick=()=>{closePage();ui.date=todayStr();ui.tab='di';topView='diary';render();scrollToNow();};
+$('nowJump').onclick=()=>{closePage();ui.date=todayStr();ui.tab='di';topView='diary';render();ui._jump='last';scrollToNow();try{haptic(15);}catch(e){}};
 $('navMisc').onclick=()=>{closePage();ui.date=todayStr();ui.tab='di';topView='misc';render();try{$('scr').scrollTop=0;}catch(e){}};
 const NAV_IC={navHome:'🗂️',navYume:'⭐',navDiary:'📔',navEarn:'💴',navTodo:'📅',navPay:'💸',navMemo:'💡'},NAV_BD={navTodo:'navTodoB',navPay:'navPayB'};
 const HOKA=[['navMisc','📂','各種（記録と設定）',''],['navLearn','🎓','学ぶ',''],['navAna','📊','分析',''],['navRtn','🔁','ルーティン','navRtnB'],['navAim','🎯','今日の1個','navAimB'],['navRule','📏','ルール',''],['navSleep','🌙','睡眠',''],['navPlan','🗓','段取り','']];
@@ -12927,7 +12930,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c46.0";
+const CL_APPVER="c46.1";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
