@@ -1948,6 +1948,14 @@ body.cardvis .fab{display:none!important}
 .ka-fav{background:#fff8e1;border-radius:12px;padding:4px 6px 6px}.ka-favnone{font-size:12px;font-weight:700;color:#b9a06a;padding:2px 4px}.ka-fav .ka-sub{color:#a8790a}.ka-fav .ka-sub small{margin-left:6px;font-weight:700;color:#b9a06a}
 .nearw{flex:1 0 100%;width:100%;display:flex;flex-direction:column;gap:6px;margin:2px 0 6px;padding:6px 8px;border-left:3px solid #7a6ef3;background:rgba(122,110,243,.07);border-radius:10px;box-sizing:border-box}.nearw>*{margin:0!important}
 #pinRow{display:none!important}
+#nvw{touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}#nvw .nb{touch-action:none;-webkit-touch-callout:none;user-select:none;-webkit-user-select:none}#nvw .nb.nb-off{display:none!important}#nvw .nb.nb-pk{opacity:.18}#nvw.nv-ed .nb{animation:nbWg .26s infinite alternate ease-in-out}#nvw.nv-ed .nb:nth-child(even){animation-delay:-.13s}@keyframes nbWg{from{transform:rotate(-2.4deg)}to{transform:rotate(2.4deg)}}
+#nvw.nv-p2 .nb span{font-size:8.5px}#yaX{width:auto;border-radius:999px;padding:0 10px}
+#nav{position:relative}#navEdBar{position:absolute;left:0;right:0;bottom:100%;z-index:40;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:5px 10px;background:#fff8e1;border-top:1px solid #e0b75a;font-size:12px;font-weight:700;color:#7a5a00}#navEdBar button{flex:none;border:0;background:var(--green);color:#fff;font-weight:800;font-size:13px;padding:4px 16px;border-radius:999px}
+.nb-gh{position:fixed;z-index:9500;left:0;top:0;width:58px;height:58px;margin:-29px 0 0 -29px;border-radius:14px;background:#fff;box-shadow:0 8px 20px rgba(20,39,90,.3);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:9.5px;font-weight:800;color:#14275a;pointer-events:none;white-space:nowrap}.nb-gh svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.dm-calc:empty{display:none}
+.ym-gap{display:inline-block;margin-left:4px;font-size:10.5px;font-weight:800;color:#3a4254;background:#eceff5;border-radius:999px;padding:1px 7px;vertical-align:middle}.ym-gap.ok{color:#0a7a45;background:#dff6e9}.ym-gap.ng{color:#b42318;background:#fde7e4}.ym-gap.no{color:#7a5a00;background:#fff3cc}.ym-cdt .ym-gap{margin:3px 0 0}
+.ym-sv1{display:block;font-size:11px;font-weight:700;color:#0a7a45;margin-top:2px}.ym-sv1 b{font-weight:800}.ym-sv{background:#e7f9f0;border-radius:12px;padding:10px 12px}.ym-svh{font-size:12px;font-weight:700;color:#0a7a45}.ym-svb{font-size:22px;font-weight:800;color:#0a7a45;line-height:1.3}.ym-svl{font-size:12px;color:#3a4254;margin-top:2px}.ym-svg{font-size:12px;color:#14275a;margin-top:5px;line-height:1.5}
+@media (prefers-reduced-motion:reduce){#nvw.nv-ed .nb{animation:none}}
 .ym-tabs{display:grid;grid-template-columns:repeat(5,1fr);gap:3px;background:#14275a;padding:5px 6px;margin:0;flex:none}.ym-tabs button{border:0;background:none;color:#c8d2ee;font-size:10px;font-weight:800;padding:5px 0 4px;border-radius:9px;display:flex;flex-direction:column;align-items:center;gap:1px;white-space:nowrap}.ym-tabs button i{font-style:normal;font-size:16px}.ym-tabs button.on{background:#ffd166;color:#14275a}
 .ym-tabs2{display:flex;gap:4px;padding:5px 8px 3px;flex:none;justify-content:center}.ym-tabs2 button{border:1px solid #dfe3ec;background:#fff;color:#4a5266;border-radius:999px;font-size:11px;font-weight:700;padding:3px 9px}.ym-tabs2 button.on{background:#14275a;color:#fff;border-color:#14275a}
 .ym-fab{position:sticky;bottom:8px;display:block;margin:12px auto 6px;border:0;background:#14275a;color:#fff;font-weight:800;font-size:15px;padding:11px 26px;border-radius:999px;box-shadow:0 3px 10px rgba(20,39,90,.3);z-index:2}
@@ -2883,6 +2891,7 @@ const newer=((b.updatedAt||0)>=(a.updatedAt||0))?b:a;
 const older=(newer===b)?a:b;
 for(const k in older)if(!known[k]&&!doneK.has(k)&&older[k]!==undefined)out[k]=older[k];
 for(const k in newer)if(!known[k]&&!doneK.has(k)&&newer[k]!==undefined)out[k]=newer[k];
+if((a&&a._cfg)||(b&&b._cfg))out._cfg=Object.assign({},(older&&older._cfg)||{},(newer&&newer._cfg)||{});
 plnMvDedup(out);
 return out;
 function plnMvDedup(st){try{const P=st.plans||{},xf=['ad','tel','who','mo'],live=(d,k)=>{const x=(P[d]||{})[k];return x&&!x.del?x:null;};
@@ -3107,9 +3116,9 @@ img.onerror=()=>{URL.revokeObjectURL(url);rej(new Error('img'));};
 img.src=url;
 });
 }
-async function phAddFiles(files){
+async function phAddFiles(files,max){
 const ids=[];
-for(const f of Array.from(files).slice(0,6)){
+for(const f of Array.from(files).slice(0,max||6)){
 try{
 const dataURL=await phCompress(f);
 const id=String(Date.now())+Math.floor(Math.random()*1e5);
@@ -4890,7 +4899,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c45.1）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c46.0）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -6305,20 +6314,28 @@ function ymPhGet(key){const a=key.split(':');if(a[0]==='d')return dmPhs((state.d
 function ymPhSet(key,L){const a=key.split(':'),now=Date.now();if(a[0]==='d'){const d=(state.dreams||{})[a[1]];if(d&&!d.del)state.dreams[a[1]]=Object.assign({},d,{ph:L.length?L:null,ts:now});}else if(a[0]==='me'){state.dream=Object.assign({},state.dream||{},{mePh:L,ts:now});}else if(a[0]==='p'){const P=ymPeople().slice(),i=+a[1];if(P[i]){P[i]=Object.assign({},P[i],{ph:L});state.dream=Object.assign({},state.dream||{},{people:P,ts:now});}}else if(a[0]==='t'){const q=(state.dwmy||{})[a[1]];if(q)state.dwmy[a[1]]=Object.assign({},q,{ph:L,ts:now});}}
 function ymStrip(key){const L=ymPhGet(key);return '<div class="ym-st">'+L.map(id=>'<img class="ym-ph" data-yv="'+esc(id)+'" data-yk="'+esc(key)+'" src="'+esc(phUrl(id))+'" alt="" loading="lazy">').join('')+'<button type="button" class="ym-add" data-ya="'+esc(key)+'">📷<span>足す</span></button></div>';}
 function ymPhNm(key){const a=key.split(':');if(a[0]==='d')return ((state.dreams||{})[a[1]]||{}).t||'';if(a[0]==='me')return (state.dream&&state.dream.meName)||'自分';if(a[0]==='p')return (ymPeople()[+a[1]]||{}).n||'';if(a[0]==='t')return ((state.dwmy||{})[a[1]]||{}).t||'';return '';}
-function ymPhAdd(key){const pi=$('phInput');pi.value='';try{pi.multiple=true;}catch(e){}pi.onchange=async ev=>{const fs=ev.target.files;if(!fs||!fs.length)return;const ids=await phAddFiles(fs);if(ids.length){mutate(()=>{ids.forEach(i=>phKeep(i));ymPhSet(key,ymPhGet(key).concat(ids));dreamLog({what:'写真を足した',id:key.split(':')[0]==='d'?key.split(':')[1]:'',t:ymPhNm(key)+'（'+ids.length+'枚）'});});if(pageMode==='dream'&&$('page').classList.contains('open'))ymRe();toast('✓ 写真を足した');}};pi.click();}
+function ymPhAdd(key){const pi=$('phInput');pi.value='';try{pi.multiple=true;}catch(e){}pi.onchange=async ev=>{const fs=ev.target.files;if(!fs||!fs.length)return;if(fs.length>6)toast('📷 '+fs.length+'枚を読み込み中…');const ids=await phAddFiles(fs,999);if(ids.length){mutate(()=>{ids.forEach(i=>phKeep(i));ymPhSet(key,ymPhGet(key).concat(ids));dreamLog({what:'写真を足した',id:key.split(':')[0]==='d'?key.split(':')[1]:'',t:ymPhNm(key)+'（'+ids.length+'枚）'});});if(pageMode==='dream'&&$('page').classList.contains('open'))ymRe();toast('✓ 写真を足した');}};pi.click();}
 function ymPhView(id,key){openSub('<div class="mvq"><img class="dph-big" src="'+esc(phUrl(id))+'" alt=""><div class="sh-btns" style="margin-top:10px"><button class="delbtn" id="ymPX" style="flex:1">✕ この写真を外す</button><button class="savebtn" id="ymPO" style="flex:1.3">閉じる</button></div></div>',null);$('ymPO').onclick=closeSub;$('ymPX').onclick=()=>{askWhy('この写真を外す。何で？',why=>{mutate(()=>{ymPhSet(key,ymPhGet(key).filter(x=>x!==id));dreamLog({what:'写真を外した',id:key.split(':')[0]==='d'?key.split(':')[1]:'',t:ymPhNm(key),why});});ymRe();toast('写真を外した（写真そのものは残る）');},()=>{});};}
 function ymClockHtml(){const L=state.life,P=ymPeople(),who=Math.min(dmWho,P.length),q=who?P[who-1]:null,bdS=q?q.bd:L.bd,goal=Number(q?q.goal:L.goal)||120,bd=parseD(bdS),end=new Date(bd.getFullYear()+goal,bd.getMonth(),bd.getDate()),now=new Date(),left=Math.max(0,Math.floor((end-now)/86400000)),used=Math.min(1,Math.max(0,(now-bd)/(end-bd))),R0=112,C=2*Math.PI*R0,key=q?'p:'+(who-1):'me',ph=ymPhGet(key)[0],nm=q?q.n:((state.dream&&state.dream.meName)||'自分'),age=Math.floor((now-bd)/31557600000);
 return '<div class="ym-clock"><div class="ym-cd">'+esc(ymDs(todayStr()))+' 現在</div><div class="ym-cap">'+goal+'歳まであと</div><div class="ym-big">'+left.toLocaleString()+'日</div><div class="ym-ring"><svg viewBox="0 0 240 240" role="img" aria-label="残りの人生"><circle cx="120" cy="120" r="'+R0+'" fill="none" stroke="#14275a" stroke-width="7"/><circle cx="120" cy="120" r="'+R0+'" fill="none" stroke="#cfd4df" stroke-width="7" stroke-dasharray="'+(C*used).toFixed(1)+' '+C.toFixed(1)+'" transform="rotate(-90 120 120)"/></svg><div class="ym-in"><button type="button" class="ym-nm" id="ymNm">'+esc(nm)+'</button>'+(ph?'<img class="ym-face" data-yv="'+esc(ph)+'" data-yk="'+esc(key)+'" src="'+esc(phUrl(ph))+'" alt="">':'<button type="button" class="ym-face e" data-ya="'+esc(key)+'">📷<br>写真</button>')+'<small>いま '+age+'歳</small></div></div><div class="ym-cb"><button type="button" class="chip" id="ymPAdd">👤 人物を足す</button>'+(P.length?'<button type="button" class="chip" id="ymPSw">切り替える '+(who+1)+'/'+(P.length+1)+'</button>':'')+(q?'':'<button class="chip" id="lcEdit">設定</button>')+'</div></div>'+ymStrip(key);}
 function ymPersonSheet(i){const P=ymPeople(),isMe=i===-1,q=i>=0?P[i]:null,nm0=isMe?((state.dream&&state.dream.meName)||''):(q?q.n:'');openSub('<div class="mvq"><div class="sh-time" style="justify-content:center"><span>👤 '+(isMe?'自分の名前':q?'人物をなおす':'人物を足す')+'</span></div><div class="sh-label">名前</div><input type="text" class="pin" id="ymPN" value="'+esc(nm0)+'" autocomplete="off">'+(isMe?'':'<div class="sh-label" style="margin-top:8px">生年月日</div><input type="date" class="pin" id="ymPB" lang="ja-JP" value="'+esc(q?q.bd:'')+'"><div class="sh-label" style="margin-top:8px">目標の年齢</div><input type="number" class="pin" id="ymPG" value="'+esc(q?q.goal:120)+'">')+'<div class="sh-btns" style="margin-top:10px">'+(q?'<button class="delbtn" id="ymPD" style="flex:1">消す</button>':'<button class="delbtn" id="ymPC" style="flex:1">やめる</button>')+'<button class="savebtn" id="ymPS" style="flex:1.3">記録</button></div></div>',null);const c=$('ymPC');if(c)c.onclick=closeSub;
 $('ymPS').onclick=()=>{const n=$('ymPN').value.trim();if(!n){toast('名前を入れてくれ');return;}if(isMe){const a=(state.dream&&state.dream.meName)||'';closeSub();if(a===n)return;const go=why=>{mutate(()=>{state.dream=Object.assign({},state.dream||{},{meName:n,ts:Date.now()});dreamLog({what:'自分の名前を変えた',t:n,ch:[{l:'名前',a,b:n}],why});});ymRe();};if(a)askWhy('何で変えた？（名前）',go,()=>{});else go('');return;}const b=$('ymPB').value,g=Number($('ymPG').value)||120;if(!b){toast('生年月日を入れてくれ');return;}closeSub();const ch=[];if(q){if(q.n!==n)ch.push({l:'名前',a:q.n,b:n});if(q.bd!==b)ch.push({l:'生年月日',a:q.bd,b});if(Number(q.goal)!==g)ch.push({l:'目標の年齢',a:String(q.goal),b:String(g)});if(!ch.length)return;}const go=why=>{mutate(()=>{const L=ymPeople().slice(),o={n,bd:b,goal:g,ph:q?q.ph:[]};if(q)L[i]=o;else L.push(o);state.dream=Object.assign({},state.dream||{},{people:L,ts:Date.now()});dreamLog(q?{what:'人物を変えた',t:n,ch,why}:{what:'人物を足した',t:n});});if(!q)dmWho=ymPeople().length;ymRe();};if(q)askWhy('何で変えた？（'+ch.map(c=>c.l).join('・')+'）',go,()=>{});else go('');};
 const d=$('ymPD');if(d)d.onclick=()=>{askWhy('「'+q.n+'」を消す。何で？',why=>{mutate(()=>{const L=ymPeople().slice();L.splice(i,1);state.dream=Object.assign({},state.dream||{},{people:L,ts:Date.now()});dreamLog({what:'人物を消した',t:q.n,pers:q,why});});dmWho=0;ymRe();},()=>{});};}
+function ymGap(d){if(!d||!d.ach)return '';if(!d.achD)return '<span class="ym-gap no">実現日を入れる</span>';const du=dreamDue(d);if(!du)return '';const n=Math.round((parseD(du)-parseD(d.achD))/86400000);return n>0?'<span class="ym-gap ok">'+n+'日前倒し！</span>':n<0?'<span class="ym-gap ng">'+(-n)+'日遅れ</span>':'<span class="ym-gap">予定どおり</span>';}
+function ymAchAsk(done){const td=todayStr(),L=[['今日',td],['昨日',addDays(td,-1)],['一昨日',addDays(td,-2)]];openSub('<div class="pdbox"><div class="pd-h"><span>🎉 いつ実現した？</span><button type="button" id="yaX">✕ 閉じる</button></div><div class="pd-chips">'+L.map(x=>'<button type="button" class="chip" data-yd="'+x[1]+'">'+x[0]+'</button>').join('')+'</div><div class="pd-o"><input type="date" id="yaD" lang="ja-JP" max="'+td+'"><button type="button" id="yaGo">この日で登録</button></div></div>',null);$('yaX').onclick=closeSub;const go=v=>{closeSub();done(v);};$('sheet2').querySelectorAll('[data-yd]').forEach(b=>b.onclick=()=>go(b.dataset.yd));$('yaGo').onclick=()=>{const v=$('yaD').value;if(!/^\d{4}-\d{2}-\d{2}$/.test(v)){toast('日を選んでくれ');return;}go(v);};}
+function ymSaveCalc(d){const S=d.sv,T=todayStr(),dn=(a,b)=>Math.max(0,Math.round((parseD(b)-parseD(a))/86400000)+1),bn=Number(S.bn)||1,bm=Number(S.bm)||0,am=Number(S.am)||0;
+const rec=[];for(const dd in state.entries){if(dd<S.act||dd>T)continue;const eo=state.entries[dd];for(const k in eo){const x=eo[k];if(!x||x.del)continue;const inA=a=>a&&[a.k].concat(a.kx||[]).indexOf(S.k)>=0,A=Array.isArray(x.acts)?x.acts:[];if(x.k===S.k&&!A.some(inA))rec.push({d:dd,m:(x.s&&x.e&&!x.noT)?durMin(x.s,x.e,x.ed):am});A.forEach(a=>{if(inA(a))rec.push({d:dd,m:Number(a.m)>0?Number(a.m):(a.s&&a.e)?durMin(a.s,a.e,0):am});});}}
+const calc=(A,B)=>{let bc=0,bt=0,ac=0,at=0;const add=(s,e,fn)=>{const a=s>A?s:A,b=e<B?e:B;if(a>b)return;const n=dn(a,b);bc+=n/bn;bt+=n/bn*bm;fn(a,b,n);};const E=(S.est||[]).slice().sort((p,q)=>p.s<q.s?-1:1);let pos=S.from;E.forEach(x=>{if(pos<x.s)add(pos,addDays(x.s,-1),(a,b,n)=>{ac+=n/bn;at+=n/bn*bm;});add(x.s,x.e,(a,b,n)=>{const c=n/30.4*Number(x.c);ac+=c;at+=c*Number(x.m);});pos=addDays(x.e,1);});if(pos<S.act)add(pos,addDays(S.act,-1),(a,b,n)=>{ac+=n/bn;at+=n/bn*bm;});add(S.act,T,()=>{});rec.forEach(r=>{if(r.d>=A&&r.d<=B){ac++;at+=r.m;}});return {cnt:Math.max(0,Math.round(bc-ac)),min:Math.max(0,Math.round(bt-at))};};
+const L=state.life;let life=0;if(L&&L.bd){const b=parseD(L.bd),g=Number(L.goal)||120;life=Math.max(0,Math.floor((new Date(b.getFullYear()+g,b.getMonth(),b.getDate())-new Date())/86400000));}return {all:calc(S.from,T),mon:calc(T.slice(0,8)+'01',T),n:rec.length,yr:{cnt:Math.round(365/bn),min:Math.round(365/bn*bm)},life:Math.round(life/bn*bm)};}
+function ymHm(m){m=Math.round(m);const h=Math.floor(m/60),r=m%60;return (h?h.toLocaleString()+'時間':'')+(r||!h?r+'分':'');}
+function ymSaveHtml(d,full){try{const c=ymSaveCalc(d),k=kindOf(d.sv.k),ic=(k&&k.ic)||'⏱';if(!full)return '<span class="ym-sv1">'+esc(ic)+' 節約 <b>'+c.all.cnt+'回・'+esc(ymHm(c.all.min))+'</b></span>';return '<div class="ym-sv"><div class="ym-svh">'+esc(ic)+' これまでの節約</div><div class="ym-svb">'+c.all.cnt+'回・'+esc(ymHm(c.all.min))+'</div><div class="ym-svl">今月 '+c.mon.cnt+'回・'+esc(ymHm(c.mon.min))+'（記録 '+c.n+'回）</div><div class="ym-svg">ゴール：全くしなくなったら 1年で '+c.yr.cnt+'回・'+esc(ymHm(c.yr.min))+'／残りの人生で 約'+Math.round(c.life/60).toLocaleString()+'時間（約'+Math.round(c.life/1440)+'日）</div></div>';}catch(e){return '';}}
 function ymDueOf(d){return dreamDue(d)||'';}
 function ymListHtml(){let L=dreamsActive().concat(dmShowWon?dreamsWon():[]);const k=dmSortK,s=dmSortA?1:-1;L=L.slice().sort((a,b)=>s*(k==='cat'?(Number(a.cat)-Number(b.cat)||ymDueOf(a).localeCompare(ymDueOf(b))):k==='due'?ymDueOf(a).localeCompare(ymDueOf(b)):k==='t'?String(a.t).localeCompare(String(b.t),'ja'):String(a.pr||'Z').localeCompare(String(b.pr||'Z'))));
-return '<div class="ym-bar">'+iosSw('ymWon',dmShowWon,'実現済みも出す','','sm')+'<span>'+L.length+'件</span></div><div class="ym-th">'+[['cat','分類'],['due','実現日'],['t','やりたいこと/夢'],['pr','優先']].map(x=>'<button type="button" data-ysort="'+x[0]+'"'+(k===x[0]?' class="on"':'')+'>'+x[1]+(k===x[0]?(dmSortA?' ▲':' ▼'):'')+'</button>').join('')+'</div>'+(L.length?L.map(d=>{const c=catOf(d.cat);return '<div class="ym-rw" style="--c:'+c.c+'"><button type="button" class="ym-row" data-de="'+esc(d.id)+'"><span class="c">'+(CAT_IC[c.id]||'')+'</span><span class="d">'+esc(ymDs(ymDueOf(d))||'期限なし')+'</span><span class="t">'+esc(d.t)+(d.ach?'<span class="ym-won">★ 実現</span>':'')+'<span class="yc-sn'+(d.sn?' on':'')+'" role="button" data-snt="'+esc(d.id)+'">🎁 '+(d.sn?'トップに出す ✓':'トップに出す')+'</span></span><span class="p">'+esc(d.pr||'')+'</span></button>'+ymStrip('d:'+d.id)+'</div>';}).join(''):'<div class="empty-hint">まだ夢がない。＋で書く。<br>無理と思う夢もOK、全部書く（熊谷式）</div>')+'<button type="button" class="ym-fab" data-dc="0">＋ やりたいこと/夢</button>';}
+return '<div class="ym-bar">'+iosSw('ymWon',dmShowWon,'実現済みも出す','','sm')+'<span>'+L.length+'件</span></div><div class="ym-th">'+[['cat','分類'],['due','実現日'],['t','やりたいこと/夢'],['pr','優先']].map(x=>'<button type="button" data-ysort="'+x[0]+'"'+(k===x[0]?' class="on"':'')+'>'+x[1]+(k===x[0]?(dmSortA?' ▲':' ▼'):'')+'</button>').join('')+'</div>'+(L.length?L.map(d=>{const c=catOf(d.cat);return '<div class="ym-rw" style="--c:'+c.c+'"><button type="button" class="ym-row" data-de="'+esc(d.id)+'"><span class="c">'+(CAT_IC[c.id]||'')+'</span><span class="d">'+esc(ymDs(ymDueOf(d))||'期限なし')+'</span><span class="t">'+esc(d.t)+(d.ach?'<span class="ym-won">★ 実現</span>'+ymGap(d):'')+(d.sv?ymSaveHtml(d,0):'')+'<span class="yc-sn'+(d.sn?' on':'')+'" role="button" data-snt="'+esc(d.id)+'">🎁 '+(d.sn?'トップに出す ✓':'トップに出す')+'</span></span><span class="p">'+esc(d.pr||'')+'</span></button>'+ymStrip('d:'+d.id)+'</div>';}).join(''):'<div class="empty-hint">まだ夢がない。＋で書く。<br>無理と思う夢もOK、全部書く（熊谷式）</div>')+'<button type="button" class="ym-fab" data-dc="0">＋ やりたいこと/夢</button>';}
 function ymPyrHtml(){const A=ymAll(),n=id=>A.filter(d=>Number(d.cat)===id).length,un=A.filter(d=>!CATS.some(c=>c.id===Number(d.cat))).length,b=id=>{const c=catOf(id);return '<button type="button" data-yc="'+id+'" style="background:'+c.c+'"><b>'+n(id)+'</b><i>'+CAT_IC[id]+'</i><span>'+esc(c.n)+'</span></button>';};
 return '<div class="ym-pw"><div class="ym-un"><small>未分類</small><b>'+un+'</b></div><div class="ym-lv" style="top:12%">結果レベル</div><div class="ym-lv" style="top:46%">実現レベル</div><div class="ym-lv" style="top:79%">基礎レベル</div><div class="ym-py"><div class="r1">'+b(6)+'</div><div class="r2">'+b(4)+b(5)+'</div><div class="r3">'+b(3)+b(1)+b(2)+'</div></div></div><button type="button" class="ym-fab" data-dc="0">＋ やりたいこと/夢</button>';}
 function ymCatHtml(cid){const c=catOf(cid),L=dSort(ymAll().filter(d=>Number(d.cat)===cid)),g=((state.dream&&state.dream.catGoal)||{})[cid]||'';
-return '<div class="ym-cp" style="--c:'+c.c+'"><div class="ym-cgl">究極の目標</div><input type="text" class="pin ym-cg" id="ymCG" placeholder="未登録" aria-label="この分野の究極の目標" value="'+esc(g)+'"><div class="ym-cds">'+L.map(d=>{const du=ymDueOf(d),n=du?Math.max(0,daysTo(du)):0,r=25,LL=2*Math.PI*r,fr=Math.min(1,n/365),ph=dmPhs(d)[0],w=['日','月','火','水','木','金','土'][du?parseD(du).getDay():0];return '<div class="ym-cd2"><div class="ym-cov">'+(ph?'<img data-yv="'+esc(ph)+'" data-yk="d:'+esc(d.id)+'" src="'+esc(phUrl(ph))+'" alt="" loading="lazy">':'<button type="button" class="ym-cove" data-ya="d:'+esc(d.id)+'">📷 写真を足す</button>')+'<button type="button" class="ym-xb" data-yx="'+esc(d.id)+'" aria-label="消す">✕<small>消す</small></button><span class="ym-rib">優先度<b>'+esc(d.pr||'－')+'</b></span>'+(d.ach?'<span class="ym-stp">★ 実現</span>':'')+'</div><button type="button" class="ym-cdt" data-de="'+esc(d.id)+'"><b>'+esc(d.t)+'<i>›</i></b><small>達成予定日：'+(du?esc(ymDs(du))+'（'+w+'）':'未定')+'</small></button><div class="ym-cdb"><div class="ym-rg"><svg width="62" height="62" viewBox="0 0 62 62" role="img" aria-label="残り日数"><circle cx="31" cy="31" r="25" fill="none" stroke="#e6e9f0" stroke-width="3"/><circle cx="31" cy="31" r="25" fill="none" stroke="'+c.c+'" stroke-width="3" stroke-dasharray="'+(LL*fr).toFixed(1)+' '+LL.toFixed(1)+'" transform="rotate(-90 31 31)"/></svg><span>あと<b>'+n+'日</b></span></div><div class="ym-pr"><small>夢の進捗率</small><b>'+(d.prog|0)+'%</b><div class="ym-pg"><i style="width:'+(d.prog|0)+'%"></i></div></div></div>'+ymStrip('d:'+d.id)+'</div>';}).join('')+'</div>'+(L.length?'':'<div class="empty-hint">この分野の夢はまだない</div>')+'<button type="button" class="ym-fab" data-dc="'+cid+'">＋ やりたいこと/夢</button></div>';}
+return '<div class="ym-cp" style="--c:'+c.c+'"><div class="ym-cgl">究極の目標</div><input type="text" class="pin ym-cg" id="ymCG" placeholder="未登録" aria-label="この分野の究極の目標" value="'+esc(g)+'"><div class="ym-cds">'+L.map(d=>{const du=ymDueOf(d),n=du?Math.max(0,daysTo(du)):0,r=25,LL=2*Math.PI*r,fr=Math.min(1,n/365),ph=dmPhs(d)[0],w=['日','月','火','水','木','金','土'][du?parseD(du).getDay():0];return '<div class="ym-cd2"><div class="ym-cov">'+(ph?'<img data-yv="'+esc(ph)+'" data-yk="d:'+esc(d.id)+'" src="'+esc(phUrl(ph))+'" alt="" loading="lazy">':'<button type="button" class="ym-cove" data-ya="d:'+esc(d.id)+'">📷 写真を足す</button>')+'<button type="button" class="ym-xb" data-yx="'+esc(d.id)+'" aria-label="消す">✕<small>消す</small></button><span class="ym-rib">優先度<b>'+esc(d.pr||'－')+'</b></span>'+(d.ach?'<span class="ym-stp">★ 実現</span>':'')+'</div><button type="button" class="ym-cdt" data-de="'+esc(d.id)+'"><b>'+esc(d.t)+'<i>›</i></b><small>達成予定日：'+(du?esc(ymDs(du))+'（'+w+'）':'未定')+'</small>'+(d.ach?ymGap(d):'')+(d.sv?ymSaveHtml(d,0):'')+'</button><div class="ym-cdb"><div class="ym-rg"><svg width="62" height="62" viewBox="0 0 62 62" role="img" aria-label="残り日数"><circle cx="31" cy="31" r="25" fill="none" stroke="#e6e9f0" stroke-width="3"/><circle cx="31" cy="31" r="25" fill="none" stroke="'+c.c+'" stroke-width="3" stroke-dasharray="'+(LL*fr).toFixed(1)+' '+LL.toFixed(1)+'" transform="rotate(-90 31 31)"/></svg><span>あと<b>'+n+'日</b></span></div><div class="ym-pr"><small>夢の進捗率</small><b>'+(d.prog|0)+'%</b><div class="ym-pg"><i style="width:'+(d.prog|0)+'%"></i></div></div></div>'+ymStrip('d:'+d.id)+'</div>';}).join('')+'</div>'+(L.length?'':'<div class="empty-hint">この分野の夢はまだない</div>')+'<button type="button" class="ym-fab" data-dc="'+cid+'">＋ やりたいこと/夢</button></div>';}
 function ymPlanOf(d,y){const out=[];String(d.plan||'').split('\n').forEach(l=>{const m=l.match(/^\s*(\d{4})[：:\s]+(.+)/);if(m&&Number(m[1])===y)out.push(m[2]);});return out;}
 function ymYearItem(d,y){const c=catOf(d.cat),S=stepsOf(d.id),P=ymPlanOf(d,y);return '<div class="ym-yi" style="--c:'+c.c+'"><button type="button" class="ym-yh" data-de="'+esc(d.id)+'"><span>'+esc(d.t)+'</span><em>✎ 開く</em></button>'+(S.length?S.map(s=>'<div class="ym-gl"><button type="button" class="ym-ck'+(s.d?' on':'')+'" data-ysk="'+esc(s.id)+'" aria-label="達成">'+(s.d?'✓':'')+'</button><span>'+esc(s.t)+(s.due?'<small> '+esc(ymDs(s.due))+'</small>':'')+'</span></div>').join(''):'<div class="ym-gl none"><span class="ym-ck"></span><span>目標未設定</span></div>')+P.map(a=>'<div class="ym-gl">▶ <span>'+esc(a)+'</span></div>').join('')+ymStrip('d:'+d.id)+'</div>';}
 function ymYearHtml(){const y=ytYear,bdS=state.life&&state.life.bd,by=bdS?parseD(bdS).getFullYear():0,nm=(state.dream&&state.dream.meName)||'',A=ymAll();const seg='<div class="ym-seg">'+[['cat','分野別'],['year','当年の目標'],['all','全部の年']].map(x=>'<button type="button" data-yseg="'+x[0]+'"'+(dmYrSeg===x[0]?' class="on"':'')+'>'+x[1]+'</button>').join('')+'</div>';if(dmYrSeg==='all')return seg+dmYearHtml();
@@ -6381,7 +6398,7 @@ const arr=dreamsWon();
 bodyHtml=arr.length?arr.map(d=>{
 const c=catOf(d.cat);
 return '<button class="drow" data-de="'+esc(d.id)+'"><span class="cdot" style="background:'+c.c+'"></span>'+
-'<span class="dt"><span class="dtt">🎉 '+esc(d.t)+'</span><span class="dmeta"><span class="badge won">'+(d.ach>1000?fmt(new Date(d.ach))+' ':'')+'実現</span></span></span></button>';
+'<span class="dt"><span class="dtt">🎉 '+esc(d.t)+'</span><span class="dmeta"><span class="badge won">'+(d.achD?esc(ymDs(d.achD))+' ':(d.ach>1000?fmt(new Date(d.ach))+' ':''))+'実現</span>'+ymGap(d)+'</span></span></button>';
 }).join(''):'<div class="empty-hint">かなった夢はここに殿堂入りする。<br>消さない——見返すたびに自信になる</div>';
  }
 p.innerHTML='<div class="page-head"><button class="bk" id="pgBk">‹ 戻る</button><span class="tt dm-ttl">'+((state.dream&&state.dream.logo)?'<img class="dm-logo" src="'+esc(phUrl(state.dream.logo))+'" alt="">':'')+esc(ymTitle())+'</span></div>'+
@@ -6433,6 +6450,8 @@ CATS.map(c=>'<button data-c="'+c.id+'">'+esc(c.n)+'</button>').join('')+'</div><
 '<div style="flex:1"><div class="sh-label">実現予定日</div><input type="date" id="dDue" lang="ja-JP"><div class="dm-calc" id="dLeft"></div></div>'+
 '<div style="width:132px;flex-shrink:0"><div class="sh-label">優先度</div><div class="prbtns" id="dPrs">'+
 ['A','B','C'].map(x=>'<button data-pr="'+x+'">'+x+'</button>').join('')+'</div></div></div>'+
+((ex&&ex.ach)?'<div><div class="sh-label">🎉 実現日</div><input type="date" id="dAch" lang="ja-JP" max="'+todayStr()+'" value="'+esc(ex.achD||'')+'"><div class="dm-calc" id="dGap"></div></div>':(ex?'<div class="sh-note">🎉 実現日：「かなった！」を押すと選べます（後追いでも入れられます）</div>':''))+
+((ex&&ex.sv)?'<div>'+ymSaveHtml(ex,1)+'</div>':'')+
 '<div style="display:flex;gap:8px"><div style="flex:1"><div class="sh-label">💰 必要な金額（万円）</div><input id="dYen" inputmode="decimal" placeholder="125"></div><div style="flex:1"><div class="sh-label">🏦 今ある金額（万円）</div><input id="dHave" inputmode="decimal" placeholder="0"></div></div><div class="dm-calc" id="dDiff"></div>'+
 '<div style="display:flex;gap:8px"><div style="flex:1"><div class="sh-label">🎯 目標の数字（金額以外）</div><input id="dNG" placeholder="70"></div><div style="flex:1"><div class="sh-label">📏 単位</div><input id="dNU" placeholder="kg・億円・人"></div></div>'+
 '<div><div class="sh-label">📍 今の数字</div><input id="dNN" placeholder="78"></div>'+
@@ -6443,7 +6462,7 @@ CATS.map(c=>'<button data-c="'+c.id+'">'+esc(c.n)+'</button>').join('')+'</div><
 '<div><div class="sh-label">メモ</div><div class="sh-ta-wrap"><textarea id="dMemo" style="min-height:52px" placeholder="具体的に。数字・色・場所まで"></textarea></div></div>'+
 (ex&&ex.created?'<div class="sh-note">夢の登録日 '+esc(String(ex.created).replace(/-/g,'/'))+'</div>':'')+
 '<div class="sh-btns">'+
-(ex?'<button class="delbtn" id="dDel">削除</button><button class="wonbtn" id="dWon">🎉 かなった！</button>':'')+
+(ex?'<button class="delbtn" id="dDel">削除</button>'+(ex.ach?'':'<button class="wonbtn" id="dWon">🎉 かなった！</button>'):'')+
 '<button class="savebtn" id="dSave">記　録</button></div>';
 $('dTt').value=ex?ex.t:'';
 $('dDue').value=(ex&&(ex.due||(ex.yr?ex.yr+'-12-31':'')))||'';
@@ -6454,6 +6473,7 @@ $('dMemo').value=(ex&&ex.memo)||'';
 const df=()=>{const y=(Number($('dYen').value)||0)*1e4,hv=(Number($('dHave').value)||0)*1e4;$('dDiff').textContent=y?'あと '+dmYen(Math.max(0,y-hv)):'金額を入れると「あと◯万」が自動で出る';};df();$('dYen').oninput=df;$('dHave').oninput=df;}
 $('dProg').oninput=()=>{$('dProgV').textContent=$('dProg').value+'%';};
 {const dl=()=>{const v=$('dDue').value;if(!v){$('dLeft').textContent='';return;}const n=daysTo(v);$('dLeft').textContent=n<0?(-n)+'日超過':'あと '+n+'日';};dl();$('dDue').addEventListener('change',dl);}
+{const a=$('dAch');if(a){const dg=()=>{const g=$('dGap');if(g)g.innerHTML=ymGap({ach:1,achD:a.value,due:$('dDue').value||(ex&&ex.yr?ex.yr+'-12-31':'')});};dg();a.addEventListener('change',dg);$('dDue').addEventListener('change',dg);}}
 const dGs=id?stepsOf(id).map(s=>({sid:s.id,t:s.t,due:s.due||'',d:!!s.d})):[];
 const gPaint=()=>{const w=$('dGoals');w.innerHTML=dGs.map((g,i)=>g.x?'':'<div class="ym-gr"><button type="button" class="ym-ck'+(g.d?' on':'')+'" data-gk="'+i+'" aria-label="達成">'+(g.d?'✓':'')+'</button><input type="text" class="pin" data-gt="'+i+'" value="'+esc(g.t)+'" placeholder="目標を記入する" aria-label="目標"><input type="date" lang="ja-JP" data-gd="'+i+'" value="'+esc(g.due)+'" aria-label="達成予定日"><button type="button" class="ym-gx" data-gx="'+i+'">消す</button></div>').join('');
 w.querySelectorAll('[data-gk]').forEach(b=>b.onclick=()=>{const g=dGs[+b.dataset.gk];g.d=!g.d;gPaint();});w.querySelectorAll('[data-gt]').forEach(b=>b.oninput=()=>{dGs[+b.dataset.gt].t=b.value;});w.querySelectorAll('[data-gd]').forEach(b=>b.onchange=()=>{dGs[+b.dataset.gd].due=b.value;});w.querySelectorAll('[data-gx]').forEach(b=>b.onclick=()=>{const g=dGs[+b.dataset.gx];g.x=1;gPaint();});};gPaint();
@@ -6476,7 +6496,7 @@ $('dPhAdd').onclick=()=>{
 const pi=$('phInput');pi.value='';try{pi.multiple=true;}catch(e){}
 pi.onchange=async ev=>{
 const fs=ev.target.files;if(!fs||!fs.length)return;
-const ids=await phAddFiles(fs);
+if(fs.length>6)toast('📷 '+fs.length+'枚を読み込み中…');const ids=await phAddFiles(fs,999);
 if(ids.length){dPhs=dPhs.concat(ids);renderDPh();toast('✓ 写真を付けた（「記録」で確定）');}
 };
 pi.click();
@@ -6496,21 +6516,20 @@ const did=id||String(Date.now())+Math.floor(Math.random()*1e4);
 const due=$('dDue').value||null;
 const prog=Number($('dProg').value)||0;
 const memo=$('dMemo').value.trim();
+const achD=$('dAch')?$('dAch').value:((ex&&ex.achD)||'');
 const yen=Math.round((Number($('dYen').value)||0)*1e4),have=Math.round((Number($('dHave').value)||0)*1e4),nGoal=$('dNG').value.trim(),nUnit=$('dNU').value.trim(),nNow=$('dNN').value.trim(),now=$('dNow').value.trim(),plan=$('dPlan').value.trim();
-const ch=[];if(ex){const c0=(l,a,b)=>{if(String(a==null?'':a)!==String(b==null?'':b))ch.push({l,a:String(a==null?'':a),b:String(b==null?'':b)});};c0('タイトル',ex.t,t);c0('期限',dreamDue(ex),due);c0('必要な金額',Number(ex.yen)>0?dmYen(ex.yen):'',yen>0?dmYen(yen):'');c0('目標の数字',ex.nGoal,nGoal);c0('分野',catOf(ex.cat).n,catOf(cat).n);c0('優先順位',ex.pr,pr);c0('今ある金額',Number(ex.have)>0?dmYen(ex.have):'',have>0?dmYen(have):'');c0('単位',ex.nUnit,nUnit);c0('今の数字',ex.nNow,nNow);c0('今の状況',ex.now,now);c0('年ごとの行動',ex.plan,plan);c0('進み具合',((ex.prog|0))+'%',prog+'%');c0('メモ',ex.memo,memo);c0('写真',dmPhs(ex).length+'枚',dPhs.length+'枚');}
+const ch=[];if(ex){const c0=(l,a,b)=>{if(String(a==null?'':a)!==String(b==null?'':b))ch.push({l,a:String(a==null?'':a),b:String(b==null?'':b)});};c0('タイトル',ex.t,t);if(ex.achD)c0('実現日',ex.achD,achD);c0('期限',dreamDue(ex),due);c0('必要な金額',Number(ex.yen)>0?dmYen(ex.yen):'',yen>0?dmYen(yen):'');c0('目標の数字',ex.nGoal,nGoal);c0('分野',catOf(ex.cat).n,catOf(cat).n);c0('優先順位',ex.pr,pr);c0('今ある金額',Number(ex.have)>0?dmYen(ex.have):'',have>0?dmYen(have):'');c0('単位',ex.nUnit,nUnit);c0('今の数字',ex.nNow,nNow);c0('今の状況',ex.now,now);c0('年ごとの行動',ex.plan,plan);c0('進み具合',((ex.prog|0))+'%',prog+'%');c0('メモ',ex.memo,memo);c0('写真',dmPhs(ex).length+'枚',dPhs.length+'枚');}
 const sv=why=>{mutate(()=>{dPhs.forEach(x=>phKeep(x));state.dreams=state.dreams||{};
-{const o0=state.dreams[did]||{};state.dreams[did]=Object.assign({},o0,{t,cat,pr,due,prog,memo,ph:dPhs.length?dPhs:null,ach:(ex&&ex.ach)||null,sn:(ex&&ex.sn)||0,created:(ex&&ex.created)||todayStr(),yen,have,nGoal,nUnit,nNow,now,plan,ts:Date.now()});}
-if(!ex)dreamLog({what:'夢を足した',id:did,t});ymGoalsSave(did,dGs);
+{const o0=state.dreams[did]||{};state.dreams[did]=Object.assign({},o0,{t,cat,pr,due,prog,memo,ph:dPhs.length?dPhs:null,ach:(ex&&ex.ach)||null,achD:achD||null,sn:(ex&&ex.sn)||0,created:(ex&&ex.created)||todayStr(),yen,have,nGoal,nUnit,nNow,now,plan,ts:Date.now()});}
+if(!ex)dreamLog({what:'夢を足した',id:did,t});if(ex&&ex.ach&&!ex.achD&&achD)dreamLog({what:'実現日を入れた',id:did,t,ch:[{l:'実現日',a:'',b:achD}]});ymGoalsSave(did,dGs);
 if(ch.length)dreamLog({what:'夢を変えた',id:did,t,ch,why});
 if(pin!==pin0){state.pins=state.pins||{};state.pins[did]={on:pin?1:0,ts:Date.now()};}});
 closeSheet();renderPage();toast('✓ 夢を書いた');};
 if(ch.length)askWhy('何で変えた？（'+ch.map(c=>c.l).join('・')+'）',sv);else sv('');
 };
 if(ex){
-$('dWon').onclick=()=>{
-mutate(()=>{state.dreams[id]=Object.assign({},state.dreams[id],{ach:Date.now(),ts:Date.now()});dreamLog({what:'かなった',id,t:ex.t});});
-closeSheet();dseg='won';renderPage();toast('🎉 殿堂入り！おめでとう');
-};
+{const dw=$('dWon');if(dw)dw.onclick=()=>ymAchAsk(dd=>{mutate(()=>{state.dreams[id]=Object.assign({},state.dreams[id],{ach:Date.now(),achD:dd,ts:Date.now()});dreamLog({what:'かなった',id,t:ex.t,ch:[{l:'実現日',a:'',b:dd}]});});
+closeSheet();dseg='won';renderPage();toast('🎉 殿堂入り！おめでとう');});}
 $('dDel').onclick=()=>{
 askWhy('「'+ex.t+'」を消す。何で？',why=>{mutate(()=>{dreamLog({what:'夢を消した',id,t:ex.t,snap:Object.assign({},state.dreams[id]),why});state.dreams[id]={del:1,ts:Date.now()};});
 closeSheet();renderPage();toast('消した（変更の記録に残る・戻せる）');});
@@ -9668,7 +9687,7 @@ anaCache.unshift({key,res});if(anaCache.length>4)anaCache.length=4;
 return res;}
 function anaCount0(r,days,N,limit,nowIdx){ANA_WALK=Math.max(1,TRS.findIndex(t=>t[0]==='walk')+1);
 const K=anaKinds(),IX={},kMu=new Uint8Array(256);
-K.forEach((k,i)=>{IX[k.id]=i+1;if(k.muda&&!KIND_NOMUDA[k.id])kMu[i+1]=1;});
+const kAl=new Uint8Array(256);K.forEach((k,i)=>{IX[k.id]=i+1;if(k.muda&&!KIND_NOMUDA[k.id])kMu[i+1]=1;if(k.muda&&((state.kinds||{})[k.id]||{}).mdAll)kAl[i+1]=1;});
 const TL=TOOL_BASE.map(b=>b[0]).concat(toolOwnIds()).slice(0,200),TX={};TL.forEach((id,i)=>{TX[id]=i+1;});
 const tIx=d=>{if(!d||typeof d!=='string')return 0;if(TX[d])return TX[d];if(TL.length>=254)return 0;TL.push(d);return TX[d]=TL.length;};
 const kIx=k=>(!k||typeof k!=='string')?0:(IX[k]||IX['?']);
@@ -9728,11 +9747,11 @@ const p=pfL[m],a=mva[m],t=tool[m];let md=0;
 if(c===IXM){const v=mvm[m]||ANA_NOTR,bs=v*5,ok=v2[o]&&v!==ANA_WALK;mvT[bs]++;
 if(MA&&items[o].trip){mvT[bs+(a?1:(ok?3:4))]++;md=1;mdTrip++;}
 else if(a===0){if(ok&&MA){mvT[bs+3]++;md=1;mdBlank++;pfB[p]++;}else mvT[bs+4]++;}
-else if(a===IXD||nx[m]||(MA&&((a<255&&kMu[a]&&!nmM[m])||bz[m]))){mvT[bs+2]++;md=1;if(MA&&bz[m]&&a!==IXD)mdBz++;else mdK[(nx[m]&&a!==IXD&&IX.nap)?IX.nap:a]++;}
+else if(a===IXD||nx[m]||(a<255&&kAl[a]&&!nmM[m])||(MA&&((a<255&&kMu[a]&&!nmM[m])||bz[m]))){mvT[bs+2]++;md=1;if(MA&&bz[m]&&a!==IXD)mdBz++;else mdK[(nx[m]&&a!==IXD&&IX.nap)?IX.nap:a]++;}
 else mvT[bs+1]++;
 if(a)mvA[a]++;if(t)mvD[t]++;}
 else if(MA&&c===IX.meal&&lateMeal((((m-P)%1440)+1440)%1440)){md=1;mdMeal++;}
-else if(c!==IXR&&(c===IXD||nx[m]||(MA&&((kMu[c]&&!nmM[m])||bz[m])))){md=1;if(MA&&bz[m]&&c!==IXD)mdBz++;else mdK[(nx[m]&&c!==IXD&&IX.nap)?IX.nap:c]++;}
+else if(c!==IXR&&(c===IXD||nx[m]||(kAl[c]&&!nmM[m])||(MA&&((kMu[c]&&!nmM[m])||bz[m])))){md=1;if(MA&&bz[m]&&c!==IXD)mdBz++;else mdK[(nx[m]&&c!==IXD&&IX.nap)?IX.nap:c]++;}
 if(!md&&mdMask[m]){md=1;mdK[IXD]++;}
 if(t)toolS[t]++;for(const tk in toolX)if(toolX[tk][m])toolS[Number(tk)]++;
 if(p)pfS[p]++;else if(c!==IXR)pfS[0]++;
@@ -10291,7 +10310,7 @@ const k=b.dataset.tr;
 if(k==='fin'){aimPick=d.id;return renderAimPage();}
 if(k==='back'){aimPick=null;return renderAimPage();}
 if(k==='pin'){if(!pinUp(d.id))return;}
-else if(k==='won')mutate(()=>{state.dreams[d.id]=Object.assign({},state.dreams[d.id],{ach:Date.now(),ts:Date.now()});});
+else if(k==='won'){ymAchAsk(dd=>{mutate(()=>{state.dreams[d.id]=Object.assign({},state.dreams[d.id],{ach:Date.now(),achD:dd,ts:Date.now()});dreamLog({what:'かなった',id:d.id,t:d.t,ch:[{l:'実現日',a:'',b:dd}]});});aimPick=null;const dn=!aimWaiting().length;if(dn)aimView='steps';renderAimPage();if(dn)toast('✓ 仕分け完了');});return;}
 else aimSet(d.id,{s:k});
 aimPick=null;
 const done=!aimWaiting().length;
@@ -11781,11 +11800,22 @@ const navGo=fn=>{gateClear();if($('page').classList.contains('open'))closePage()
 $('navHome').onclick=()=>{closePage();ui.date=todayStr();ui.tab='di';topView='top';render();try{$('scr').scrollTop=0;}catch(e){}};
 $('navDiary').onclick=()=>{closePage();ui.date=todayStr();ui.tab='di';topView='diary';render();scrollToNow();};
 $('navMisc').onclick=()=>{closePage();ui.date=todayStr();ui.tab='di';topView='misc';render();try{$('scr').scrollTop=0;}catch(e){}};
+const NAV_IC={navHome:'🗂️',navYume:'⭐',navDiary:'📔',navEarn:'💴',navTodo:'📅',navPay:'💸',navMemo:'💡'},NAV_BD={navTodo:'navTodoB',navPay:'navPayB'};
 const HOKA=[['navMisc','📂','各種（記録と設定）',''],['navLearn','🎓','学ぶ',''],['navAna','📊','分析',''],['navRtn','🔁','ルーティン','navRtnB'],['navAim','🎯','今日の1個','navAimB'],['navRule','📏','ルール',''],['navSleep','🌙','睡眠',''],['navPlan','🗓','段取り','']];
 function hokaSheet(){const bd=id=>{const e=id&&$(id);return (e&&e.style.display!=='none'&&String(e.textContent||'').trim())?'<b>'+esc(String(e.textContent).trim())+'</b>':'';};
-openSub('<div class="mvq"><div class="sh-time" style="justify-content:center"><span>📂 ほか</span></div><div class="sh-note">押すとその画面へ</div><div class="hoka-grid">'+HOKA.filter(x=>$(x[0])).map(x=>'<button type="button" class="hoka-t" data-hk="'+x[0]+'">'+bd(x[3])+'<i>'+x[1]+'</i>'+esc(x[2])+'</button>').join('')+'</div><div class="sh-btns" style="margin-top:10px"><button class="delbtn" id="hokaX" style="flex:1">閉じる</button></div></div>',null);
-$('sheet2').querySelectorAll('[data-hk]').forEach(b=>b.onclick=()=>{const id=b.dataset.hk;closeSub();const t=$(id);if(t)t.click();});$('hokaX').onclick=closeSub;}
+openSub('<div class="mvq"><div class="sh-time" style="justify-content:center"><span>📂 ほか</span></div><div class="sh-note">押すとその画面へ</div><div class="hoka-grid">'+navOrd().slice(NAV_P1).map(id=>{const y=HOKA.find(z=>z[0]===id);if(y)return y;const b=$(id);return [id,NAV_IC[id]||'',(b&&b.querySelector('span')?b.querySelector('span').textContent:id),NAV_BD[id]||''];}).filter(x=>$(x[0])).map(x=>'<button type="button" class="hoka-t" data-hk="'+x[0]+'">'+bd(x[3])+'<i>'+x[1]+'</i>'+esc(x[2])+'</button>').join('')+'</div><div class="sh-btns" style="margin-top:10px"><button class="delbtn" id="hokaX" style="flex:1">閉じる</button></div></div>',null);
+$('sheet2').querySelectorAll('[data-hk]').forEach(b=>b.onclick=()=>{const id=b.dataset.hk;closeSub();if(navEd){navEd=false;navPg=0;navApply();}const t=$(id);if(t)t.click();});$('hokaX').onclick=closeSub;}
 {const hb=$('hokaBtn');if(hb)hb.onclick=hokaSheet;}
+(function(){const w=$('nvw');if(!w)return;let T=0,sx=0,sy=0,gh=null,eT=0,eS=0,wasPk=0;
+const pick=(id,x,y)=>{if(!navEd){navCur=navOrd();navEd=true;navPg=navCur.indexOf(id)<NAV_P1?0:1;}navPk=id;const b=$(id);gh=document.createElement('div');gh.className='nb-gh';const sv=b.querySelector('svg');gh.innerHTML=(sv?sv.outerHTML:'')+'<span>'+esc((b.querySelector('span')||{}).textContent||'')+'</span>';document.body.appendChild(gh);gh.style.transform='translate('+x+'px,'+y+'px)';wasPk=Date.now();try{haptic(15);}catch(e){}navApply();};
+const flip=to=>{const a=navCur.indexOf(navPk);navCur.splice(a,1);navCur.splice(to===1?NAV_P1:NAV_P1-1,0,navPk);navPg=to;navApply();};
+const drop=()=>{clearTimeout(T);clearTimeout(eT);eS=0;if(gh){gh.remove();gh=null;}if(navPk){navPk='';wasPk=Date.now();if(navCur.join()!==navOrd().join())mutate(()=>{state._cfg=Object.assign({},state._cfg||{},{navOrd:navCur.slice(),ts:Date.now()});});navApply();}};
+w.addEventListener('contextmenu',e=>e.preventDefault());
+w.addEventListener('pointerdown',e=>{const b=e.target.closest&&e.target.closest('.nb');if(!b)return;sx=e.clientX;sy=e.clientY;try{b.setPointerCapture(e.pointerId);}catch(x){}if(navEd){pick(b.id,sx,sy);return;}clearTimeout(T);T=setTimeout(()=>pick(b.id,sx,sy),400);},true);
+document.addEventListener('pointermove',e=>{if(!navPk){if(Math.hypot(e.clientX-sx,e.clientY-sy)>10)clearTimeout(T);return;}if(gh)gh.style.transform='translate('+e.clientX+'px,'+e.clientY+'px)';const r=w.getBoundingClientRect(),want=(e.clientX>r.right-26&&navPg===0)?1:(e.clientX<r.left+26&&navPg===1)?0:-1;if(want>=0){if(eS!==want+1){eS=want+1;clearTimeout(eT);eT=setTimeout(()=>{eS=0;flip(want);},450);}return;}clearTimeout(eT);eS=0;const hit=[...w.querySelectorAll('.nb:not(.nb-off)')].find(b=>{const q=b.getBoundingClientRect();return e.clientX>=q.left&&e.clientX<=q.right;});if(!hit||hit.id===navPk)return;const a=navCur.indexOf(navPk),c=navCur.indexOf(hit.id);navCur.splice(a,1);navCur.splice(c,0,navPk);navApply();});
+document.addEventListener('pointerup',()=>{clearTimeout(T);if(navPk)drop();});document.addEventListener('pointercancel',()=>{clearTimeout(T);if(navPk)drop();});
+document.addEventListener('touchmove',e=>{if(navPk)e.preventDefault();},{passive:false});
+w.addEventListener('click',e=>{if(navEd||Date.now()-wasPk<500){e.preventDefault();e.stopPropagation();}},true);})();
 $('navPay').onclick=()=>navGo(openPayPage);
 $('navYume').onclick=()=>{const was=$('page').classList.contains('open')&&pageMode==='dream';dmCatPg=0;dseg='clock';if(was){renderDreamPage();return;}navGo(openDreamPage);ymOpen();};
 $('navMemo').onclick=()=>navGo(openMemoPage);$('navEarn').onclick=()=>navGo(openEarnPage);$('navLearn').onclick=()=>openLearnSheet();
@@ -11834,7 +11864,13 @@ s.style.visibility=((p&&Math.abs(cy(p.getBoundingClientRect())-y)>10)||(n&&Math.
 function gstripPaint(){try{const el=$('gstrip');if(!el)return;const tt=(typeof TT!=='undefined'&&TT.on&&TT.kind)?TT.kind:'';const html=tt?(tt==='money'?'<button class="gs gsl on" data-gs="listen">⏸ お金の読み上げを止める</button>':'<button class="gs gsl on" data-gs="ttstop">⏸ 読み上げを止める</button>'):'';el.innerHTML=html;el.style.display=html?'':'none';gstripBind(el);
 const pg=$('page');if(pg&&pg.classList.contains('open')){let s=pg.querySelector('.gstrip');const hd=pg.querySelector('.page-head');if(!s&&hd){hd.insertAdjacentHTML('afterend','<div class="gstrip pg"></div>');s=pg.querySelector('.gstrip');}if(s){s.innerHTML=html;s.style.display=html?'':'none';gstripBind(s);}}}catch(e){}}
 (function(){try{const pg=$('page');if(pg&&typeof MutationObserver!=='undefined')new MutationObserver(ms=>{if(ms.some(m=>[...m.addedNodes].some(x=>x.nodeType===1&&(x.classList.contains('page-head')||x.querySelector&&x.querySelector('.page-head')))))gstripPaint();}).observe(pg,{childList:true,subtree:false});}catch(e){}})();
-function navPaint(){try{gstripPaint();}catch(e){}try{scrub.init();scrub.sync();}catch(e){}try{fabPaint();}catch(e){}try{fbPaint();}catch(e){}
+const NAV_P1=7;let navEd=false,navPg=0,navPk='',navCur=[];
+function navBtns(){return [...document.querySelectorAll('#nvw .nb')];}
+function navOrd(){const all=navBtns().map(b=>b.id),c0=(state._cfg||{}).navOrd,c=Array.isArray(c0)?c0:[],L=c.filter((id,i)=>all.indexOf(id)>=0&&c.indexOf(id)===i);all.forEach(id=>{if(L.indexOf(id)<0)L.push(id);});return L;}
+function navApply(){try{const w=$('nvw'),p1=w.querySelector('.nvp');navBtns().forEach(b=>{if(b.parentElement!==p1)p1.appendChild(b);});const L=navEd?navCur:navOrd();L.forEach((id,i)=>{const b=$(id);if(!b)return;b.style.order=i;b.classList.toggle('nb-off',(i<NAV_P1?0:1)!==(navEd?navPg:0));b.classList.toggle('nb-pk',id===navPk);});w.classList.toggle('nv-ed',navEd);
+const nm=id=>{const b=$(id),s=b&&b.querySelector('span');return s?s.textContent:'';};const sm=document.querySelector('#hokaBtn small');{const tx=L.slice(NAV_P1).map(nm).join('・');if(sm&&sm.textContent!==tx)sm.textContent=tx;}w.classList.toggle('nv-p2',navEd&&navPg===1);
+let bar=$('navEdBar');if(navEd&&!bar){bar=document.createElement('div');bar.id='navEdBar';$('nav').appendChild(bar);}if(bar){if(!navEd){bar.remove();}else{const tx=navPk?'「'+nm(navPk)+'」を移動中':'並び替え中（'+(navPg+1)+'／2ページ・端で止まるとめくれる）';if(bar.dataset.t!==tx){bar.dataset.t=tx;bar.innerHTML='<span>'+esc(tx)+'</span><button type="button" id="navEdOk">完了</button>';$('navEdOk').onclick=()=>{navEd=false;navPg=0;navApply();toast('✓ 並びを保存した');};}}}}catch(e){}}
+function navPaint(){navApply();try{gstripPaint();}catch(e){}try{scrub.init();scrub.sync();}catch(e){}try{fabPaint();}catch(e){}try{fbPaint();}catch(e){}
 try{
 const pg=$('page'),open=pg.classList.contains('open');
 const tab=!open?(topView==='diary'?'diary':topView==='misc'?'misc':'home'):pageMode==='pay'?'pay':pageMode==='memo'?'memo':pageMode==='earn'?'earn':pageMode==='rtn'?'rtn':pageMode==='ana'?'ana':(pageMode==='todo'||pageMode==='st')?'todo':pageMode==='rules'?'rule':pageMode==='plan'?'plan':pageMode==='aim'?'aim':pageMode==='srch'?'srch':pageMode==='dream'?'yume':'';
@@ -12891,7 +12927,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c45.1";
+const CL_APPVER="c46.0";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
