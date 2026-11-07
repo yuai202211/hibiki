@@ -1949,6 +1949,9 @@ body.cardvis .fab{display:none!important}
 .nearw{flex:1 0 100%;width:100%;display:flex;flex-direction:column;gap:6px;margin:2px 0 6px;padding:6px 8px;border-left:3px solid #7a6ef3;background:rgba(122,110,243,.07);border-radius:10px;box-sizing:border-box}.nearw>*{margin:0!important}
 #pinRow{display:none!important}
 .hdr1 .nowjump{margin-left:auto;flex:none;border:0;border-radius:999px;padding:4px 9px;background:#14275a;color:#fff;font-weight:800;font-size:12px;line-height:1.3;white-space:nowrap}.hdr1 .nowjump:active{background:#22397a}#kakuTop{margin-left:6px!important}
+.pfflt{gap:4px}.mvp .pfflt>button[data-pfl],.mvq .pfflt>button[data-pfl],.pfflt>button[data-pfl]{padding:7px 8px;font-size:12.5px;white-space:nowrap}.pfflt .pf-ed{margin-left:0}
+.pl-sec{width:100%;font-size:11.5px;font-weight:800;color:#8a90a0;margin-top:6px}.pldw{width:100%;position:relative;margin-top:4px;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fafbfd}.pldw::before{content:"";position:absolute;left:6px;right:6px;top:84px;height:42px;border-radius:10px;background:#e9edf8;pointer-events:none}.pldw::after{content:"";position:absolute;inset:0;background:linear-gradient(#fafbfd,rgba(250,251,253,0) 34%,rgba(250,251,253,0) 66%,#fafbfd);pointer-events:none}.pldial{position:relative;height:210px;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scroll-snap-type:y mandatory;padding-block:84px;scrollbar-width:none;touch-action:pan-y}.pldial::-webkit-scrollbar{display:none}
+.pldw .pldial>button[type]{display:flex;align-items:center;justify-content:center;width:100%;height:42px;padding:0 12px;border:0;border-radius:0;background:none;scroll-snap-align:center;font-size:13px;font-weight:700;line-height:1.25;text-align:center;color:#3b4252}.pldw .pldial>button[type].on,.pldw .pldial>button[type].sel{background:none;color:#2c5cc5;font-weight:800}
 #nvw{touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}#nvw .nb{touch-action:none;-webkit-touch-callout:none;user-select:none;-webkit-user-select:none}#nvw .nb.nb-off{display:none!important}#nvw .nb.nb-pk{opacity:.18}#nvw.nv-ed .nb{animation:nbWg .26s infinite alternate ease-in-out}#nvw.nv-ed .nb:nth-child(even){animation-delay:-.13s}@keyframes nbWg{from{transform:rotate(-2.4deg)}to{transform:rotate(2.4deg)}}
 #nvw.nv-p2 .nb span{font-size:8.5px}#yaX{width:auto;border-radius:999px;padding:0 10px}
 #nav{position:relative}#navEdBar{position:absolute;left:0;right:0;bottom:100%;z-index:40;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:5px 10px;background:#fff8e1;border-top:1px solid #e0b75a;font-size:12px;font-weight:700;color:#7a5a00}#navEdBar button{flex:none;border:0;background:var(--green);color:#fff;font-weight:800;font-size:13px;padding:4px 16px;border-radius:999px}
@@ -3770,20 +3773,41 @@ function plGroups(){const r=state.plgrp||{},out=[];let any=false;for(const g in 
 if(!any)return PLG_DEF.map((d,i)=>({g:d[0],c:d[1],o:i}));return out.sort((a,b)=>a.o-b.o);}
 function plgName(g){if(g==='ot')return '📂 ほか';const x=plGroups().find(y=>y.g===g);const p=x&&prefOf(x.c);if(!p)return '📂 ほか';const d=PLG_DEF.find(y=>y[0]===g);return (d?d[2]:'📍')+' '+p.short;}
 function plgFor(pf){const x=plGroups().find(y=>y.c===Number(pf));return x?x.g:'ot';}
+const PL_TOP=5;
+function plShow(){const gs=plGroups().map(x=>x.g),T=todayStr(),reg={},c={},R0=state.plreg||{},ent=state.entries||{};
+for(const id in R0){const x=R0[id];if(x&&x.g&&x.p)reg[placeKey(x.p)]=x;}
+for(let i=0;i<7;i++){const d=addDays(T,-i),eo=ent[d];if(!eo)continue;for(const k in eo){const x=eo[k];if(!x||x.del||x.mv||!x.p)continue;const pk=placeKey(x.p),o=c[pk]||(c[pk]={p:(reg[pk]&&reg[pk].p)||x.p,n:0,l:'',f:0});o.n++;const w=d+(x.s||'');if(w>o.l)o.l=w;if(!o.f&&Number(x.pf))o.f=Number(x.pf);}}
+const need={},last={},lastD={};placeReg('ot').forEach(p=>need[placeKey(p)]=1);
+for(const d in ent){const eo=ent[d];for(const k in eo){const x=eo[k];if(!x||x.del||!x.p||!Number(x.pf))continue;const pk=placeKey(x.p);if(need[pk]&&(!lastD[pk]||d>=lastD[pk])){lastD[pk]=d;last[pk]=Number(x.pf);}}}
+const gOf=(pk,name,f)=>{const r=reg[pk];if(r&&r.g!=='ot'&&gs.indexOf(r.g)>=0)return r.g;const v=placePf(name)||f;return v?plgFor(v):'ot';};
+const by={ot:[]},regBy={ot:[]};gs.forEach(g=>{by[g]=[];regBy[g]=[];});
+Object.keys(c).forEach(k=>by[gOf(k,c[k].p,c[k].f)].push(c[k]));
+Object.keys(by).forEach(g=>by[g].sort((a,b)=>b.n-a.n||(a.l<b.l?1:a.l>b.l?-1:0)));
+gs.concat(['ot']).forEach(g=>placeReg(g).forEach(p=>{const pk=placeKey(p);regBy[gOf(pk,p,last[pk]||0)].push(p);}));
+const tab={},rest={};
+gs.forEach(g=>{const fx=[];for(const id in R0){const x=R0[id];if(x&&x.g===g&&x.p&&x.fx)fx.push(x);}fx.sort((a,b)=>(a.o||0)-(b.o||0));
+tab[g]=fx.length?fx.map(x=>x.p):by[g].slice(0,PL_TOP).map(o=>o.p);if(!tab[g].length)tab[g]=regBy[g].slice(0,3);});
+gs.concat(['ot']).forEach(g=>{const seen={},out=[];(tab[g]||[]).forEach(p=>seen[placeKey(p)]=1);const add=p=>{const k=placeKey(p);if(!seen[k]){seen[k]=1;out.push(p);}};by[g].forEach(o=>add(o.p));regBy[g].forEach(add);rest[g]=out;});
+return {tab,rest};}
+function plShowHtml(g,o){const S=plShow(),T=g==='ot'?[]:(S.tab[g]||[]),D=S.rest[g]||[],a=o.a||'data-p',on=o.on||'sel',cur=o.cur||'';
+if(!T.length&&!D.length)return o.none||'';
+return T.map(p=>'<button type="button" class="'+(o.b||'')+(cur===p?' '+on:'')+'" '+a+'="'+esc(p)+'">'+esc(p)+'</button>').join('')+
+(D.length?'<div class="pl-sec">🎚 回して選ぶ（'+D.length+'か所）</div><div class="pldw"><div class="pldial">'+D.map(p=>'<button type="button" class="'+(cur===p?on:'')+'" '+a+'="'+esc(p)+'">'+esc(p)+'</button>').join('')+'</div></div>':'');}
+function plDialFix(host){try{host.querySelectorAll('.pldial').forEach(d=>{const x=d.querySelector('.on,.sel');if(x)d.scrollTop=x.offsetTop-84;});}catch(e){}}
 function plgWrite(list){state.plgrp=state.plgrp||{};const now=Date.now();list.forEach((x,i)=>{state.plgrp[x.g]={c:x.c,o:i,ts:now};});}
 function pflBtns(cur){return plGroups().concat([{g:'ot'}]).map(x=>'<button data-pfl="'+x.g+'"'+(x.g===cur?' class="sel"':'')+'>'+esc(plgName(x.g))+'</button>').join('')+'<button data-pfl="_ed" class="pf-ed">✎ 編集</button>';}
 function plEdit(onDone){let sel=null,mode='',gxArm='';
 const R=()=>state.plreg||{};
 const ids=g=>{const r=R();return Object.keys(r).filter(id=>r[id]&&r[id].g===g&&r[id].p).sort((a,b)=>(r[a].o||0)-(r[b].o||0));};
 const paint=()=>{const r=R(),G=plGroups(),all=G.map(x=>x.g).concat(['ot']);
-let s='<div class="sh-time"><span>✎ 場所のボタンを編集</span></div><div class="sh-note" style="text-align:left">場所を押すと、名前を直す・移す・並べ替え・外すができる。日記の記録は変わらない</div>';
+let s='<div class="sh-time"><span>✎ 場所のボタンを編集</span></div><div class="sh-note" style="text-align:left">場所を押すと、名前を直す・移す・並べ替え・📌固定・外すができる。📌固定のある県は固定の物だけをボタンに出す。無い県は直近7日に押した回数の順に5個まで。ほかはダイヤルで選ぶ。日記の記録は変わらない</div>';
 all.forEach((g,gi)=>{const L=ids(g);
 s+='<div class="pe-g"><div class="pe-h"><b>'+esc(plgName(g))+'</b>'+(g!=='ot'?'<span class="pe-gb"><button class="chip" data-gu="'+g+'"'+(gi===0?' disabled':'')+'>⬅ 前へ</button><button class="chip" data-gd="'+g+'"'+(gi>=G.length-1?' disabled':'')+'>➡ 後ろへ</button><button class="chip pe-del" data-gx="'+g+'">'+(gxArm===g?'🗑 本当に消す？':'🗑 消す')+'</button></span>':'')+'</div>'+
-'<div class="sr-r">'+L.map(id=>'<button class="chip'+(id===sel?' sel':'')+'" data-pe="'+id+'">'+esc(r[id].p)+'</button>').join('')+'<button class="chip pe-add" data-pa="'+g+'">＋ 場所を足す</button></div>';
+'<div class="sr-r">'+L.map(id=>'<button class="chip'+(id===sel?' sel':'')+'" data-pe="'+id+'">'+(r[id].fx&&g!=='ot'?'📌 ':'')+esc(r[id].p)+'</button>').join('')+'<button class="chip pe-add" data-pa="'+g+'">＋ 場所を足す</button></div>';
 if(sel&&r[sel]&&r[sel].g===g){const i=L.indexOf(sel);
 s+='<div class="pe-op"><div class="pe-nm"><input type="text" id="peNm" value="'+esc(r[sel].p)+'"><button class="chip" id="peRn">名前を直す</button></div>'+
 '<div class="sr-r">'+all.filter(x=>x!==g).map(x=>'<button class="chip" data-pm="'+x+'">'+esc(plgName(x))+' へ移す</button>').join('')+'</div>'+
-'<div class="sr-r"><button class="chip" id="peUp"'+(i<=0?' disabled':'')+'>⬆ 前へ</button><button class="chip" id="peDn"'+(i>=L.length-1?' disabled':'')+'>⬇ 後ろへ</button><button class="chip pe-del" id="peX">🗑 ボタンから外す</button></div></div>';}
+'<div class="sr-r"><button class="chip" id="peUp"'+(i<=0?' disabled':'')+'>⬆ 前へ</button><button class="chip" id="peDn"'+(i>=L.length-1?' disabled':'')+'>⬇ 後ろへ</button><button class="chip pe-del" id="peX">🗑 ボタンから外す</button>'+(g!=='ot'?'<button class="chip" id="peFx">'+(r[sel].fx?'📌 固定をやめる':'📌 固定する')+'</button>':'')+'</div></div>';}
 if(mode==='add:'+g)s+='<div class="pe-op"><div class="pe-nm"><input type="text" id="peNew" placeholder="場所の名前（コピペOK）"><button class="chip" id="peNewOk">登録</button></div></div>';
 s+='</div>';});
 s+='<div class="sr-r" style="margin-top:10px"><button class="chip pe-add" id="peGAdd">＋ 県のボタンを足す</button></div>';
@@ -3794,7 +3818,7 @@ const S=$('sheet2'),Q=(q,f)=>S.querySelectorAll(q).forEach(b=>b.onclick=()=>f(b)
 const renum=(g,L)=>{L.forEach((id,i)=>{state.plreg[id]=Object.assign({},state.plreg[id],{o:i,ts:Date.now()});});};
 Q('[data-pe]',b=>{sel=(sel===b.dataset.pe)?null:b.dataset.pe;mode='';gxArm='';paint();});
 Q('[data-pa]',b=>{const g=b.dataset.pa;mode=(mode==='add:'+g)?'':'add:'+g;sel=null;gxArm='';paint();const i=$('peNew');if(i)i.focus();});
-Q('[data-pm]',b=>{const g=b.dataset.pm;mutate(()=>{state.plreg[sel]=Object.assign({},state.plreg[sel],{g,o:ids(g).length,ts:Date.now()});});toast('📍 '+plgName(g)+' へ移した');paint();});
+Q('[data-pm]',b=>{const g=b.dataset.pm;mutate(()=>{state.plreg[sel]=Object.assign({},state.plreg[sel],{g,o:ids(g).length,fx:0,ts:Date.now()});});toast('📍 '+plgName(g)+' へ移した');paint();});
 Q('[data-gu]',b=>{const L=plGroups(),i=L.findIndex(x=>x.g===b.dataset.gu);if(i>0){[L[i-1],L[i]]=[L[i],L[i-1]];mutate(()=>plgWrite(L));}gxArm='';paint();});
 Q('[data-gd]',b=>{const L=plGroups(),i=L.findIndex(x=>x.g===b.dataset.gd);if(i>=0&&i<L.length-1){[L[i+1],L[i]]=[L[i],L[i+1]];mutate(()=>plgWrite(L));}gxArm='';paint();});
 Q('[data-gx]',b=>{const g=b.dataset.gx;if(gxArm!==g){gxArm=g;paint();return;}
@@ -3804,6 +3828,7 @@ gxArm='';sel=null;toast(nm+' のボタンを消した（中の場所は📂ほ�
 Q('[data-gn]',b=>{const c=Number(b.dataset.gn),g=plgOf(c);mutate(()=>plgWrite(plGroups().concat([{g,c}])));mode='';toast(plgName(g)+' のボタンを足した');paint();});
 {const x=$('peGAdd');if(x)x.onclick=()=>{mode=(mode==='gadd')?'':'gadd';sel=null;gxArm='';paint();};}
 {const x=$('peRn');if(x)x.onclick=()=>{const v=($('peNm').value||'').trim();if(!v||v===state.plreg[sel].p)return;mutate(()=>{state.plreg[sel]=Object.assign({},state.plreg[sel],{p:v,ts:Date.now()});});toast('名前を直した');paint();};}
+{const x=$('peFx');if(x)x.onclick=()=>{const v=state.plreg[sel].fx?0:1;mutate(()=>{state.plreg[sel]=Object.assign({},state.plreg[sel],{fx:v,ts:Date.now()});});toast(v?'📌 固定した':'固定をやめた');paint();};}
 {const x=$('peUp');if(x)x.onclick=()=>{const g=state.plreg[sel].g,L=ids(g),i=L.indexOf(sel);if(i>0){[L[i-1],L[i]]=[L[i],L[i-1]];mutate(()=>renum(g,L));}paint();};}
 {const x=$('peDn');if(x)x.onclick=()=>{const g=state.plreg[sel].g,L=ids(g),i=L.indexOf(sel);if(i>=0&&i<L.length-1){[L[i+1],L[i]]=[L[i],L[i+1]];mutate(()=>renum(g,L));}paint();};}
 {const x=$('peX');if(x)x.onclick=()=>{const o=state.plreg[sel];mutate(()=>{state.plreg[sel]={p:o.p,no:addDays(todayStr(),30),ts:Date.now()};});toast(o.p+' をボタンから外した');sel=null;paint();};}
@@ -4901,7 +4926,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c46.1）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c46.2）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -5550,8 +5575,8 @@ if(less)less.onclick=()=>{chipsSetOpen(false);pc.innerHTML=chipListHtml(chips,fa
 bindChips();
 {const fl=$('pFlt');if(fl&&pc){let picked=false;const auto=()=>plgFor(Number(sheetSt&&sheetSt.pf)||0);
 if(!plHas())mutate(plSeed);
-const paintF=()=>{if(pfl!=='ot'&&!plGroups().some(x=>x.g===pfl))pfl='ot';fl.innerHTML=pflBtns(pfl);if(sheetSt&&sheetSt.trBtn)sheetSt.trBtn(fl);curChips=placeReg(pfl);
-pc.innerHTML=curChips.length?curChips.map(p=>'<button class="chip" data-p="'+esc(p)+'">'+esc(p)+'</button>').join(''):'<span class="sh-note">'+(pfl==='ot'?'ほかの場所はまだ無い':'この県の場所はまだ無い')+'（✎ 編集で足せる）</span>';bindChips();
+const paintF=()=>{if(pfl!=='ot'&&!plGroups().some(x=>x.g===pfl))pfl='ot';fl.innerHTML=pflBtns(pfl);if(sheetSt&&sheetSt.trBtn)sheetSt.trBtn(fl);curChips=[];
+pc.innerHTML=plShowHtml(pfl,{b:'chip',none:'<span class="sh-note">'+(pfl==='ot'?'ほかの場所はまだ無い':'この県の場所はまだ無い')+'（✎ 編集で足せる）</span>'});bindChips();
 fl.querySelectorAll('[data-pfl]').forEach(b=>b.onclick=()=>{if(b.dataset.pfl==='_ed'){plEdit(paintF);return;}picked=true;pfl=b.dataset.pfl;paintF();});};
 pfl=auto();paintF();if(sheetSt)sheetSt.paintF=paintF;
 if(sheetSt)sheetSt.pflSync=()=>{if(picked)return;const v=auto();if(v!==pfl){pfl=v;paintF();}};}}
@@ -5857,8 +5882,8 @@ $('plnD').onchange=()=>{sh.querySelectorAll('[data-plnd]').forEach(x=>x.classLis
 sh.querySelectorAll('[data-plnt]').forEach(b=>b.onclick=()=>{$('plnT').value=b.dataset.plnt;keep();});sh.querySelectorAll('[data-plnp]').forEach(b=>b.onclick=()=>{$('plnP').value=b.dataset.plnp;keep();});
 ['plnS','plnE','plnT','plnP','plnAd','plnTel','plnWho','plnMo'].forEach(i=>{$(i).addEventListener('input',keep);$(i).addEventListener('change',keep);});try{taGrow($('plnMo'));}catch(e){}
 {const fl=$('plnPfl'),pc=$('plnPC');if(fl&&pc){try{if(!plHas())mutate(plSeed);}catch(e){}let pfl=plgFor(placePf(($('plnP').value||'').trim())||(function(){try{return pfAuto(todayStr(),plnNow())||0;}catch(e){return 0;}})());
-const paintF=()=>{if(pfl!=='ot'&&!plGroups().some(x=>x.g===pfl))pfl='ot';fl.innerHTML=pflBtns(pfl);const L=placeReg(pfl),cur=($('plnP').value||'').trim();
-pc.innerHTML=L.length?L.map(p=>'<button type="button" class="chip'+(cur===p?' sel':'')+'" data-p="'+esc(p)+'">'+esc(p)+'</button>').join(''):'<span class="sh-note">'+(pfl==='ot'?'ほかの場所はまだ無い':'この県の場所はまだ無い')+'（✎ 編集で足せる）</span>';
+const paintF=()=>{if(pfl!=='ot'&&!plGroups().some(x=>x.g===pfl))pfl='ot';fl.innerHTML=pflBtns(pfl);const cur=($('plnP').value||'').trim();
+pc.innerHTML=plShowHtml(pfl,{b:'chip',cur,none:'<span class="sh-note">'+(pfl==='ot'?'ほかの場所はまだ無い':'この県の場所はまだ無い')+'（✎ 編集で足せる）</span>'});plDialFix(pc);
 pc.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{const ip=$('plnP');ip.value=(ip.value.trim()===b.dataset.p)?'':b.dataset.p;keep();paintF();psum();if(ip.value){const dd=$('plnPlF');if(dd)dd.open=false;}});
 fl.querySelectorAll('[data-pfl]').forEach(b=>b.onclick=()=>{if(b.dataset.pfl==='_ed'){plEdit(paintF);return;}pfl=b.dataset.pfl;paintF();});};
 const psum=()=>{const s=$('plnPsum'),sm=s&&s.nextElementSibling,v=($('plnP').value||'').trim();if(!s)return;s.innerHTML=v?('📍 <b>'+esc(v)+'</b>'):'📍 場所を選ぶ・書く';if(sm)sm.textContent=v?'押して変える':'県・よく行く場所から、または書く';};
@@ -5980,7 +6005,7 @@ openOvl();
 let sheetDirty=false,ovlArm=0;
 function glide(el,pad){try{if(!el)return;const sc=el.closest('#sheet')||el.closest('#sheet2')||el.closest('#scr')||el.closest('.page-body');if(!sc)return;const r=el.getBoundingClientRect(),sr=sc.getBoundingClientRect();let top=sc.scrollTop+r.top-sr.top-(pad==null?12:pad);if(sc.id==='scr'){const kt=$('kakuTop');if(kt&&kt.offsetHeight&&sc.contains(kt))top-=kt.offsetHeight;}sc.scrollTo({top:Math.max(0,top),behavior:'smooth'});}catch(e){}}
 function sheetFlow(ev){try{const sh=$('sheet');if(!sh||!sh.contains(ev.target))return;if(sheetSt&&sheetSt.kind==='entry')return;const t=ev.target;
-if(t.closest('.sh-btns,.grab,.oe-pick,.ios,.pfflt,summary,.fr-mic,.phadd,[data-dftd],.ak-btns,.ms-ac,.ms-tr,#pMore,#pLess,#tdMoreB,#tdAllB,.ub-h,.undobar,.pln-dm'))return;
+if(t.closest('.sh-btns,.grab,.oe-pick,.ios,.pfflt,summary,.fr-mic,.phadd,[data-dftd],.ak-btns,.ms-ac,.ms-tr,#pMore,#pLess,#tdMoreB,#tdAllB,.ub-h,.undobar,.pln-dm,.pldw'))return;
 let ctl=null;if(ev.type==='click'){ctl=t.closest('button,.chip');if(!ctl)return;}else{ctl=t.closest('input,select');if(!ctl||ctl.type==='time'||ctl.type==='checkbox'||ctl.type==='radio'||ctl.type==='range'||ctl.type==='file')return;}
 const secs=[...sh.querySelectorAll('.pln-lab,.sh-label,.td-sec,.glab')].filter(s=>s.offsetParent);if(!secs.length)return;const y=ctl.getBoundingClientRect().top;let i=-1;secs.forEach((s,j)=>{if(s.getBoundingClientRect().top<=y)i=j;});const nx=secs[i+1];
 setTimeout(()=>{if(!sh.contains(ctl)&&!nx)return;if(nx){glide(nx,10);const inp=nx.parentElement&&nx.nextElementSibling&&nx.nextElementSibling.matches&&nx.nextElementSibling.matches('input[type=text]')?nx.nextElementSibling:null;if(inp&&!inp.value&&ctl.matches('[data-plnd]'))try{inp.focus({preventScroll:true});}catch(e){}}else sh.scrollTo({top:sh.scrollHeight,behavior:'smooth'});},90);}catch(e){}}
@@ -8281,14 +8306,14 @@ function mvpStopPlaces(){try{const lim=addDays(todayStr(),-120),cnt={},last={};c
 for(const d in state.entries){if(d<lim)continue;const eo=state.entries[d];for(const k in eo){const x=eo[k];if(!x||x.del||x.mv||x.noT||!x.p||!x.s||!x.e)continue;const m=durMin(x.s,x.e,x.ed?1:0);if(!(m>0&&m<=30)&&!re.test(x.p))continue;const pk=placeKey(x.p);cnt[pk]=(cnt[pk]||0)+1;if(!last[pk]||d>last[pk].d)last[pk]={d,p:x.p};}}
 return Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a]||(last[b].d<last[a].d?-1:1)).slice(0,6).map(k=>last[k].p);}catch(e){return [];}}
 function mvpArrPlaces(){try{const out=[],seen={},add=(p,plan)=>{p=String(p||'').trim();if(!p)return;const k=placeKey(p);if(seen[k])return;seen[k]=1;out.push({p,plan:!!plan});};const pr=prepToday();if(pr&&pr.to&&!pr.home)add(pr.to,1);try{plnOpen(todayStr()).forEach(o=>{if(o.x.pl)add(o.x.pl,1);});}catch(e){}
-const lim=addDays(todayStr(),-90),cnt={},nm={};for(const d in state.entries){if(d<lim)continue;const eo=state.entries[d];for(const k in eo){const x=eo[k];if(!x||x.del||x.mv||x.noT||!x.p||!x.s)continue;const pk=placeKey(x.p);cnt[pk]=(cnt[pk]||0)+1;nm[pk]=x.p;}}
-Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a]).forEach(k=>{if(out.length<7)add(nm[k]);});return out.slice(0,7);}catch(e){return [];}}
+const lim=addDays(todayStr(),-6),cnt={},nm={},ls={};for(const d in state.entries){if(d<lim)continue;const eo=state.entries[d];for(const k in eo){const x=eo[k];if(!x||x.del||x.mv||x.noT||!x.p||!x.s)continue;const pk=placeKey(x.p);cnt[pk]=(cnt[pk]||0)+1;nm[pk]=x.p;const w=d+x.s;if(!ls[pk]||w>ls[pk])ls[pk]=w;}}
+Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a]||(ls[a]<ls[b]?1:-1)).slice(0,PL_TOP).forEach(k=>add(nm[k]));return out;}catch(e){return [];}}
 let mvpPfl='';try{mvpPfl=localStorage.getItem('hibiki-mvp-pfl')||'';}catch(e){}
 let mvpPflOpen=false;
-function mvpPlHtml(cur,fold){if(mvpPfl!=='ot'&&!plGroups().some(x=>x.g===mvpPfl)){const g=plGroups()[0];mvpPfl=g?g.g:'ot';}const L=placeReg(mvpPfl);
-if(fold&&!mvpPflOpen)return '<div class="pfflt mvpfl" data-fold="1">'+pflBtns('').replace('<button data-pfl="_ed" class="pf-ed">✎ 編集</button>','')+'</div>';
-return '<div class="pfflt mvpfl"'+(fold?' data-fold="1"':'')+'>'+pflBtns(mvpPfl).replace('<button data-pfl="_ed" class="pf-ed">✎ 編集</button>','')+'</div><div class="ks mvpl">'+(L.length?L.map(p=>'<button type="button" data-mpl="'+esc(p)+'"'+(cur===p?' class="on"':'')+'>'+esc(p)+'</button>').join(''):'<span class="sh-note">この県の場所はまだ無い</span>')+'</div>';}
-function mvpPlBind(host,pick,repaint){host.querySelectorAll('.mvpfl [data-pfl]').forEach(b=>b.onclick=()=>{const g=b.dataset.pfl;if(b.closest('[data-fold]')&&mvpPfl===g&&mvpPflOpen){mvpPflOpen=false;repaint();return;}mvpPflOpen=true;mvpPfl=g;try{localStorage.setItem('hibiki-mvp-pfl',mvpPfl);}catch(e){}repaint();});host.querySelectorAll('[data-mpl]').forEach(b=>b.onclick=()=>pick(b.dataset.mpl));}
+function mvpPlHtml(cur,fold,ed){if(mvpPfl!=='ot'&&!plGroups().some(x=>x.g===mvpPfl)){const g=plGroups()[0];mvpPfl=g?g.g:'ot';}const edX=s=>ed?s:s.replace('<button data-pfl="_ed" class="pf-ed">✎ 編集</button>','');
+if(fold&&!mvpPflOpen)return '<div class="pfflt mvpfl" data-fold="1">'+edX(pflBtns(''))+'</div>';
+return '<div class="pfflt mvpfl"'+(fold?' data-fold="1"':'')+'>'+edX(pflBtns(mvpPfl))+'</div><div class="ks mvpl">'+plShowHtml(mvpPfl,{a:'data-mpl',on:'on',cur,none:'<span class="sh-note">この県の場所はまだ無い</span>'})+'</div>';}
+function mvpPlBind(host,pick,repaint){host.querySelectorAll('.mvpfl [data-pfl]').forEach(b=>b.onclick=()=>{const g=b.dataset.pfl;if(g==='_ed'){plEdit(repaint);return;}if(b.closest('[data-fold]')&&mvpPfl===g&&mvpPflOpen){mvpPflOpen=false;repaint();return;}mvpPflOpen=true;mvpPfl=g;try{localStorage.setItem('hibiki-mvp-pfl',mvpPfl);}catch(e){}repaint();});host.querySelectorAll('[data-mpl]').forEach(b=>b.onclick=()=>pick(b.dataset.mpl));}
 function mvpTmRow(base,min){min=min-1;let mn=min,cx=0;if(min>base){if(min-base<720)base=min;else{cx=1;base+=1440;}}return '<div class="tmrow"><button type="button" data-tma="-1" aria-label="5分前">－</button><input type="time" id="mvqT" class="tmi" lang="ja-JP" data-m="'+base+'" data-min="'+mn+'" data-x="'+cx+'" value="'+hmOf(base)+'" aria-label="時刻（押すと手で入れられる）"><button type="button" data-tma="1" aria-label="5分後">＋</button></div>';}
 function mvpTmMx(T){return hmMin(nowHM())+(T&&T.dataset.x==='1'?1440:0);}
 function mvpTmIn(T,v){let m=hmMin(v);if(T.dataset.x==='1'&&m<=hmMin(nowHM()))m+=1440;return m;}
@@ -8403,14 +8428,14 @@ h='<div class="st">いま：📍 '+esc(p||'（場所なし）')+'</div><div clas
 else if(!r){h='<div class="st">走行中 '+esc(o.en.s)+'〜：'+rtVHtml(o.en.rt,TRICON[o.en.tr]||'🚗')+'</div><div class="big"><button type="button" class="stp" id="mvpStop">☕ 止まる</button>'+(mvOrigin(o)?'<button type="button" class="rnd" id="mvpRnd">🔁 往復で<br>戻った</button>':'')+'<button type="button" class="arr" id="mvpArr">🏁 到着 <b>⏱'+esc(mvElText(mvElapsed(o)))+'</b></button></div>';}
 else{const n=new Date(),m=durMin(r.x.s,pad(n.getHours())+':'+pad(n.getMinutes()),0),ks=[r.x.k].concat(r.x.kx||[]);
 h='<div class="st">止まり中：'+esc(r.x.s)+'〜（走行 '+esc(o.en.s)+'〜）</div><div class="big"><button type="button" class="res" id="mvpRes" style="flex:1.7">▶ 出発'+(r.x.ntr&&r.x.ntr!==(o.en.tr||'car')?' '+esc(TRICON[r.x.ntr]||''):'')+' <b>⏱'+esc(mvElText(m))+'</b></button><button type="button" class="arr" id="mvpArr">🏁 到着</button></div>'+mvpSplitBtn(r.x.p||'')+'<div class="ks">'+MVP_KS.map(z=>'<button type="button" data-mk="'+z[0]+'"'+(ks.indexOf(z[0])>=0?' class="on"':'')+'>'+z[1]+'</button>').join('')+[r.x.k].concat(r.x.kx||[]).filter(k=>k&&!MVP_KS.some(z=>z[0]===k)).map(k=>{const q=kindOf(k);return q?'<button type="button" data-mk="'+esc(k)+'" class="on">'+esc(q.ic)+' '+esc(q.lb)+'</button>':'';}).join('')+'<button type="button" id="mvpKAll">🏷️ ほか（全部）</button></div>'+
-'<div class="st" style="margin-top:8px">🚉 次は何で行く？（変わる時だけ押す）</div><div class="trs">'+TRS.map(z=>'<button type="button" data-mntr="'+z[0]+'"'+(z[0]===(r.x.ntr||o.en.tr||'car')?' class="on"':'')+'>'+z[1]+'</button>').join('')+'</div>'+mvpPlanHtml(r.x.pk)+'<div class="mvp-pl"><div class="st" style="margin-top:8px">📍 場所（任意）：貼り付け、または押す</div><input type="text" class="pin" id="mvpPin" placeholder="ここに貼り付け（Googleマップ）" value="'+esc(r.x.p||'')+'" autocomplete="off"><div id="mvpPlW">'+mvpPlHtml(r.x.p||'',true)+'</div></div>';}
+'<div class="st" style="margin-top:8px">🚉 次は何で行く？（変わる時だけ押す）</div><div class="trs">'+TRS.map(z=>'<button type="button" data-mntr="'+z[0]+'"'+(z[0]===(r.x.ntr||o.en.tr||'car')?' class="on"':'')+'>'+z[1]+'</button>').join('')+'</div>'+mvpPlanHtml(r.x.pk)+'<div class="mvp-pl"><div class="st" style="margin-top:8px">📍 場所（任意）：貼り付け、または押す</div><input type="text" class="pin" id="mvpPin" placeholder="ここに貼り付け（Googleマップ）" value="'+esc(r.x.p||'')+'" autocomplete="off"><div id="mvpPlW">'+mvpPlHtml(r.x.p||'',true,true)+'</div></div>';}
 const html0='<div class="box">'+swH+h+'</div>';const ob=el.querySelector('.box:not(.mini)');if(el._h===html0&&ob){el.style.display='';return;}
 const sT=ob?ob.scrollTop:0,wasT=!!(ob&&ob.classList.contains('typing'));el._h=html0;el.innerHTML=html0;el.style.display='';{const nb=el.querySelector('.box');if(nb){if(wasT){nb.scrollTop=sT;requestAnimationFrame(()=>mvpShowPl(nb));}else if(sT)nb.scrollTop=sT;}}
 {const sw=$('mvpSw');if(sw)sw.onclick=()=>{try{localStorage.setItem('hibiki-mvp-min','1');}catch(e){}paintMvp();};}
 {const eb=$('mvpEd');if(eb&&edT)eb.onclick=()=>openEntrySheet(edT.d,{key:edT.k});}
 {const fb=$('mvpFg');if(fb)fb.onclick=mvpForgotAsk;}
 {const ka=$('mvpKAll');if(ka)ka.onclick=()=>openKindAll(id=>{mvpRowSet(x=>{let ks=[x.k].concat(x.kx||[]).filter(Boolean);if(ks.indexOf(id)<0)ks.push(id);x.k=ks[0];x.t=(kindOf(ks[0])||{}).lb||ks[0];if(ks.length>1)x.kx=ks.slice(1);else delete x.kx;});render();},'🏷️ 止まって何をした？','分野を押すと中身が出る。押した物を足す');}
-{const w=$('mvpPlW');if(w){const pick=p=>{mvpPflOpen=false;mvpRowSet(x=>{if(x.p===p)delete x.p;else x.p=p;});render();};const rp=()=>{const o2=openMove(),r2=o2&&mvOpenRow(o2);w.innerHTML=mvpPlHtml(r2&&r2.x.p||'',true);mvpPlBind(w,pick,rp);};mvpPlBind(w,pick,rp);}}
+{const w=$('mvpPlW');if(w){const pick=p=>{mvpPflOpen=false;mvpRowSet(x=>{if(x.p===p)delete x.p;else x.p=p;});render();};const rp=()=>{const o2=openMove(),r2=o2&&mvOpenRow(o2);w.innerHTML=mvpPlHtml(r2&&r2.x.p||'',true,true);plDialFix(w);mvpPlBind(w,pick,rp);};mvpPlBind(w,pick,rp);}}
 requestAnimationFrame(()=>{try{const nb=$('nowBar');el.style.bottom=(nb&&nb.style.display!=='none'?nb.offsetHeight:0)+'px';}catch(e){}mvpFit(el);});
 const B=id=>$(id);if(B('mvpGo'))B('mvpGo').onclick=mvpGoAsk;el.querySelectorAll('[data-mtr]').forEach(b=>b.onclick=()=>{mvpTrSel=b.dataset.mtr;try{b.blur();}catch(e){}paintMvp();});if(B('mvpStop'))B('mvpStop').onclick=mvpStopNow;if(B('mvpArr'))B('mvpArr').onclick=mvpArrAsk;if(B('mvpRnd'))B('mvpRnd').onclick=mvpRoundAsk;if(B('mvpRes'))B('mvpRes').onclick=mvpResumeAsk;if(B('mvpSplit'))B('mvpSplit').onclick=mvpSplitAsk;
 el.querySelectorAll('[data-mk]').forEach(b=>b.onclick=()=>{const k=b.dataset.mk;mvpRowSet(x=>{let ks=[x.k].concat(x.kx||[]).filter(Boolean);const i=ks.indexOf(k);if(i>=0)ks.splice(i,1);else ks.push(k);if(!ks.length)ks=['rest'];x.k=ks[0];x.t=(kindOf(ks[0])||{}).lb||ks[0];if(ks.length>1)x.kx=ks.slice(1);else delete x.kx;});});
@@ -11398,9 +11423,9 @@ if(fi){const t=w.querySelector('.pqpi[data-f="'+fi+'"]');if(t){try{t.focus();}ca
 const paintFlt=()=>{const gs=plGroups().map(x=>x.g).concat(['ot']);if(S.pfl!=='_rc'&&gs.indexOf(S.pfl)<0)S.pfl='_rc';
 const fl=$('pqFlt');fl.innerHTML='<button data-pfl="_rc"'+(S.pfl==='_rc'?' class="sel"':'')+'>🕘 最近</button>'+pflBtns(S.pfl).replace(/<button data-pfl="_ed"[^>]*>[^<]*<\/button>/,'');
 fl.querySelectorAll('[data-pfl]').forEach(b=>b.onclick=()=>{S.pfl=b.dataset.pfl;paintFlt();paintChips();});};
-const paintChips=()=>{const pc=$('pqChips'),rc=(S.pfl==='_rc'),L=rc?placeChips():placeReg(S.pfl);
+const paintChips=()=>{const pc=$('pqChips'),rc=(S.pfl==='_rc'),L=rc?placeChips():[];
 pc.innerHTML=iosSw('pqHome',!!S.home,'🏠 家の日','','row')+
-(S.home?'':(rc?chipListHtml(L,chipsOpen()):(L.length?L.map(p=>'<button class="chip" data-p="'+esc(p)+'">'+esc(p)+'</button>').join(''):'<span class="sh-note">この県の場所はまだ無い</span>')));
+(S.home?'':(rc?chipListHtml(L,chipsOpen()):plShowHtml(S.pfl,{b:'chip',none:'<span class="sh-note">この県の場所はまだ無い</span>'})));
 pc.querySelectorAll('[data-p]').forEach(b=>{b.onclick=()=>setPick(cv()===b.dataset.p?'':b.dataset.p);});
 markChips();
 {const m=pc.querySelector('#pMore');if(m)m.onclick=()=>{chipsSetOpen(true);paintChips();};}
@@ -11689,8 +11714,8 @@ if(fi){const t=w.querySelector('.pqpi[data-f="'+fi+'"]');if(t){try{t.focus();}ca
 const paintFlt=()=>{const gs=plGroups().map(x=>x.g).concat(['ot']);if(S.pfl!=='_rc'&&gs.indexOf(S.pfl)<0)S.pfl='_rc';
 const fl=$('dpFlt');fl.innerHTML='<button data-pfl="_rc"'+(S.pfl==='_rc'?' class="sel"':'')+'>🕘 最近</button>'+pflBtns(S.pfl).replace(/<button data-pfl="_ed"[^>]*>[^<]*<\/button>/,'');
 fl.querySelectorAll('[data-pfl]').forEach(b=>b.onclick=()=>{S.pfl=b.dataset.pfl;paintFlt();paintChips();});};
-const paintChips=()=>{const pc=$('dpChips'),rc=(S.pfl==='_rc'),L=rc?placeChips():placeReg(S.pfl);
-pc.innerHTML=(rc?chipListHtml(L,chipsOpen()):(L.length?L.map(p=>'<button class="chip" data-p="'+esc(p)+'">'+esc(p)+'</button>').join(''):'<span class="sh-note">この県の場所はまだ無い</span>'));
+const paintChips=()=>{const pc=$('dpChips'),rc=(S.pfl==='_rc'),L=rc?placeChips():[];
+pc.innerHTML=(rc?chipListHtml(L,chipsOpen()):plShowHtml(S.pfl,{b:'chip',none:'<span class="sh-note">この県の場所はまだ無い</span>'}));
 pc.querySelectorAll('[data-p]').forEach(b=>{b.onclick=()=>{setPick(cv()===b.dataset.p?'':b.dataset.p);};});
 markChips();
 {const m=pc.querySelector('#pMore');if(m)m.onclick=()=>{chipsSetOpen(true);paintChips();};}
@@ -12930,7 +12955,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c46.1";
+const CL_APPVER="c46.2";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
