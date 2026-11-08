@@ -4929,7 +4929,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c46.5）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c46.6）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -8306,9 +8306,9 @@ return true;}
 function mvNormalize(d,k){const J={d,snap:[],legs:[]};let t=false;mutate(()=>{t=mvNormCore(d,k,J);});return t?J:null;}
 const MVP_KS=[['rest','☕ 休憩'],['wc','🚻 トイレ'],['meal','🍚 食事'],['nap','😴 仮眠'],['spplay','📲 スマホ'],['ai','🤖 AI・PC']];
 function hmOf(m){m=((m%1440)+1440)%1440;return pad(Math.floor(m/60))+':'+pad(m%60);}
-function mvpStopPlaces(){try{const lim=addDays(todayStr(),-120),cnt={},last={};const re=/SA|PA|パーキング|サービスエリア|GS|スタンド|ENEOS|apollostation|出光|コスモ|セブン|ローソン|ファミリーマート|ミニストップ|コンビニ|道の駅/i;
-for(const d in state.entries){if(d<lim)continue;const eo=state.entries[d];for(const k in eo){const x=eo[k];if(!x||x.del||x.mv||x.noT||!x.p||!x.s||!x.e)continue;const m=durMin(x.s,x.e,x.ed?1:0);if(!(m>0&&m<=30)&&!re.test(x.p))continue;const pk=placeKey(x.p);cnt[pk]=(cnt[pk]||0)+1;if(!last[pk]||d>last[pk].d)last[pk]={d,p:x.p};}}
-return Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a]||(last[b].d<last[a].d?-1:1)).slice(0,6).map(k=>last[k].p);}catch(e){return [];}}
+function mvpStopPlaces(){try{const lim=addDays(todayStr(),-120),cnt={},last={},sp={};const re=/SA|PA|パーキング|サービスエリア|GS|スタンド|ENEOS|apollostation|出光|コスモ|セブン|ローソン|ファミリーマート|ミニストップ|コンビニ|道の駅/i;
+for(const d in state.entries){if(d<lim)continue;const eo=state.entries[d];for(const k in eo){const x=eo[k];if(x&&!x.del&&x.mv&&Array.isArray(x.acts))x.acts.forEach(z=>{if(z&&z.mvp&&String(z.p||'').trim()){const pk=placeKey(z.p);cnt[pk]=(cnt[pk]||0)+1;sp[pk]=1;if(!last[pk]||d>last[pk].d)last[pk]={d,p:String(z.p).trim()};}});if(!x||x.del||x.mv||x.noT||!x.p||!x.s||!x.e)continue;const m=durMin(x.s,x.e,x.ed?1:0);if(!(m>0&&m<=30)&&!re.test(x.p))continue;const pk=placeKey(x.p);cnt[pk]=(cnt[pk]||0)+1;if(!last[pk]||d>last[pk].d)last[pk]={d,p:x.p};}}
+return Object.keys(cnt).sort((a,b)=>(sp[b]?1:0)-(sp[a]?1:0)||cnt[b]-cnt[a]||(last[b].d<last[a].d?-1:1)).slice(0,6).map(k=>last[k].p);}catch(e){return [];}}
 function mvpArrPlaces(){try{const out=[],seen={},add=(p,plan)=>{p=String(p||'').trim();if(!p)return;const k=placeKey(p);if(seen[k])return;seen[k]=1;out.push({p,plan:!!plan});};const pr=prepToday();if(pr&&pr.to&&!pr.home)add(pr.to,1);try{plnOpen(todayStr()).forEach(o=>{if(o.x.pl)add(o.x.pl,1);});}catch(e){}
 const lim=addDays(todayStr(),-6),cnt={},nm={},ls={};for(const d in state.entries){if(d<lim)continue;const eo=state.entries[d];for(const k in eo){const x=eo[k];if(!x||x.del||x.mv||x.noT||!x.p||!x.s)continue;const pk=placeKey(x.p);cnt[pk]=(cnt[pk]||0)+1;nm[pk]=x.p;const w=d+x.s;if(!ls[pk]||w>ls[pk])ls[pk]=w;}}
 Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a]||(ls[a]<ls[b]?1:-1)).slice(0,PL_TOP).forEach(k=>add(nm[k]));return out;}catch(e){return [];}}
@@ -12990,7 +12990,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c46.5";
+const CL_APPVER="c46.6";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
