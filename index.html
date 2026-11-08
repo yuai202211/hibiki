@@ -4926,7 +4926,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c46.3）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c46.4）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -7744,12 +7744,13 @@ document.addEventListener('click',ev=>{const q=ev.target&&ev.target.closest&&ev.
 if(q.dataset.ctb==='no'){sugSet('ct|'+d+'|'+k);toast('このままにした');return;}
 mutate(()=>{const en=state.entries[d][k];if(!en)return;const add=c.W.map(a=>{const z={k:a.k,t:a.t||(kindOf(a.k)||{}).lb||a.k,m:0,w:1};if(a.kx)z.kx=a.kx.slice();if(Array.isArray(a.ai))z.ai=a.ai.slice();if(Array.isArray(a.ap))z.ap=a.ap.slice();if(a.d)z.d=a.d;return z;});en.acts=(en.acts||[]).concat(add);en.ts=Date.now();});toast('⏭ 離席前の続きを入れた');},true);
 function warnDecorate(pane){const eo=entriesOf(ui.date)||{},REST={rest:1,nap:1};
-pane.querySelectorAll('.hour.filled[data-k]').forEach(el=>{const x=eo[el.dataset.k];if(!x||x.del||x.noT||!x.s)return;const dur=(x.e?durMin(x.s,x.e,x.ed?1:0):0)||0;let rest=0,muda=0;
+pane.querySelectorAll('.hour.filled[data-k]').forEach(el=>{const x=eo[el.dataset.k];if(!x||x.del||x.noT||!x.s)return;const dur=(x.e?durMin(x.s,x.e,x.ed?1:0):0)||0;let rest=0,muda=0,rw=0;
 const MA=mudaAuto(),isM=k=>{if(!MA)return false;const q=kindOf(k);return !!(q&&q.muda);};
 if(x.md)muda+=dur;else if(REST[x.k])rest+=dur;else if(x.k&&isM(x.k))muda+=dur;
 const AL=(Array.isArray(x.acts)?x.acts:[]).filter(a=>a&&actRowOk(x,a)),wN=AL.filter(a=>!(a.s&&a.e)&&!(Number(a.m)>0)&&(a.w||!a.s)&&(a.k||a.md)).length,used=AL.reduce((s,a)=>s+((a.s&&a.e)?durMin(a.s,a.e,0):(Number(a.m)>0?Number(a.m):0)),0),wSh=wN?Math.max(0,Math.round((dur-used)/wN)):0;
 (Array.isArray(x.acts)?x.acts:[]).forEach(a=>{if(!a||!actRowOk(x,a))return;const ks=[a.k].concat(a.kx||[]).filter(Boolean);const m=(a.s&&a.e)?durMin(a.s,a.e,0):(a.w||!a.s?dur:0),mM0=(a.s&&a.e)?m:(Number(a.m)>0?Number(a.m):((a.w||!a.s)?wSh:0)),mM=(a.md&&Number(a.mdm)>0)?Math.min(Number(a.mdm),mM0):mM0;
-if(a.md||(!a.nm&&!a.wk&&ks.some(isM))){if(!x.md&&!isM(x.k))muda+=mM;}else if(ks.some(k=>REST[k])){if(!REST[x.k])rest+=m;}});
+if(a.md||(!a.nm&&!a.wk&&ks.some(isM))){if(!x.md&&!isM(x.k))muda+=mM;}else if(ks.some(k=>REST[k])){if(!REST[x.k]){if(a.s&&a.e)rest+=m;else if(!rw){rw=1;rest+=m;}}}});
+if(dur&&rest>dur)rest=dur;
 if(!rest&&!muda&&!x.md&&!(x.k&&(REST[x.k]||isM(x.k))))return;
 el.classList.add('warn-rec');const b=el.querySelector('.body');if(b&&!b.querySelector('.warn-tag')){const t=[];if(rest||REST[x.k])t.push('☕ 休憩 '+(durText(rest)||'0分'));if(muda||x.md||isM(x.k))t.push('🕳️ ムダ '+(durText(muda)||'0分'));b.insertAdjacentHTML('beforeend','<span class="warn-tag">⚠️ '+t.join('・')+'</span>');}});}
 function tripDecorate(pane){return;let tn=0;const eo=entriesOf(ui.date)||{},rows=[...pane.querySelectorAll('.hour.filled[data-k]')],pk=s=>placeKey(String(s||'').trim()),near=(a,b)=>a&&b&&Math.abs(hmMin(a)-hmMin(b))<=5;
@@ -8432,7 +8433,7 @@ if(!o){const p=placeBefore(todayStr(),nowHM());const tr=mvpTr(),tl=String((TRS.f
 h='<div class="st">いま：📍 '+esc(p||'（場所なし）')+'</div><div class="trs">'+TRS.map(z=>'<button type="button" data-mtr="'+z[0]+'"'+(z[0]===tr?' class="on"':'')+'>'+z[1]+'</button>').join('')+'</div><div class="big"><button type="button" class="go" id="mvpGo">'+esc(TRICON[tr]||'🚗')+' 移動 <b>'+esc(tl)+'で出発</b></button></div>'+(()=>{const st=mvpStay();return st?mvpSplitBtn(st.en.p):'';})();}
 else if(!r){h='<div class="st">走行中 '+esc(o.en.s)+'〜：'+rtVHtml(o.en.rt,TRICON[o.en.tr]||'🚗')+'</div><div class="big"><button type="button" class="stp" id="mvpStop">☕ 止まる</button>'+(mvOrigin(o)?'<button type="button" class="rnd" id="mvpRnd">🔁 往復で<br>戻った</button>':'')+'<button type="button" class="arr" id="mvpArr">🏁 到着 <b>⏱'+esc(mvElText(mvElapsed(o)))+'</b></button></div>';}
 else{const n=new Date(),m=durMin(r.x.s,pad(n.getHours())+':'+pad(n.getMinutes()),0),ks=[r.x.k].concat(r.x.kx||[]);
-h='<div class="st">止まり中：'+esc(r.x.s)+'〜（走行 '+esc(o.en.s)+'〜）</div><div class="big"><button type="button" class="res" id="mvpRes" style="flex:1.7">▶ 出発'+(r.x.ntr&&r.x.ntr!==(o.en.tr||'car')?' '+esc(TRICON[r.x.ntr]||''):'')+' <b>⏱'+esc(mvElText(m))+'</b></button><button type="button" class="arr" id="mvpArr">🏁 到着</button></div>'+mvpSplitBtn(r.x.p||'')+'<div class="ks">'+MVP_KS.map(z=>'<button type="button" data-mk="'+z[0]+'"'+(ks.indexOf(z[0])>=0?' class="on"':'')+'>'+z[1]+'</button>').join('')+[r.x.k].concat(r.x.kx||[]).filter(k=>k&&!MVP_KS.some(z=>z[0]===k)).map(k=>{const q=kindOf(k);return q?'<button type="button" data-mk="'+esc(k)+'" class="on">'+esc(q.ic)+' '+esc(q.lb)+'</button>':'';}).join('')+'<button type="button" id="mvpKAll">🏷️ ほか（全部）</button></div>'+
+h='<div class="st">止まり中：'+esc(r.x.s)+'〜（走行 '+esc(o.en.s)+'〜）</div><div class="big"><button type="button" class="res" id="mvpRes" style="flex:1.7">▶ 出発'+(r.x.ntr&&r.x.ntr!==(o.en.tr||'car')?' '+esc(TRICON[r.x.ntr]||''):'')+' <b>⏱'+esc(mvElText(m))+'</b></button><button type="button" class="arr" id="mvpArr">🏁 到着</button></div>'+mvpSplitBtn(r.x.p||'')+((ks.filter(Boolean).length&&!(ks.filter(Boolean).length===1&&ks[0]==='rest'))?'<button type="button" class="spl" id="mvpSubEnd">✓ '+esc(ks.filter(Boolean).map(k=>{const q=kindOf(k);return q?q.ic+' '+q.lb:k;}).join('・'))+' おわり<small>（まだここにいる）</small></button>':'')+'<div class="ks">'+MVP_KS.map(z=>'<button type="button" data-mk="'+z[0]+'"'+(ks.indexOf(z[0])>=0?' class="on"':'')+'>'+z[1]+'</button>').join('')+[r.x.k].concat(r.x.kx||[]).filter(k=>k&&!MVP_KS.some(z=>z[0]===k)).map(k=>{const q=kindOf(k);return q?'<button type="button" data-mk="'+esc(k)+'" class="on">'+esc(q.ic)+' '+esc(q.lb)+'</button>':'';}).join('')+'<button type="button" id="mvpKAll">🏷️ ほか（全部）</button></div>'+
 '<div class="st" style="margin-top:8px">🚉 次は何で行く？（変わる時だけ押す）</div><div class="trs">'+TRS.map(z=>'<button type="button" data-mntr="'+z[0]+'"'+(z[0]===(r.x.ntr||o.en.tr||'car')?' class="on"':'')+'>'+z[1]+'</button>').join('')+'</div>'+mvpPlanHtml(r.x.pk)+'<div class="mvp-pl"><div class="st" style="margin-top:8px">📍 場所（任意）：貼り付け、または押す</div><input type="text" class="pin" id="mvpPin" placeholder="ここに貼り付け（Googleマップ）" value="'+esc(r.x.p||'')+'" autocomplete="off"><div id="mvpPlW">'+mvpPlHtml(r.x.p||'',true,true)+'</div></div>';}
 const html0='<div class="box">'+swH+h+'</div>';const ob=el.querySelector('.box:not(.mini)');if(el._h===html0&&ob){el.style.display='';return;}
 const sT=ob?ob.scrollTop:0,wasT=!!(ob&&ob.classList.contains('typing'));el._h=html0;el.innerHTML=html0;el.style.display='';{const nb=el.querySelector('.box');if(nb){if(wasT){nb.scrollTop=sT;requestAnimationFrame(()=>mvpShowPl(nb));}else if(sT)nb.scrollTop=sT;}}
@@ -8442,7 +8443,7 @@ const sT=ob?ob.scrollTop:0,wasT=!!(ob&&ob.classList.contains('typing'));el._h=ht
 {const ka=$('mvpKAll');if(ka)ka.onclick=()=>openKindAll(id=>{mvpRowSet(x=>{let ks=[x.k].concat(x.kx||[]).filter(Boolean);if(ks.indexOf(id)<0)ks.push(id);x.k=ks[0];x.t=(kindOf(ks[0])||{}).lb||ks[0];if(ks.length>1)x.kx=ks.slice(1);else delete x.kx;});render();},'🏷️ 止まって何をした？','分野を押すと中身が出る。押した物を足す');}
 {const w=$('mvpPlW');if(w){const pick=p=>{mvpPflOpen=false;mvpRowSet(x=>{if(x.p===p)delete x.p;else x.p=p;});render();};const rp=()=>{const o2=openMove(),r2=o2&&mvOpenRow(o2);w.innerHTML=mvpPlHtml(r2&&r2.x.p||'',true,true);plDialFix(w);mvpPlBind(w,pick,rp);};mvpPlBind(w,pick,rp);}}
 requestAnimationFrame(()=>{try{const nb=$('nowBar');el.style.bottom=(nb&&nb.style.display!=='none'?nb.offsetHeight:0)+'px';}catch(e){}mvpFit(el);});
-const B=id=>$(id);if(B('mvpGo'))B('mvpGo').onclick=mvpGoAsk;el.querySelectorAll('[data-mtr]').forEach(b=>b.onclick=()=>{mvpTrSel=b.dataset.mtr;try{b.blur();}catch(e){}paintMvp();});if(B('mvpStop'))B('mvpStop').onclick=mvpStopNow;if(B('mvpArr'))B('mvpArr').onclick=mvpArrAsk;if(B('mvpRnd'))B('mvpRnd').onclick=mvpRoundAsk;if(B('mvpRes'))B('mvpRes').onclick=mvpResumeAsk;if(B('mvpSplit'))B('mvpSplit').onclick=mvpSplitAsk;
+const B=id=>$(id);if(B('mvpGo'))B('mvpGo').onclick=mvpGoAsk;el.querySelectorAll('[data-mtr]').forEach(b=>b.onclick=()=>{mvpTrSel=b.dataset.mtr;try{b.blur();}catch(e){}paintMvp();});if(B('mvpStop'))B('mvpStop').onclick=mvpStopNow;if(B('mvpArr'))B('mvpArr').onclick=mvpArrAsk;if(B('mvpRnd'))B('mvpRnd').onclick=mvpRoundAsk;if(B('mvpRes'))B('mvpRes').onclick=mvpResumeAsk;if(B('mvpSplit'))B('mvpSplit').onclick=mvpSplitAsk;if(B('mvpSubEnd'))B('mvpSubEnd').onclick=()=>{const o2=openMove(),r2=o2&&mvOpenRow(o2);if(!r2)return;const pv=(o2.en.acts||[]).filter(a=>a&&a.mvp&&a.e&&a.e===r2.x.s&&a!==r2.x).pop();const bk=(pv&&pv.k&&pv.k!==r2.x.k)?pv.k:'rest';mvpSplit({o:o2,i:r2.i},nowHM(),'',bk,(pv&&pv.p)||r2.x.p||'');};
 el.querySelectorAll('[data-mk]').forEach(b=>b.onclick=()=>{const k=b.dataset.mk;mvpRowSet(x=>{let ks=[x.k].concat(x.kx||[]).filter(Boolean);const i=ks.indexOf(k);if(i>=0)ks.splice(i,1);else ks.push(k);if(!ks.length)ks=['rest'];x.k=ks[0];x.t=(kindOf(ks[0])||{}).lb||ks[0];if(ks.length>1)x.kx=ks.slice(1);else delete x.kx;});});
 el.querySelectorAll('[data-mp]').forEach(b=>b.onclick=()=>{const p=b.dataset.mp;mvpRowSet(x=>{if(x.p===p)delete x.p;else x.p=p;});});
 el.querySelectorAll('[data-mntr]').forEach(b=>b.onclick=()=>{const v=b.dataset.mntr,o2=openMove(),cur=(o2&&o2.en.tr)||'car';try{b.blur();}catch(e){}mvpRowSet(x=>{if(v===cur)delete x.ntr;else x.ntr=v;});});
@@ -12962,7 +12963,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c46.3";
+const CL_APPVER="c46.4";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
