@@ -1950,6 +1950,7 @@ body.cardvis .fab{display:none!important}
 #pinRow{display:none!important}
 .hdr1 .nowjump{margin-left:auto;flex:none;border:0;border-radius:999px;padding:4px 9px;background:#14275a;color:#fff;font-weight:800;font-size:12px;line-height:1.3;white-space:nowrap}.hdr1 .nowjump:active{background:#22397a}#kakuTop{margin-left:6px!important}
 .pfflt{gap:4px}.mvp .pfflt>button[data-pfl],.mvq .pfflt>button[data-pfl],.pfflt>button[data-pfl]{padding:7px 8px;font-size:12.5px;white-space:nowrap}.pfflt .pf-ed{margin-left:0}
+.stq .st{font-size:13px;font-weight:800;color:#4a5568;margin-top:6px}.stq .pl{justify-content:flex-start}.stq .pl button{padding:9px 12px;font-size:13.5px}.stq .pl button.on{background:#2c5cc5;color:#fff}.stq .ks button.on{background:#12b76a;color:#fff}.stq .trs{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}.stq .trs button{border:0;border-radius:999px;padding:8px 10px;font-weight:800;font-size:13px;background:#f1f3f8;color:#4a5568;white-space:nowrap;font-family:inherit}.stq .trs button.on{background:#13864a;color:#fff}.stq .spl{display:block;width:100%;margin-top:10px;border:0;border-radius:14px;background:#fff4dc;color:#7a4b00;font-weight:800;font-size:14px;padding:10px 8px;box-shadow:inset 0 0 0 1.5px #f5c46b;font-family:inherit}
 .pl-sec{width:100%;font-size:11.5px;font-weight:800;color:#8a90a0;margin-top:6px}.pldw{width:100%;position:relative;margin-top:4px;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fafbfd}.pldw::before{content:"";position:absolute;left:6px;right:6px;top:84px;height:42px;border-radius:10px;background:#e9edf8;pointer-events:none}.pldw::after{content:"";position:absolute;inset:0;background:linear-gradient(#fafbfd,rgba(250,251,253,0) 34%,rgba(250,251,253,0) 66%,#fafbfd);pointer-events:none}.pldial{position:relative;height:210px;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scroll-snap-type:y mandatory;padding-block:84px;scrollbar-width:none;touch-action:pan-y}.pldial::-webkit-scrollbar{display:none}
 .pldw .pldial>button[type]{display:flex;align-items:center;justify-content:center;width:100%;height:42px;padding:0 12px;border:0;border-radius:0;background:none;scroll-snap-align:center;font-size:13px;font-weight:700;line-height:1.25;text-align:center;color:#3b4252}.pldw .pldial>button[type].on,.pldw .pldial>button[type].sel{background:none;color:#2c5cc5;font-weight:800}
 #nvw{touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}#nvw .nb{touch-action:none;-webkit-touch-callout:none;user-select:none;-webkit-user-select:none}#nvw .nb.nb-off{display:none!important}#nvw .nb.nb-pk{opacity:.18}#nvw.nv-ed .nb{animation:nbWg .26s infinite alternate ease-in-out}#nvw.nv-ed .nb:nth-child(even){animation-delay:-.13s}@keyframes nbWg{from{transform:rotate(-2.4deg)}to{transform:rotate(2.4deg)}}
@@ -4288,9 +4289,11 @@ if(g==='sky')return '<span class="mvc-sky"><svg width="100%" height="40" viewBox
 if(g==='sea')return '<span class="mvc-sea"><svg width="100%" height="16" viewBox="0 0 120 16" preserveAspectRatio="none"><path d="M0 6 Q5 0 10 6 T20 6 T30 6 T40 6 T50 6 T60 6 T70 6 T80 6 T90 6 T100 6 T110 6 T120 6 V16 H0 Z" fill="#b5d4f4"/></svg></span>';
 if(g==='foot'){let s='';const F=nf||9;for(let i=0;i<F;i++)s+='<i style="opacity:'+((done||(i+0.5)/F<=pos)?1:0.25)+'">👣</i>';return '<span class="mvc-foot">'+s+'</span>';}
 return '<span class="mvc-road"></span>';}
+function mvCardVias(en,P){const from=P[0]||'',to=P.length>1?P[P.length-1]:'',out=P.slice(1,-1).filter(Boolean),seen={};[from,to].concat(out).forEach(p=>{if(p)seen[placeKey(p)]=1;});
+const S=String(en.s||'00:00'),ab=t=>(String(t)<S?1440:0)+hmMin(t);(Array.isArray(en.acts)?en.acts:[]).filter(a=>a&&a.s&&String(a.p||'').trim()).sort((a,b)=>ab(a.s)-ab(b.s)).forEach(a=>{const p=String(a.p).trim(),k=placeKey(p);if(!seen[k]){seen[k]=1;out.push(p);}});return out;}
 function mvCardHtml(en,open){
 const tr=en.tr||'car',ic=TRICON[tr]||'🚗',P=String(en.rt||'').split('→').map(z=>z.trim());
-const from=P[0]||'',to=P.length>1?P[P.length-1]:'',vias=P.slice(1,-1).filter(Boolean);
+const from=P[0]||'',to=P.length>1?P[P.length-1]:'',vias=mvCardVias(en,P);
 const L=P.length>1?P:[from,''],PF=mvLinePf(L,en),q0=PF[0]||null,q1=PF[PF.length-1]||q0;
 const tag=q=>'<span class="mvc-pf"><i>'+pfSym(q)+'</i>'+esc(q.short)+'</span>';
 const top=(q0&&q1&&q0.short===q1.short)?'':'<span class="mvc-top">'+(q0?'<span class="mvc-g">'+tag(q0)+'<b class="mvc-kr">から</b></span>':'')+'<span class="mvc-ln"></span><span class="mvc-go">移動<i>➜</i></span><span class="mvc-ln"></span>'+(q1?'<span class="mvc-g">'+tag(q1)+'<b class="mvc-md">まで</b></span>':'')+'</span>';
@@ -4308,7 +4311,7 @@ function mvNum(i){const N=[...'①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯�
 function mvViaDots(vias){return (vias||[]).map((v,j,a)=>{const p=Math.round((j+1)/(a.length+1)*1000)/10;return '<i class="mvt-vd" style="left:'+p+'%"></i><i class="mvt-vn" style="left:'+p+'%">'+mvNum(j)+'</i>';}).join('');}
 function mvTripHtml(T,open){try{const ends=x=>String(x.rt||'').split('→').map(z=>z.trim()).filter(Boolean),segs=[];
 T.filter(o=>o.x&&o.x.mv).forEach(o=>{const x=o.x,tr=x.tr||'car',p=ends(x),mm=x.e?durMin(x.s,x.e,(x.ed||x.e<x.s)?1:0):0,l=segs[segs.length-1];
-const from=p[0]||'',to=p.length>1?p[p.length-1]:'',iv=p.slice(1,-1);
+const from=p[0]||'',to=p.length>1?p[p.length-1]:'',iv=mvCardVias(x,String(x.rt||'').split('→').map(z=>z.trim()));
 if(l&&l.tr===tr){if(l.to)l.vias.push(l.to);iv.forEach(v=>l.vias.push(v));l.to=to;l.m+=mm;}else segs.push({tr,from,to,m:mm,vias:iv.slice()});});
 if(segs.length<1)return '';
 let vn=0;const V=s=>s.vias.map(v=>({v,n:vn++}));segs.forEach(s=>{s.vv=V(s);});
@@ -4926,7 +4929,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c46.4）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c46.5）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -8321,7 +8324,7 @@ function mvpTmIn(T,v){let m=hmMin(v);if(T.dataset.x==='1'&&m<=hmMin(nowHM()))m+=
 function mvpBindTm(){const s2=$('sheet2'),T=$('mvqT');if(!s2||!T)return;s2.querySelectorAll('[data-tma]').forEach(b=>b.onclick=()=>{const m0=Number(T.dataset.m),dir=Number(b.dataset.tma),r=((m0%5)+5)%5;let m=dir<0?(r?m0-r:m0-5):(r?m0+5-r:m0+5);const mn=Number(T.dataset.min),mx=mvpTmMx(T);if(m<mn)m=mn;if(m>mx)m=mx;T.dataset.m=m;T.value=hmOf(m);});T.onchange=()=>{if(!/^\d\d:\d\d$/.test(T.value)){T.value=hmOf(Number(T.dataset.m));return;}let m=mvpTmIn(T,T.value);const mn=Number(T.dataset.min),mx=mvpTmMx(T);if(m<mn)m=mn;if(m>mx)m=mx;T.dataset.m=m;T.value=hmOf(m);};}
 function mvpT(){const T=$('mvqT');if(!T)return nowHM();if(/^\d\d:\d\d$/.test(T.value)){let m=mvpTmIn(T,T.value);const mn=Number(T.dataset.min),mx=mvpTmMx(T);if(m<mn)m=mn;if(m>mx)m=mx;return hmOf(m);}return hmOf(Number(T.dataset.m));}
 function mvpDayOf(o,hm){const dT=todayStr();return (o.d<dT&&hm<o.en.s)?dT:o.d;}
-function mvpStopNow(){const o=openMove();if(!o||mvOpenRow(o))return;const sn=ubSnap(o.d,o.k);mvPauseStart('rest');const r=mvOpenRow(openMove()||o);undoBar('☕ '+(r?r.x.s:nowHM())+' から止まっている',ubBack(sn),{d:o.d,k:o.k});render();}
+function mvpStopNow(){const o=openMove();if(!o||mvOpenRow(o))return;const sn=ubSnap(o.d,o.k);mvPauseStart('rest');const r=mvOpenRow(openMove()||o);undoBar('☕ '+(r?r.x.s:nowHM())+' から止まっている',ubBack(sn),{d:o.d,k:o.k});render();mvpStopSheet('new');}
 function mvpPinFlush(pin){const o=openMove(),r=o&&mvOpenRow(o);if(!r||!pin)return;const v=pin.value.trim();if((r.x.p||'')!==v)mvpRowSet(x=>{if(v)x.p=v;else delete x.p;});}
 function mvpRowSet(fn){const o=openMove(),r=o&&mvOpenRow(o);if(!r)return;mutate(()=>{const en=state.entries[o.d][o.k];const x=(en.acts||[])[r.i];if(x&&x.mvp){fn(x);en.ts=Date.now();}});}
 function mvpForgotAsk(){const o=openMove(),r=o&&mvOpenRow(o);
@@ -8423,6 +8426,31 @@ if(e){const bk=ks.indexOf('rest')>=0?'rest':(ks.find(Boolean)||'rest');A.push({t
 en.acts=actsSort(A,en.s);en.ts=Date.now();});
 undoBar('⏱ '+s+(e?'–'+e:'〜')+' '+(kk?kk.ic+' ':'')+lb+(sp?'（📍 '+sp+'）':'')+(e?'・'+e+'〜 元に戻る':''),ubBack(sn),{d:dd,k:ek});render();}
 function mvpSplitBtn(pl){return '<button type="button" class="spl" id="mvpSplit">⏱ ここで別のこと'+(pl?'<small>（📍 '+esc(pl)+' の中）</small>':'')+'</button>';}
+function mvpStopSheet(mode){const o=openMove(),r=o&&mvOpenRow(o);if(!r)return;const x=r.x,isNew=mode==='new',ks0=[x.k].concat(x.kx||[]).filter(Boolean);let fresh=isNew&&ks0.length===1&&ks0[0]==='rest';
+const cur=()=>{const o2=openMove(),r2=o2&&mvOpenRow(o2);return r2?{o:o2,r:r2,ks:[r2.x.k].concat(r2.x.kx||[]).filter(Boolean),p:r2.x.p||''}:null;};
+const kb=(k,on,lb)=>'<button type="button" data-sqk="'+esc(k)+'"'+(on?' class="on"':'')+'>'+lb+'</button>';
+const html='<div class="mvq stq"><div class="sh-time" style="justify-content:center"><span>'+(isNew?'☕ 止まった':'✎ 場所と何をした')+'</span></div>'+
+(isNew?'<div class="sh-note">止まった時刻</div>'+mvpTmRow(hmMin(x.s),hmMin(o.en.s)+1):'<div class="sh-note">いま：'+esc(ks0.map(k=>(kindOf(k)||{}).lb||k).join('・'))+'（'+esc(x.s)+'〜）。別の事を押すと、今から切り替わる</div>')+
+'<div class="st">📍 どこ？（押すだけ）</div><div class="pl">'+mvpStopPlaces().map(p=>'<button type="button" data-sqp="'+esc(p)+'"'+(x.p===p?' class="on"':'')+'>'+esc(p)+'</button>').join('')+'</div><input type="text" class="pin" id="sqPin" placeholder="ここに貼り付け（Googleマップ）" value="'+esc(x.p||'')+'" autocomplete="off"><div id="sqPl">'+(mvpPflOpen=false,mvpPlHtml(x.p||'',true))+'</div>'+
+'<div class="st" style="margin-top:8px">何してる？（いくつでも）</div><div class="ks">'+MVP_KS.map(z=>kb(z[0],!fresh&&ks0.indexOf(z[0])>=0,z[1])).join('')+ks0.filter(k=>!MVP_KS.some(z=>z[0]===k)).map(k=>{const q=kindOf(k);return q?kb(k,true,esc(q.ic)+' '+esc(q.lb)):'';}).join('')+'<button type="button" id="sqAll">🏷️ ほか（全部）</button></div>'+
+(isNew?'':'<div class="st" style="margin-top:8px">🚉 次は何で行く？（変わる時だけ押す）</div><div class="trs">'+TRS.map(z=>'<button type="button" data-sqtr="'+z[0]+'"'+(z[0]===(x.ntr||o.en.tr||'car')?' class="on"':'')+'>'+z[1]+'</button>').join('')+'</div><div id="sqPk">'+mvpPlanHtml(x.pk)+'</div><button type="button" class="spl" id="sqSplit">⏱ 時刻を決めて別のこと（押し忘れた時）</button>')+
+'<div class="sh-btns"><button class="savebtn" id="sqOk" style="flex:1">✓ 閉じる</button></div><div class="sh-note">押した物はその場で入る。'+(isNew?'何も押さずに閉じると☕休憩':'')+'</div></div>';
+const flush=()=>{try{const pin=$('sqPin');if(pin)mvpPinFlush(pin);}catch(e){}if(isNew){try{const T=$('mvqT'),c=cur();if(T&&c){const v=mvpT();if(v!==c.r.x.s)mvpRowSet(z=>{z.s=v;});}}catch(e){}}};
+openSub(html,()=>{flush();render();});mvpBindTm();const S=$('sheet2');
+const markP=()=>{const c=cur(),v=c?c.p:'';S.querySelectorAll('[data-sqp]').forEach(b=>b.classList.toggle('on',b.dataset.sqp===v));const pin=$('sqPin');if(pin&&document.activeElement!==pin)pin.value=v;};
+const markK=()=>{const c=cur();if(!c)return;S.querySelectorAll('[data-sqk]').forEach(b=>b.classList.toggle('on',!fresh&&c.ks.indexOf(b.dataset.sqk)>=0));};
+S.querySelectorAll('[data-sqp]').forEach(b=>b.onclick=()=>{const p=b.dataset.sqp;mvpRowSet(z=>{if(z.p===p)delete z.p;else z.p=p;});markP();});
+{const w=$('sqPl'),pick=p=>{mvpRowSet(z=>{z.p=p;});markP();rp();},rp=()=>{const c=cur();w.innerHTML=mvpPlHtml(c?c.p:'',true);plDialFix(w);mvpPlBind(w,pick,rp);};mvpPlBind(w,pick,rp);}
+{const pin=$('sqPin');pin.onchange=()=>{mvpPinFlush(pin);markP();};pin.onkeydown=ev=>{if(ev.key==='Enter'&&!ev.isComposing){ev.preventDefault();pin.blur();}};}
+const useK=k=>{const c=cur();if(!c)return;
+if(!isNew&&c.ks.indexOf(k)<0){closeSub();const c2=cur();if(c2)mvpSplit({o:c2.o,i:c2.r.i},nowHM(),'',k,'');return;}
+mvpRowSet(z=>{let a=fresh?[]:[z.k].concat(z.kx||[]).filter(Boolean);const i=a.indexOf(k);if(i>=0)a.splice(i,1);else a.push(k);if(!a.length)a=['rest'];z.k=a[0];z.t=(kindOf(a[0])||{}).lb||a[0];if(a.length>1)z.kx=a.slice(1);else delete z.kx;});fresh=false;markK();};
+S.querySelectorAll('[data-sqk]').forEach(b=>b.onclick=()=>useK(b.dataset.sqk));
+$('sqAll').onclick=()=>{flush();openKindAll(id=>{const c=cur();if(!c)return;if(!isNew&&c.ks.indexOf(id)<0){mvpSplit({o:c.o,i:c.r.i},nowHM(),'',id,'');return;}mvpRowSet(z=>{let a=fresh?[]:[z.k].concat(z.kx||[]).filter(Boolean);if(a.indexOf(id)<0)a.push(id);z.k=a[0];z.t=(kindOf(a[0])||{}).lb||a[0];if(a.length>1)z.kx=a.slice(1);else delete z.kx;});render();mvpStopSheet('edit');},'🏷️ 止まって何をした？','分野を押すと中身が出る');};
+S.querySelectorAll('[data-sqtr]').forEach(b=>b.onclick=()=>{const v=b.dataset.sqtr,c=cur();if(!c)return;const tr0=c.o.en.tr||'car';mvpRowSet(z=>{if(v===tr0)delete z.ntr;else z.ntr=v;});S.querySelectorAll('[data-sqtr]').forEach(q=>q.classList.toggle('on',q.dataset.sqtr===v));});
+const bindPk=()=>{S.querySelectorAll('#sqPk [data-mpk]').forEach(b=>b.onclick=()=>{const pk=b.dataset.mpk,q=((state.plans||{})[todayStr()]||{})[pk];mvpRowSet(z=>{const a=Array.isArray(z.pk)?z.pk.slice():[];const i=a.indexOf(pk);if(i>=0)a.splice(i,1);else{a.push(pk);if(!z.p&&q&&q.pl)z.p=q.pl;}if(a.length)z.pk=a;else delete z.pk;});const c=cur();$('sqPk').innerHTML=mvpPlanHtml(c&&c.r.x.pk);bindPk();markP();});};bindPk();
+{const sp=$('sqSplit');if(sp)sp.onclick=()=>{flush();mvpSplitAsk();};}
+$('sqOk').onclick=closeSub;}
 function paintMvp(){const el=$('mvp');if(!el)return;mvpNoScroll(el);const show=ui.tab==='di'&&(typeof topView==='undefined'||topView==='diary')&&ui.date===todayStr();if(!show){el.style.display='none';return;}
 {const ae=document.activeElement;if(ae&&el.contains(ae)&&ae.matches&&ae.matches('input,textarea,select'))return;}const o=openMove(),r=o&&mvOpenRow(o);let h='';
 let mn=false;try{mn=localStorage.getItem('hibiki-mvp-min')==='1';}catch(e){}
@@ -8433,17 +8461,16 @@ if(!o){const p=placeBefore(todayStr(),nowHM());const tr=mvpTr(),tl=String((TRS.f
 h='<div class="st">いま：📍 '+esc(p||'（場所なし）')+'</div><div class="trs">'+TRS.map(z=>'<button type="button" data-mtr="'+z[0]+'"'+(z[0]===tr?' class="on"':'')+'>'+z[1]+'</button>').join('')+'</div><div class="big"><button type="button" class="go" id="mvpGo">'+esc(TRICON[tr]||'🚗')+' 移動 <b>'+esc(tl)+'で出発</b></button></div>'+(()=>{const st=mvpStay();return st?mvpSplitBtn(st.en.p):'';})();}
 else if(!r){h='<div class="st">走行中 '+esc(o.en.s)+'〜：'+rtVHtml(o.en.rt,TRICON[o.en.tr]||'🚗')+'</div><div class="big"><button type="button" class="stp" id="mvpStop">☕ 止まる</button>'+(mvOrigin(o)?'<button type="button" class="rnd" id="mvpRnd">🔁 往復で<br>戻った</button>':'')+'<button type="button" class="arr" id="mvpArr">🏁 到着 <b>⏱'+esc(mvElText(mvElapsed(o)))+'</b></button></div>';}
 else{const n=new Date(),m=durMin(r.x.s,pad(n.getHours())+':'+pad(n.getMinutes()),0),ks=[r.x.k].concat(r.x.kx||[]);
-h='<div class="st">止まり中：'+esc(r.x.s)+'〜（走行 '+esc(o.en.s)+'〜）</div><div class="big"><button type="button" class="res" id="mvpRes" style="flex:1.7">▶ 出発'+(r.x.ntr&&r.x.ntr!==(o.en.tr||'car')?' '+esc(TRICON[r.x.ntr]||''):'')+' <b>⏱'+esc(mvElText(m))+'</b></button><button type="button" class="arr" id="mvpArr">🏁 到着</button></div>'+mvpSplitBtn(r.x.p||'')+((ks.filter(Boolean).length&&!(ks.filter(Boolean).length===1&&ks[0]==='rest'))?'<button type="button" class="spl" id="mvpSubEnd">✓ '+esc(ks.filter(Boolean).map(k=>{const q=kindOf(k);return q?q.ic+' '+q.lb:k;}).join('・'))+' おわり<small>（まだここにいる）</small></button>':'')+'<div class="ks">'+MVP_KS.map(z=>'<button type="button" data-mk="'+z[0]+'"'+(ks.indexOf(z[0])>=0?' class="on"':'')+'>'+z[1]+'</button>').join('')+[r.x.k].concat(r.x.kx||[]).filter(k=>k&&!MVP_KS.some(z=>z[0]===k)).map(k=>{const q=kindOf(k);return q?'<button type="button" data-mk="'+esc(k)+'" class="on">'+esc(q.ic)+' '+esc(q.lb)+'</button>':'';}).join('')+'<button type="button" id="mvpKAll">🏷️ ほか（全部）</button></div>'+
-'<div class="st" style="margin-top:8px">🚉 次は何で行く？（変わる時だけ押す）</div><div class="trs">'+TRS.map(z=>'<button type="button" data-mntr="'+z[0]+'"'+(z[0]===(r.x.ntr||o.en.tr||'car')?' class="on"':'')+'>'+z[1]+'</button>').join('')+'</div>'+mvpPlanHtml(r.x.pk)+'<div class="mvp-pl"><div class="st" style="margin-top:8px">📍 場所（任意）：貼り付け、または押す</div><input type="text" class="pin" id="mvpPin" placeholder="ここに貼り付け（Googleマップ）" value="'+esc(r.x.p||'')+'" autocomplete="off"><div id="mvpPlW">'+mvpPlHtml(r.x.p||'',true,true)+'</div></div>';}
+h='<div class="st">止まり中：'+esc(r.x.s)+'〜（走行 '+esc(o.en.s)+'〜）：'+esc(ks.filter(Boolean).map(k=>{const q=kindOf(k);return q?q.ic+' '+q.lb:k;}).join('・'))+(r.x.p?'　📍 '+esc(r.x.p):'')+'</div><div class="big"><button type="button" class="res" id="mvpRes" style="flex:1.7">▶ 出発'+(r.x.ntr&&r.x.ntr!==(o.en.tr||'car')?' '+esc(TRICON[r.x.ntr]||''):'')+' <b>⏱'+esc(mvElText(m))+'</b></button><button type="button" class="arr" id="mvpArr">🏁 到着</button></div>'+((ks.filter(Boolean).length&&!(ks.filter(Boolean).length===1&&ks[0]==='rest'))?'<button type="button" class="spl" id="mvpSubEnd">✓ '+esc(ks.filter(Boolean).map(k=>{const q=kindOf(k);return q?q.ic+' '+q.lb:k;}).join('・'))+' おわり<small>（まだここにいる）</small></button>':'')+'<button type="button" class="spl" id="mvpStopEd">✎ 場所と何をしたを直す</button>';}
 const html0='<div class="box">'+swH+h+'</div>';const ob=el.querySelector('.box:not(.mini)');if(el._h===html0&&ob){el.style.display='';return;}
 const sT=ob?ob.scrollTop:0,wasT=!!(ob&&ob.classList.contains('typing'));el._h=html0;el.innerHTML=html0;el.style.display='';{const nb=el.querySelector('.box');if(nb){if(wasT){nb.scrollTop=sT;requestAnimationFrame(()=>mvpShowPl(nb));}else if(sT)nb.scrollTop=sT;}}
 {const sw=$('mvpSw');if(sw)sw.onclick=()=>{try{localStorage.setItem('hibiki-mvp-min','1');}catch(e){}paintMvp();};}
-{const eb=$('mvpEd');if(eb&&edT)eb.onclick=()=>openEntrySheet(edT.d,{key:edT.k});}
+{const eb=$('mvpEd');if(eb&&edT)eb.onclick=()=>{if(r){mvpStopSheet('edit');return;}openEntrySheet(edT.d,{key:edT.k});};}
 {const fb=$('mvpFg');if(fb)fb.onclick=mvpForgotAsk;}
 {const ka=$('mvpKAll');if(ka)ka.onclick=()=>openKindAll(id=>{mvpRowSet(x=>{let ks=[x.k].concat(x.kx||[]).filter(Boolean);if(ks.indexOf(id)<0)ks.push(id);x.k=ks[0];x.t=(kindOf(ks[0])||{}).lb||ks[0];if(ks.length>1)x.kx=ks.slice(1);else delete x.kx;});render();},'🏷️ 止まって何をした？','分野を押すと中身が出る。押した物を足す');}
 {const w=$('mvpPlW');if(w){const pick=p=>{mvpPflOpen=false;mvpRowSet(x=>{if(x.p===p)delete x.p;else x.p=p;});render();};const rp=()=>{const o2=openMove(),r2=o2&&mvOpenRow(o2);w.innerHTML=mvpPlHtml(r2&&r2.x.p||'',true,true);plDialFix(w);mvpPlBind(w,pick,rp);};mvpPlBind(w,pick,rp);}}
 requestAnimationFrame(()=>{try{const nb=$('nowBar');el.style.bottom=(nb&&nb.style.display!=='none'?nb.offsetHeight:0)+'px';}catch(e){}mvpFit(el);});
-const B=id=>$(id);if(B('mvpGo'))B('mvpGo').onclick=mvpGoAsk;el.querySelectorAll('[data-mtr]').forEach(b=>b.onclick=()=>{mvpTrSel=b.dataset.mtr;try{b.blur();}catch(e){}paintMvp();});if(B('mvpStop'))B('mvpStop').onclick=mvpStopNow;if(B('mvpArr'))B('mvpArr').onclick=mvpArrAsk;if(B('mvpRnd'))B('mvpRnd').onclick=mvpRoundAsk;if(B('mvpRes'))B('mvpRes').onclick=mvpResumeAsk;if(B('mvpSplit'))B('mvpSplit').onclick=mvpSplitAsk;if(B('mvpSubEnd'))B('mvpSubEnd').onclick=()=>{const o2=openMove(),r2=o2&&mvOpenRow(o2);if(!r2)return;const pv=(o2.en.acts||[]).filter(a=>a&&a.mvp&&a.e&&a.e===r2.x.s&&a!==r2.x).pop();const bk=(pv&&pv.k&&pv.k!==r2.x.k)?pv.k:'rest';mvpSplit({o:o2,i:r2.i},nowHM(),'',bk,(pv&&pv.p)||r2.x.p||'');};
+const B=id=>$(id);if(B('mvpGo'))B('mvpGo').onclick=mvpGoAsk;el.querySelectorAll('[data-mtr]').forEach(b=>b.onclick=()=>{mvpTrSel=b.dataset.mtr;try{b.blur();}catch(e){}paintMvp();});if(B('mvpStop'))B('mvpStop').onclick=mvpStopNow;if(B('mvpArr'))B('mvpArr').onclick=mvpArrAsk;if(B('mvpRnd'))B('mvpRnd').onclick=mvpRoundAsk;if(B('mvpRes'))B('mvpRes').onclick=mvpResumeAsk;if(B('mvpSplit'))B('mvpSplit').onclick=mvpSplitAsk;if(B('mvpStopEd'))B('mvpStopEd').onclick=()=>mvpStopSheet('edit');if(B('mvpSubEnd'))B('mvpSubEnd').onclick=()=>{const o2=openMove(),r2=o2&&mvOpenRow(o2);if(!r2)return;const pv=(o2.en.acts||[]).filter(a=>a&&a.mvp&&a.e&&a.e===r2.x.s&&a!==r2.x).pop();const bk=(pv&&pv.k&&pv.k!==r2.x.k)?pv.k:'rest';mvpSplit({o:o2,i:r2.i},nowHM(),'',bk,(pv&&pv.p)||r2.x.p||'');};
 el.querySelectorAll('[data-mk]').forEach(b=>b.onclick=()=>{const k=b.dataset.mk;mvpRowSet(x=>{let ks=[x.k].concat(x.kx||[]).filter(Boolean);const i=ks.indexOf(k);if(i>=0)ks.splice(i,1);else ks.push(k);if(!ks.length)ks=['rest'];x.k=ks[0];x.t=(kindOf(ks[0])||{}).lb||ks[0];if(ks.length>1)x.kx=ks.slice(1);else delete x.kx;});});
 el.querySelectorAll('[data-mp]').forEach(b=>b.onclick=()=>{const p=b.dataset.mp;mvpRowSet(x=>{if(x.p===p)delete x.p;else x.p=p;});});
 el.querySelectorAll('[data-mntr]').forEach(b=>b.onclick=()=>{const v=b.dataset.mntr,o2=openMove(),cur=(o2&&o2.en.tr)||'car';try{b.blur();}catch(e){}mvpRowSet(x=>{if(v===cur)delete x.ntr;else x.ntr=v;});});
@@ -12963,7 +12990,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c46.4";
+const CL_APPVER="c46.5";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
