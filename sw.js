@@ -1,7 +1,7 @@
 /* HIBIKI Service Worker：オフラインでも開けるようにする。
    index.html は「まずネット、だめならキャッシュ」（新しい版をすぐ拾う）。アイコン類は「キャッシュ優先」。
    データ（Supabase の API）と写真はここでは触らない（アプリが自分で端末に控える）。 */
-const VER='hibiki-c46.7';
+const VER='hibiki-c46.8';
 const CORE=['./','./index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png','./icon-512-maskable.png','./apple-touch-icon.png'];
 self.addEventListener('install',e=>{
   e.waitUntil(caches.open(VER).then(c=>c.addAll(CORE).catch(()=>{})).then(()=>self.skipWaiting()));
@@ -14,6 +14,7 @@ self.addEventListener('fetch',e=>{
   if(req.method!=='GET')return;
   const url=new URL(req.url);
   if(url.origin!==self.location.origin)return;   /* API・写真・フォントは素通し */
+  if(/\/sw\.js$/.test(url.pathname))return;   /* c46.8：版の確認（sw.js?v=…）を控えに溜めない */
   const isPage=(req.mode==='navigate')||/\/index\.html$/.test(url.pathname)||url.pathname.endsWith('/');
   if(isPage){
     e.respondWith((async()=>{
@@ -22,13 +23,13 @@ self.addEventListener('fetch',e=>{
       if(!hit)return net.catch(()=>caches.match('./index.html'));
       /* 控えがある時はネットを4秒だけ待つ（電波はあるのに通らない時、白い画面で止めない）。ネットの取得は裏で続けて次回に備える */
       const r=await Promise.race([net.catch(()=>null),new Promise(ok=>setTimeout(()=>ok(null),4000))]);
-      if(r)return r;
+      if(r&&(r.ok||r.type==='opaqueredirect'))return r;   /* c46.8：404・5xx・中継ページより控えを出す */
       try{e.waitUntil(net.catch(()=>{}));}catch(x){}
       return hit;
     })());
     return;
   }
-  e.respondWith(caches.match(req).then(hit=>hit||fetch(req).then(r=>{const cp=r.clone();caches.open(VER).then(c=>c.put(req,cp)).catch(()=>{});return r;})));
+  e.respondWith(caches.match(req).then(hit=>hit||fetch(req).then(r=>{if(r&&r.ok){const cp=r.clone();caches.open(VER).then(c=>c.put(req,cp)).catch(()=>{});}return r;})));
 });
 /* c20.6：🔔 閉じていても鳴る通知（Web Push）。iOS は「受けた Push には必ず通知を出す」が約束＝出さないと3回で購読が消える。
    どの経路でも（中身が空でも JSON が壊れていても）必ず showNotification を waitUntil に渡す。アプリを開いている最中でも出す（早期 return しない） */

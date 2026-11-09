@@ -208,7 +208,7 @@ async function clRpcJson(name,body,sig,ms){const t=await clRpcText(name,typeof b
 async function clRpc(name,body){return clRpcJson(name,body);}   /* 旧版と同じ名前（他から呼ばれても動く） */
 
 /* ---------- state ⇄ 項目（1行） ---------- */
-const CL_ID=['dreams','memos','pays','aims','moves','pins','steps','payrep','rtn','rlog','payppl','pha','kinds','tools','places','projects','marks','bedp','arp','todos','plreg','plgrp','kgrp','trs','srr','tdq','ksub','dlg','dgoal','aip','msx','inc','cash','rtm','dep','tbox','wish'];   /* c31.2：wish＝欲しい物 */   /* c7.9：todos＝📋やる事 */   /* c4.8：arp＝場所ごとの区・市町村 */   /* c4.7：marks＝🕳️😤😫の申告、bedp＝場所ごとの🛏️/🪑 */
+const CL_ID=['dreams','memos','pays','aims','moves','pins','steps','payrep','rtn','rlog','payppl','pha','kinds','tools','places','projects','marks','bedp','arp','todos','dwmy','plreg','plgrp','kgrp','trs','srr','tdq','ksub','dlg','dgoal','aip','msx','inc','cash','rtm','dep','tbox','wish'];   /* c31.2：wish＝欲しい物 */   /* c7.9：todos＝📋やる事 */   /* c4.8：arp＝場所ごとの区・市町村 */   /* c4.7：marks＝🕳️😤😫の申告、bedp＝場所ごとの🛏️/🪑 */
 const CL_DAY=['ai','rules','scr','cond','prep','ckin','ckcnt','rdin','ernin','nmin'];   /* c37.2：ernin＝💰 AIで稼ぐ */   /* c34.0：rdin＝1日3回の読み物 */   /* c31.0：ckin＝手帳チェックイン */   /* c11.5：cond＝体調（日ごと） */   /* c4.7：scr＝夜に入れる📲📞の数字（日ごと） */
 const CL_DAY2=['entries','plans'];
 const CL_UNION={ckin:1,rdin:1,ernin:1,nmin:1};   /* c37.3d：枠ごとの和で合わせる物＝同点ルール（同じts・違う中身＝影）を使わない。端末の方が多ければ送る */
@@ -487,7 +487,7 @@ function clMergeRows(rows,full){
   use.forEach((r,i)=>{
     const now=clLocalRef(r.coll,r.k);if(now!==refs[i])changed=true;
     /* 同じ ts で中身が違う（払った印などの合流が要る pays・steps 以外）＝送り合いにしない。端末の中身を影とみなす */
-    if(r.coll!=='pays'&&r.coll!=='steps'&&!CL_UNION[r.coll]){const k=clKey(r),it=clItemByKey(k);
+    if(r.coll!=='pays'&&r.coll!=='steps'&&r.coll!=='dwmy'&&!CL_UNION[r.coll]){const k=clKey(r),it=clItemByKey(k);
       if(it&&clTsOf(it.ts)===clTsOf(r.ts)&&!echo[k]){const h=clSigOf(it,false);if(h!==tgt[k]){tgt[k]=h;tie++;}}}   /* こだまの時は端末の書き換えを未送信のまま残す */
   });
   if(tie)CL.tieN=(CL.tieN||0)+tie;
@@ -782,7 +782,7 @@ function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL
 /* ログインの後：同じユーザーなら影はそのまま（全件受信をやり直さない）。違うユーザーならそのユーザーの影を読む */
 async function clAfterLogin(){
   if(!cloudLoggedIn())return;
-  CLQ.fails=0;CL.authDead=false;CL.auth401=0;
+  CLQ.fails=0;CL.authDead=false;CL.auth401=0;try{PHUP.stop=false;PHUP.err=null;setTimeout(()=>{try{phUploadSweep();}catch(e){}},3000);}catch(e){}   /* c46.8 */
   const uid=CL.sess.user.id;
   if(uid!==CL.shadowFor){clAbortRun();await clLoadShadow(uid);clRecomputeDirty(true);}
   else clRecomputeDirty(false);
@@ -963,8 +963,7 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden)clOnHidden(
 /* ---------- 新しい版があるか（index.html の CL_APPVER を見る）。あれば上に出す：押すと送り切ってから最新を読み込む ---------- */
 let clUpAt=0;
 async function clCheckUpdate(){try{if(!cloudConfigured()||Date.now()-clUpAt<20000)return;clUpAt=Date.now();
-  const r=await fetch('./index.html?up='+Date.now(),{cache:'no-store'});if(!r.ok)return;const t=await r.text();
-  const m=/const CL_APPVER="([^"]+)"/.exec(t);if(!m||m[1]===CL_APPVER)return;if(typeof appVerCheck==='function')appVerCheck(true);}catch(e){}}   /* c10.8：［更新する］の帯は出さない。自動で入れ替える（本人指示 2026-10-07「しつこい」） */
+  if(typeof appVerCheck==='function')appVerCheck(false);   /* c46.8 */}catch(e){}}   /* c10.8：［更新する］の帯は出さない。自動で入れ替える（本人指示 2026-10-07「しつこい」） */
 function clShowUpdate(v){if(document.getElementById('clUp'))return;const d=document.createElement('div');d.id='clUp';
   d.style.cssText='position:fixed;left:12px;right:12px;top:calc(10px + env(safe-area-inset-top,0px));z-index:250;max-width:420px;margin:0 auto;background:#1f2430;color:#fff;border-radius:16px;padding:12px 14px;box-shadow:0 10px 30px rgba(0,0,0,.25);display:flex;gap:10px;align-items:center;font:800 13.5px -apple-system,BlinkMacSystemFont,sans-serif';
   d.innerHTML='<span style="flex:1">🆕 新しい版（'+esc(v)+'）があります</span><button id="clUpGo" style="background:#0bc167;color:#fff;border:0;border-radius:12px;padding:9px 14px;font-weight:800">更新する</button>';
