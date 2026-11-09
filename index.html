@@ -1951,6 +1951,7 @@ body.cardvis .fab{display:none!important}
 .hdr1 .nowjump{margin-left:auto;flex:none;border:0;border-radius:999px;padding:4px 9px;background:#14275a;color:#fff;font-weight:800;font-size:12px;line-height:1.3;white-space:nowrap}.hdr1 .nowjump:active{background:#22397a}#kakuTop{margin-left:6px!important}
 .pfflt{gap:4px}.mvp .pfflt>button[data-pfl],.mvq .pfflt>button[data-pfl],.pfflt>button[data-pfl]{padding:7px 8px;font-size:12.5px;white-space:nowrap}.pfflt .pf-ed{margin-left:0}
 .stq .st{font-size:13px;font-weight:800;color:#4a5568;margin-top:6px}.stq .pl{justify-content:flex-start}.stq .pl button{padding:9px 12px;font-size:13.5px}.stq .pl button.on{background:#2c5cc5;color:#fff}.stq .ks button.on{background:#12b76a;color:#fff}.stq .trs{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}.stq .trs button{border:0;border-radius:999px;padding:8px 10px;font-weight:800;font-size:13px;background:#f1f3f8;color:#4a5568;white-space:nowrap;font-family:inherit}.stq .trs button.on{background:#13864a;color:#fff}.stq .spl{display:block;width:100%;margin-top:10px;border:0;border-radius:14px;background:#fff4dc;color:#7a4b00;font-weight:800;font-size:14px;padding:10px 8px;box-shadow:inset 0 0 0 1.5px #f5c46b;font-family:inherit}
+.pe-g [data-pe]{touch-action:pan-y;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}.pe-src{position:absolute!important;visibility:hidden;width:0;height:0;padding:0!important;overflow:hidden}.pe-ph{padding:4px 13px;border-radius:999px;background:#e8ecf6;border:2px dashed #14275a;color:transparent;font-size:12px;font-weight:700;white-space:nowrap;max-width:100%;overflow:hidden}.pe-gh{position:fixed;z-index:9999;left:0;top:0;max-width:300px;padding:8px 14px;border-radius:999px;background:#fff;box-shadow:0 8px 22px rgba(20,39,90,.32);color:#14275a;font-weight:800;font-size:13px;pointer-events:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pl-sec{width:100%;font-size:11.5px;font-weight:800;color:#8a90a0;margin-top:6px}.pldw{width:100%;position:relative;margin-top:4px;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fafbfd}.pldw::before{content:"";position:absolute;left:6px;right:6px;top:84px;height:42px;border-radius:10px;background:#e9edf8;pointer-events:none}.pldw::after{content:"";position:absolute;inset:0;background:linear-gradient(#fafbfd,rgba(250,251,253,0) 34%,rgba(250,251,253,0) 66%,#fafbfd);pointer-events:none}.pldial{position:relative;height:210px;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scroll-snap-type:y mandatory;padding-block:84px;scrollbar-width:none;touch-action:pan-y}.pldial::-webkit-scrollbar{display:none}
 .pldw .pldial>button[type]{display:flex;align-items:center;justify-content:center;width:100%;height:42px;padding:0 12px;border:0;border-radius:0;background:none;scroll-snap-align:center;font-size:13px;font-weight:700;line-height:1.25;text-align:center;color:#3b4252}.pldw .pldial>button[type].on,.pldw .pldial>button[type].sel{background:none;color:#2c5cc5;font-weight:800}
 #nvw{touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}#nvw .nb{touch-action:none;-webkit-touch-callout:none;user-select:none;-webkit-user-select:none}#nvw .nb.nb-off{display:none!important}#nvw .nb.nb-pk{opacity:.18}#nvw.nv-ed .nb{animation:nbWg .26s infinite alternate ease-in-out}#nvw.nv-ed .nb:nth-child(even){animation-delay:-.13s}@keyframes nbWg{from{transform:rotate(-2.4deg)}to{transform:rotate(2.4deg)}}
@@ -3797,18 +3798,30 @@ return T.map(p=>'<button type="button" class="'+(o.b||'')+(cur===p?' '+on:'')+'"
 function plDialFix(host){try{host.querySelectorAll('.pldial').forEach(d=>{const x=d.querySelector('.on,.sel');if(x)d.scrollTop=x.offsetTop-84;});}catch(e){}}
 function plgWrite(list){state.plgrp=state.plgrp||{};const now=Date.now();list.forEach((x,i)=>{state.plgrp[x.g]={c:x.c,o:i,ts:now};});}
 function pflBtns(cur){return plGroups().concat([{g:'ot'}]).map(x=>'<button data-pfl="'+x.g+'"'+(x.g===cur?' class="sel"':'')+'>'+esc(plgName(x.g))+'</button>').join('')+'<button data-pfl="_ed" class="pf-ed">✎ 編集</button>';}
+let PD=null,plPeT=0;
+function plPeBind(S,onDrop){S.querySelectorAll('[data-pe]').forEach(b=>{b.addEventListener('contextmenu',e=>e.preventDefault());b.addEventListener('pointerdown',e=>{if(e.button)return;if(PD&&PD.t)clearTimeout(PD.t);PD={b,S,onDrop,sx:e.clientX,sy:e.clientY,x:e.clientX,y:e.clientY,on:false,t:setTimeout(plPeLift,400)};});});}
+function plPeLift(){const d=PD;if(!d)return;d.t=0;d.on=true;const ph=document.createElement('div');ph.className='pe-ph';ph.textContent=d.b.textContent;d.b.parentNode.insertBefore(ph,d.b.nextSibling);d.b.classList.add('pe-src');const gh=document.createElement('div');gh.className='pe-gh mg-ghost';gh.textContent=d.b.textContent;document.body.appendChild(gh);d.ph=ph;d.gh=gh;plPeGh();try{haptic(15);}catch(e){}d.raf=requestAnimationFrame(plPeTick);}
+function plPeGh(){const d=PD;d.gh.style.transform='translate('+(d.x-40)+'px,'+(d.y-46)+'px)';}
+function plPeTick(){const d=PD;if(!d||!d.on)return;const r=d.S.getBoundingClientRect(),E=44;if(d.y<r.top+E)d.S.scrollTop-=7;else if(d.y>r.bottom-E)d.S.scrollTop+=7;
+const el=document.elementFromPoint(d.x,d.y),ph=d.ph;if(el&&el!==ph&&d.S.contains(el)){const c=el.closest('[data-pe]');if(c&&c!==d.b){const q=c.getBoundingClientRect(),to=d.x<q.left+q.width/2?c:c.nextSibling;if(ph.parentNode!==c.parentNode||(to!==ph&&to!==ph.nextSibling))c.parentNode.insertBefore(ph,to);}else if(!c){const g=el.closest('.pe-g'),a=g&&g.querySelector('[data-pa]');if(a&&a.previousSibling!==ph)a.parentNode.insertBefore(ph,a);}}
+d.raf=requestAnimationFrame(plPeTick);}
+function plPeEnd(ok){const d=PD;PD=null;if(!d)return;if(d.t)clearTimeout(d.t);if(!d.on)return;cancelAnimationFrame(d.raf);plPeT=Date.now();d.gh.remove();const box=d.ph.parentNode,id=d.b.dataset.pe,g=box.closest('.pe-g'),L=[...box.children].filter(e=>e===d.ph||(e.dataset&&e.dataset.pe&&e!==d.b)).map(e=>e===d.ph?id:e.dataset.pe);d.ph.remove();d.b.classList.remove('pe-src');if(ok&&g)d.onDrop(id,g.dataset.peg,L);}
+document.addEventListener('pointermove',e=>{const d=PD;if(!d)return;d.x=e.clientX;d.y=e.clientY;if(d.on){plPeGh();return;}if(Math.hypot(d.x-d.sx,d.y-d.sy)>10){clearTimeout(d.t);PD=null;}});
+document.addEventListener('pointerup',()=>{if(PD)plPeEnd(true);});
+document.addEventListener('pointercancel',()=>{if(PD)plPeEnd(false);});
+document.addEventListener('touchmove',e=>{if(PD&&PD.on)e.preventDefault();},{passive:false});
 function plEdit(onDone){let sel=null,mode='',gxArm='';
 const R=()=>state.plreg||{};
 const ids=g=>{const r=R();return Object.keys(r).filter(id=>r[id]&&r[id].g===g&&r[id].p).sort((a,b)=>(r[a].o||0)-(r[b].o||0));};
 const paint=()=>{const r=R(),G=plGroups(),all=G.map(x=>x.g).concat(['ot']);
-let s='<div class="sh-time"><span>✎ 場所のボタンを編集</span></div><div class="sh-note" style="text-align:left">場所を押すと、名前を直す・移す・並べ替え・📌固定・外すができる。📌固定のある県は固定の物だけをボタンに出す。無い県は直近7日に押した回数の順に5個まで。ほかはダイヤルで選ぶ。日記の記録は変わらない</div>';
+let s='<div class="sh-time"><span>✎ 場所のボタンを編集</span></div><div class="sh-note" style="text-align:left">場所を長押しして動かすと、並び替えや別の県への移動ができる。普通に押すと、名前を直す・移す・📌固定・外すができる。📌固定のある県は固定の物だけをボタンに出す。無い県は直近7日に押した回数の順に5個まで。ほかはダイヤルで選ぶ。日記の記録は変わらない</div>';
 all.forEach((g,gi)=>{const L=ids(g);
-s+='<div class="pe-g"><div class="pe-h"><b>'+esc(plgName(g))+'</b>'+(g!=='ot'?'<span class="pe-gb"><button class="chip" data-gu="'+g+'"'+(gi===0?' disabled':'')+'>⬅ 前へ</button><button class="chip" data-gd="'+g+'"'+(gi>=G.length-1?' disabled':'')+'>➡ 後ろへ</button><button class="chip pe-del" data-gx="'+g+'">'+(gxArm===g?'🗑 本当に消す？':'🗑 消す')+'</button></span>':'')+'</div>'+
+s+='<div class="pe-g" data-peg="'+g+'"><div class="pe-h"><b>'+esc(plgName(g))+'</b>'+(g!=='ot'?'<span class="pe-gb"><button class="chip" data-gu="'+g+'"'+(gi===0?' disabled':'')+'>⬅ 前へ</button><button class="chip" data-gd="'+g+'"'+(gi>=G.length-1?' disabled':'')+'>➡ 後ろへ</button><button class="chip pe-del" data-gx="'+g+'">'+(gxArm===g?'🗑 本当に消す？':'🗑 消す')+'</button></span>':'')+'</div>'+
 '<div class="sr-r">'+L.map(id=>'<button class="chip'+(id===sel?' sel':'')+'" data-pe="'+id+'">'+(r[id].fx&&g!=='ot'?'📌 ':'')+esc(r[id].p)+'</button>').join('')+'<button class="chip pe-add" data-pa="'+g+'">＋ 場所を足す</button></div>';
-if(sel&&r[sel]&&r[sel].g===g){const i=L.indexOf(sel);
+if(sel&&r[sel]&&r[sel].g===g){
 s+='<div class="pe-op"><div class="pe-nm"><input type="text" id="peNm" value="'+esc(r[sel].p)+'"><button class="chip" id="peRn">名前を直す</button></div>'+
 '<div class="sr-r">'+all.filter(x=>x!==g).map(x=>'<button class="chip" data-pm="'+x+'">'+esc(plgName(x))+' へ移す</button>').join('')+'</div>'+
-'<div class="sr-r"><button class="chip" id="peUp"'+(i<=0?' disabled':'')+'>⬆ 前へ</button><button class="chip" id="peDn"'+(i>=L.length-1?' disabled':'')+'>⬇ 後ろへ</button><button class="chip pe-del" id="peX">🗑 ボタンから外す</button>'+(g!=='ot'?'<button class="chip" id="peFx">'+(r[sel].fx?'📌 固定をやめる':'📌 固定する')+'</button>':'')+'</div></div>';}
+'<div class="sr-r"><button class="chip pe-del" id="peX">🗑 ボタンから外す</button>'+(g!=='ot'?'<button class="chip" id="peFx">'+(r[sel].fx?'📌 固定をやめる':'📌 固定する')+'</button>':'')+'</div></div>';}
 if(mode==='add:'+g)s+='<div class="pe-op"><div class="pe-nm"><input type="text" id="peNew" placeholder="場所の名前（コピペOK）"><button class="chip" id="peNewOk">登録</button></div></div>';
 s+='</div>';});
 s+='<div class="sr-r" style="margin-top:10px"><button class="chip pe-add" id="peGAdd">＋ 県のボタンを足す</button></div>';
@@ -3817,7 +3830,8 @@ s+='<div class="sh-btns"><button class="savebtn" id="peOk">閉じる</button></d
 const keep=$('sheet2')?$('sheet2').scrollTop:0;openSub(s,onDone||null);try{$('sheet2').scrollTop=keep;}catch(e){}
 const S=$('sheet2'),Q=(q,f)=>S.querySelectorAll(q).forEach(b=>b.onclick=()=>f(b));
 const renum=(g,L)=>{L.forEach((id,i)=>{state.plreg[id]=Object.assign({},state.plreg[id],{o:i,ts:Date.now()});});};
-Q('[data-pe]',b=>{sel=(sel===b.dataset.pe)?null:b.dataset.pe;mode='';gxArm='';paint();});
+Q('[data-pe]',b=>{if(Date.now()-plPeT<400)return;sel=(sel===b.dataset.pe)?null:b.dataset.pe;mode='';gxArm='';paint();});
+plPeBind(S,(id,to,L)=>{const from=R()[id].g;if(from===to&&ids(to).join()===L.join()){paint();return;}const rest=from!==to?ids(from).filter(x=>x!==id):null;mutate(()=>{if(from!==to)state.plreg[id]=Object.assign({},state.plreg[id],{g:to,fx:0,ts:Date.now()});renum(to,L);if(rest)renum(from,rest);});if(from!==to)toast('📍 '+plgName(to)+' へ移した');paint();});
 Q('[data-pa]',b=>{const g=b.dataset.pa;mode=(mode==='add:'+g)?'':'add:'+g;sel=null;gxArm='';paint();const i=$('peNew');if(i)i.focus();});
 Q('[data-pm]',b=>{const g=b.dataset.pm;mutate(()=>{state.plreg[sel]=Object.assign({},state.plreg[sel],{g,o:ids(g).length,fx:0,ts:Date.now()});});toast('📍 '+plgName(g)+' へ移した');paint();});
 Q('[data-gu]',b=>{const L=plGroups(),i=L.findIndex(x=>x.g===b.dataset.gu);if(i>0){[L[i-1],L[i]]=[L[i],L[i-1]];mutate(()=>plgWrite(L));}gxArm='';paint();});
@@ -3830,8 +3844,6 @@ Q('[data-gn]',b=>{const c=Number(b.dataset.gn),g=plgOf(c);mutate(()=>plgWrite(pl
 {const x=$('peGAdd');if(x)x.onclick=()=>{mode=(mode==='gadd')?'':'gadd';sel=null;gxArm='';paint();};}
 {const x=$('peRn');if(x)x.onclick=()=>{const v=($('peNm').value||'').trim();if(!v||v===state.plreg[sel].p)return;mutate(()=>{state.plreg[sel]=Object.assign({},state.plreg[sel],{p:v,ts:Date.now()});});toast('名前を直した');paint();};}
 {const x=$('peFx');if(x)x.onclick=()=>{const v=state.plreg[sel].fx?0:1;mutate(()=>{state.plreg[sel]=Object.assign({},state.plreg[sel],{fx:v,ts:Date.now()});});toast(v?'📌 固定した':'固定をやめた');paint();};}
-{const x=$('peUp');if(x)x.onclick=()=>{const g=state.plreg[sel].g,L=ids(g),i=L.indexOf(sel);if(i>0){[L[i-1],L[i]]=[L[i],L[i-1]];mutate(()=>renum(g,L));}paint();};}
-{const x=$('peDn');if(x)x.onclick=()=>{const g=state.plreg[sel].g,L=ids(g),i=L.indexOf(sel);if(i>=0&&i<L.length-1){[L[i+1],L[i]]=[L[i],L[i+1]];mutate(()=>renum(g,L));}paint();};}
 {const x=$('peX');if(x)x.onclick=()=>{const o=state.plreg[sel];mutate(()=>{state.plreg[sel]={p:o.p,no:addDays(todayStr(),30),ts:Date.now()};});toast(o.p+' をボタンから外した');sel=null;paint();};}
 {const x=$('peNewOk');if(x)x.onclick=()=>{const v=($('peNew').value||'').trim(),g=mode.slice(4);if(!v)return;const id=plId(v),o=state.plreg&&state.plreg[id];
 if(o&&o.g){toast('もう '+plgName(o.g)+' にある');return;}mutate(()=>{state.plreg=state.plreg||{};state.plreg[id]={p:v,g,o:ids(g).length,ts:Date.now()};});mode='';toast('📍 '+v+' を登録した');paint();};}
@@ -4929,7 +4941,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c46.6）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c46.7）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -12990,7 +13002,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c46.6";
+const CL_APPVER="c46.7";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
