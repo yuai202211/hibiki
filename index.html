@@ -1952,6 +1952,7 @@ body.cardvis .fab{display:none!important}
 .pfflt{gap:4px}.mvp .pfflt>button[data-pfl],.mvq .pfflt>button[data-pfl],.pfflt>button[data-pfl]{padding:7px 8px;font-size:12.5px;white-space:nowrap}.pfflt .pf-ed{margin-left:0}
 .stq .st{font-size:13px;font-weight:800;color:#4a5568;margin-top:6px}.stq .pl{justify-content:flex-start}.stq .pl button{padding:9px 12px;font-size:13.5px}.stq .pl button.on{background:#2c5cc5;color:#fff}.stq .ks button.on{background:#12b76a;color:#fff}.stq .trs{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}.stq .trs button{border:0;border-radius:999px;padding:8px 10px;font-weight:800;font-size:13px;background:#f1f3f8;color:#4a5568;white-space:nowrap;font-family:inherit}.stq .trs button.on{background:#13864a;color:#fff}.stq .spl{display:block;width:100%;margin-top:10px;border:0;border-radius:14px;background:#fff4dc;color:#7a4b00;font-weight:800;font-size:14px;padding:10px 8px;box-shadow:inset 0 0 0 1.5px #f5c46b;font-family:inherit}
 .pe-g [data-pe]{touch-action:pan-y;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}.pe-src{position:absolute!important;visibility:hidden;width:0;height:0;padding:0!important;overflow:hidden}.pe-ph{padding:4px 13px;border-radius:999px;background:#e8ecf6;border:2px dashed #14275a;color:transparent;font-size:12px;font-weight:700;white-space:nowrap;max-width:100%;overflow:hidden}.pe-gh{position:fixed;z-index:9999;left:0;top:0;max-width:300px;padding:8px 14px;border-radius:999px;background:#fff;box-shadow:0 8px 22px rgba(20,39,90,.32);color:#14275a;font-weight:800;font-size:13px;pointer-events:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fgx .st{font-size:13px;font-weight:800;color:#4a5568}.fgx-b{border-radius:16px;padding:10px 12px;margin-top:8px;display:flex;flex-direction:column;gap:6px}.fgx-b.stay{background:#e9f8ef}.fgx-b.move{background:#eaf0ff}.fgx-h{font-weight:800;font-size:14.5px}.fgx-h small{margin-left:6px;font-size:12px;font-weight:700;color:#667089}.fgx-r{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:13px;font-weight:800;color:#3a4254}.fgx-tm{display:flex;align-items:center;gap:6px}.fgx-tm button{width:38px;height:36px;border:0;border-radius:10px;background:#fff;font-weight:800;font-size:17px;box-shadow:inset 0 0 0 1px #dfe3ec;font-family:inherit}.fgx-tm input{width:118px;padding:0 4px;height:36px;border:1px solid #dfe3ec;border-radius:10px;text-align:center;font-size:16px;font-weight:800;font-family:inherit;background:#fff}.fgx-it{display:flex;align-items:center;gap:8px;font-size:13px;background:#fff;border-radius:10px;padding:6px 8px}.fgx-it.mv{background:#fff6e0}.fgx-it span{color:#667089}.fgx-it button{margin-left:auto;border:0;padding:4px 9px;border-radius:999px;background:#fdecec;color:#b42318;font-weight:800;font-size:12px;font-family:inherit}
 .pl-sec{width:100%;font-size:11.5px;font-weight:800;color:#8a90a0;margin-top:6px}.pldw{width:100%;position:relative;margin-top:4px;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fafbfd}.pldw::before{content:"";position:absolute;left:6px;right:6px;top:84px;height:42px;border-radius:10px;background:#e9edf8;pointer-events:none}.pldw::after{content:"";position:absolute;inset:0;background:linear-gradient(#fafbfd,rgba(250,251,253,0) 34%,rgba(250,251,253,0) 66%,#fafbfd);pointer-events:none}.pldial{position:relative;height:210px;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scroll-snap-type:y mandatory;padding-block:84px;scrollbar-width:none;touch-action:pan-y}.pldial::-webkit-scrollbar{display:none}
 .pldw .pldial>button[type]{display:flex;align-items:center;justify-content:center;width:100%;height:42px;padding:0 12px;border:0;border-radius:0;background:none;scroll-snap-align:center;font-size:13px;font-weight:700;line-height:1.25;text-align:center;color:#3b4252}.pldw .pldial>button[type].on,.pldw .pldial>button[type].sel{background:none;color:#2c5cc5;font-weight:800}
 #nvw{touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}#nvw .nb{touch-action:none;-webkit-touch-callout:none;user-select:none;-webkit-user-select:none}#nvw .nb.nb-off{display:none!important}#nvw .nb.nb-pk{opacity:.18}#nvw.nv-ed .nb{animation:nbWg .26s infinite alternate ease-in-out}#nvw.nv-ed .nb:nth-child(even){animation-delay:-.13s}@keyframes nbWg{from{transform:rotate(-2.4deg)}to{transform:rotate(2.4deg)}}
@@ -4845,7 +4846,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c46.8）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c46.9）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -8063,16 +8064,49 @@ function mvpDayOf(o,hm){const dT=todayStr();return (o.d<dT&&hm<o.en.s)?dT:o.d;}
 function mvpStopNow(){const o=openMove();if(!o||mvOpenRow(o))return;const sn=ubSnap(o.d,o.k);mvPauseStart('rest');const r=mvOpenRow(openMove()||o);undoBar('☕ '+(r?r.x.s:nowHM())+' から止まっている',ubBack(sn),{d:o.d,k:o.k});render();mvpStopSheet('new');}
 function mvpPinFlush(pin){const o=openMove(),r=o&&mvOpenRow(o);if(!r||!pin)return;const v=pin.value.trim();if((r.x.p||'')!==v)mvpRowSet(x=>{if(v)x.p=v;else delete x.p;});}
 function mvpRowSet(fn){const o=openMove(),r=o&&mvOpenRow(o);if(!r)return;mutate(()=>{const en=state.entries[o.d][o.k];const x=(en.acts||[])[r.i];if(x&&x.mvp){fn(x);en.ts=Date.now();}});}
+function mvFgFind(){const T=todayStr(),nw=nowHM();let best=null;for(const d of [T,addDays(T,-1)]){const eo=state.entries[d]||{};for(const k in eo){const x=eo[k];if(!x||x.del||!x.mv||!x.s||x.noT)continue;if(d===T&&x.s>nw)continue;const key=d+' '+x.s;if(!best||key>best.key)best={d,k,x,key};}if(best)break;}if(!best)return null;
+const eo=state.entries[best.d];let A=null,B=null;for(const k in eo){const y=eo[k];if(!y||y.del||y.mv||y.noT||!y.p||!y.s)continue;if(y.e&&y.e===best.x.s&&!y.ed)A={k,x:y};if(best.x.e&&y.s===best.x.e&&!best.x.ed)B={k,x:y};}
+return {d:best.d,M:{k:best.k,x:best.x},A,B};}
 function mvpForgotAsk(){const o=openMove(),r=o&&mvOpenRow(o);
-const C=[['go','🚗 出発',!o,'移動中は押せない（もう出発している）'],['stop','⏸ 止まる',!!(o&&!r),o?'もう止まり中':'移動中だけ'],['res','▶ 止まった所から出発',!!r,'止まり中だけ'],['arr','🏁 到着',!!o,'移動中だけ']];
-openSub('<div class="mvq"><div class="sh-time" style="justify-content:center"><span>何を押し忘れた？</span></div><div class="fg-ch">'+C.map(c=>'<button type="button" class="fg-'+c[0]+'" data-fg="'+c[0]+'"'+(c[2]?'':' disabled')+'>'+c[1]+(c[2]?'':'<small>'+c[3]+'</small>')+'</button>').join('')+'</div><div class="sh-btns" style="margin-top:12px"><button class="delbtn" id="fgNo" style="flex:1">閉じる</button></div></div>',null);
-$('fgNo').onclick=closeSub;
-$('sheet2').querySelectorAll('[data-fg]').forEach(b=>b.onclick=()=>{const v=b.dataset.fg;closeSub();
+const C=[['go','🚗 今 出発した',!o,'移動中は押せない'],['stop','⏸ 今 止まった',!!(o&&!r),o?'もう止まり中':'移動中だけ'],['res','▶ 止まった所から出発',!!r,'止まり中だけ'],['arr','🏁 今 着いた',!!o,'移動中だけ']];
+const Fd=mvFgFind(),ok=!!(Fd&&!Fd.M.x.ed&&!(Fd.A&&Fd.A.x.ed));
+const snap={},take=k=>{if(k&&!snap[k]){const en=state.entries[Fd.d][k];snap[k]=JSON.parse(JSON.stringify(en));}};if(ok){take(Fd.M.k);if(Fd.A)take(Fd.A.k);if(Fd.B)take(Fd.B.k);}
+let L=[],dep=0,arr=null,chg=false;
+if(ok){const A=Fd.A&&Fd.A.x,M=Fd.M.x;(A?(A.acts||[]):[]).concat(M.acts||[]).forEach(a=>{if(a&&a.s&&a.e)L.push(Object.assign({},a));});L.sort((x,y)=>hmMin(x.s)-hmMin(y.s));
+const L2=[];L.forEach(a=>{const p=L2[L2.length-1];if(p&&p.e===a.s&&p.k===a.k&&(p.p||'')===(a.p||'')&&JSON.stringify(p.kx||[])===JSON.stringify(a.kx||[])){p.e=a.e;p.m=durMin(p.s,p.e,0);}else L2.push(a);});L=L2;
+dep=hmMin(M.s);arr=M.e?hmMin(M.e):null;}
+const nowM=hmMin(nowHM()),aS=ok&&Fd.A?hmMin(Fd.A.x.s):null,bE=ok&&Fd.B&&Fd.B.x.e?hmMin(Fd.B.x.e):null;
+const lo1=()=>aS!=null?aS+1:(L.length?Math.min(hmMin(L[0].s),dep):dep),hi1=()=>(arr!=null?arr-1:nowM),lo2=()=>dep+1,hi2=()=>(bE!=null?bE-1:nowM);
+const clip=(lo,hi)=>L.map((a,i)=>{const S=Math.max(hmMin(a.s),lo),E=Math.min(hmMin(a.e),hi);return E>S?{a,i,S,E}:null;}).filter(Boolean);
+const write=()=>{chg=true;mutate(()=>{const now=Date.now(),eo=state.entries[Fd.d],M=eo[Fd.M.k],mk=(lo,hi,mvp)=>clip(lo,hi).map(z=>{const y=Object.assign({},z.a,{s:hmOf(z.S),e:hmOf(z.E),m:z.E-z.S});if(mvp)y.mvp=1;else delete y.mvp;return y;});
+if(Fd.A){const A=eo[Fd.A.k];const keep=(A.acts||[]).filter(a=>a&&!(a.s&&a.e));A.acts=keep.concat(mk(aS,dep,false));if(!A.acts.length)delete A.acts;A.e=hmOf(dep);A.ts=now;}
+const open=(M.acts||[]).filter(a=>a&&!(a.s&&a.e)),lo=Fd.A?dep:-1;M.acts=mk(lo,arr!=null?arr:1440,true).concat(open);if(!M.acts.length)delete M.acts;M.s=hmOf(dep);if(arr!=null)M.e=hmOf(arr);M.ts=now;
+if(Fd.B&&arr!=null){const B=eo[Fd.B.k];B.s=hmOf(arr);B.ts=now;}});};
+const tmH=(id,v)=>'<div class="fgx-tm"><button type="button" data-fgt="'+id+'" data-fgd="-5" aria-label="5分前">－</button><input type="time" id="fgx_'+id+'" lang="ja-JP" value="'+hmOf(v)+'" aria-label="時刻"><button type="button" data-fgt="'+id+'" data-fgd="5" aria-label="5分後">＋</button></div>';
+const itH=(z,mv)=>{const q=kindOf(z.a.k);return '<div class="fgx-it'+(mv?' mv':'')+'"><b>'+esc(q?q.ic+' '+q.lb:(z.a.t||z.a.k||''))+'</b><span>'+hmOf(z.S)+'–'+hmOf(z.E)+'</span><button type="button" data-fgx="'+z.i+'">✕ 消す</button></div>';};
+const paint=()=>{const S0=$('sheet2')?$('sheet2').scrollTop:0;
+let s='<div class="mvq fgx"><div class="sh-time" style="justify-content:center"><span>❓ 押し忘れた</span></div><div class="sh-note">今やる事は上、あとで直す事は下</div><div class="fg-ch">'+C.map(c=>'<button type="button" class="fg-'+c[0]+'" data-fg="'+c[0]+'"'+(c[2]?'':' disabled')+'>'+c[1]+(c[2]?'':'<small>'+c[3]+'</small>')+'</button>').join('')+'</div>';
+if(ok){const M=Fd.M.x,P=String(M.rt||'').split('→').map(z=>z.trim());
+s+='<div class="st" style="margin-top:12px">あとで直す（つながった時刻は一緒に動く）</div>';
+if(Fd.A)s+='<div class="fgx-b stay"><div class="fgx-h">📍 '+esc(Fd.A.x.p)+'<small>'+esc(Fd.A.x.s)+' 着</small></div>'+clip(aS,dep).map(z=>itH(z)).join('')+'</div>';
+s+='<div class="fgx-b move"><div class="fgx-h">'+esc(TRICON[M.tr]||'🚗')+' 移動<small>'+esc((P[0]||'')+(P.length>1&&P[P.length-1]?' → '+P[P.length-1]:''))+'</small></div><div class="fgx-r"><span>🚩 出発</span>'+tmH('dep',dep)+'</div>'+clip(Fd.A?dep:-1,arr!=null?arr:1440).map(z=>itH(z,1)).join('')+(arr!=null?'<div class="fgx-r"><span>🏁 到着</span>'+tmH('arr',arr)+'</div>':'<div class="sh-note">まだ移動中</div>')+'</div>';
+if(Fd.B&&arr!=null)s+='<div class="fgx-b stay"><div class="fgx-h">📍 '+esc(Fd.B.x.p)+'<small>'+hmOf(arr)+' 着'+(Fd.B.x.e?'〜'+esc(Fd.B.x.e):'・いま')+'</small></div></div>';}
+else if(Fd)s+='<div class="sh-note" style="margin-top:10px">日をまたいだ移動は ✎ 編集から直す</div>';
+s+='<div class="sh-btns" style="margin-top:12px"><button class="savebtn" id="fgNo" style="flex:1">✓ 閉じる</button></div></div>';
+openSub(s,()=>{if(chg){const d=Fd.d,sv=JSON.parse(JSON.stringify(snap));undoBar('✎ 押し忘れを直した',()=>{mutate(()=>{const now=Date.now();for(const k in sv){state.entries[d][k]=Object.assign({},sv[k],{ts:now});}});render();},{d,k:Fd.M.k});}render();});
+const S=$('sheet2');S.scrollTop=S0;$('fgNo').onclick=closeSub;
+S.querySelectorAll('[data-fg]').forEach(b=>b.onclick=()=>{const v=b.dataset.fg;closeSub();
 if(v==='res'){mvpResumeAsk();return;}if(v==='arr'){mvpArrAsk();return;}
 const base=hmMin(nowHM()),q=v==='go'?'🚩 何時に出発した？':'⏸ 何時に止まった？',mn=v==='go'?1:hmMin(o.en.s)+1;
 setTimeout(()=>{openSub('<div class="mvq"><div class="sh-time" style="justify-content:center"><span>'+q+'</span></div>'+mvpTmRow(base,mn)+'<div class="sh-btns"><button class="delbtn" id="fgBk" style="flex:1">戻る</button><button class="savebtn" id="fgOk" style="flex:1.3">✓ 入れる</button></div></div>',null);
 mvpBindTm();$('fgBk').onclick=()=>{closeSub();setTimeout(mvpForgotAsk,60);};
-$('fgOk').onclick=()=>{const t=mvpT();closeSub();if(v==='go'){quickMoveStart(mvpTr(),t);render();return;}const o2=openMove();if(!o2)return;const sn=ubSnap(o2.d,o2.k);mvPauseStart('rest',t);undoBar('⏸ '+t+' から止まっていた',ubBack(sn),{d:o2.d,k:o2.k});render();};},60);});}
+$('fgOk').onclick=()=>{const t=mvpT();closeSub();if(v==='go'){quickMoveStart(mvpTr(),t);render();return;}const o2=openMove();if(!o2)return;const sn=ubSnap(o2.d,o2.k);mvPauseStart('rest',t);undoBar('⏸ '+t+' から止まっていた',ubBack(sn),{d:o2.d,k:o2.k});render();};},60);});
+if(!ok)return;
+const setV=(id,v)=>{if(id==='dep'){v=Math.max(lo1(),Math.min(v,hi1()));if(v===dep)return;dep=v;}else{v=Math.max(lo2(),Math.min(v,hi2()));if(v===arr)return;arr=v;}write();paint();};
+S.querySelectorAll('[data-fgt]').forEach(b=>b.onclick=()=>{const id=b.dataset.fgt;setV(id,(id==='dep'?dep:arr)+Number(b.dataset.fgd));});
+['dep','arr'].forEach(id=>{const I=$('fgx_'+id);if(I)I.onchange=()=>{if(!/^\d\d:\d\d$/.test(I.value))return;setV(id,hmMin(I.value));};});
+S.querySelectorAll('[data-fgx]').forEach(b=>b.onclick=()=>{L.splice(Number(b.dataset.fgx),1);write();paint();});};
+paint();}
 function mvpResumeAsk(){const o=openMove(),r=o&&mvOpenRow(o);if(!r)return;const base=hmMin(nowHM()),ks=[r.x.k].concat(r.x.kx||[]).map(k=>(kindOf(k)||{}).lb||k).join('・');
 openSub('<div class="mvq"><div class="sh-time" style="justify-content:center"><span>▶ 出発する？</span></div><div class="sh-note">'+esc(r.x.s)+' から止まっていた（'+esc(ks||'休憩')+(r.x.p?'・'+esc(r.x.p):'')+'）。動き始めた時刻</div>'+mvpTmRow(base,hmMin(r.x.s)+1)+'<div class="sh-btns"><button class="delbtn" id="mvqN" style="flex:1">いいえ（まだ）</button><button class="savebtn" id="mvqY" style="flex:1.3">はい、出発</button></div></div>',null);
 mvpBindTm();$('mvqN').onclick=closeSub;$('mvqY').onclick=()=>{const e=mvpT();closeSub();mvpResume(e);};}
@@ -12689,7 +12723,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c46.8";
+const CL_APPVER="c46.9";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
