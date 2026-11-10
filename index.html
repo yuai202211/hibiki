@@ -4847,7 +4847,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c47.1）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c47.2）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -8070,6 +8070,7 @@ const d=best.d,M=best.x;let A=null,B=null;const scan=(dd,fn)=>{const eo=state.en
 scan(d,(k,y)=>{if(y.e&&y.e===M.s&&!y.ed)A={d,k,x:y};});if(!A){const dP=addDays(d,-1);scan(dP,(k,y)=>{if(y.e&&y.e===M.s&&y.ed)A={d:dP,k,x:y};});}
 if(M.e){const dB=M.ed?addDays(d,1):d;scan(dB,(k,y)=>{if(y.s===M.e)B={d:dB,k,x:y};});}
 return {d,M:{d,k:best.k,x:M},A,B};}
+function mvFgYEnd(){const T=todayStr();if(Object.values(state.entries[T]||{}).some(x=>x&&!x.del&&!x.noT&&x.s))return '';const eo=state.entries[addDays(T,-1)]||{};let L='';for(const k in eo){const x=eo[k];if(!x||x.del||x.noT||!x.s)continue;if(x.ed||(x.mv&&!x.e))return '';const e=x.e||x.s;if(e>L)L=e;}return (L&&hmMin(L)-hmMin(nowHM())>720)?L:'';}
 function mvpForgotAsk(){const o=openMove(),r=o&&mvOpenRow(o);
 const C=[['go','🚗 今 出発した',!o,'移動中は押せない'],['stop','⏸ 今 止まった',!!(o&&!r),o?'もう止まり中':'移動中だけ'],['res','▶ 止まった所から出発',!!r,'止まり中だけ'],['arr','🏁 今 着いた',!!o,'移動中だけ']];
 const Fd=mvFgFind(),ok=!!Fd;
@@ -8106,9 +8107,9 @@ openSub(s,()=>{if(chg){const sv=JSON.parse(JSON.stringify(snap)),mk2=made.slice(
 const S=$('sheet2');S.scrollTop=S0;$('fgNo').onclick=closeSub;
 S.querySelectorAll('[data-fg]').forEach(b=>b.onclick=()=>{const v=b.dataset.fg;closeSub();
 if(v==='res'){mvpResumeAsk();return;}if(v==='arr'){mvpArrAsk();return;}
-const base=hmMin(nowHM()),q=v==='go'?'🚩 何時に出発した？':'⏸ 何時に止まった？',mn=v==='go'?1:hmMin(o.en.s)+1;
-setTimeout(()=>{openSub('<div class="mvq"><div class="sh-time" style="justify-content:center"><span>'+q+'</span></div>'+mvpTmRow(base,mn)+'<div class="sh-btns"><button class="delbtn" id="fgBk" style="flex:1">戻る</button><button class="savebtn" id="fgOk" style="flex:1.3">✓ 入れる</button></div></div>',null);
-mvpBindTm();$('fgBk').onclick=()=>{closeSub();setTimeout(mvpForgotAsk,60);};
+const base=hmMin(nowHM()),q=v==='go'?'🚩 何時に出発した？':'⏸ 何時に止まった？',yL=v==='go'?mvFgYEnd():'',mn=v==='go'?(yL?hmMin(yL)+1:1):hmMin(o.en.s)+1;
+setTimeout(()=>{openSub('<div class="mvq"><div class="sh-time" style="justify-content:center"><span>'+q+'</span></div>'+(yL?'<div class="sh-note">前の日の '+esc(yL)+'（最後の記録の終わり）まで戻せる</div>':'')+mvpTmRow(base,mn)+'<div class="sh-btns"><button class="delbtn" id="fgBk" style="flex:1">戻る</button><button class="savebtn" id="fgOk" style="flex:1.3">✓ 入れる</button></div></div>',null);
+mvpBindTm();if(yL){const T=$('mvqT');if(T&&T.dataset.x==='1'){T.dataset.m=String(hmMin(yL));T.value=yL;}}$('fgBk').onclick=()=>{closeSub();setTimeout(mvpForgotAsk,60);};
 $('fgOk').onclick=()=>{const t=mvpT();closeSub();if(v==='go'){quickMoveStart(mvpTr(),t);render();return;}const o2=openMove();if(!o2)return;const sn=ubSnap(o2.d,o2.k);mvPauseStart('rest',t);undoBar('⏸ '+t+' から止まっていた',ubBack(sn),{d:o2.d,k:o2.k});render();};},60);});
 if(!ok)return;
 const setV=(id,v)=>{if(id==='dep'){v=Math.max(lo1(),Math.min(v,hi1()));if(v===dep)return;dep=v;}else{v=Math.max(lo2(),Math.min(v,hi2()));if(v===arr)return;arr=v;}write();paint();};
@@ -12744,7 +12745,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c47.1";
+const CL_APPVER="c47.2";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
