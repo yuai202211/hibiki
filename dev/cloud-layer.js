@@ -487,7 +487,7 @@ function clMergeRows(rows,full){
   use.forEach((r,i)=>{
     const now=clLocalRef(r.coll,r.k);if(now!==refs[i])changed=true;
     /* 同じ ts で中身が違う（払った印などの合流が要る pays・steps 以外）＝送り合いにしない。端末の中身を影とみなす */
-    if(r.coll!=='pays'&&r.coll!=='steps'&&r.coll!=='dwmy'&&!CL_UNION[r.coll]){const k=clKey(r),it=clItemByKey(k);
+    if(r.coll!=='pays'&&r.coll!=='steps'&&r.coll!=='dwmy'&&!CL_UNION[r.coll]&&!(r.coll==='_top'&&r.k==='dream'&&clTsOf((refs[i]||{}).ts)<clTsOf(r.ts))){   /* c47.0：手元が古くて合流した夢は、合流した中身を送り返す */const k=clKey(r),it=clItemByKey(k);
       if(it&&clTsOf(it.ts)===clTsOf(r.ts)&&!echo[k]){const h=clSigOf(it,false);if(h!==tgt[k]){tgt[k]=h;tie++;}}}   /* こだまの時は端末の書き換えを未送信のまま残す */
   });
   if(tie)CL.tieN=(CL.tieN||0)+tie;

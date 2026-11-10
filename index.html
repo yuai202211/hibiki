@@ -4037,11 +4037,12 @@ function hibSugHtml(){try{if(pjHibId()||sugNo('pjhib'))return '';const n=hibCand
 const GOAL={yen:4850000,until:'2026-12-31',from:''};
 function incList(){const I=state.inc||{};return Object.keys(I).filter(id=>I[id]&&!I[id].del&&Number(I[id].amt)>0&&I[id].d).map(id=>Object.assign({id},I[id])).sort((a,b)=>a.d<b.d?1:a.d>b.d?-1:(b.ts||0)-(a.ts||0));}
 function incSum(ty,d1,d2){let s=0;for(const x of incList()){if(x.ty!==ty)continue;if(d1&&x.d<d1)continue;if(d2&&x.d>d2)continue;s+=Number(x.amt)||0;}return s;}
+function goalLeftOf(yen,got,cash){return cashList().length?yen-cash:yen-got;}
 function cashList(){const K=state.cash||{};return Object.keys(K).filter(id=>K[id]&&!K[id].del&&Number(K[id].amt)>=0&&K[id].d).map(id=>Object.assign({id},K[id])).sort((a,b)=>a.d<b.d?1:a.d>b.d?-1:(b.ts||0)-(a.ts||0));}
 function cashLatest(){const L=cashList();return L.length?(Number(L[0].amt)||0):0;}
 function manY(n){const m=n/10000;return (Math.abs(m)>=100?Math.round(m):Math.round(m*10)/10).toLocaleString('ja-JP')+'万';}
 function goalDays(){const t=todayStr();return Math.max(0,Math.round((parseD(goalCfg().until).getTime()-parseD(t).getTime())/864e5));}
-function goalLineHtml(){try{const t=todayStr(),GC=goalCfg(),got=incSum('in',GC.from,t),cash=cashLatest(),left=GC.yen-got-cash,days=goalDays(),per=days?left/days:left,ym=t.slice(0,7),gp=incSum('gp',ym+'-01',ym+'-31');
+function goalLineHtml(){try{const t=todayStr(),GC=goalCfg(),got=incSum('in',GC.from,t),cash=cashLatest(),left=goalLeftOf(GC.yen,got,cash),days=goalDays(),per=days?left/days:left,ym=t.slice(0,7),gp=incSum('gp',ym+'-01',ym+'-31');
 return '<button class="goal-line'+(left<=0?' done':'')+'" id="goalLine"><span class="gl-main">💰 あと <b>'+manY(Math.max(0,left))+'円</b></span><span class="gl-sub">'+(left<=0?'🎉 '+manY(GC.yen)+'円 達成':GC.until.slice(5).replace('-','/')+'まで '+days+'日・1日 '+manY(Math.max(0,per))+'円')+'</span><span class="gl-gp">📈 粗利 '+Number(ym.slice(5))+'月 <b>'+manY(gp)+'</b>　💵 入金 <b>'+manY(got)+'</b>　💴 手元 <b>'+manY(cash)+'</b></span></button>';}catch(e){return '';}}
 let incArm='';
 function openIncSheet(ym){ym=ym||todayStr().slice(0,7);let ty='in',d=todayStr();if(d.slice(0,7)!==ym)d=ym+'-01';
@@ -4600,8 +4601,8 @@ openSub('<div class="sh-time" style="justify-content:center"><span>🚪 ログ�
 '<div class="sh-btns"><button class="delbtn" id="lgNo" style="flex:1">いいえ</button><button class="savebtn" id="lgYes">はい</button></div>',null);
 $('lgNo').onclick=()=>closeSub();$('lgYes').onclick=()=>{closeSub();appLogout();};};}
 pane.querySelectorAll('[data-h]').forEach(b=>{
-b.onclick=()=>{if(gateNew())return;openEntrySheet(ui.date,{hour:Number(b.dataset.h),pick:!b.classList.contains('wr'),wr:b.classList.contains('wr')});};
-b.onkeydown=ev=>{if(ev.target!==b)return;if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();if(gateNew())return;openEntrySheet(ui.date,{hour:Number(b.dataset.h),wr:b.classList.contains('wr')});}};
+b.onclick=()=>{openEntrySheet(ui.date,{hour:Number(b.dataset.h),pick:!b.classList.contains('wr'),wr:b.classList.contains('wr')});};
+b.onkeydown=ev=>{if(ev.target!==b)return;if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();openEntrySheet(ui.date,{hour:Number(b.dataset.h),wr:b.classList.contains('wr')});}};
 });
 const wB=(id,fn)=>{const b=pane.querySelector('#'+id);if(b)b.onclick=ev=>{ev.stopPropagation();fn();};};
 wB('wrWake',quickWake);
@@ -4666,7 +4667,7 @@ mutate(()=>{const x=state.entries[d][pk];x.e=s;delete x.ed;x.ts=Date.now();const
 undoBar('🚗 移動を入れた（'+s+'–'+D.m0a+'）・'+D.msf+' の終わりを '+s+' に',()=>{ubDel(d,nk)();if(sn)ubBack(sn)();},{d,k:nk});render();});
 pane.querySelectorAll('.ar-ok').forEach(b=>b.onclick=ev=>{ev.stopPropagation();const d=ui.date,k=b.dataset.ark,s=b.dataset.ars,p=b.dataset.arp;
 const m0=(state.entries[d]||{})[k],o0=m0?{e:m0.e,ed:m0.ed,rt:m0.rt}:null;mutate(()=>{const mv=(state.entries[d]||{})[k];if(!mv||mv.e)return;mv.e=s;if(s<mv.s)mv.ed=1;else delete mv.ed;if(p){const pts=String(mv.rt||'').split('→').map(z=>z.trim()).filter(Boolean);if(pts.length<2)mv.rt=(pts[0]?pts[0]+' ':'')+'→ '+p;}mv.ts=Date.now();});undoBar('🏁 到着 '+s,()=>{if(!o0)return;mutate(()=>{const m=(state.entries[d]||{})[k];if(!m||m.del)return;if(o0.e)m.e=o0.e;else delete m.e;if(o0.ed)m.ed=o0.ed;else delete m.ed;m.rt=o0.rt;m.ts=Date.now();});toast('↩ 取り消した');},{d,k});});
-pane.querySelectorAll('[data-gs]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();if(gateNew())return;openEntrySheet(ui.date,{hour:Number(b.dataset.gs.slice(0,2)),s:b.dataset.gs,e:b.dataset.ge});});
+pane.querySelectorAll('[data-gs]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();openEntrySheet(ui.date,{hour:Number(b.dataset.gs.slice(0,2)),s:b.dataset.gs,e:b.dataset.ge});});
 {const db=pane.querySelector('#dBand');if(db)db.onclick=ev=>{ev.stopPropagation();anaUnit='day';anaBase=ui.date;openAnaPage();};}
 pane.querySelectorAll('[data-pz]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();mvPauseAsk(b.dataset.pz);});wB('wrPzEnd',()=>mvPauseEndAsk());
 wB('wrGo',quickMoveStart);wB('wrArr',quickMoveArrive);wB('wrCar',quickCarStart);wB('wrRead',quickReadStart);wB('wrReadE',quickReadEnd);wB('wrChat',quickChatStart);wB('wrChatE',quickChatEnd);{const rj=pane.querySelector('#wrRoju');if(rj)rj.onclick=ev=>{ev.stopPropagation();quickRojuStart();};}wB('wrCarE',quickCarEnd);
@@ -4846,7 +4847,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c46.9）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c47.0）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -7589,7 +7590,7 @@ const D=rdDay(d),nx=L.findIndex((x,k)=>!D[sl+'#'+k]);
 if(nx>=0&&!D[sl]){rdCur=nx;render();rdScrollCard();setTimeout(()=>rdStartListen(nx),900);}
 else{render();if(!D[sl])setTimeout(()=>toast('🎉 '+L.length+'人とも聞き終えた。「全部読んだ！」を押して完了'),900);}}catch(e){}}
 function ttYen(v){let n=Math.round((Number(v)||0)/1000)*1000;const neg=n<0;n=Math.abs(n);const m=Math.floor(n/10000),r=Math.round((n%10000)/1000);return (neg?'マイナス':'')+(n===0?'0円':(m?m+'万':'')+(r?r+'千':'')+'円');}
-function moneyTalkText(){const t=todayStr(),GC=goalCfg(),got=incSum('in',GC.from,t),cash=cashLatest(),left=Math.max(0,GC.yen-got-cash),days=goalDays(),per=days?Math.ceil(left/days):left;
+function moneyTalkText(){const t=todayStr(),GC=goalCfg(),got=incSum('in',GC.from,t),cash=cashLatest(),left=Math.max(0,goalLeftOf(GC.yen,got,cash)),days=goalDays(),per=days?Math.ceil(left/days):left;
 const d=parseD(t),wd=(d.getDay()+6)%7,ws=addDays(t,-wd),ms=t.slice(0,8)+'01',dim=new Date(d.getFullYear(),d.getMonth()+1,0).getDate(),dom=Number(t.slice(8,10));
 const K=[['gp','粗利'],['in','入金']],out=['お金の状況です。','まず、'+esc(GC.until.slice(5).replace('-','月'))+'日の壁。目標まで、あと'+ttYen(left)+'。残り'+days+'日。1日の目標は'+ttYen(per)+'です。'];
 try{let sumY=0,sumD=0;pinnedDreams().slice(0,2).forEach(dd=>{const n=stepStat(dd).n,y=Number(dd.yen)||0,pd=(y&&n>0)?Math.ceil(y/n):0;sumY+=y;sumD+=pd;out.push('次に、'+String(dd.t||'')+'。'+(n===null?'期限なし。':n<0?(-n)+'日超過。':'あと'+n+'日。')+(y?'必要なお金は'+ttYen(y)+'。'+(pd?'1日あたり'+ttYen(pd)+'。':''):'必要なお金が未設定。'));});
@@ -7632,14 +7633,15 @@ function numScroll(){setTimeout(()=>{try{const c=$('numCard'),sc=$('scr');if(c&&
 function numGate(){try{if(!gateDay()||numDone()||openMove())return false;numWant=true;if(topView!=='top'){topView='top';render();}numScroll();toast('📊 先に数字を見て「全部見た！」');return true;}catch(e){return false;}}
 function numPayMonth(ym){try{return paysOf().filter(p=>String(p.d||'').slice(0,7)===ym).reduce((s,p)=>s+(Number(p.a)||0),0);}catch(e){return 0;}}
 function numSums(s,e){let dm=0,post=0,rep=0,learn=0,biz=0,car=0,ern=0,rd=0,ck=0,ai=0,n=0;
-for(let d=s;d<=e&&n<70;d=addDays(d,1)){n++;const c=actTodayCnt(d);dm+=c.dm;post+=c.post;rep+=c.rep;try{learn+=learnTodayMin(d);}catch(x){}try{biz+=bizSplit(d).biz;}catch(x){}try{const c0=anaCount(anaRange('day',d));ai+=((c0&&(c0.sum1||c0.sum))||{}).aibiz||0;}catch(x){}try{car+=ckCarCnt(d);}catch(x){}
+for(let d=s;d<=e&&n<70;d=addDays(d,1)){n++;const c=actTodayCnt(d);dm+=c.dm;post+=c.post;rep+=c.rep;try{learn+=learnTodayMin(d);}catch(x){}try{biz+=bizSplit(d).biz;}catch(x){}try{car+=ckCarCnt(d);}catch(x){}
 const E=((state.ernin||{})[d])||{};if(!E.del)ern+=ERN_SL.filter(x=>E[x[0]]).length;const Rd=((state.rdin||{})[d])||{};if(!Rd.del)rd+=RD_SL.filter(x=>Rd[x[0]]).length;const C=((state.ckin||{})[d])||{};if(!C.del)ck+=CK_SL.filter(x=>C[x[0]]).length;}
+if(n){try{ai=aiOfBiz(anaBizRange(s,addDays(s,n-1)));}catch(x){}}
 return {dm,post,rep,learn,biz,car,ern,rd,ck,ai,n};}
 function numStreak(){try{const m=String(($('streak')||{}).textContent||'').match(/(\d+)/);return m?Number(m[1]):0;}catch(e){return 0;}}
-function numTabs(){const t=todayStr(),GC=goalCfg(),got=incSum('in',GC.from,t),cash=cashLatest(),left=Math.max(0,GC.yen-got-cash),days=goalDays(),per=days?Math.ceil(left/days):left;
+function numTabs(){const t=todayStr(),GC=goalCfg(),got=incSum('in',GC.from,t),cash=cashLatest(),left=Math.max(0,goalLeftOf(GC.yen,got,cash)),days=goalDays(),per=days?Math.ceil(left/days):left;
 const d0=parseD(t),wd=(d0.getDay()+6)%7,ws=addDays(t,-wd),ms=t.slice(0,8)+'01',dim=new Date(d0.getFullYear(),d0.getMonth()+1,0).getDate(),dom=Number(t.slice(8,10));
 const H=m=>Math.round(m/6)/10,md=s=>s.slice(5).replace('-','/'),mk=(ic,lb,v,say)=>({ic,lb,v,say});
-const D=numSums(t,t),inD=incSum('in',t,t),gpD=incSum('gp',t,t);
+const D=numSums(t,t),inD=incSum('in',t,t),gpD=incSum('gp',t,t);try{D.ai=aiOfBiz(anaBizDay(bizDay()));}catch(e){}
 const day=[mk('💰','壁まで あと',manY(left)+'（残り'+days+'日）','目標まで、あと'+ttYen(left)+'。残り'+days+'日。'),mk('🎯','1日の目標',manY(per),'1日の目標は'+ttYen(per)+'。'),mk('💴','今日の入金・粗利',manY(inD)+'・'+manY(gpD),'今日の入金は'+ttYen(inD)+'、粗利は'+ttYen(gpD)+'。'),mk('🏦','手元現金',manY(cash),'手元現金は'+ttYen(cash)+'。'),
 mk('📣','DM・投稿・返信',D.dm+'/'+GC.dm+'通・'+D.post+'/'+GC.post+'本・'+D.rep+'件','DMは'+D.dm+'通、投稿は'+D.post+'本、返信は'+D.rep+'件。'),mk('📚','学ぶ',D.learn+'/'+GC.learn+'分','学ぶは'+D.learn+'分。'),mk('💼','商売の時間',H(D.biz)+'h','商売の時間は'+H(D.biz)+'時間。'),mk('🚗','車の行動',D.car+'件','車の行動は'+D.car+'件。'),
 mk('💰','AIで稼ぐ',D.ai+'/'+ERN_GOAL_MIN+'分','AIで稼ぐは'+D.ai+'分。'),mk('📖','読み物',D.rd+'/3','読み物は'+D.rd+'回。')];
@@ -7681,7 +7683,7 @@ function ernGate(){try{if(!gateDay()||ernDone()||openMove())return false;ernWant
 function ernMark(id){const d=ernDayKey(),sl=ernTarget();mutate(()=>{state.ernin=state.ernin||{};state.ernin[d]=Object.assign({},ernDay(d),{[sl+'#'+id]:nowHM(),ts:Date.now()});});}
 function ernSlotDo(){const d=ernDayKey(),sl=ernTarget();if(ernDay(d)[sl])return;mutate(()=>{state.ernin=state.ernin||{};state.ernin[d]=atoMark(Object.assign({},ernDay(d),{[sl]:nowHM(),ts:Date.now()}),sl,ernSlotNow());});}
 function ernIdeas(){const m=state.memos||{};return Object.keys(m).filter(k=>m[k]&&!m[k].del&&m[k].idea&&m[k].ln).map(k=>m[k]).sort((a,b)=>(b.at||b.ts||0)-(a.at||a.ts||0));}
-const ERN_GOAL_MIN=120; /* c41.9：AIで稼ぐの1日の線（本人 2026-11-04） */ function aibizRun(){try{return openKindRec(['aibiz']);}catch(e){return null;}} function aibizRunMin(o){try{return o?Math.max(0,durMin(o.en.s,nowMin(),o.d!==todayStr()?1:0)):0;}catch(e){return 0;}} function aibizLine(){let m=0;try{const c=anaCount(anaRange('day',todayStr()));m=((c&&(c.sum1||c.sum))||{}).aibiz||0;}catch(e){}const o=aibizRun();return '<div class="rd-left" style="font-weight:800">📓 日記の 💡AIビジネス：今日 '+m+'分／'+ERN_GOAL_MIN+'分'+(m>=ERN_GOAL_MIN?' ✓':' ⚠')+(o?'（▶ 計っている途中 '+aibizRunMin(o)+'分）':'')+'</div>';} /* c41.8：押したかでなく、日記に付いた本当の時間を出す（本人 2026-11-04） */ function ernCardHtml(){try{const L=ernLines(),d=ernDayKey(),sl=ernTarget(),D=ernDay(d),MIS=ernMiss(),dn=!!D[sl],pd=x=>!!D[sl+'#'+x.id];
+const ERN_GOAL_MIN=120; /* c41.9：AIで稼ぐの1日の線（本人 2026-11-04） */ function aibizRun(){try{return openKindRec(['aibiz']);}catch(e){return null;}} function aibizRunMin(o){try{return o?Math.max(0,durMin(o.en.s,nowMin(),o.d!==todayStr()?1:0)):0;}catch(e){return 0;}} function aibizLine(){let m=0;try{m=aiOfBiz(anaBizDay(bizDay()));}catch(e){}const o=aibizRun();return '<div class="rd-left" style="font-weight:800">📓 日記の 💡AIビジネス：今日 '+m+'分／'+ERN_GOAL_MIN+'分'+(m>=ERN_GOAL_MIN?' ✓':' ⚠')+(o?'（▶ 計っている途中 '+aibizRunMin(o)+'分）':'')+'</div>';} /* c41.8：押したかでなく、日記に付いた本当の時間を出す（本人 2026-11-04） */ function ernCardHtml(){try{const L=ernLines(),d=ernDayKey(),sl=ernTarget(),D=ernDay(d),MIS=ernMiss(),dn=!!D[sl],pd=x=>!!D[sl+'#'+x.id];
 const mine=L.filter(x=>ernSlotOf(x)===sl),nDone=L.filter(pd).length;
 if(ernCur==null||!L.some(x=>x.id===ernCur)){const f=mine.find(x=>!pd(x))||mine[0]||L[0];ernCur=f?f.id:null;}
 const it=L.find(x=>x.id===ernCur)||L[0];
@@ -7704,7 +7706,6 @@ p.querySelectorAll('[data-ernp]').forEach(b=>b.onclick=()=>{ernPick=b.dataset.er
 }
 function gateClear(){try{ckWant=false;rdWant=false;numWant=false;ernWant=false;}catch(e){}}
 function gateDay(){const hh=new Date().getHours();return ui.date===todayStr()&&(hh>=13||hh<5);}
-function gateNew(d){return false;} /* c41.8：書く前ゲートをやめた（本人 2026-11-04「ムダにチェックインの手段の目的化になっている」）。📒📖📊💰 の札は注意表示だけ。日記はいつでもすぐ書ける */
 function ckGate(){try{if(!gateDay()||ckDone()||openMove())return false;
 ckWant=true;if(topView!=='top'){topView='top';render();}setTimeout(()=>{try{const sc=$('scr');if(sc)sc.scrollTop=0;}catch(e){}},30);toast('📒 先にトップを見て、手帳チェックインしてから書く');return true;}catch(e){return false;}}
 function ckGoalExtra(){const g=(state.goal&&typeof state.goal==='object')?state.goal:{};const n=(v,d)=>{const x=Number(v);return isFinite(x)&&x>0?x:d;};return {biz:n(g.biz,360),car:n(g.car,1)};}
@@ -7782,7 +7783,7 @@ if(T4&&T4.auto){try{const k='hibiki-ckf-auto-'+b.id;if(localStorage.getItem(k)!=
 const op=force||ckFoldOpenDef(fid,true)/* c40.1：4つも最初は開く */,s2=T4?T4.html:blkSumOf(b.id,inn);t=String(t).replace(/（[^）]*）/g,'').replace(/＝.*$/,'').trim();
 return '<section class="blk blk-any'+(T4?' blk-top4'+(T4.ok?' ok':'')+(T4.todo?' todo':''):'')+'" data-blk="'+esc(b.id)+'"><details class="ck-fd blk-flat" data-ckf="'+esc(fid)+'"'+(op?' open':'')+'><summary class="blk-hd'+(T4?' rich':'')+'"><b class="bt">'+t+'</b>'+(T4?(T4.badge||'')+grip+'<span class="s rich">'+s2+'</span>':'<span class="s">'+s2+'</span>'+grip)+'</summary><div class="in">'+inn+'</div></details></section>';}}
 function blkTop4(id){try{const t=todayStr();
-if(id==='dream'){const GC=goalCfg(),got=incSum('in',GC.from,t),cash=cashLatest(),left=Math.max(0,GC.yen-got-cash),days=goalDays(),per=days?Math.ceil(left/days):left;
+if(id==='dream'){const GC=goalCfg(),got=incSum('in',GC.from,t),cash=cashLatest(),left=Math.max(0,goalLeftOf(GC.yen,got,cash)),days=goalDays(),per=days?Math.ceil(left/days):left;
 return {html:'あと <b>'+days+'</b>日<i>・</i><b>'+esc(ckMan(left))+'</b>万<i>・</i>今日 <b>'+esc(ckMan(per))+'</b>万'};}
 if(id==='pins'){const P=pinnedDreams().slice(0,2);if(!P.length)return null;return {html:P.map(g=>{const n=stepStat(g).n;return pinIcon(g.t)+' '+(n===null?'期限なし':n<0?'<b>'+(-n)+'</b>日超過':'あと <b>'+n+'</b>日');}).join('<i>・</i>')};}
 const chips=(SL,D,sl)=>'<span class="sl4">'+SL.map(x=>'<em class="'+(D[x[0]]?'d':'')+(x[0]===sl?' now':'')+'">'+x[0]+' '+(D[x[0]]?'✓':'—')+'</em>').join('')+'</span>';
@@ -7867,7 +7868,7 @@ function dphStrip(ph,key){const L=[].concat(ph||[]).filter(Boolean);return '<div
 function dphAdd(key,pid){mutate(()=>{phKeep(pid);if(key==='_dream'){state.dream=Object.assign({},state.dream||{},{ph:((state.dream&&state.dream.ph)||[]).concat(pid),ts:Date.now()});dreamLog({what:'写真を足した',t:'夢の写真'});}else{const d=(state.dreams||{})[key];if(d&&!d.del){d.ph=[].concat(d.ph||[]).concat(pid);d.ts=Date.now();dreamLog({what:'写真を足した',id:key,t:String(d.t||'')});}}});}
 function dphView(id,key){openSub('<div class="mvq"><img class="dph-big" src="'+esc(phUrl(id))+'" alt=""><div class="sh-btns" style="margin-top:10px"><button class="delbtn" id="dphX" style="flex:1">✕ この写真を外す</button><button class="savebtn" id="dphOk" style="flex:1.3">閉じる</button></div></div>',null);
 $('dphOk').onclick=closeSub;$('dphX').onclick=()=>{askWhy('この写真を外す。何で？',why=>{mutate(()=>{if(key==='_dream'){state.dream=Object.assign({},state.dream||{},{ph:((state.dream&&state.dream.ph)||[]).filter(x=>x!==id),ts:Date.now()});dreamLog({what:'写真を外した',t:'究極の目標',why});}else{const d=(state.dreams||{})[key];if(d&&!d.del){d.ph=[].concat(d.ph||[]).filter(x=>x!==id);d.ts=Date.now();dreamLog({what:'写真を外した',id:key,t:d.t,why});}}});toast('写真を外した（写真そのものは残る）');render();});};}
-function ckTopHtml(P){const t=todayStr(),GC=goalCfg(),got=incSum('in',GC.from,t),cash=cashLatest(),left=Math.max(0,GC.yen-got-cash),days=goalDays(),per=days?Math.ceil(left/days):left;let h='';const BK=[];const bk=(id,title,html,o)=>{if(html&&String(html).trim())BK.push(Object.assign({id,title,html},o||{}));};
+function ckTopHtml(P){const t=todayStr(),GC=goalCfg(),got=incSum('in',GC.from,t),cash=cashLatest(),left=Math.max(0,goalLeftOf(GC.yen,got,cash)),days=goalDays(),per=days?Math.ceil(left/days):left;let h='';const BK=[];const bk=(id,title,html,o)=>{if(html&&String(html).trim())BK.push(Object.assign({id,title,html},o||{}));};
 if(!P.misc)h+=dmAskHtml();
 const xDream='<button type="button" class="ck-hero" id="ckDream"><div class="hk">'+((state.dream&&state.dream.logo)?'<img class="dm-logo" src="'+esc(phUrl(state.dream.logo))+'" alt="">':'')+'⭐ 夢</div><div class="ht">'+esc(((state.dream&&state.dream.name)||'（夢を設定する）').split('\n')[0])+'</div>'+
 '<div class="ck-cd">'+(()=>{const du=state.dream&&state.dream.due;if(!du)return '<div><b>—</b><small>期限を入れる</small></div>';const ag=ageAt(du);return '<div><b>'+daysTo(du)+'</b><span>日</span><small>'+esc(du.replace(/-/g,'/'))+(ag!=null?'（'+ag+'歳）':'')+'</small></div>';})()+'<div><b>'+esc(ckMan(left))+'</b><span>万</span><small>🧱 '+esc(GC.until.slice(5).replace('-','/'))+'までの壁</small></div><div><b>'+esc(ckMan(per))+'</b><span>万</span><small>今日の目標</small></div></div></button>';
@@ -9174,7 +9175,7 @@ if(over()){const s=$('wrSlp');if(s)s.remove();}
 r.classList.add('wrap');}catch(e){}}
 function quickPlace(p){
 if(ui.date!==todayStr()){ui.date=todayStr();ui.tab='di';render();}
-if(gateNew(todayStr()))return;openEntrySheet(todayStr(),{hour:new Date().getHours(),draft:{place:p}});
+openEntrySheet(todayStr(),{hour:new Date().getHours(),draft:{place:p}});
 const i=$('shPlace');if(i){i.value=p;i.dispatchEvent(new Event('change'));}
 fldRefresh();
 setTimeout(()=>{if(sheetSt&&sheetSt.frFocus)sheetSt.frFocus();},250);
@@ -9403,8 +9404,18 @@ toast(id==='memo'?('📒 手帳 '+r.memo+'/5回'):id==='rest'?('☕ 休憩 '+r.r
 const SEME_ADD={bizcall:1,errand:1,relb:1,post:1,m_atm:1,aibiz:1,sns_xp:1,sns_xd:1,sns_ip:1,sns_id:1,mk_blog:1,mk_video:1,mk_lp:1,mk_ads:1,mk_gmap:1,mk_reply:1,pcwork:1},SEME_NO={c_snsc:1}; /* c42.0：攻め＝中古車の実務（SNS閲覧＋コメントを除く）＋仕事の連絡・用事＋AIビジネス。HIBIKI・SNS・動画・移動は入れない（本人 2026-11-03） */
 function semeIs(k){const q=kindOf(k)||{};return !!((q.g==='V'&&!SEME_NO[k])||SEME_ADD[k]);}
 function semeOfSum(S1){let seme=0;for(const k in S1){if(k==='_none'||!(S1[k]>0))continue;if(semeIs(k))seme+=S1[k];}return seme;}
-function semeMudaDay(d){let seme=0,muda=0;try{const c=anaCount(anaRange('day',d));seme=semeOfSum((c&&(c.sum1||c.sum))||{});muda=(c&&c.muda&&c.muda.total)||0;}catch(e){}return {seme,muda};}
-function semeTopHtml(){const t=todayStr(),x=semeMudaDay(t),G=(ckGoalExtra().biz)||360,H=m=>(Math.round(m/6)/10).toFixed(1);let ai=0;try{const c=anaCount(anaRange('day',t));ai=((c&&(c.sum1||c.sum))||{}).aibiz||0;}catch(e){}
+function bizDay(){const n=new Date();return n.getHours()<5?addDays(todayStr(),-1):todayStr();}
+const bizRangeC=new Map();
+function anaBizRange(s,e){let kts=0;for(const o of [state.kinds||{},state.tools||{}])for(const id in o)kts+=Number(o[id]&&o[id].ts)||0;const k=s+'|'+e+'|'+(state.updatedAt||0)+'|'+kts+'|'+Math.floor(Date.now()/60000);if(bizRangeC.has(k))return bizRangeC.get(k);
+const A=anaCount({s,e:addDays(e,1)}),B=anaCount(anaRange('day',s),300),C=anaCount(anaRange('day',addDays(e,1)),300);
+const mix=(x,y,z)=>{const o={};[x,y,z].forEach(S=>{for(const id in (S||{}))o[id]=0;});for(const id in o)o[id]=((x||{})[id]||0)-((y||{})[id]||0)+((z||{})[id]||0);return o;};
+const M=c=>(c&&c.muda)||{},V=c=>(c&&c.mvAtk)||0;
+const v={sum1:mix(A.sum1,B.sum1,C.sum1),mvK:mix(A.mvK,B.mvK,C.mvK),mvAtk:V(A)-V(B)+V(C),mudaTotal:(M(A).total||0)-(M(B).total||0)+(M(C).total||0),sleepMuda:Math.max(M(A).nap2||0,M(A).over||0,M(A).excess||0)};
+if(bizRangeC.size>16)bizRangeC.clear();bizRangeC.set(k,v);return v;}
+function anaBizDay(d){return anaBizRange(d,d);}
+function aiOfBiz(v){return ((((v&&v.sum1)||{}).aibiz)||0)+((((v&&v.mvK)||{}).aibiz)||0);}
+function semeMudaDay(d){let seme=0,muda=0;try{const c=anaBizDay(d);seme=semeOfSum(c.sum1||{})+(c.mvAtk||0);muda=Math.max(0,(c.mudaTotal||0)+(c.sleepMuda||0));}catch(e){}return {seme,muda};}
+function semeTopHtml(){const t=bizDay(),x=semeMudaDay(t),G=(ckGoalExtra().biz)||360,H=m=>(Math.round(m/6)/10).toFixed(1);let ai=0;try{ai=aiOfBiz(anaBizDay(t));}catch(e){}
 const bar=(ic,lb,v,g,tx,ng)=>'<div class="at-row'+(ng?' ng':'')+'"><span class="at-ic">'+ic+'</span><span class="at-lb">'+lb+'</span><span class="at-bar"><i style="width:'+Math.min(100,Math.round(v/g*100))+'%"></i></span><b class="at-v">'+tx+'</b></div>';
 let Rs=[];try{Rs=rulesDay(t);}catch(e){}const rs=id=>(Rs.find(r=>r.id===id)||{}).s||'none',ch=(ic,lb,id)=>{const s=rs(id);return '<span class="at-ch '+s+'">'+ic+' '+lb+' <b>'+(s==='ok'?'✓':s==='ng'?'✗':s==='mid'?'△':'—')+'</b></span>';};
 return '<div class="ck-card at-card">'+bar('⚔️','攻め',x.seme,G,H(x.seme)+'<small>/'+Math.round(G/60)+'h</small>',x.seme<G)+bar('🕳️','ムダ',x.muda,120,H(x.muda)+'<small>/2h</small>',x.muda>120)+bar('💡','AIで稼ぐ',ai,ERN_GOAL_MIN,ai+'<small>/'+ERN_GOAL_MIN+'分</small>',ai<ERN_GOAL_MIN)+'<div class="at-chs">'+ch('🌙','1時に寝る','bed')+ch('🚪','9時起き30分で外へ','out')+ch('🎯','遊びは攻め3hの後','play')+'</div></div>';}
@@ -9413,7 +9424,7 @@ function tmDays(r){const t=todayStr(),e=r.e>addDays(t,1)?addDays(t,1):r.e;return
 function tmBodyHtml(u){try{const t=todayStr(),r=anaRange(u,t),n=tmDays(r),c=anaCount(r),S=c.sum||{},S1=c.sum1||S,H=m=>(Math.round(m/n/6)/10).toFixed(1);
 let P=null,pn=1;try{const r0=anaRange(u,addDays(r.s,-1));if(r0.s>=ANA_FROM||r0.e>ANA_FROM){const c0=anaCount(r0);P=c0.sum||{};pn=Math.max(1,Math.round((parseD(r0.e)-parseD(r0.s))/86400000));}}catch(e){}
 const keys=Object.keys(S).filter(k=>k[0]!=='_'&&k!=='stay'&&S[k]>0).sort((a,b)=>S[b]-S[a]);if(!keys.length)return '<div class="tm-cap">まだ記録がない。日記を書くと出る</div>';
-const max=S[keys[0]],lb=k=>{const q=kindOf(k);return q?q.ic+' '+q.lb:k;},G=(ckGoalExtra().biz)||360,se=semeOfSum(S1)/n,gap=Math.max(0,G-se),dn=keys.find(k=>k!=='sleep'&&k!=='nap'&&!semeIs(k));
+const max=S[keys[0]],lb=k=>{const q=kindOf(k);return q?q.ic+' '+q.lb:k;},G=(ckGoalExtra().biz)||360,se=(semeOfSum(S1)+(c.mvAtk||0))/n,gap=Math.max(0,G-se),dn=keys.find(k=>k!=='sleep'&&k!=='nap'&&!semeIs(k));
 const up=se>=G?'<div class="tm-do up"><b>✓ 届いた</b>⚔️ 攻め '+H(se*n)+'h ／ '+Math.round(G/60)+'h</div>':'<div class="tm-do up"><b>⬆ 増やす</b>⚔️ 攻め '+H(se*n)+'h → '+Math.round(G/60)+'h（あと '+(Math.round(gap/6)/10).toFixed(1)+'h）</div>';
 const down=dn?'<div class="tm-do down"><b>⬇ 減らす</b>'+esc(lb(dn))+' '+H(S[dn])+'h（睡眠と攻め以外で一番長い）</div>':'';
 const rows=keys.slice(0,5).map(k=>{let d='';if(P){const x=(S[k]/n-(Number(P[k])||0)/pn)/60;d=Math.abs(x)<0.1?'<i class="tm-d">→</i>':'<i class="tm-d">'+(x>0?'▲':'▼')+Math.abs(x).toFixed(1)+'h</i>';}return '<div class="tm-row"><span class="tm-l">'+esc(lb(k))+'</span><span class="tm-b"><i style="width:'+Math.round(S[k]/max*100)+'%"></i></span><b>'+H(S[k])+'h</b>'+d+'</div>';}).join('');
@@ -9421,14 +9432,14 @@ return up+down+'<div class="tm-cap">'+(u==='day'?'今日':u==='week'?'今週・1
 function tmTopHtml(){return '<div class="tm-h">⏱ 時間の使い方</div><div class="tm-tabs">'+[['day','今日'],['week','今週'],['month','今月']].map(x=>'<button type="button" data-tmu="'+x[0]+'"'+(tmU===x[0]?' class="on"':'')+'>'+x[1]+'</button>').join('')+'</div><div id="tmBody" style="min-height:190px"></div>';}
 function soonHtml(){try{const L=dreamsActive().filter(d=>d.sn).sort((a,b)=>String(dreamDue(a)||'9').localeCompare(String(dreamDue(b)||'9')));if(!L.length)return '';
 return '<div class="tm-h">🎁 もうすぐ叶う夢</div><div class="sn-row">'+L.map(d=>{const n=stepStat(d).n,ph=dmPhs(d)[0],du=dreamDue(d);return '<div class="sn" role="button" tabindex="0" data-snid="'+esc(d.id)+'">'+(ph?'<img class="sn-p" src="'+esc(phUrl(ph))+'" alt="" loading="lazy">':'<button type="button" class="sn-p" data-dph="'+esc(d.id)+'">🎁<small>📷 写真を足す</small></button>')+'<b>'+esc(d.t)+'</b><small>'+(n===null?'期限なし':n<0?'⚠ '+(-n)+'日超過':'あと <i>'+n+'日</i>')+(du?'・'+esc(du.slice(5).replace('-','/')):'')+'</small></div>';}).join('')+'</div>';}catch(e){return '';}}
-function dbandHtml(){try{const t=todayStr(),GC=goalCfg(),left=Math.max(0,GC.yen-incSum('in',GC.from,t)-cashLatest()),days=goalDays(),per=days?Math.ceil(left/days):left,got=incSum('in',t,t);
+function dbandHtml(){try{const t=todayStr(),GC=goalCfg(),left=Math.max(0,goalLeftOf(GC.yen,incSum('in',GC.from,t),cashLatest())),days=goalDays(),per=days?Math.ceil(left/days):left,got=incSum('in',t,t);
 const cell=(ic,n,y)=>'<span>'+ic+' <b>'+n+'</b>日'+(y?' <b>'+esc(y)+'</b>':'')+'</span>';
 const P=pinnedDreams().slice(0,2).map(d=>{const n=stepStat(d).n;return cell(pinIcon(d.t),n===null?'—':n,Number(d.yen)>0?manY(Number(d.yen)):'');}).join('');
 const B=hmMin(alarmCfg().bed),b2=B<720?B+1440:B,nw=new Date(),n0=nw.getHours()*60+nw.getMinutes(),n2=n0<300?n0+1440:n0,rest=b2-n2;
 return '<div class="db1">'+cell('🧱',days,manY(left))+P+'</div><div class="db2"><span>💴 今日 <b>'+esc(ckMan(got))+'</b>／'+esc(ckMan(per))+'万</span><span>🌙 '+(rest>0?'寝るまで <b>'+Math.floor(rest/60)+'時間'+(rest%60)+'分</b>':'寝る時刻 <b>'+esc(alarmCfg().bed)+'</b>')+'</span></div>';}catch(e){return '';}}
 function dbandPaint(){try{const x=dbandHtml(),a=$('dreamBand');if(a){a.innerHTML=x;a.style.display=x?'':'none';const tb=$('todayBtn');a.style.marginTop=(tb&&tb.style.display!=='none'&&getComputedStyle(tb).display!=='none')?'20px':'';}const p=$('page');if(p&&p.classList.contains('open')){const hd=p.querySelector(':scope>.page-head');if(hd){let e=p.querySelector(':scope>.dband');if(!e){e=document.createElement('div');e.className='dband';hd.parentNode.insertBefore(e,hd.nextSibling);}if(e.innerHTML!==x)e.innerHTML=x;}}}catch(e){}}
 try{setInterval(dbandPaint,30000);}catch(e){}
-function semeBandHtml(){try{const t=todayStr();if(ui.date!==t)return '';const x=semeMudaDay(t),G=(ckGoalExtra().biz)||360,H=m=>(Math.round(m/6)/10).toFixed(1),gh=Math.round(G/60),r=aibizRun();
+function semeBandHtml(){try{const t=bizDay();if(ui.date!==todayStr())return '';const x=semeMudaDay(t),G=(ckGoalExtra().biz)||360,H=m=>(Math.round(m/6)/10).toFixed(1),gh=Math.round(G/60),r=aibizRun();
 if(x.seme>=G&&!r)return '<div class="sb g"><div class="sb1">⚔️ 攻め '+H(x.seme)+'h ／ '+gh+'h ✓</div></div>';
 if(r)return '<div class="sb b"><div class="sb1">⚔️ 攻め '+H(x.seme)+'h ／ '+gh+'h</div><div class="sb2">計っている途中：'+esc(String(r.en.t||'💡 AIビジネス'))+' '+aibizRunMin(r)+'分</div><button type="button" id="sbStop">■ 終わる</button></div>';
 const it=semeBandLine();return '<div class="sb r"><div class="sb1">⚔️ 攻め '+H(x.seme)+'h ／ '+gh+'h ⚠</div><div class="sb2">座ったら最初に、作る・集める</div>'+(it?'<button type="button" id="sbStart">▶ '+esc(it.ic||'💰')+' '+esc(it.nm)+' を始める</button>':'')+'</div>';}catch(e){return '';}}
@@ -9513,7 +9524,7 @@ let kts=0;for(const o of [state.kinds||{},state.tools||{}])for(const id in o)kts
 const key=r.s+'|'+r.e+'|'+limit+'|'+(state.updatedAt||0)+'|'+kts+'|'+(nowIdx<N+1440*2?nowIdx:'');
 const hit=anaCache.find(c=>c.key===key);if(hit)return hit.res;
 const res=anaCount0(r,days,N,limit,nowIdx);
-anaCache.unshift({key,res});if(anaCache.length>4)anaCache.length=4;
+anaCache.unshift({key,res});if(anaCache.length>12)anaCache.length=12;
 return res;}
 function anaCount0(r,days,N,limit,nowIdx){ANA_WALK=Math.max(1,TRS.findIndex(t=>t[0]==='walk')+1);
 const K=anaKinds(),IX={},kMu=new Uint8Array(256);
@@ -9610,12 +9621,12 @@ const vis={};{let cp=0,st=-1,lbs=[];const flush=e=>{if(cp&&st>=0)(vis[cp]=vis[cp
 for(let m=P;m<P+limit;m++){const o=own[m],p=o>=0?pfL[m]:0;if(p!==cp){flush(m);if(p){cp=p;st=m;}}if(p){const l=items[o]&&items[o].lb;if(l&&lbs.indexOf(l)<0&&lbs.length<3)lbs.push(l);}}
 flush(P+limit);}
 const kid=i=>i===255?'_untyped':(K[i-1]?K[i-1].id:'?'),obj=(arr,f,from)=>{const o={};for(let i=(from==null?1:from);i<arr.length;i++)if(arr[i])o[f(i)]=arr[i];return o;};
-const fullS=new Float64Array(K.length+2),aiRuns={},aiUse={},apRuns={},apUse={},mpRuns={},mpUse={},bzRuns={},bzUse={};let multi=0;{
-const runs={},W0=P,W1=P+limit,IXS=IX.stay,stayMk=new Uint8Array(NT);
+const fullS=new Float64Array(K.length+2),aiRuns={},aiUse={},apRuns={},apUse={},mpRuns={},mpUse={},bzRuns={},bzUse={};let multi=0,mvK={},mvAtk=0;{
+const runs={},W0=P,W1=P+limit,IXS=IX.stay,stayMk=new Uint8Array(NT),mvRuns={},addMv=(ki,s,e)=>{if(ki&&e>s)(mvRuns[ki]=mvRuns[ki]||[]).push([s,e]);};
 const add=(ki,s,e,ac)=>{if(!ki||e<=s)return;(runs[ki]=runs[ki]||[]).push([s,e]);if(ac&&AI_KINDS[ac.k]){const v=Array.isArray(ac.ai)?ac.ai:aiGuess(ac.t);for(const id of v)(aiRuns[id]=aiRuns[id]||[]).push([s,e]);}if(ac&&Array.isArray(ac.ap))for(const id of ac.ap)(apRuns[id]=apRuns[id]||[]).push([s,e]);if(ac&&Array.isArray(ac.mp)&&ac.mp.length){for(const id of ac.mp)(mpRuns[id]=mpRuns[id]||[]).push([s,e]);if(ac.mp.some(x=>x!=='idle'))(mpRuns._fw=mpRuns._fw||[]).push([s,e]);}if(ac&&ac.bz)(bzRuns[ac.bz]=bzRuns[ac.bz]||[]).push([s,e]);};
 const addMask=(ki,A,mask,want,ac)=>{let s=-1;for(let j=0;j<=mask.length;j++){const on=j<mask.length&&mask[j]===want;if(on&&s<0)s=j;else if(!on&&s>=0){add(ki,A+s,A+j,ac);s=-1;}}};
 items.forEach(it=>{const A=Math.max(0,it.a),B=Math.min(NT,it.b);if(B<=A)return;
-if(it.mv){add(it.c,A,B);for(const ac of it.acts){if(!ac||ac.md)continue;const ki=(ac.wk&&IX.relb)?IX.relb:kIx(ac.k);if(!ki)continue;if(ac.s&&ac.e){let x=it.off+hmMin(ac.s),y=it.off+hmMin(ac.e);if(x<it.a)x+=1440;if(y<=x)y+=1440;x=Math.max(x,A);y=Math.min(y,B);if(y>x)add(ki,x,y,ac);}else add(ki,A,B,ac);}return;}
+if(it.mv){add(it.c,A,B);for(const ac of it.acts){if(!ac||ac.md)continue;const ki=(ac.wk&&IX.relb)?IX.relb:kIx(ac.k);if(!ki)continue;if(ac.s&&ac.e){let x=it.off+hmMin(ac.s),y=it.off+hmMin(ac.e);if(x<it.a)x+=1440;if(y<=x)y+=1440;x=Math.max(x,A);y=Math.min(y,B);if(y>x){add(ki,x,y,ac);if(!it.md)addMv(ki,x,y);}}else{add(ki,A,B,ac);if(!it.md)addMv(ki,A,Number(ac.m)>0?Math.min(B,A+Number(ac.m)):B);}}return;}
 const L=B-A,cl=new Uint8Array(L),timed=[],mins=[],whole=[];
 for(const ac of it.acts){if(!ac)continue;const ki=(ac.wk&&IX.relb)?IX.relb:kIx(ac.k);if(!ki)continue;
 if(ac.s&&ac.e)timed.push([ac,ki]);else if(Number(ac.m)>0)mins.push([ac,ki]);else whole.push([ac,ki]);}
@@ -9623,6 +9634,8 @@ for(const [ac,ki] of timed){let a=it.off+hmMin(ac.s),b=it.off+hmMin(ac.e);if(a<i
 for(const [ac,ki] of mins){let left=Number(ac.m);const mk=new Uint8Array(L);for(let j=0;j<L&&left>0;j++)if(!cl[j]){cl[j]=1;mk[j]=1;left--;}addMask(ki,A,mk,1,ac);}
 if(whole.length){const all=new Uint8Array(L).fill(1);whole.forEach(w=>addMask(w[1],A,all,1,w[0]));cl.fill(1);}
 if(it.c===IXS){for(let j=0;j<L;j++)if(!cl[j])stayMk[A+j]=1;}else addMask(it.c,A,cl,0,it.aiT?{k:'ai',ai:it.aiT}:null);});
+{const uni=L=>{const mk=new Uint8Array(Math.max(0,W1-W0));let t=0;for(const [s,e] of L){for(let m=Math.max(s,W0);m<Math.min(e,W1);m++)if(cat[m]===IX.move&&!mk[m-W0]){mk[m-W0]=1;t++;}}return t;};
+const atk=[];for(const ki in mvRuns){const k=K[ki-1];if(!k)continue;mvK[k.id]=uni(mvRuns[ki]);if(semeIs(k.id))atk.push(...mvRuns[ki]);}mvAtk=uni(atk);}
 const cnt=new Int32Array(NT+1);
 for(const ki in runs){const rs=runs[ki].sort((x,y)=>x[0]-y[0]);let cs=-1,ce=-1;
 const flush=()=>{if(cs<0)return;const s=Math.max(cs,W0),e=Math.min(ce,W1);if(e>s){fullS[ki]+=e-s;cnt[s]++;cnt[e]--;}};
@@ -9640,7 +9653,7 @@ means[v<=TRS.length?TRS[v-1][0]:'_none']=x;mt+=x.tot;mu+=x.used;mb+=x.blank;mo+=
 const prefKind={};for(let p=0;p<48;p++){if(!pfS[p])continue;const o={};for(let c=1;c<=K.length;c++){const v=pfK[p*256+c];if(v)o[K[c-1].id]=v;}prefKind[p]=o;}
 return {total:limit,rec,K,sum:sumO,sum1:sum1O,multi,aiUse,apUse,mpUse,bzUse,places:plM,areas:arM,sleepHow:{lying:slLy,seated:slSe,unknown:slUn},tool:obj(toolS,i=>TL[i-1]),pref:obj(pfS,i=>i,0),prefMuda:obj(pfM,i=>i,0),prefBlank:obj(pfB,i=>i,0),prefKind,
 mv:{means,acts:obj(mvA,kid),tools:obj(mvD,i=>TL[i-1]),tot:mt,used:mu,blank:mb,old:mo,mudaAct:mm},
-muda:{blank:mdBlank,kinds:obj(mdK,kid),bedx:mdBz,meal:mdMeal,trip:mdTrip,late:mdLate,over:mdOver,nap2:mdNap2,excess:mdExcess,scrSp:mdScrSp,scrTel:mdScrTel,rh:mdRh,marks:mk,total:mdTot,all:mdTot+mdRh},unknown:sum[IX['?']]||0,visits:vis};
+muda:{blank:mdBlank,kinds:obj(mdK,kid),bedx:mdBz,meal:mdMeal,trip:mdTrip,late:mdLate,over:mdOver,nap2:mdNap2,excess:mdExcess,scrSp:mdScrSp,scrTel:mdScrTel,rh:mdRh,marks:mk,total:mdTot,all:mdTot+mdRh},unknown:sum[IX['?']]||0,visits:vis,mvK,mvAtk};
 }
 function anaTr(k){if(k==='_none')return ['❔','乗り物なし'];const t=TRS.find(x=>x[0]===k);if(!t)return ['❔',String(k)];
 const i=t[1].indexOf(' ');return [TRICON[k]||t[1].slice(0,i),t[1].slice(i+1)];}
@@ -10287,12 +10300,12 @@ openOvl();
 
 function quickMic(){
 if(ui.date!==todayStr()){ui.date=todayStr();ui.tab='di';render();}
-if(gateNew(todayStr()))return;openEntrySheet(todayStr(),{hour:new Date().getHours()});
+openEntrySheet(todayStr(),{hour:new Date().getHours()});
 setTimeout(()=>{if(sheetSt&&sheetSt.frFocus)sheetSt.frFocus();},250);
 }
 function quickPhoto(){
 if(ui.date!==todayStr()){ui.date=todayStr();ui.tab='di';render();}
-if(gateNew(todayStr()))return;openEntrySheet(todayStr(),{hour:new Date().getHours()});
+openEntrySheet(todayStr(),{hour:new Date().getHours()});
 const pi=$('phInput');pi.value='';pi.click();
 }
 
@@ -10346,7 +10359,7 @@ function tbBreak(){const L=tbAll().filter(b=>(b.st==='done'||b.st==='cut')&&b.fz
 function tbPick(){const pl={};tbDay(todayStr()).forEach(b=>{if(b.st==='plan'||b.st==='run')pl[b.tid]=1;});return planOrder().find(x=>!pl[x.id])||null;}
 const tbCs=()=>{const r=tbRun(),b=tbBreak();return (r?r.id+(Date.now()>=r.z?'o':'r'):'-')+((b&&b.cmb)?'c':'');};
 const tbCardOn=()=>{try{return ui.date===todayStr()&&(!!tbRun()||prepCardHtml().indexOf('class="pcard')<0);}catch(e){return false;}};
-function tbRoadHtml(){try{const t=todayStr(),GC=goalCfg(),left=Math.max(0,GC.yen-incSum('in',GC.from,t)-cashLatest()),prog=GC.yen-left,D=state.dreams||{};
+function tbRoadHtml(){try{const t=todayStr(),GC=goalCfg(),left=Math.max(0,goalLeftOf(GC.yen,incSum('in',GC.from,t),cashLatest())),prog=GC.yen-left,D=state.dreams||{};
 const dd=(id,y0,u0)=>{const d=D[id];return (d&&!d.del)?{y:Number(d.yen)>0?Number(d.yen):y0,u:dreamDue(d)||u0}:{y:y0,u:u0};},c=dd('g12',1250000,'2027-03-31'),m=dd('g11',1000000,'2027-09-30');
 const tot=GC.yen+c.y+m.y,P=v=>Math.min(100,Math.max(0,v/tot*100)).toFixed(1),md=u=>Number(u.slice(5,7))+'/'+Number(u.slice(8,10));
 return '<div class="tbroad" aria-label="夢への道"><div class="rd-tr"><i class="rd-fill" style="width:'+P(prog)+'%"></i><span class="rd-fl" style="left:'+P(GC.yen)+'%">🧱</span><span class="rd-fl" style="left:'+P(GC.yen+c.y)+'%">🏢</span><span class="rd-fl" style="left:100%">🏠</span><span class="rd-car" style="left:'+P(prog)+'%">🚗</span></div>'+
@@ -12452,7 +12465,7 @@ for(const k in part){if(CL_KNOWN_TOP[k])continue;const c=part[k],l=state[k];if(l
 let changed=false,tie=0;
 use.forEach((r,i)=>{
 const now=clLocalRef(r.coll,r.k);if(now!==refs[i])changed=true;
-if(r.coll!=='pays'&&r.coll!=='steps'&&r.coll!=='dwmy'&&!CL_UNION[r.coll]){const k=clKey(r),it=clItemByKey(k);
+if(r.coll!=='pays'&&r.coll!=='steps'&&r.coll!=='dwmy'&&!CL_UNION[r.coll]&&!(r.coll==='_top'&&r.k==='dream'&&clTsOf((refs[i]||{}).ts)<clTsOf(r.ts))){const k=clKey(r),it=clItemByKey(k);
 if(it&&clTsOf(it.ts)===clTsOf(r.ts)&&!echo[k]){const h=clSigOf(it,false);if(h!==tgt[k]){tgt[k]=h;tie++;}}}
 });
 if(tie)CL.tieN=(CL.tieN||0)+tie;
@@ -12723,7 +12736,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c46.9";
+const CL_APPVER="c47.0";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
