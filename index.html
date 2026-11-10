@@ -4680,7 +4680,7 @@ const ir=nl.querySelector('#nxIr');if(ir)ir.onclick=ev=>{ev.stopPropagation();op
 {const sa=pane.querySelector('#stAlert');if(sa)sa.onclick=ev=>{ev.stopPropagation();navGo(openStPage);};}
 if(isToday)wrFit();
 nowCardSet(false);
-pane.querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>{if(b.dataset.mgj)return;openEntrySheet(ui.date,{key:b.dataset.k});});
+pane.querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>{if(b.dataset.mgj)return;{const o=openMove();if(o&&o.k===b.dataset.k&&mvOpenRow(o)){mvpStopSheet('edit');return;}}openEntrySheet(ui.date,{key:b.dataset.k});});
 pane.querySelectorAll('[data-hcm]').forEach(s=>s.onclick=ev=>{ev.stopPropagation();ev.preventDefault();hcmOpen(pane,s.dataset.hcm);});if(HCM)hcmOpen(pane,HCM.k,true);
 mgBind(pane);
 {const sb=pane.querySelector('#slpBar');if(sb){sb.dataset.h=slpBarInner();slpBarBind(sb);}}
@@ -4847,7 +4847,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c47.2）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c47.3）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -8210,13 +8210,13 @@ function mvpStopSheet(mode){const o=openMove(),r=o&&mvOpenRow(o);if(!r)return;co
 const cur=()=>{const o2=openMove(),r2=o2&&mvOpenRow(o2);return r2?{o:o2,r:r2,ks:[r2.x.k].concat(r2.x.kx||[]).filter(Boolean),p:r2.x.p||''}:null;};
 const kb=(k,on,lb)=>'<button type="button" data-sqk="'+esc(k)+'"'+(on?' class="on"':'')+'>'+lb+'</button>';
 const html='<div class="mvq stq"><div class="sh-time" style="justify-content:center"><span>'+(isNew?'☕ 止まった':'✎ 場所と何をした')+'</span></div>'+
-(isNew?'<div class="sh-note">止まった時刻</div>'+mvpTmRow(hmMin(x.s),hmMin(o.en.s)+1):'<div class="sh-note">いま：'+esc(ks0.map(k=>(kindOf(k)||{}).lb||k).join('・'))+'（'+esc(x.s)+'〜）。別の事を押すと、今から切り替わる</div>')+
+(isNew?'':'<div class="sh-note">いま：'+esc(ks0.map(k=>(kindOf(k)||{}).lb||k).join('・'))+'（'+esc(x.s)+'〜）。別の事を押すと、今から切り替わる</div>')+'<div class="sh-note">止まった時刻</div>'+mvpTmRow(hmMin(x.s),hmMin(o.en.s)+1)+
 '<div class="st">📍 どこ？（押すだけ）</div><div class="pl">'+mvpStopPlaces().map(p=>'<button type="button" data-sqp="'+esc(p)+'"'+(x.p===p?' class="on"':'')+'>'+esc(p)+'</button>').join('')+'</div><input type="text" class="pin" id="sqPin" placeholder="ここに貼り付け（Googleマップ）" value="'+esc(x.p||'')+'" autocomplete="off"><div id="sqPl">'+(mvpPflOpen=false,mvpPlHtml(x.p||'',true))+'</div>'+
 '<div class="st" style="margin-top:8px">何してる？（いくつでも）</div><div class="ks">'+MVP_KS.map(z=>kb(z[0],!fresh&&ks0.indexOf(z[0])>=0,z[1])).join('')+ks0.filter(k=>!MVP_KS.some(z=>z[0]===k)).map(k=>{const q=kindOf(k);return q?kb(k,true,esc(q.ic)+' '+esc(q.lb)):'';}).join('')+'<button type="button" id="sqAll">🏷️ ほか（全部）</button></div>'+
 (isNew?'':'<div class="st" style="margin-top:8px">🚉 次は何で行く？（変わる時だけ押す）</div><div class="trs">'+TRS.map(z=>'<button type="button" data-sqtr="'+z[0]+'"'+(z[0]===(x.ntr||o.en.tr||'car')?' class="on"':'')+'>'+z[1]+'</button>').join('')+'</div><div id="sqPk">'+mvpPlanHtml(x.pk)+'</div><button type="button" class="spl" id="sqSplit">⏱ 時刻を決めて別のこと（押し忘れた時）</button>')+
 '<div class="sh-btns"><button class="savebtn" id="sqOk" style="flex:1">✓ 閉じる</button></div><div class="sh-note">押した物はその場で入る。'+(isNew?'何も押さずに閉じると☕休憩':'')+'</div></div>';
-const flush=()=>{try{const pin=$('sqPin');if(pin)mvpPinFlush(pin);}catch(e){}if(isNew){try{const T=$('mvqT'),c=cur();if(T&&c){const v=mvpT();if(v!==c.r.x.s)mvpRowSet(z=>{z.s=v;});}}catch(e){}}};
-openSub(html,()=>{flush();render();});mvpBindTm();const S=$('sheet2');
+const flush=()=>{try{const pin=$('sqPin');if(pin)mvpPinFlush(pin);}catch(e){}try{const T=$('mvqT'),c=cur();if(T&&c&&T.dataset.m0!==String(T.dataset.m)){const v=mvpT();if(v!==c.r.x.s)mvpRowSet(z=>{z.s=v;});}}catch(e){}};
+openSub(html,()=>{flush();render();});mvpBindTm();const S=$('sheet2');{const T0=$('mvqT');if(T0){T0.dataset.m0=String(T0.dataset.m);const ap=()=>{const c=cur();if(!c)return;const v=mvpT();if(v!==c.r.x.s)mvpRowSet(z=>{z.s=v;});T0.dataset.m0=String(T0.dataset.m);};S.querySelectorAll('[data-tma]').forEach(b=>b.addEventListener('click',ap));T0.addEventListener('change',ap);}}
 const markP=()=>{const c=cur(),v=c?c.p:'';S.querySelectorAll('[data-sqp]').forEach(b=>b.classList.toggle('on',b.dataset.sqp===v));const pin=$('sqPin');if(pin&&document.activeElement!==pin)pin.value=v;};
 const markK=()=>{const c=cur();if(!c)return;S.querySelectorAll('[data-sqk]').forEach(b=>b.classList.toggle('on',!fresh&&c.ks.indexOf(b.dataset.sqk)>=0));};
 S.querySelectorAll('[data-sqp]').forEach(b=>b.onclick=()=>{const p=b.dataset.sqp;mvpRowSet(z=>{if(z.p===p)delete z.p;else z.p=p;});markP();});
@@ -12745,7 +12745,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c47.2";
+const CL_APPVER="c47.3";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
