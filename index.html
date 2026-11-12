@@ -2498,7 +2498,7 @@ const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function taGrow(ta){if(!ta||ta._grow||ta.tagName!=='TEXTAREA')return;ta._grow=1;const w=document.createElement('div');w.className='tagrow';const cs=getComputedStyle(ta);w.style.setProperty('--tf',cs.font);w.style.setProperty('--tlh',cs.lineHeight);w.style.setProperty('--tp',cs.padding);w.style.setProperty('--tb',cs.borderWidth);w.style.setProperty('--tls',cs.letterSpacing);if(ta.style.margin){w.style.margin=ta.style.margin;ta.style.margin='0';}
 ta.parentNode.insertBefore(w,ta);w.appendChild(ta);const s=()=>{w.dataset.v=ta.value;};s();ta.addEventListener('input',s);ta.addEventListener('change',s);}
-function kbOn(host){if(!host)return;try{if(!host.querySelector(':scope>.kbsp')){const sp=document.createElement('div');sp.className='kbsp';const ft=[...host.children].find(k=>{const c=getComputedStyle(k);return c.position==='sticky'&&c.bottom!=='auto';});if(ft)host.insertBefore(sp,ft);else host.appendChild(sp);}}catch(e){}host.classList.add('kb');}
+function kbOn(host){if(!host)return;if(host.id==='page'&&pageMode==='srch')return;try{if(!host.querySelector(':scope>.kbsp')){const sp=document.createElement('div');sp.className='kbsp';const ft=[...host.children].find(k=>{const c=getComputedStyle(k);return c.position==='sticky'&&c.bottom!=='auto';});if(ft)host.insertBefore(sp,ft);else host.appendChild(sp);}}catch(e){}host.classList.add('kb');}
 const kvTxt=el=>{if(!el||!el.matches)return false;if(el.tagName==='TEXTAREA')return !el.readOnly;if(el.tagName!=='INPUT'||el.readOnly)return false;return /^(text|search|tel|number|url|email)$/.test(el.type);};
 function kvCoverTop(el,top0){const r=el.getBoundingClientRect();let best=Infinity;const vb=(window.visualViewport?window.visualViewport.offsetTop+window.visualViewport.height:window.innerHeight);
 const ys=[Math.min(r.bottom-4,vb-2),Math.min(r.top+Math.min(r.height-4,40),vb-2)];
@@ -4806,7 +4806,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c47.7）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c47.8）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -12709,7 +12709,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c47.7";
+const CL_APPVER="c47.8";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
