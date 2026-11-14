@@ -2015,6 +2015,19 @@ body.cardvis .fab{display:none!important}
 .pinrow{flex-wrap:wrap}
 .pinrow .pin{flex:1 1 calc(50% - 4px);min-width:calc(50% - 4px)}
 .pinrow .pin .pt b{white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere}
+.pinrow .pin:not(.sm){box-shadow:0 8px 20px rgba(20,39,90,.24)}
+.pinrow .pin:not(.sm) .pt b{font-size:17px}
+.pinrow .pin:not(.sm) .pt em{font-size:22px}
+.pinrow .pin.sm{padding:6px 9px 7px 10px;border-radius:14px;opacity:.93}
+.pinrow .pin.sm .pi{font-size:15px}
+.pinrow .pin.sm .pt b{font-size:12px}
+.pinrow .pin.sm .pt small{font-size:10px}
+.pinrow .pin.sm .pt em{font-size:12.5px}
+.pinrow .pin.sm .pin-s,.pinrow .pin.sm .pin-gen,.pinrow .pin.sm .ck-ph{display:none}
+.dband .db1.x{font-size:11.5px;opacity:.86}
+.dband .db1.x b{font-size:12.5px}
+.pinrow .pin .pin-c{flex-wrap:wrap}
+.pinrow .pin .pin-chip{overflow:visible;text-overflow:clip;max-width:none}
 .dband .db3{display:flex;flex-wrap:wrap;align-items:baseline;gap:0 10px;margin-top:4px;padding:4px 8px;border-radius:8px;background:#c81e3a}
 .dband .db3.lv2,.dband .db3.lv3{background:#a3122b}
 .dband .db3 .rm-a{font-size:15px;font-weight:900;white-space:nowrap}
@@ -4868,7 +4881,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c49.2）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c49.3）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -5943,12 +5956,13 @@ function pinOn(id){const p=(state.pins||{})[id];return p?!!p.on:!!PIN_DEFAULT[id
 function pinnedDreams(){
 const dk=d=>dreamDue(d)||'9999-12-31';
 return dreamsActive().filter(d=>pinOn(d.id))
-.sort((a,b)=>(dk(a)<dk(b)?-1:dk(a)>dk(b)?1:0)||((a.ts||0)-(b.ts||0))).slice(0,PIN_MAX);
+.sort((a,b)=>((a.pr==='A'?0:1)-(b.pr==='A'?0:1))||(dk(a)<dk(b)?-1:dk(a)>dk(b)?1:0)||((a.ts||0)-(b.ts||0))).slice(0,PIN_MAX);
 }
 function pinIcon(t){
 const s=String(t||'');
 return /引っ?越|引越|住まい|マンション/.test(s)?'🏠':/法人|会社|設立|起業/.test(s)?'🏢':/上場/.test(s)?'📈':/時計/.test(s)?'⌚':/車/.test(s)?'🚗':/資金|万円|売上|貯金/.test(s)?'💰':'🎯';
 }
+function pinSmall(d){try{return pinnedDreams().some(x=>x.pr==='A')&&d.pr!=='A';}catch(e){return false;}}
 function renderPins(){
 const el=$('pinTopRow');if(!el)return;
 const arr=pinnedDreams();
@@ -5957,7 +5971,7 @@ el.innerHTML=arr.map(d=>{
 const st=stepStat(d),n=st.n,c=catOf(d.cat),hit=dreamHit(d.id);
 const left=(n===null)?'期限なし':n<0?('⚠<em>'+(-n)+'</em>日超過'):n===0?'<em>今日</em>まで':('あと<em>'+n+'</em>日');
 const cnt=(dreamDue(d)?'・'+Number(dreamDue(d).slice(5,7))+'/'+Number(dreamDue(d).slice(8,10))+(ageAt(dreamDue(d))!=null?'（'+ageAt(dreamDue(d))+'歳）':''):'')+(st.tot?('・'+st.dn+'/'+st.tot+'手'):'');
-return '<div class="pin'+(hit?' hit':'')+'" data-pin="'+esc(d.id)+'" style="background-color:'+((n!==null&&n<0)?'#e0405a':c.c)+'">'+
+return '<div class="pin'+(hit?' hit':'')+(pinSmall(d)?' sm':'')+'" data-pin="'+esc(d.id)+'" style="background-color:'+((n!==null&&n<0)?'#e0405a':c.c)+'">'+
 '<div class="pin-h"><span class="pi">'+pinIcon(d.t)+'</span><span class="pt"><b>'+esc(d.t)+'</b><small>'+left+cnt+'</small></span></div>'+
 pinLow(d,hit)+(st.next?'<div class="pin-s"><button class="pin-ok lbl" data-ok="'+esc(st.next.id)+'" aria-label="やった">✓<small class="bn">やった</small></button><span class="pin-tx" data-ds="'+esc(d.id)+'">'+esc(st.next.t)+'</span></div>'
 :st.tot?'<div class="pin-s"><span class="pin-tx" data-ds="'+esc(d.id)+'">🎉 手順は全部やった</span></div>'
@@ -12936,7 +12950,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c49.2";
+const CL_APPVER="c49.3";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
