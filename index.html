@@ -2038,6 +2038,20 @@ body.cardvis .fab{display:none!important}
 .dband .db3 .rm-b b{font-size:12.5px;color:#fff}
 .page>.dband{margin:0 8px 6px}
 .dband{width:calc(100% - 16px)!important;box-sizing:border-box;align-self:center}
+.dband .db1{flex-wrap:wrap;gap:3px 5px;white-space:normal}
+.dband .dc{display:inline-flex;flex-direction:column;flex:0 1 auto;max-width:100%;min-width:0;line-height:1.3}
+.dband .dc i{font-style:normal;font-size:11.5px;font-weight:800;color:#fff;white-space:normal;overflow-wrap:anywhere}
+.dband .dc>span{white-space:nowrap}
+.dband .db1.x{gap:2px 16px}
+.dband .db1.x .dc{flex-direction:row;align-items:baseline;gap:5px}
+.dband .db1.x .dc i{font-size:11px}
+.dband .db2{flex-wrap:wrap;gap:0 6px}
+.dband .db3{gap:0 6px}
+.dband .db3 .rm-a{flex-basis:100%;white-space:normal}
+.dband .db3 .rm-b{flex:0 1 auto}
+.dband .db3 .rm-c{font-size:11.5px}
+.dband .db3 .rm-c b{font-size:12.5px}
+.pinrow .pin .pin-chip{white-space:normal;line-height:1.3;padding:5px 9px;text-align:left}
 .dm-cat{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:800;margin:12px 2px 6px}.dm-cat i{width:10px;height:10px;border-radius:50%}.dm-cat span{color:var(--sub);font-weight:700}
 .dm-c{display:flex;gap:10px;width:100%;text-align:left;background:#fff;border:1px solid var(--line);border-radius:14px;padding:9px;margin-bottom:8px}
 .dm-p{flex:none;width:64px;height:64px;border-radius:10px;object-fit:cover}.dm-p.e{display:flex;align-items:center;justify-content:center;text-align:center;color:#fff;font-size:10.5px;font-weight:800}
@@ -4077,7 +4091,7 @@ function cashLatest(){const L=cashList();return L.length?(Number(L[0].amt)||0):0
 function manY(n){const m=n/10000;return (Math.abs(m)>=100?Math.round(m):Math.round(m*10)/10).toLocaleString('ja-JP')+'万';}
 function goalDays(){const t=todayStr();return Math.max(0,Math.round((parseD(goalCfg().until).getTime()-parseD(t).getTime())/864e5));}
 function goalLineHtml(){try{const t=todayStr(),GC=goalCfg(),got=incSum('in',GC.from,t),cash=cashLatest(),left=goalLeftOf(GC.yen,got,cash),days=goalDays(),per=days?left/days:left,ym=t.slice(0,7),gp=incSum('gp',ym+'-01',ym+'-31');
-return '<button class="goal-line'+(left<=0?' done':'')+'" id="goalLine"><span class="gl-main">💰 あと <b>'+manY(Math.max(0,left))+'円</b></span><span class="gl-sub">'+(left<=0?'🎉 '+manY(GC.yen)+'円 達成':GC.until.slice(5).replace('-','/')+'まで '+days+'日・1日 '+manY(Math.max(0,per))+'円')+'</span><span class="gl-gp">📈 粗利 '+Number(ym.slice(5))+'月 <b>'+manY(gp)+'</b>　💵 入金 <b>'+manY(got)+'</b>　💴 手元 <b>'+manY(cash)+'</b></span></button>';}catch(e){return '';}}
+return '<button class="goal-line'+(left<=0?' done':'')+'" id="goalLine"><span class="gl-main">🧱 '+GC.until.slice(5).replace('-','/')+'までの壁　あと <b>'+manY(Math.max(0,left))+'円</b></span><span class="gl-sub">'+(left<=0?'🎉 '+manY(GC.yen)+'円 達成':'あと '+days+'日・1日 '+manY(Math.max(0,per))+'円 稼ぐ')+'</span><span class="gl-gp">📈 粗利 '+Number(ym.slice(5))+'月 <b>'+manY(gp)+'</b>　💵 入金 <b>'+manY(got)+'</b>　💴 手元 <b>'+manY(cash)+'</b></span></button>';}catch(e){return '';}}
 let incArm='';
 function openIncSheet(ym){ym=ym||todayStr().slice(0,7);let ty='in',d=todayStr();if(d.slice(0,7)!==ym)d=ym+'-01';
 const paint=()=>{const L=incList().filter(x=>x.d.slice(0,7)===ym);const sIn=incSum('in',ym+'-01',ym+'-31'),sGp=incSum('gp',ym+'-01',ym+'-31');
@@ -4881,7 +4895,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c49.3）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c49.4）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -5962,6 +5976,7 @@ function pinIcon(t){
 const s=String(t||'');
 return /引っ?越|引越|住まい|マンション/.test(s)?'🏠':/法人|会社|設立|起業/.test(s)?'🏢':/上場/.test(s)?'📈':/時計/.test(s)?'⌚':/車/.test(s)?'🚗':/資金|万円|売上|貯金/.test(s)?'💰':'🎯';
 }
+function pinWord(d){const k=String((d&&d.sht)||'').trim();if(k)return k;const s=String((d&&d.t)||'').trim(),m=s.match(/引っ越し|引越し|引越|法人化|上場|時計|車/);return (m&&s.length>8)?m[0]:s;}
 function pinSmall(d){try{return pinnedDreams().some(x=>x.pr==='A')&&d.pr!=='A';}catch(e){return false;}}
 function renderPins(){
 const el=$('pinTopRow');if(!el)return;
@@ -5990,8 +6005,8 @@ function dreamHit(id){try{return movesOn(todayStr()).some(m=>m.dr===id);}catch(e
 function needList(d){return (Array.isArray(d&&d.need)?d.need:[]).map((x,i)=>x?Object.assign({i:i},x):null).filter(x=>x&&!x.del&&x.t);}
 function pinLow(d,hit){
 const y=Number(d.yen)>0,nl=needList(d),ok=nl.filter(x=>x.ok).length;
-return '<div class="pin-c"><button class="pin-chip" data-dy="'+esc(d.id)+'" aria-label="必要額">💰 '+(y?'<b>'+manY(Number(d.yen))+'</b>':'＋額')+'</button>'+
-'<button class="pin-chip" data-dn="'+esc(d.id)+'" aria-label="必要なもの">📦 '+(nl.length?'<b>'+ok+'/'+nl.length+'</b>':'＋もの')+'</button></div>'+
+return '<div class="pin-c"><button class="pin-chip" data-dy="'+esc(d.id)+'" aria-label="必要額">💰 '+(y?'必要額 <b>'+manY(Number(d.yen))+'</b>':'必要額を入れる')+'</button>'+
+'<button class="pin-chip" data-dn="'+esc(d.id)+'" aria-label="必要なもの">📦 '+(nl.length?'必要なもの <b>'+ok+'/'+nl.length+'</b>':'必要なものを足す')+'</button></div>'+
 (hit?'<div class="pin-hit">✓ 今日の1手 済</div>':'');
 }
 function openDreamYen(id){
@@ -6263,6 +6278,7 @@ $('sheet').innerHTML=
 '<div>'+iosSw('dPin',false,'📌 トップに大きく出す（'+PIN_MAX+'つまで）','','row')+'</div>'+
 '<div><div class="sh-label">✦ 夢（目をつぶって浮かぶくらい具体的に・話してもOK）</div><div class="sh-ta-wrap"><input type="text" id="dTt" style="padding-right:46px" placeholder="例：自分の店を持つ">'+
 '<button class="sh-mic lbl" id="dMic" style="top:5px;bottom:auto" aria-label="声で書く">'+MICSVG+'<small class="bn">声</small></button></div></div>'+
+'<div><div class="sh-label">🏷 短い名前（上の帯に出す名前。空なら自動）</div><input type="text" id="dSht" placeholder="例：車"></div>'+
 '<div><div class="sh-label">六分野（1タップ）</div><div class="catbtns" id="dCats">'+
 CATS.map(c=>'<button data-c="'+c.id+'">'+esc(c.n)+'</button>').join('')+'</div></div>'+
 '<div style="display:flex;gap:10px">'+
@@ -6287,7 +6303,7 @@ $('dTt').value=ex?ex.t:'';
 $('dDue').value=(ex&&(ex.due||(ex.yr?ex.yr+'-12-31':'')))||'';
 $('dProg').value=(ex&&ex.prog)||0;
 $('dProgV').textContent=(((ex&&ex.prog)||0))+'%';
-$('dMemo').value=(ex&&ex.memo)||'';
+$('dMemo').value=(ex&&ex.memo)||'';$('dSht').value=(ex&&ex.sht)||'';
 {const en=(id,v)=>{$(id).value=v==null?'':v;};en('dYen',ex&&Number(ex.yen)>0?ex.yen/1e4:'');en('dHave',ex&&Number(ex.have)>0?ex.have/1e4:'');en('dNG',ex&&ex.nGoal);en('dNU',ex&&ex.nUnit);en('dNN',ex&&ex.nNow);en('dNow',ex&&ex.now);en('dPlan',ex&&ex.plan);
 const df=()=>{const y=(Number($('dYen').value)||0)*1e4,hv=(Number($('dHave').value)||0)*1e4;$('dDiff').textContent=y?'あと '+dmYen(Math.max(0,y-hv)):'金額を入れると「あと◯万」が自動で出る';};df();$('dYen').oninput=df;$('dHave').oninput=df;}
 $('dProg').oninput=()=>{$('dProgV').textContent=$('dProg').value+'%';};
@@ -6337,12 +6353,12 @@ if(!cat){toast('六分野をどれか選んでくれ');return;}
 const did=id||String(Date.now())+Math.floor(Math.random()*1e4);
 const due=$('dDue').value||null;
 const prog=Number($('dProg').value)||0;
-const memo=$('dMemo').value.trim();
+const memo=$('dMemo').value.trim(),sht=$('dSht').value.trim();
 const achD=$('dAch')?$('dAch').value:((ex&&ex.achD)||'');
 const yen=Math.round((Number($('dYen').value)||0)*1e4),have=Math.round((Number($('dHave').value)||0)*1e4),nGoal=$('dNG').value.trim(),nUnit=$('dNU').value.trim(),nNow=$('dNN').value.trim(),now=$('dNow').value.trim(),plan=$('dPlan').value.trim();
 const ch=[];if(ex){const c0=(l,a,b)=>{if(String(a==null?'':a)!==String(b==null?'':b))ch.push({l,a:String(a==null?'':a),b:String(b==null?'':b)});};c0('タイトル',ex.t,t);if(ex.achD)c0('実現日',ex.achD,achD);c0('期限',dreamDue(ex),due);c0('必要な金額',Number(ex.yen)>0?dmYen(ex.yen):'',yen>0?dmYen(yen):'');c0('目標の数字',ex.nGoal,nGoal);c0('分野',catOf(ex.cat).n,catOf(cat).n);c0('優先順位',ex.pr,pr);c0('今ある金額',Number(ex.have)>0?dmYen(ex.have):'',have>0?dmYen(have):'');c0('単位',ex.nUnit,nUnit);c0('今の数字',ex.nNow,nNow);c0('今の状況',ex.now,now);c0('年ごとの行動',ex.plan,plan);c0('進み具合',((ex.prog|0))+'%',prog+'%');c0('メモ',ex.memo,memo);c0('写真',dmPhs(ex).length+'枚',dPhs.length+'枚');}
 const sv=why=>{mutate(()=>{dPhs.forEach(x=>phKeep(x));state.dreams=state.dreams||{};
-{const o0=state.dreams[did]||{};state.dreams[did]=Object.assign({},o0,{t,cat,pr,due,prog,memo,ph:dPhs.length?dPhs:null,ach:wonNow?Date.now():((ex&&ex.ach)||null),achD:wonNow||achD||null,sn:(ex&&ex.sn)||0,created:(ex&&ex.created)||todayStr(),yen,have,nGoal,nUnit,nNow,now,plan,ts:Date.now()});}
+{const o0=state.dreams[did]||{};state.dreams[did]=Object.assign({},o0,{t,sht,cat,pr,due,prog,memo,ph:dPhs.length?dPhs:null,ach:wonNow?Date.now():((ex&&ex.ach)||null),achD:wonNow||achD||null,sn:(ex&&ex.sn)||0,created:(ex&&ex.created)||todayStr(),yen,have,nGoal,nUnit,nNow,now,plan,ts:Date.now()});}
 if(!ex)dreamLog({what:'夢を足した',id:did,t});if(ex&&ex.ach&&!ex.achD&&achD)dreamLog({what:'実現日を入れた',id:did,t,ch:[{l:'実現日',a:'',b:achD}]});ymGoalsSave(did,dGs);
 if(ch.length)dreamLog({what:'夢を変えた',id:did,t,ch,why});if(wonNow)dreamLog({what:'かなった',id:did,t,ch:[{l:'実現日',a:'',b:wonNow}]});
 if(pin!==pin0){state.pins=state.pins||{};state.pins[did]={on:pin?1:0,ts:Date.now()};}});
@@ -7930,7 +7946,7 @@ bk('wish',null,wishHtml(),{fold:1,wish:1});
 let xRoad='';  try{const D=state.dreams||{},dd=(id,y0,u0)=>{const d=D[id];return (d&&!d.del)?{y:Number(d.yen)>0?Number(d.yen):y0,u:dreamDue(d)||u0}:{y:y0,u:u0};},c=dd('g12',1250000,'2027-03-31'),m=dd('g11',1000000,'2027-09-30');
 const tot=GC.yen+c.y+m.y,prog=GC.yen-left,md=u=>Number(u.slice(5,7))+'/'+Number(u.slice(8,10)),st=prog<GC.yen?1:prog<GC.yen+c.y?2:3,X=[0,26,52,77,96],seg=[[0,GC.yen],[GC.yen,GC.yen+c.y],[GC.yen+c.y,tot]],Pp=v=>{if(v>=tot)return X[3].toFixed(1);for(let i=0;i<3;i++){const s=seg[i];if(v<s[1])return (X[i]+(X[i+1]-X[i])*Math.max(0,(v-s[0]))/Math.max(1,s[1]-s[0])).toFixed(1);}return X[3].toFixed(1);};
 xRoad+='<div class="ck-sec">🗺 道のり（今いるのは ステージ'+st+'）<i></i></div><div class="ck-card"><div class="ck-track"><div class="fill" style="width:'+Pp(prog)+'%"></div><div class="car" style="left:'+Pp(prog)+'%">🚗</div>'+
-'<div class="ck-node'+(st===1?' on':'')+'" style="left:'+X[1]+'%"><b>🧱</b><span>ステージ1<br>'+esc(manY(GC.yen))+'<br>'+md(GC.until)+'</span></div>'+
+'<div class="ck-node'+(st===1?' on':'')+'" style="left:'+X[1]+'%"><b>🧱</b><span>ステージ1<br>壁 '+esc(manY(GC.yen))+'<br>'+md(GC.until)+'</span></div>'+
 '<div class="ck-node'+(st===2?' on':'')+'" style="left:'+X[2]+'%"><b>🏢</b><span>ステージ2<br>法人化<br>'+md(c.u)+'</span></div>'+
 '<div class="ck-node'+(st===3?' on':'')+'" style="left:'+X[3]+'%"><b>🏠</b><span>ステージ3<br>引っ越し<br>'+md(m.u)+'</span></div>'+
 '<div class="ck-node goal" style="left:'+X[4]+'%"><b>⭐</b><span>ゴール<br>夢</span></div></div>'+
@@ -9528,11 +9544,11 @@ const ROOM_MSG0='1日でも早く、ステップアップを！';
 function roomCfg(){const r=(state._cfg&&state._cfg.room)||null;return (r&&r.d&&/^\d{4}-\d{2}-\d{2}$/.test(r.d))?r:null;}
 function roomLimit(r){const p=r.d.split('-').map(Number),y=Number(r.y)>0?Number(r.y):3,dt=new Date(p[0]+y,p[1]-1,p[2]);return dt.getFullYear()+'-'+pad(dt.getMonth()+1)+'-'+pad(dt.getDate());}
 function roomHtml(){try{const r=roomCfg();if(!r||r.off)return '';const t=todayStr(),y=Number(r.y)>0?Number(r.y):3,lim=roomLimit(r),lived=Math.round((parseD(t)-parseD(r.d))/86400000)+1,left=Math.round((parseD(lim)-parseD(t))/86400000);
-const lv=left<=30?3:left<=90?2:left<=180?1:0;
-const a=left>0?((lv>=3?'🚨':lv>=1?'⚠':'🔥')+' <b>'+y+'年</b>まで あと <b>'+left+'</b>日'+(lv===1?'（半年を切った）':lv===2?'（3か月を切った）':'')):('🚨 <b>'+y+'年</b>を <b>'+(-left)+'</b>日 過ぎた');
-let c='';const d=r.dr?(state.dreams||{})[r.dr]:null;if(d&&!d.del&&!d.ach&&Number(d.yen)>0){const need=Math.max(0,Number(d.yen)-(Number(d.have)||0)),n=daysTo(dreamDue(d)||lim);if(need>0&&n>0)c='<span class="rm-c">💰 1日 <b>'+fmtYen(Math.ceil(need/n))+'</b>円</span>';}
+const lv=left<=30?3:left<=90?2:left<=180?1:0,nm=esc(r.lb||'今の部屋');
+const a=left>0?((lv>=3?'🚨':lv>=1?'⚠':'🔥')+' '+nm+'は <b>'+y+'年</b>超えない　あと <b>'+left+'</b>日'+(lv===1?'（半年を切った）':lv===2?'（3か月を切った）':'')):('🚨 '+nm+' <b>'+y+'年</b>を <b>'+(-left)+'</b>日 過ぎた');
+let c='';const d=r.dr?(state.dreams||{})[r.dr]:null;if(d&&!d.del&&!d.ach&&Number(d.yen)>0){const need=Math.max(0,Number(d.yen)-(Number(d.have)||0)),n=daysTo(dreamDue(d)||lim);if(need>0&&n>0)c='<span class="rm-c">💰 1日 <b>'+fmtYen(Math.ceil(need/n))+'</b>円 貯める</span>';}
 const q=r.d.split('-').map(Number),tt=t.split('-').map(Number),yrs=tt[0]-q[0]-((tt[1]<q[1]||(tt[1]===q[1]&&tt[2]<q[2]))?1:0),msg=String(r.msg!=null?r.msg:ROOM_MSG0).trim();
-return '<div class="db3 lv'+lv+'"><span class="rm-a">'+a+'</span>'+c+(msg?'<span class="rm-m">'+(yrs>0?yrs+'年経過。':'')+esc(msg)+'</span>':'')+'<span class="rm-b">🏠 '+esc(r.lb||'今の部屋')+' <b>'+lived+'</b>日目（契約 '+q[0]+'/'+q[1]+'/'+q[2]+'・'+y+'年超えない）</span></div>';}catch(e){return '';}}
+return '<div class="db3 lv'+lv+'"><span class="rm-a">'+a+'</span>'+(msg?'<span class="rm-m">'+(yrs>0?yrs+'年経過。':'')+esc(msg)+'</span>':'')+'<span class="rm-b">🏠 契約 '+q[0]+'/'+q[1]+'/'+q[2]+'・<b>'+lived+'</b>日目</span>'+c+'</div>';}catch(e){return '';}}
 function openRoomSheet(){const r0=(state._cfg&&state._cfg.room)||{};let on=!r0.off;
 const ds=Object.keys(state.dreams||{}).map(k=>Object.assign({id:k},state.dreams[k])).filter(d=>d&&!d.del&&!d.ach&&d.t);
 openSub('<div class="sh-time"><span>🏠 今の部屋（帯に出す）</span></div><div class="sh-note" style="text-align:left">契約した日と「何年を超えない」を入れると、全部の画面の帯に、住んだ日数と残りの日数が出る</div>'+
@@ -9548,10 +9564,10 @@ $('rmNo').onclick=closeSub;
 $('rmOk').onclick=()=>{const d=$('rmD').value||'',y=Math.max(1,Math.round(Number($('rmY').value)||3)),lb=($('rmLb').value||'').trim()||'今の部屋',dr=$('rmDr').value||'',msg=($('rmMsg').value||'').trim();if(!d){toast('契約した日を入れて');return;}
 mutate(()=>{state._cfg=Object.assign({},state._cfg||{},{room:{d,y,lb,dr,msg,off:on?0:1,ts:Date.now()},ts:Date.now()});});closeSub();toast('🏠 保存した');};}
 function dbandHtml(){try{const t=todayStr(),GC=goalCfg(),left=Math.max(0,goalLeftOf(GC.yen,incSum('in',GC.from,t),cashLatest())),days=goalDays(),per=days?Math.ceil(left/days):left,got=incSum('in',t,t);
-const cell=(ic,n,y)=>'<span>'+ic+' <b>'+n+'</b>日'+(y?' <b>'+esc(y)+'</b>':'')+'</span>';
-const PC=pinnedDreams().map(d=>{const n=stepStat(d).n;return cell(pinIcon(d.t),n===null?'—':n,Number(d.yen)>0?manY(Number(d.yen)):'');}),P=PC.slice(0,2).join(''),P2=PC.slice(2).join('');
+const cell=(ic,nm,n,y,id)=>'<span class="dc" data-bnd="'+esc(id)+'"><i>'+ic+' '+esc(nm)+'</i><span>'+(n===null?'期限なし':n<0?'<b>'+(-n)+'</b>日 超過':n===0?'<b>今日</b>まで':'あと<b>'+n+'</b>日')+(y?' <b>'+esc(y)+'</b>':'')+'</span></span>';
+const PC=pinnedDreams().map(d=>cell(pinIcon(d.t),pinWord(d),stepStat(d).n,Number(d.yen)>0?manY(Number(d.yen)):'',d.id)),P=PC.slice(0,2).join(''),P2=PC.slice(2).join('');
 const B=hmMin(alarmCfg().bed),b2=B<720?B+1440:B,nw=new Date(),n0=nw.getHours()*60+nw.getMinutes(),n2=n0<300?n0+1440:n0,rest=b2-n2;
-return '<div class="db1">'+cell('🧱',days,manY(left))+P+'</div>'+(P2?'<div class="db1 x">'+P2+'</div>':'')+'<div class="db2"><span>💴 今日 <b>'+esc(ckMan(got))+'</b>／'+esc(ckMan(per))+'万</span><span>🌙 '+(rest>0?'寝るまで <b>'+Math.floor(rest/60)+'時間'+(rest%60)+'分</b>':'寝る時刻 <b>'+esc(alarmCfg().bed)+'</b>')+'</span></div>'+roomHtml();}catch(e){return '';}}
+return '<div class="db1">'+cell('🧱',GC.until.slice(5).replace('-','/')+'までの壁',days,manY(left),'wall')+P+'</div>'+(P2?'<div class="db1 x">'+P2+'</div>':'')+'<div class="db2"><span>💴 今日の稼ぎ <b>'+esc(ckMan(got))+'</b>／'+esc(ckMan(per))+'万</span><span>🌙 '+(rest>0?'寝るまで <b>'+Math.floor(rest/60)+'時間'+(rest%60)+'分</b>':'寝る時刻 <b>'+esc(alarmCfg().bed)+'</b>')+'</span></div>'+roomHtml();}catch(e){return '';}}
 function dbandPaint(){try{const x=dbandHtml(),a=$('dreamBand');if(a){a.innerHTML=x;a.style.display=x?'':'none';const tb=$('todayBtn');a.style.marginTop=(tb&&tb.style.display!=='none'&&getComputedStyle(tb).display!=='none')?'20px':'';}const p=$('page');if(p&&p.classList.contains('open')){const hd=p.querySelector(':scope>.page-head');if(hd){let e=p.querySelector(':scope>.dband');if(!e){e=document.createElement('div');e.className='dband';hd.parentNode.insertBefore(e,hd.nextSibling);}if(e.innerHTML!==x)e.innerHTML=x;}}}catch(e){}}
 try{setInterval(dbandPaint,30000);}catch(e){}
 function semeBandHtml(){try{const t=bizDay();if(ui.date!==todayStr())return '';const x=semeMudaDay(t),G=(ckGoalExtra().biz)||360,H=m=>(Math.round(m/6)/10).toFixed(1),gh=Math.round(G/60),r=aibizRun();
@@ -9997,7 +10013,7 @@ const judged=i=>w7.filter(x=>x.rs[i].s!=='none'&&x.rs[i].s!=='pend').length;
 const rev=days.slice().reverse();
 const grid='<div style="overflow-x:auto"><table style="border-collapse:collapse;font-size:11px;white-space:nowrap">'+
 '<tr><td></td>'+rev.map(x=>'<td style="padding:2px 3px;color:#8a90a0;text-align:center">'+Number(x.d.slice(8))+'</td>').join('')+'<td style="padding:2px 6px;color:#8a90a0">7日</td></tr>'+
-RULE_DEFS.map((def,i)=>'<tr><td style="padding:2px 6px 2px 0">'+def.icon+'</td>'+rev.map(x=>'<td style="text-align:center;padding:2px 3px;font-size:13px">'+mark(x.rs[i].s)+'</td>').join('')+'<td style="padding:2px 6px;font-weight:800">'+(judged(i)?(cnt(i,'ok')+'/'+judged(i)):'—')+'</td></tr>').join('')+'</table></div>';
+RULE_DEFS.map((def,i)=>'<tr><td colspan="'+(rev.length+2)+'" style="padding:7px 0 0;font-weight:800;white-space:normal;font-size:12px">'+def.icon+' '+esc(def.label)+'</td></tr><tr><td></td>'+rev.map(x=>'<td style="text-align:center;padding:2px 3px;font-size:13px">'+mark(x.rs[i].s)+'</td>').join('')+'<td style="padding:2px 6px;font-weight:800">'+(judged(i)?(cnt(i,'ok')+'/'+judged(i)):'—')+'</td></tr>').join('')+'</table></div>';
 const okT=today.filter(x=>x.s==='ok').length;
 const worst=RULE_DEFS.map((def,i)=>({def,ok:cnt(i,'ok'),n:judged(i)})).filter(x=>x.n>=3).sort((a,b)=>(a.ok/a.n)-(b.ok/b.n))[0];
 const verdict=(worst&&worst.ok/worst.n<0.5)?('今週いちばん押せてないのは「'+worst.def.icon+' '+worst.def.label+'」（'+worst.ok+'/'+worst.n+'）。ここだけ押せ（笑）'):'今週は押せてる。この調子';
@@ -10460,7 +10476,7 @@ const tbRun=()=>tbAll().find(b=>b.st==='run')||null;
 const tbHM=ms=>{const d=new Date(ms);return pad(d.getHours())+':'+pad(d.getMinutes());};
 const tbMS=ms=>{const s=Math.max(0,Math.ceil(ms/1000));return pad(Math.floor(s/60))+':'+pad(s%60);};
 const tbBr=b=>(Number(b.min)>=50?10:Number(b.min)>=25?5:0);
-const tbDrLb=k=>k==='wall'?manY(goalCfg().yen):k==='corp'?'法人化':'引っ越し';
+const tbDrLb=k=>k==='wall'?'壁 '+manY(goalCfg().yen):k==='corp'?'法人化':'引っ越し';
 const tbMark=x=>{const f=(x&&x.fl)||{};return (f.money?'💰':'')+(planFire(x)?'🔥':'');};
 const tbDots=t=>{const k=Math.min(3,tbBig(t));return '●'.repeat(k)+'○'.repeat(3-k);};
 function tbXp1(b){const m=Number(b.min)||0;return (b.st==='done'?m:b.st==='cut'?Math.floor(m/2):0)*(b.combo?2:1);}
@@ -10475,10 +10491,10 @@ function tbPick(){const pl={},kid={};tbDay(todayStr()).forEach(b=>{if(b.st==='pl
 const tbCs=()=>{const r=tbRun(),b=tbBreak();return (r?r.id+(Date.now()>=r.z?'o':'r'):'-')+((b&&b.cmb)?'c':'');};
 const tbCardOn=()=>{try{return ui.date===todayStr()&&(!!tbRun()||prepCardHtml().indexOf('class="pcard')<0);}catch(e){return false;}};
 function tbRoadHtml(){try{const t=todayStr(),GC=goalCfg(),left=Math.max(0,goalLeftOf(GC.yen,incSum('in',GC.from,t),cashLatest())),prog=GC.yen-left,D=state.dreams||{};
-const dd=(id,y0,u0)=>{const d=D[id];return (d&&!d.del)?{y:Number(d.yen)>0?Number(d.yen):y0,u:dreamDue(d)||u0}:{y:y0,u:u0};},c=dd('g12',1250000,'2027-03-31'),m=dd('g11',1000000,'2027-09-30');
+const dd=(id,y0,u0,n0)=>{const d=D[id];return (d&&!d.del)?{y:Number(d.yen)>0?Number(d.yen):y0,u:dreamDue(d)||u0,n:pinWord(d)}:{y:y0,u:u0,n:n0};},c=dd('g12',1250000,'2027-03-31','法人化'),m=dd('g11',1000000,'2027-09-30','引っ越し');
 const tot=GC.yen+c.y+m.y,P=v=>Math.min(100,Math.max(0,v/tot*100)).toFixed(1),md=u=>Number(u.slice(5,7))+'/'+Number(u.slice(8,10));
 return '<div class="tbroad" aria-label="夢への道"><div class="rd-tr"><i class="rd-fill" style="width:'+P(prog)+'%"></i><span class="rd-fl" style="left:'+P(GC.yen)+'%">🧱</span><span class="rd-fl" style="left:'+P(GC.yen+c.y)+'%">🏢</span><span class="rd-fl" style="left:100%">🏠</span><span class="rd-car" style="left:'+P(prog)+'%">🚗</span></div>'+
-'<div class="rd-lb"><span>今</span><span>→ 🧱 '+manY(GC.yen)+'<small>（'+md(GC.until)+'）</small></span><span>→ 🏢 +'+manY(c.y)+'<small>（'+md(c.u)+'）</small></span><span>→ 🏠 +'+manY(m.y)+'<small>（'+md(m.u)+'）</small></span></div><div class="rd-n">今日の本番 '+tbN(t,['done'])+'箱</div></div>';}catch(e){return '';}}
+'<div class="rd-lb"><span>🚗 今</span><span>→ 🧱 壁 '+manY(GC.yen)+'<small>（'+md(GC.until)+'）</small></span><span>→ 🏢 '+esc(c.n)+' +'+manY(c.y)+'<small>（'+md(c.u)+'）</small></span><span>→ 🏠 '+esc(m.n)+' +'+manY(m.y)+'<small>（'+md(m.u)+'）</small></span></div><div class="rd-n">今日の本番 '+tbN(t,['done'])+'箱</div></div>';}catch(e){return '';}}
 const KM_ST=[['k','✔','決定済み'],['c','…','検討中'],['h','⏸','保留']];
 const kmStOf=s=>KM_ST.find(x=>x[0]===s)||KM_ST[1];
 function kmAll(){const o=state.kime||{};return Object.keys(o).map(id=>Object.assign({id},o[id])).filter(x=>x&&!x.del&&x.t).sort((a,b)=>(b.at||0)-(a.at||0));}
@@ -12950,7 +12966,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c49.3";
+const CL_APPVER="c49.4";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
