@@ -2014,6 +2014,7 @@ body.cardvis .fab{display:none!important}
 .dband .db1.x{justify-content:flex-start;gap:18px}
 .pinrow{flex-wrap:wrap}
 .pinrow .pin{flex:1 1 calc(50% - 4px);min-width:calc(50% - 4px)}
+.pinrow .pin .pt b{white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere}
 .dband .db3{display:flex;flex-wrap:wrap;align-items:baseline;gap:0 10px;margin-top:4px;padding:4px 8px;border-radius:8px;background:#c81e3a}
 .dband .db3.lv2,.dband .db3.lv3{background:#a3122b}
 .dband .db3 .rm-a{font-size:15px;font-weight:900;white-space:nowrap}
@@ -4867,7 +4868,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c49.1）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c49.2）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -12935,7 +12936,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c49.1";
+const CL_APPVER="c49.2";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
