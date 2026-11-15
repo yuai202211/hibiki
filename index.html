@@ -2066,6 +2066,17 @@ body.cardvis .fab{display:none!important}
 .pin-gh .pt small{white-space:normal;overflow:visible;text-overflow:clip}
 .pin-pk{opacity:.3!important}
 .pin-mv{margin:6px 14px 0;padding:8px 8px;border:1px dashed #c9cfdb;border-radius:10px;font-size:10.5px;font-weight:800;color:#6b7486;text-align:center;line-height:1.5;cursor:grab;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+.dc-page .dc-add{width:100%;min-height:52px;font-size:16px;margin-bottom:10px}
+.dc-c{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 12px 10px;margin-bottom:10px}
+.dc-t{font-size:15px;font-weight:800;line-height:1.4;overflow-wrap:anywhere}
+.dc-m{font-size:11.5px;font-weight:700;color:#6b7486;margin:2px 0 6px}
+.dc-d span{display:inline-block;padding:3px 9px;border-radius:999px;background:#eef2fb;color:#14275a;font-size:11.5px;font-weight:800;margin:0 4px 4px 0}
+.dc-memo{font-size:12.5px;font-weight:700;color:#3a4152;line-height:1.5;margin-bottom:4px;white-space:pre-wrap;overflow-wrap:anywhere}
+.dc-b{display:flex;gap:8px;margin-top:6px}
+.dc-b .dc-open{flex:2;min-height:44px;font-size:15px;display:flex;align-items:center;justify-content:center;text-decoration:none;text-align:center;line-height:1.3;padding:4px 8px;box-sizing:border-box}
+.dc-b .chip{flex:1;min-height:44px;font-size:13.5px}
+.dc-prog{font-size:13px;font-weight:800;color:#b45309;min-height:20px;margin-top:8px;line-height:1.5}
+.dc-page .chip.sel,.dc-drs .chip.sel{background:var(--green);color:#fff}
 .dm-cat{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:800;margin:12px 2px 6px}.dm-cat i{width:10px;height:10px;border-radius:50%}.dm-cat span{color:var(--sub);font-weight:700}
 .dm-c{display:flex;gap:10px;width:100%;text-align:left;background:#fff;border:1px solid var(--line);border-radius:14px;padding:9px;margin-bottom:8px}
 .dm-p{flex:none;width:64px;height:64px;border-radius:10px;object-fit:cover}.dm-p.e{display:flex;align-items:center;justify-content:center;text-align:center;color:#fff;font-size:10.5px;font-weight:800}
@@ -2570,7 +2581,7 @@ input.pin,textarea.pin{color:#14181f!important;-webkit-text-fill-color:#14181f!i
 <button class="nb" id="navLearn"><svg viewBox="0 0 24 24"><path d="M2 9l10-5 10 5-10 5zM6 11.5V16c0 1.5 2.7 3 6 3s6-1.5 6-3v-4.5M22 9v6"/></svg><span>学ぶ</span></button>
 <button class="nb" id="navAna"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>分析</span></button>
 <button class="nb" id="navRtn"><svg viewBox="0 0 24 24"><path d="M4 5.5C4 4.7 4.7 4 5.5 4H11v16H5.5c-.8 0-1.5-.7-1.5-1.5zM20 5.5c0-.8-.7-1.5-1.5-1.5H13v16h5.5c.8 0 1.5-.7 1.5-1.5zM7 8h2M15 8h2M7 11h2M15 11h2"/></svg><span>ルーティン</span><i class="nbdg z" id="navRtnB" style="display:none"></i></button>
-<button class="nb" id="navAim"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2"/></svg><span>今日の1個</span><i class="nbdg z" id="navAimB" style="display:none"></i></button><button class="nb" id="navRule"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 12.5l2.8 2.8L16.5 9"/></svg><span>ルール</span></button><button class="nb" id="navSleep"><svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/></svg><span>睡眠</span></button><button class="nb" id="navPlan"><svg viewBox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg><span>段取り</span></button>
+<button class="nb" id="navAim"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2"/></svg><span>今日の1個</span><i class="nbdg z" id="navAimB" style="display:none"></i></button><button class="nb" id="navRule"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 12.5l2.8 2.8L16.5 9"/></svg><span>ルール</span></button><button class="nb" id="navSleep"><svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/></svg><span>睡眠</span></button><button class="nb" id="navPlan"><svg viewBox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg><span>段取り</span></button><button class="nb" id="navDocs"><svg viewBox="0 0 24 24"><path d="M21.4 11.1l-9.2 9.2a6 6 0 0 1-8.5-8.5l9.2-9.2a4 4 0 0 1 5.7 5.7l-9.2 9.2a2 2 0 0 1-2.8-2.8l8.5-8.5"/></svg><span>資料</span></button>
 </div></div><div class="nvd" id="nvd"><button type="button" class="nvd-btn" id="hokaBtn">📂 ほか <small>各種・学ぶ・分析・ルーティン・今日の1個・ルール・睡眠・段取り</small> ▴</button></div><!-- c21.1：1ページ目＝毎日の6つ・2ページ目＝ほか（点の横に文字） -->
 </div>
 
@@ -2943,7 +2954,7 @@ if(nu&&(!cur||((nu.ts||0)>(cur.ts||0))))out.moves[id]=nu;}
 for(const k in (src.payrep||{})){const nu=src.payrep[k];if(!nu)continue;
 out.payrep=out.payrep||{};const cur=out.payrep[k];
 if(!cur||((nu.ts||0)>(cur.ts||0)))out.payrep[k]=nu;}
-for(const k of ['rtn','rlog','payppl','kinds','tools','places','projects','marks','bedp','arp','todos','plreg','plgrp','kgrp','trs','srr','tdq','ksub','dlg','dgoal','aip','msx','inc','cash','rtm','dep','tbox','wish','kime'])for(const id in (src[k]||{})){const nu=src[k][id];if(!nu)continue;
+for(const k of ['rtn','rlog','payppl','kinds','tools','places','projects','marks','bedp','arp','todos','plreg','plgrp','kgrp','trs','srr','tdq','ksub','dlg','dgoal','aip','msx','inc','cash','rtm','dep','tbox','wish','kime','docs'])for(const id in (src[k]||{})){const nu=src[k][id];if(!nu)continue;
 out[k]=out[k]||{};const cur=out[k][id];if(!cur||((nu.ts||0)>(cur.ts||0)))out[k][id]=nu;}
 for(const id in (src.dwmy||{})){const nu=src.dwmy[id];if(!nu)continue;out.dwmy=out.dwmy||{};const cur=out.dwmy[id];const w=(!cur||((nu.ts||0)>(cur.ts||0)))?nu:cur,l=(w===nu)?cur:nu;if(l&&(l.dn||w.dn)){const dn=Object.assign({},w.dn||{});for(const k in (l.dn||{}))if(Math.abs(l.dn[k])>Math.abs(dn[k]||0))dn[k]=l.dn[k];out.dwmy[id]=Object.assign({},w,{dn});}else out.dwmy[id]=w;}
 for(const id in (src.pins||{})){const nu=src.pins[id];if(!nu)continue;
@@ -2959,7 +2970,7 @@ for(const id in (src.photos||{})){if(!out.photos[id])out.photos[id]=src.photos[i
 for(const id in (src.pha||{})){if(!out.pha[id]&&src.pha[id])out.pha[id]=src.pha[id];}
  }
 out.life=((b.life&&(!(a.life)||((b.life.ts||0)>(a.life.ts||0))))?b.life:a.life)||null;
-const known={updatedAt:1,dream:1,entries:1,plans:1,ai:1,dreams:1,memos:1,life:1,photos:1,pha:1,pays:1,rules:1,aims:1,moves:1,pins:1,dwmy:1,steps:1,payrep:1,rtn:1,rlog:1,payppl:1,kinds:1,tools:1,places:1,projects:1,marks:1,bedp:1,scr:1,alarm:1,goal:1,learn:1,arp:1,todos:1,plreg:1,plgrp:1,kgrp:1,trs:1,srr:1,tdq:1,ksub:1,cond:1,dlg:1,dgoal:1,aip:1,msx:1,inc:1,cash:1,rtm:1,dep:1,prep:1,tbox:1,rew:1,tstep:1,fst:1,ntf:1,ckin:1,rdin:1,ckcnt:1,lay:1,rdtxt:1,daily5:1,wish:1,wishcfg:1,ern:1,ernin:1,nmin:1,kime:1};
+const known={updatedAt:1,dream:1,entries:1,plans:1,ai:1,dreams:1,memos:1,life:1,photos:1,pha:1,pays:1,rules:1,aims:1,moves:1,pins:1,dwmy:1,steps:1,payrep:1,rtn:1,rlog:1,payppl:1,kinds:1,tools:1,places:1,projects:1,marks:1,bedp:1,scr:1,alarm:1,goal:1,learn:1,arp:1,todos:1,plreg:1,plgrp:1,kgrp:1,trs:1,srr:1,tdq:1,ksub:1,cond:1,dlg:1,dgoal:1,aip:1,msx:1,inc:1,cash:1,rtm:1,dep:1,prep:1,tbox:1,rew:1,tstep:1,fst:1,ntf:1,ckin:1,rdin:1,ckcnt:1,lay:1,rdtxt:1,daily5:1,wish:1,wishcfg:1,ern:1,ernin:1,nmin:1,kime:1,docs:1};
 const doneK=new Set(Object.keys(out));
 const newer=((b.updatedAt||0)>=(a.updatedAt||0))?b:a;
 const older=(newer===b)?a:b;
@@ -4909,7 +4920,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c49.5）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c50.0）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -6019,14 +6030,14 @@ el.querySelectorAll('[data-ok]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();
 el.querySelectorAll('[data-dy]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();openDreamYen(b.dataset.dy);});
 el.querySelectorAll('[data-dn]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();openDreamNeed(b.dataset.dn);});
 el.querySelectorAll('[data-ds]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();openDreamSteps(b.dataset.ds);});
-el.querySelectorAll('[data-de]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();openDreamSheet(b.dataset.de);});el.querySelectorAll('[data-dc]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();dreamDup(b.dataset.dc);});
+el.querySelectorAll('[data-de]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();openDreamSheet(b.dataset.de);});el.querySelectorAll('[data-dc]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();dreamDup(b.dataset.dc);});el.querySelectorAll('[data-dd]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();const d=b.dataset.dd;navGo(()=>openDocsPage(d));});
 }
 function dreamHit(id){try{return movesOn(todayStr()).some(m=>m.dr===id);}catch(e){return false;}}
 function needList(d){return (Array.isArray(d&&d.need)?d.need:[]).map((x,i)=>x?Object.assign({i:i},x):null).filter(x=>x&&!x.del&&x.t);}
 function pinLow(d,hit){
 const y=Number(d.yen)>0,nl=needList(d),ok=nl.filter(x=>x.ok).length;
 return '<div class="pin-c"><button class="pin-chip" data-dy="'+esc(d.id)+'" aria-label="必要額">💰 '+(y?'必要額 <b>'+manY(Number(d.yen))+'</b>':'必要額を入れる')+'</button>'+
-'<button class="pin-chip" data-dn="'+esc(d.id)+'" aria-label="必要なもの">📦 '+(nl.length?'必要なもの <b>'+ok+'/'+nl.length+'</b>':'必要なものを足す')+'</button><button class="pin-chip" data-de="'+esc(d.id)+'">✎ 直す</button><button class="pin-chip" data-dc="'+esc(d.id)+'">📑 複製</button></div>'+
+'<button class="pin-chip" data-dn="'+esc(d.id)+'" aria-label="必要なもの">📦 '+(nl.length?'必要なもの <b>'+ok+'/'+nl.length+'</b>':'必要なものを足す')+'</button><button class="pin-chip" data-de="'+esc(d.id)+'">✎ 直す</button><button class="pin-chip" data-dc="'+esc(d.id)+'">📑 複製</button>'+(dcOf(d.id).length?'<button class="pin-chip" data-dd="'+esc(d.id)+'">📎 資料 <b>'+dcOf(d.id).length+'</b></button>':'')+'</div>'+
 (hit?'<div class="pin-hit">✓ 今日の1手 済</div>':'');
 }
 function openDreamYen(id){
@@ -6113,7 +6124,7 @@ function renderPage(){
 if(pageMode==='dream')renderDreamPage();
 else if(pageMode==='memo')renderMemoPage();
 else if(pageMode==='earn')renderEarnPage();
-else if(pageMode==='kime')renderKimePage();
+else if(pageMode==='kime')renderKimePage();else if(pageMode==='docs')renderDocsPage();
 else if(pageMode==='set')renderSetPage();
 
 }
@@ -6318,10 +6329,11 @@ CATS.map(c=>'<button data-c="'+c.id+'">'+esc(c.n)+'</button>').join('')+'</div><
 '<div><div class="sh-label">メモ</div><div class="sh-ta-wrap"><textarea id="dMemo" style="min-height:52px" placeholder="具体的に。数字・色・場所まで"></textarea></div></div>'+
 (ex&&ex.created?'<div class="sh-note">夢の登録日 '+esc(String(ex.created).replace(/-/g,'/'))+'</div>':'')+
 ((ex&&!ex.ach)?'<div><button type="button" class="chip" id="dDup">📑 この夢を複製</button></div>':'')+
+((ex&&dcOf(id).length)?'<div><button type="button" class="chip" id="dDocs">📎 この夢の資料 '+dcOf(id).length+'件を見る</button></div>':'')+
 '<div class="sh-btns">'+
 (ex?'<button class="delbtn" id="dDel">削除</button>'+(ex.ach?'':'<button class="wonbtn" id="dWon">🎉 かなった！</button>'):'')+
 '<button class="savebtn" id="dSave">記　録</button></div>';
-$('dTt').value=ex?ex.t:'';{const du=$('dDup');if(du)du.onclick=()=>{closeSheet();dreamDup(id);};}
+$('dTt').value=ex?ex.t:'';{const du=$('dDup');if(du)du.onclick=()=>{closeSheet();dreamDup(id);};}{const dd=$('dDocs');if(dd)dd.onclick=()=>{closeSheet();navGo(()=>openDocsPage(id));};}
 $('dDue').value=(ex&&(ex.due||(ex.yr?ex.yr+'-12-31':'')))||'';
 $('dProg').value=(ex&&ex.prog)||0;
 $('dProgV').textContent=(((ex&&ex.prog)||0))+'%';
@@ -10557,6 +10569,73 @@ const kmPill=s=>{const x=kmStOf(s);return '<span class="km-st '+x[0]+'">'+x[1]+'
 function kimeLineHtml(){try{const L=kmAll(),c={k:0,c:0,h:0};L.forEach(x=>{c[kmStOf(x.st)[0]]++;});
 return '<button type="button" class="km-line" data-kimego="1"><span>📌 決めた事 '+L.length+'件<small>決定済み '+c.k+'・検討中 '+c.c+'・保留 '+c.h+'</small></span><i>›</i></button>';}catch(e){return '';}}
 let kmKen='';
+let dcDr='';const dcUrl={};
+function dcAll(){const o=state.docs||{};return Object.keys(o).map(id=>Object.assign({id},o[id])).filter(x=>x&&!x.del&&x.aid&&x.t).sort((a,b)=>(b.ts0||0)-(a.ts0||0));}
+function dcGone(){const o=state.docs||{};return Object.keys(o).map(id=>Object.assign({id},o[id])).filter(x=>x&&x.del&&x.aid&&x.t);}
+function dcOf(dr){return dcAll().filter(x=>Array.isArray(x.dr)&&x.dr.indexOf(dr)>=0);}
+function dcSize(n){n=Number(n)||0;return n>=1048576?(Math.round(n/104857.6)/10)+'MB':Math.max(1,Math.round(n/1024))+'KB';}
+function dcSet(id,patch){mutate(()=>{state.docs=state.docs||{};const n=Object.assign({},state.docs[id]||{},patch,{ts:Date.now()});if(patch&&patch.del===0)delete n.del;state.docs[id]=n;});}
+const dcOn=()=>{try{return typeof cloudLoggedIn==='function'&&cloudLoggedIn()&&typeof cloudDocUpload==='function';}catch(e){return false;}};
+const dcAfter=()=>{if(pageMode==='docs'&&$('page').classList.contains('open'))renderDocsPage();try{renderPins();}catch(e){}};
+function dcDrs(sel){const D=dreamsActive();return D.length?'<div class="te-lb">どの夢の資料？（選ばなくてもいい・いくつでも）</div><div class="sr-r dc-drs">'+D.map(d=>'<button type="button" class="chip'+(sel.indexOf(d.id)>=0?' sel':'')+'" data-dcd="'+esc(d.id)+'">'+pinIcon(d.t)+' '+esc(pinWord(d))+'</button>').join('')+'</div>':'';}
+async function dcSign(x){try{const u=await cloudDocUrl(x.aid,3600);if(u){dcUrl[x.aid]={u,at:Date.now()};return u;}}catch(e){}return '';}
+function dcLink(a,x){
+const fresh=()=>{const c=dcUrl[x.aid];return (c&&Date.now()-c.at<3000000)?c.u:'';};
+const ready=u=>{if(!a.isConnected)return;if(u){a.href=u;a.textContent='開く';}else{a.removeAttribute('href');a.textContent='開けない（押すと、もう一度試す）';}};
+const make=()=>{a.removeAttribute('href');a.textContent='開く（準備中…）';dcSign(x).then(ready);};
+const u0=fresh();if(u0)ready(u0);else make();
+a.onclick=ev=>{if(a.getAttribute('href')&&fresh())return;ev.preventDefault();if(!dcOn()){toast('クラウドにログインしている時だけ開ける');return;}make();};}
+function openDocsPage(dr){closeSheet();dcDr=dr||'';renderDocsPage();}
+function renderDocsPage(){pageMode='docs';const p=$('page');let y0=0;try{const ob=p.querySelector('.page-body');if(ob&&p.classList.contains('open'))y0=ob.scrollTop;}catch(e){}
+const D=state.dreams||{},ok=id=>D[id]&&!D[id].del,A=dcAll(),G=dcGone(),drs=[];A.forEach(x=>(x.dr||[]).forEach(id=>{if(drs.indexOf(id)<0&&ok(id))drs.push(id);}));if(dcDr&&drs.indexOf(dcDr)<0)dcDr='';
+const L=A.filter(x=>!dcDr||(x.dr||[]).indexOf(dcDr)>=0),nm=id=>pinIcon(D[id].t)+' '+esc(pinWord(D[id]));
+const row=x=>{const ds=(x.dr||[]).filter(ok);return '<div class="dc-c"><div class="dc-t">📎 '+esc(x.t)+'</div><div class="dc-m">PDF・'+dcSize(x.sz)+'・'+esc(String(x.at||'').replace(/-/g,'/'))+' に足した</div>'+
+(ds.length?'<div class="dc-d">'+ds.map(id=>'<span>'+nm(id)+'</span>').join('')+'</div>':'')+(x.memo?'<div class="dc-memo">'+esc(x.memo)+'</div>':'')+
+'<div class="dc-b"><a class="savebtn dc-open" data-dco="'+esc(x.id)+'" target="_blank" rel="noopener">開く</a><button type="button" class="chip" data-dce="'+esc(x.id)+'">✎ 直す</button></div></div>';};
+p.innerHTML='<div class="page-head"><button class="bk" id="pgBk">‹ 戻る</button><span class="tt">📎 資料</span><span style="width:36px"></span></div><div class="page-body dc-page">'+
+(dcOn()?'<button type="button" class="savebtn dc-add" id="dcAdd">＋ PDF を足す</button><input type="file" id="dcFile" accept="application/pdf,.pdf" style="display:none">':'<div class="sh-note" style="text-align:left">PDF を足す・開くのは、クラウドにログインしている時だけ</div>')+
+(drs.length?'<div class="sr-r"><button type="button" class="chip'+(dcDr?'':' sel')+'" data-dck="">全部</button>'+drs.map(id=>'<button type="button" class="chip'+(dcDr===id?' sel':'')+'" data-dck="'+esc(id)+'">'+nm(id)+'</button>').join('')+'</div>':'')+
+(L.length?L.map(row).join(''):'<div class="km-none">まだ無い。［＋ PDF を足す］で入れる</div>')+
+(G.length?'<details class="km-gone"><summary>🗑 一覧から外した物（'+G.length+'件）</summary>'+G.map(x=>'<div class="km-g"><span>'+esc(x.t)+'</span><button type="button" class="chip" data-dcr="'+esc(x.id)+'">↩ 戻す</button></div>').join('')+'</details>':'')+
+'<div class="sh-note" style="text-align:left">しまった PDF は、自分だけが開ける場所に入る。一覧から外す事は出来る（戻せる）。中身そのものは消せない作り</div></div>';
+p.classList.add('open');$('pgBk').onclick=closePage;
+{const b=$('dcAdd'),f=$('dcFile');if(b&&f){b.onclick=()=>{f.value='';f.click();};f.onchange=()=>{const x=f.files&&f.files[0];if(x)dcPick(x);};}}
+p.querySelectorAll('[data-dck]').forEach(b=>b.onclick=()=>{dcDr=b.dataset.dck;renderDocsPage();});
+p.querySelectorAll('[data-dce]').forEach(b=>b.onclick=()=>dcSheet(b.dataset.dce));
+p.querySelectorAll('[data-dcr]').forEach(b=>b.onclick=()=>{dcSet(b.dataset.dcr,{del:0});toast('↩ 戻した');dcAfter();});
+p.querySelectorAll('[data-dco]').forEach(a=>{const x=L.find(z=>z.id===a.dataset.dco);if(x)dcLink(a,x);});
+try{const nb=p.querySelector('.page-body');if(nb&&y0)nb.scrollTop=y0;}catch(e){}}
+function dcPick(f){if(!f)return;if(!/pdf$/i.test(f.type||'')&&!/\.pdf$/i.test(f.name||'')){toast('PDF だけ足せる');return;}
+const sel=dcDr?[dcDr]:[];let busy=false;
+const paint=keep=>{const v=keep||{t:String(f.name||'資料').replace(/\.pdf$/i,''),memo:''};
+openSub('<div class="sh-time"><span>📎 PDF を足す</span></div><div class="sh-note" style="text-align:left">'+esc(f.name||'')+'（'+dcSize(f.size)+'）</div>'+
+'<div class="te-lb">名前</div><textarea id="dcT" rows="1" style="width:100%;min-height:44px">'+esc(v.t)+'</textarea>'+dcDrs(sel)+
+'<div class="te-lb">メモ</div><textarea id="dcM" rows="1" style="width:100%;min-height:44px">'+esc(v.memo)+'</textarea>'+
+'<div class="dc-prog" id="dcProg"></div>'+
+'<div class="sh-btns" style="margin-top:12px"><button class="delbtn" id="dcNo" style="flex:0 0 auto">やめる</button><button class="savebtn" id="dcOk">しまう</button></div>',null);
+const rd=()=>({t:$('dcT').value,memo:$('dcM').value});
+$('sheet2').querySelectorAll('[data-dcd]').forEach(b=>b.onclick=()=>{if(busy)return;const k=rd(),id=b.dataset.dcd,i=sel.indexOf(id);if(i>=0)sel.splice(i,1);else sel.push(id);paint(k);});
+$('dcNo').onclick=()=>{if(busy){toast('送っている途中。終わるまで待って');return;}closeSub();};
+$('dcOk').onclick=async()=>{if(busy)return;const k=rd(),t=(k.t||'').trim(),memo=(k.memo||'').trim();if(!t){toast('名前を書いて');return;}
+busy=true;const ob=$('dcOk');if(ob)ob.disabled=true;const say=s=>{try{const pr=$('dcProg');if(pr)pr.textContent=s;}catch(e){}};say('送っている… 0%');
+try{const r=await cloudDocUpload(f,(a,b)=>say('送っている… '+Math.floor(a/Math.max(1,b)*100)+'%（'+dcSize(a)+'／'+dcSize(b)+'）'));
+dcSet(String(Date.now())+Math.floor(Math.random()*1e4),{t,aid:r.id,sz:f.size,ty:'application/pdf',dr:sel.slice(),memo,at:todayStr(),ts0:Date.now()});
+busy=false;try{closeSub();}catch(e){}toast('📎 しまった');dcAfter();}
+catch(e){busy=false;try{const o2=$('dcOk');if(o2)o2.disabled=false;}catch(_){}
+say(e&&e.code==='too_big'?'大きすぎて入らなかった（1つの大きさの上限を超えた）':e&&e.code==='not_granted'?'ログインが切れている。ログインし直してから、もう一度':'送れなかった。電波の良い所で、もう一度［しまう］を押して');}};};
+paint(null);}
+function dcSheet(id){const o=(state.docs||{})[id];if(!o||o.del)return;const sel=(Array.isArray(o.dr)?o.dr:[]).filter(x=>(state.dreams||{})[x]&&!(state.dreams||{})[x].del);
+const paint=keep=>{const v=keep||{t:o.t||'',memo:o.memo||''};
+openSub('<div class="sh-time"><span>✎ 資料を直す</span></div><div class="sh-note" style="text-align:left">PDF・'+dcSize(o.sz)+'・'+esc(String(o.at||'').replace(/-/g,'/'))+' に足した</div>'+
+'<div class="te-lb">名前</div><textarea id="dcT" rows="1" style="width:100%;min-height:44px">'+esc(v.t)+'</textarea>'+dcDrs(sel)+
+'<div class="te-lb">メモ</div><textarea id="dcM" rows="1" style="width:100%;min-height:44px">'+esc(v.memo)+'</textarea>'+
+'<div class="sh-btns" style="margin-top:12px"><button class="delbtn" id="dcDel" style="flex:0 0 auto">🗑 一覧から外す</button><button class="delbtn" id="dcNo" style="flex:0 0 auto">やめる</button><button class="savebtn" id="dcOk">保存</button></div>',null);
+const rd=()=>({t:$('dcT').value,memo:$('dcM').value});
+$('sheet2').querySelectorAll('[data-dcd]').forEach(b=>b.onclick=()=>{const k=rd(),d=b.dataset.dcd,i=sel.indexOf(d);if(i>=0)sel.splice(i,1);else sel.push(d);paint(k);});
+$('dcNo').onclick=closeSub;
+$('dcOk').onclick=()=>{const k=rd(),t=(k.t||'').trim();if(!t){toast('名前を書いて');return;}dcSet(id,{t,dr:sel.slice(),memo:(k.memo||'').trim()});closeSub();toast('保存した');dcAfter();};
+{const d=$('dcDel');if(d)d.onclick=()=>armTap(d,'dcDel'+id,'一覧から外す（一番下から戻せる）',()=>{closeSub();dcSet(id,{del:1});toast('🗑 一覧から外した（一番下から戻せる）');dcAfter();});}};
+paint(null);}
 function openKimePage(){closeSheet();renderKimePage();}
 function renderKimePage(){pageMode='kime';const p=$('page');let y0=0;try{const ob=p.querySelector('.page-body');if(ob&&p.classList.contains('open'))y0=ob.scrollTop;}catch(e){}
 const A=kmAll(),kens=[];A.forEach(x=>{const k=x.ken||'そのほか';if(kens.indexOf(k)<0)kens.push(k);});if(kmKen&&kens.indexOf(kmKen)<0)kmKen='';
@@ -11902,7 +11981,7 @@ $('navDiary').onclick=()=>{closePage();ui.date=todayStr();ui.tab='di';topView='d
 $('nowJump').onclick=()=>{closePage();ui.date=todayStr();ui.tab='di';topView='diary';render();ui._jump='last';scrollToNow();try{haptic(15);}catch(e){}};
 $('navMisc').onclick=()=>{closePage();ui.date=todayStr();ui.tab='di';topView='misc';render();try{$('scr').scrollTop=0;}catch(e){}};
 const NAV_IC={navHome:'🗂️',navYume:'⭐',navDiary:'📔',navEarn:'💴',navTodo:'📅',navPay:'💸',navMemo:'💡'},NAV_BD={navTodo:'navTodoB',navPay:'navPayB'};
-const HOKA=[['navMisc','📂','各種（記録と設定）',''],['navLearn','🎓','学ぶ',''],['navAna','📊','分析',''],['navRtn','🔁','ルーティン','navRtnB'],['navAim','🎯','今日の1個','navAimB'],['navRule','📏','ルール',''],['navSleep','🌙','睡眠',''],['navPlan','🗓','段取り','']];
+const HOKA=[['navMisc','📂','各種（記録と設定）',''],['navLearn','🎓','学ぶ',''],['navAna','📊','分析',''],['navRtn','🔁','ルーティン','navRtnB'],['navAim','🎯','今日の1個','navAimB'],['navRule','📏','ルール',''],['navSleep','🌙','睡眠',''],['navPlan','🗓','段取り',''],['navDocs','📎','資料','']];
 function hokaSheet(){const bd=id=>{const e=id&&$(id);return (e&&e.style.display!=='none'&&String(e.textContent||'').trim())?'<b>'+esc(String(e.textContent).trim())+'</b>':'';};
 openSub('<div class="mvq"><div class="sh-time" style="justify-content:center"><span>📂 ほか</span></div><div class="sh-note">押すとその画面へ</div><div class="hoka-grid">'+navOrd().slice(NAV_P1).map(id=>{const y=HOKA.find(z=>z[0]===id);if(y)return y;const b=$(id);return [id,NAV_IC[id]||'',(b&&b.querySelector('span')?b.querySelector('span').textContent:id),NAV_BD[id]||''];}).filter(x=>$(x[0])).map(x=>'<button type="button" class="hoka-t" data-hk="'+x[0]+'">'+bd(x[3])+'<i>'+x[1]+'</i>'+esc(x[2])+'</button>').join('')+'</div><div class="sh-btns" style="margin-top:10px"><button class="delbtn" id="hokaX" style="flex:1">閉じる</button></div></div>',null);
 $('sheet2').querySelectorAll('[data-hk]').forEach(b=>b.onclick=()=>{const id=b.dataset.hk;closeSub();if(navEd){navEd=false;navPg=0;navApply();}const t=$(id);if(t)t.click();});$('hokaX').onclick=closeSub;}
@@ -11919,7 +11998,7 @@ document.addEventListener('touchmove',e=>{if(navPk)e.preventDefault();},{passive
 w.addEventListener('click',e=>{if(navEd||Date.now()-wasPk<500){e.preventDefault();e.stopPropagation();}},true);})();
 $('navPay').onclick=()=>navGo(openPayPage);
 $('navYume').onclick=()=>{const was=$('page').classList.contains('open')&&pageMode==='dream';dmCatPg=0;dseg='clock';if(was){renderDreamPage();return;}navGo(openDreamPage);ymOpen();};
-$('navMemo').onclick=()=>navGo(openMemoPage);$('navEarn').onclick=()=>navGo(openEarnPage);$('navLearn').onclick=()=>openLearnSheet();
+$('navMemo').onclick=()=>navGo(openMemoPage);{const b=$('navDocs');if(b)b.onclick=()=>navGo(()=>openDocsPage(''));}$('navEarn').onclick=()=>navGo(openEarnPage);$('navLearn').onclick=()=>openLearnSheet();
 $('navRtn').onclick=()=>navGo(openRtnPage);
 $('navAna').onclick=()=>navGo(openAnaPage);
 renderTodoPage=(o=>function(){o();try{plnInject();}catch(e){}})(renderTodoPage);
@@ -11962,9 +12041,9 @@ let bar=$('navEdBar');if(navEd&&!bar){bar=document.createElement('div');bar.id='
 function navPaint(){navApply();try{gstripPaint();}catch(e){}try{scrub.init();scrub.sync();}catch(e){}try{fabPaint();}catch(e){}try{fbPaint();}catch(e){}
 try{
 const pg=$('page'),open=pg.classList.contains('open');
-const tab=!open?(topView==='diary'?'diary':topView==='misc'?'misc':'home'):pageMode==='pay'?'pay':pageMode==='memo'?'memo':pageMode==='earn'?'earn':pageMode==='rtn'?'rtn':pageMode==='ana'?'ana':(pageMode==='todo'||pageMode==='st')?'todo':pageMode==='rules'?'rule':pageMode==='plan'?'plan':pageMode==='aim'?'aim':pageMode==='srch'?'srch':pageMode==='dream'?'yume':'';
-pg.classList.toggle('withnav',open&&(pageMode==='srch'||pageMode==='kime'||pageMode==='plan'||pageMode==='pay'||pageMode==='memo'||pageMode==='earn'||pageMode==='rules'||pageMode==='aim'||pageMode==='rtn'||pageMode==='ana'||pageMode==='st'||pageMode==='todo'||pageMode==='set'||pageMode==='dream'));
-[['navHome','home'],['navYume','yume'],['navDiary','diary'],['navMisc','misc'],['navPay','pay'],['navMemo','memo'],['navEarn','earn'],['navRtn','rtn'],['navAna','ana'],['navTodo','todo'],['navAim','aim'],['navRule','rule'],['navPlan','plan']].forEach(x=>{const b=$(x[0]);if(b)b.classList.toggle('on',tab===x[1]);});
+const tab=!open?(topView==='diary'?'diary':topView==='misc'?'misc':'home'):pageMode==='pay'?'pay':pageMode==='memo'?'memo':pageMode==='earn'?'earn':pageMode==='rtn'?'rtn':pageMode==='ana'?'ana':(pageMode==='todo'||pageMode==='st')?'todo':pageMode==='rules'?'rule':pageMode==='plan'?'plan':pageMode==='aim'?'aim':pageMode==='srch'?'srch':pageMode==='dream'?'yume':pageMode==='docs'?'docs':'';
+pg.classList.toggle('withnav',open&&(pageMode==='srch'||pageMode==='kime'||pageMode==='docs'||pageMode==='plan'||pageMode==='pay'||pageMode==='memo'||pageMode==='earn'||pageMode==='rules'||pageMode==='aim'||pageMode==='rtn'||pageMode==='ana'||pageMode==='st'||pageMode==='todo'||pageMode==='set'||pageMode==='dream'));
+[['navHome','home'],['navYume','yume'],['navDiary','diary'],['navMisc','misc'],['navPay','pay'],['navMemo','memo'],['navEarn','earn'],['navRtn','rtn'],['navAna','ana'],['navTodo','todo'],['navAim','aim'],['navRule','rule'],['navPlan','plan'],['navDocs','docs']].forEach(x=>{const b=$(x[0]);if(b)b.classList.toggle('on',tab===x[1]);});
 {const b=$('navLearn');if(b)b.classList.toggle('on',!!openKindRec(['vstudy']));}
 const nv=$('nav');if(nv&&nv.offsetHeight)document.documentElement.style.setProperty('--navh',nv.offsetHeight+'px');
 sleepBarTick();
@@ -12494,7 +12573,7 @@ return r.text;
 async function clRpcJson(name,body,sig,ms){const t=await clRpcText(name,typeof body==='string'?body:JSON.stringify(body||{}),sig,ms);try{return t?JSON.parse(t):null;}catch(e){throw clErr('応答が読めない',0,'parse','server');}}
 async function clRpc(name,body){return clRpcJson(name,body);}
 
-const CL_ID=['dreams','memos','pays','aims','moves','pins','steps','payrep','rtn','rlog','payppl','pha','kinds','tools','places','projects','marks','bedp','arp','todos','dwmy','plreg','plgrp','kgrp','trs','srr','tdq','ksub','dlg','dgoal','aip','msx','inc','cash','rtm','dep','tbox','wish','kime'];
+const CL_ID=['dreams','memos','pays','aims','moves','pins','steps','payrep','rtn','rlog','payppl','pha','kinds','tools','places','projects','marks','bedp','arp','todos','dwmy','plreg','plgrp','kgrp','trs','srr','tdq','ksub','dlg','dgoal','aip','msx','inc','cash','rtm','dep','tbox','wish','kime','docs'];
 const CL_DAY=['ai','rules','scr','cond','prep','ckin','ckcnt','rdin','ernin','nmin'];
 const CL_DAY2=['entries','plans'];
 const CL_UNION={ckin:1,rdin:1,ernin:1,nmin:1};
@@ -12980,6 +13059,30 @@ if(!b||!b.size)return null;
 return await new Promise(res=>{const fr=new FileReader();fr.onload=()=>res(String(fr.result));fr.onerror=()=>res(null);fr.readAsDataURL(b);});
 }
 getAssets=async function(){return cloudLoggedIn()?{upload:cloudPhotoUpload}:null;};
+function cloudDocUpload(blob,onProg){return new Promise((res,rej)=>{(async()=>{
+if(!cloudLoggedIn())throw Object.assign(new Error('not_logged_in'),{code:'not_granted'});
+await clEnsureFresh();
+const id=clNewAssetId(),x=new XMLHttpRequest();
+x.open('POST',CLOUD.url+'/storage/v1/object/'+CLOUD.bucket+'/'+CL.sess.user.id+'/'+id);
+x.setRequestHeader('apikey',CLOUD.key);x.setRequestHeader('Authorization','Bearer '+CL.sess.access_token);x.setRequestHeader('Content-Type',blob.type||'application/pdf');x.setRequestHeader('x-upsert','false');
+x.timeout=20*60*1000;
+x.upload.onprogress=e=>{try{if(onProg&&e.lengthComputable)onProg(e.loaded,e.total);}catch(_){}};
+x.onload=()=>{if(x.status>=200&&x.status<300){res({id});return;}let j=null;try{j=JSON.parse(x.responseText);}catch(e){}
+const er=new Error((j&&(j.message||j.error))||('HTTP '+x.status));er.status=x.status;er.code=(x.status===413||/too large|exceeded/i.test(er.message))?'too_big':(x.status===401||x.status===403)?'not_granted':'ERR';rej(er);};
+x.onerror=()=>rej(Object.assign(new Error('network'),{code:'network'}));
+x.ontimeout=()=>rej(Object.assign(new Error('timeout'),{code:'timeout'}));
+x.send(blob);
+})().catch(rej);});}
+async function cloudDocUrl(assetId,sec){
+if(!cloudLoggedIn())return null;
+try{await clEnsureFresh();
+const r=await clTimed(CL.T.rpc,s=>fetch(CLOUD.url+'/storage/v1/object/sign/'+CLOUD.bucket+'/'+CL.sess.user.id+'/'+assetId,{method:'POST',headers:{'apikey':CLOUD.key,'Authorization':'Bearer '+CL.sess.access_token,'Content-Type':'application/json'},body:JSON.stringify({expiresIn:sec||3600}),signal:s})
+.then(x=>x.ok?x.json():null));
+const u=r&&(r.signedURL||r.signedUrl);return u?(CLOUD.url+'/storage/v1'+u):null;}catch(e){return null;}}
+async function cloudDocBlob(assetId){
+if(!cloudLoggedIn())return null;
+try{await clEnsureFresh();
+return await clTimed(20*60*1000,s=>fetch(CLOUD.url+'/storage/v1/object/authenticated/'+CLOUD.bucket+'/'+CL.sess.user.id+'/'+assetId,{headers:{'apikey':CLOUD.key,'Authorization':'Bearer '+CL.sess.access_token},signal:s}).then(r=>r.ok?r.blob():null));}catch(e){return null;}}
 verifyBlob=async function(url){
 const m=/^\/_blob\/(.+)$/.exec(String(url||''));
 if(!m)return false;
@@ -13016,7 +13119,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c49.5";
+const CL_APPVER="c50.0";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;

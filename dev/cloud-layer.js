@@ -208,7 +208,7 @@ async function clRpcJson(name,body,sig,ms){const t=await clRpcText(name,typeof b
 async function clRpc(name,body){return clRpcJson(name,body);}   /* 旧版と同じ名前（他から呼ばれても動く） */
 
 /* ---------- state ⇄ 項目（1行） ---------- */
-const CL_ID=['dreams','memos','pays','aims','moves','pins','steps','payrep','rtn','rlog','payppl','pha','kinds','tools','places','projects','marks','bedp','arp','todos','dwmy','plreg','plgrp','kgrp','trs','srr','tdq','ksub','dlg','dgoal','aip','msx','inc','cash','rtm','dep','tbox','wish','kime'];   /* c49.0：kime＝決めた事 */   /* c31.2：wish＝欲しい物 */   /* c7.9：todos＝📋やる事 */   /* c4.8：arp＝場所ごとの区・市町村 */   /* c4.7：marks＝🕳️😤😫の申告、bedp＝場所ごとの🛏️/🪑 */
+const CL_ID=['dreams','memos','pays','aims','moves','pins','steps','payrep','rtn','rlog','payppl','pha','kinds','tools','places','projects','marks','bedp','arp','todos','dwmy','plreg','plgrp','kgrp','trs','srr','tdq','ksub','dlg','dgoal','aip','msx','inc','cash','rtm','dep','tbox','wish','kime','docs'];   /* c49.0：kime＝決めた事 */   /* c31.2：wish＝欲しい物 */   /* c7.9：todos＝📋やる事 */   /* c4.8：arp＝場所ごとの区・市町村 */   /* c4.7：marks＝🕳️😤😫の申告、bedp＝場所ごとの🛏️/🪑 */
 const CL_DAY=['ai','rules','scr','cond','prep','ckin','ckcnt','rdin','ernin','nmin'];   /* c37.2：ernin＝💰 AIで稼ぐ */   /* c34.0：rdin＝1日3回の読み物 */   /* c31.0：ckin＝手帳チェックイン */   /* c11.5：cond＝体調（日ごと） */   /* c4.7：scr＝夜に入れる📲📞の数字（日ごと） */
 const CL_DAY2=['entries','plans'];
 const CL_UNION={ckin:1,rdin:1,ernin:1,nmin:1};   /* c37.3d：枠ごとの和で合わせる物＝同点ルール（同じts・違う中身＝影）を使わない。端末の方が多ければ送る */
@@ -736,6 +736,31 @@ async function cloudPhotoFetch(assetId){
   return await new Promise(res=>{const fr=new FileReader();fr.onload=()=>res(String(fr.result));fr.onerror=()=>res(null);fr.readAsDataURL(b);});
 }
 getAssets=async function(){return cloudLoggedIn()?{upload:cloudPhotoUpload}:null;};
+/* c50.0：📎 資料（PDF）。写真と同じ置き場へ、そのままの大きさで送る。onProg(送った量, 全体) */
+function cloudDocUpload(blob,onProg){return new Promise((res,rej)=>{(async()=>{
+  if(!cloudLoggedIn())throw Object.assign(new Error('not_logged_in'),{code:'not_granted'});
+  await clEnsureFresh();
+  const id=clNewAssetId(),x=new XMLHttpRequest();
+  x.open('POST',CLOUD.url+'/storage/v1/object/'+CLOUD.bucket+'/'+CL.sess.user.id+'/'+id);
+  x.setRequestHeader('apikey',CLOUD.key);x.setRequestHeader('Authorization','Bearer '+CL.sess.access_token);x.setRequestHeader('Content-Type',blob.type||'application/pdf');x.setRequestHeader('x-upsert','false');
+  x.timeout=20*60*1000;
+  x.upload.onprogress=e=>{try{if(onProg&&e.lengthComputable)onProg(e.loaded,e.total);}catch(_){}};
+  x.onload=()=>{if(x.status>=200&&x.status<300){res({id});return;}let j=null;try{j=JSON.parse(x.responseText);}catch(e){}
+    const er=new Error((j&&(j.message||j.error))||('HTTP '+x.status));er.status=x.status;er.code=(x.status===413||/too large|exceeded/i.test(er.message))?'too_big':(x.status===401||x.status===403)?'not_granted':'ERR';rej(er);};
+  x.onerror=()=>rej(Object.assign(new Error('network'),{code:'network'}));
+  x.ontimeout=()=>rej(Object.assign(new Error('timeout'),{code:'timeout'}));
+  x.send(blob);
+})().catch(rej);});}
+async function cloudDocUrl(assetId,sec){   /* 自分だけが使える、期限付きの URL（sec 秒）。作れない時は null */
+  if(!cloudLoggedIn())return null;
+  try{await clEnsureFresh();
+    const r=await clTimed(CL.T.rpc,s=>fetch(CLOUD.url+'/storage/v1/object/sign/'+CLOUD.bucket+'/'+CL.sess.user.id+'/'+assetId,{method:'POST',headers:{'apikey':CLOUD.key,'Authorization':'Bearer '+CL.sess.access_token,'Content-Type':'application/json'},body:JSON.stringify({expiresIn:sec||3600}),signal:s})
+      .then(x=>x.ok?x.json():null));
+    const u=r&&(r.signedURL||r.signedUrl);return u?(CLOUD.url+'/storage/v1'+u):null;}catch(e){return null;}}
+async function cloudDocBlob(assetId){   /* 期限付きの URL が作れない時の控え：中身を取り出す */
+  if(!cloudLoggedIn())return null;
+  try{await clEnsureFresh();
+    return await clTimed(20*60*1000,s=>fetch(CLOUD.url+'/storage/v1/object/authenticated/'+CLOUD.bucket+'/'+CL.sess.user.id+'/'+assetId,{headers:{'apikey':CLOUD.key,'Authorization':'Bearer '+CL.sess.access_token},signal:s}).then(r=>r.ok?r.blob():null));}catch(e){return null;}}
 verifyBlob=async function(url){
   /* 旧版は '/_blob/<id>' を画像として読めるか見ていた。クラウド版は保管番号を取り直して中身があるかを見る */
   const m=/^\/_blob\/(.+)$/.exec(String(url||''));
