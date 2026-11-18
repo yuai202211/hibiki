@@ -4922,7 +4922,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c50.6）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c50.7）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -8593,8 +8593,8 @@ const WK_TOK={ai:1,car:1,tel:1,nb:1,mk:1,scr:1,ppl:1,mv:1,tc:1,proc:1,cis:1,goo:
 const WK_PL={f:'ws',c:'place',q:'どこで？',tip:'🚙車内＝止めた車の中／🚃移動中＝電車・バス・新幹線・飛行機・走っている車・歩き',o:[['desk','🖥️ デスク'],['car','🚙 車内'],['move','🚃 移動中'],['tmp','🧍 その場しのぎ'],['sofa','🛋️ くつろぎ']]};
 const WK_TL={f:'d',c:'tool',q:'何で？',o:[['pc','💻 PC'],['phone','📱 スマホ']],nx:()=>WK_PL};
 const WK_TL3={f:'d',c:'tool',q:'何で？',o:[['pc','💻 PC'],['phone','📱 スマホ'],['paper','📕 紙・ノート']],nx:()=>WK_PL};
-const WK_HW={f:'hw',c:'how',q:'どうやって話した？',o:()=>[['line','💬 LINE'],['mail','✉️ メール・'+wkLb('goo')],['dm','📱 SNSのDM'],['online','💻 オンライン'],['face','🤝 対面']]};
-const WK_F2={f:'hw',c:'how',q:'どうやって？',o:[['face','🤝 対面'],['online','💻 オンライン']]};
+const WK_HW={f:'hw',c:'how',q:'どうやって話した？',o:()=>[['line','💬 LINE'],['mail','✉️ メール・'+wkLb('goo')],['dm','📱 SNSのDM'],['online','💻 オンライン'],['face','🤝 対面'],['tel','📞 電話']]};
+const WK_F2={f:'hw',c:'how',q:'どうやって？',o:[['face','🤝 対面'],['online','💻 オンライン'],['tel','📞 電話']]};
 const WK_PPL=[['c_cust','🙋 客対応'],['c_inq','📩 問合せ対応'],['c_buy','🤝 買取商談'],['c_sell','💰 販売商談']];
 const WK_WHY={f:'wy',c:'why',q:'🎯 何のため（いくつでも）',m:1,o:[['hibiki','📱 HIBIKI'],['car','🚗 中古車'],['nb','🚀 新規事業（教材・コンサル）'],['learn','📚 学び'],['etc','📂 その他']],last:1};
 const WK_DID={f:'ap',c:'did',q:'🧠 AIで何をした（いくつでも）',m:1,o:()=>aipList().map(z=>[z.id,z.ic+' '+z.lb]),nx:()=>WK_WHY};
@@ -8634,7 +8634,7 @@ function wkClear(a,L,i){for(let j=i;j<L.length;j++){const st=L[j];if(st.f==='wc'
 function wkSync(a,oldK){const nk=wkKind(a.wc);const kx=(a.kx||[]).filter(x=>x!==oldK||!oldK);
 if(oldK&&a.k===oldK)a.k=nk||kx.shift()||'';else if(nk&&a.k!==nk&&kx.indexOf(nk)<0){if(!a.k)a.k=nk;else kx.push(nk);}
 a.kx=kx.filter(x=>x&&x!==a.k);if(!a.kx.length)delete a.kx;
-if(Array.isArray(a.wc)&&a.wc[0]==='tel'&&a.wc[1]==='car')a.hw='tel';else if(a.hw==='tel')delete a.hw;
+if(Array.isArray(a.wc)&&a.wc[0]==='tel'&&a.wc[1]==='car')a.hw='tel';else if(a.hw==='tel'&&!wkChain(a).some(st=>st.f==='hw'))delete a.hw;
 const lbOf=x=>{const z=x&&kindOf(x);return z?z.lb:'';},tv=String(a.t||'').trim();if(!tv||tv===lbOf(oldK)||kindList().some(x=>x&&x.lb===tv))a.t=lbOf(a.k);}
 function wkDrop(a){const L=wkChain(a);wkClear(a,L,0);wkSync(a,wkKind(a.wc));}
 function wkChipHtml(){const a=WK_CUR,c=a&&Array.isArray(a.wc)&&a.wc[0];return '<button type="button" class="chip ac-q wk-b'+(c?' sel':'')+'" data-wkb="'+esc(WK_SITE)+'">💼 仕事'+(c?'：'+esc(wkOptLb(WK_ROOT,c)):'')+'</button>';}
@@ -13121,7 +13121,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c50.6";
+const CL_APPVER="c50.7";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
