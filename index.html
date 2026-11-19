@@ -4923,7 +4923,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c50.8）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c50.9）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -6445,9 +6445,9 @@ years.map(y=>'　'+y+'年：'+byY[y]+'日').join('<br>')+
 '<div class="sh-note">続いてることが、何よりの実績だ。</div>';
 openOvl();
 }
-const UI_HIDE0={flash:1,top:1,band:1,seme:1,road:1,now1:1};
+const UI_HIDE0={flash:1,band:1,seme:1,road:1,now1:1};
 function uiHide(k){try{const s=((typeof state!=='undefined'&&state&&state._cfg)||{}).uiShow||{};return !!UI_HIDE0[k]&&!s[k];}catch(e){return false;}}
-const UI_HIDE_LB=[['flash','📋 開いた時の「毎日のルール」の画面'],['top','🗂️ 下の段の「トップ」'],['band','🧱 上の紺色の帯（壁・夢・今の部屋）'],['seme','⚔️ 日記の上の「攻め」'],['road','🚗 日記の上の「道」'],['now1','▶ 日記の上の「今やる1つ」']];
+const UI_HIDE_LB=[['flash','📋 開いた時の「毎日のルール」の画面'],['band','🧱 トップ以外の画面の紺色の帯（壁・夢・今の部屋）'],['seme','⚔️ 日記の上の「攻め」'],['road','🚗 日記の上の「道」'],['now1','▶ 日記の上の「今やる1つ」']];
 function openUiHideSheet(){const s=((state._cfg||{}).uiShow)||{};
 openSub('<div class="sh-time"><span>🙈 隠した表示（戻せる）</span></div><div class="sh-note" style="text-align:left">オンにすると、また出る（2026-11-19 本人「一旦、表示しないように」「履歴は残しておいて」）</div>'+
 UI_HIDE_LB.map(([k,lb])=>'<div style="margin:6px 0">'+iosSw('',!!s[k],lb,'data-uis="'+k+'"','row')+'</div>').join('')+
@@ -9609,7 +9609,7 @@ openSub('<div class="sh-time"><span>🏠 今の部屋（帯に出す）</span></
 $('rmNo').onclick=closeSub;
 $('rmOk').onclick=()=>{const d=$('rmD').value||'',y=Math.max(1,Math.round(Number($('rmY').value)||3)),lb=($('rmLb').value||'').trim()||'今の部屋',dr=$('rmDr').value||'',msg=($('rmMsg').value||'').trim();if(!d){toast('契約した日を入れて');return;}
 mutate(()=>{state._cfg=Object.assign({},state._cfg||{},{room:{d,y,lb,dr,msg,off:on?0:1,ts:Date.now()},ts:Date.now()});});closeSub();toast('🏠 保存した');};}
-function dbandHtml(){try{if(uiHide('band'))return '';const t=todayStr(),GC=goalCfg(),left=Math.max(0,goalLeftOf(GC.yen,incSum('in',GC.from,t),cashLatest())),days=goalDays(),per=days?Math.ceil(left/days):left,got=incSum('in',t,t);
+function dbandHtml(){try{if(uiHide('band')&&!(topView==='top'&&!$('page').classList.contains('open')))return '';const t=todayStr(),GC=goalCfg(),left=Math.max(0,goalLeftOf(GC.yen,incSum('in',GC.from,t),cashLatest())),days=goalDays(),per=days?Math.ceil(left/days):left,got=incSum('in',t,t);
 const cell=(ic,nm,n,y,id,i)=>'<span class="dc'+(i>2?' x':'')+'" data-bnd="'+esc(id)+'" style="order:'+(i>2?i+1:i)+'"><i>'+ic+' '+esc(nm)+'</i><span>'+(n===null?'期限なし':n<0?'<b>'+(-n)+'</b>日 超過':n===0?'<b>今日</b>まで':'あと<b>'+n+'</b>日')+(y?' <b>'+esc(y)+'</b>':'')+'</span></span>';
 const PD=pinnedDreams(),PC=PD.map(d=>[pinIcon(d.t),pinWord(d),stepStat(d).n,Number(d.yen)>0?manY(Number(d.yen)):'',d.id]);{const O=pinOrd(),wi=O.indexOf('wall');PC.splice(wi<0?0:O.slice(0,wi).filter(id=>PD.some(d=>d.id===id)).length,0,['🧱',GC.until.slice(5).replace('-','/')+'までの壁',days,manY(left),'wall']);}const P=PC.map((a,i)=>cell(a[0],a[1],a[2],a[3],a[4],i)).join('')+(PC.length>3?'<i class="dbk" style="order:3"></i>':'');
 const B=hmMin(alarmCfg().bed),b2=B<720?B+1440:B,nw=new Date(),n0=nw.getHours()*60+nw.getMinutes(),n2=n0<300?n0+1440:n0,rest=b2-n2;
@@ -10833,7 +10833,7 @@ function spRoom(id){
 const T=todayStr(),N=spN,opt=spOpt,mem=spMem,sub=spSub;
 if(id==='goal')return [{rows:[
 {ic:'🏠',nm:'今の部屋（契約した日・何年を超えない）',sm:'帯に、住んだ日数と残りの日数を出す',go:()=>openRoomSheet()},
-{ic:'🙈',nm:'隠した表示（戻せる）',sm:'開いた時の画面・トップ・帯・攻め・道・今やる1つ',go:()=>openUiHideSheet()},
+{ic:'🙈',nm:'隠した表示（戻せる）',sm:'開いた時の画面・トップ以外の帯・攻め・道・今やる1つ',go:()=>openUiHideSheet()},
 {ic:'⭐',nm:'夢カード（夢手帳）',n:N(()=>dreamsActive().length),go:()=>{dseg='list';openDreamPage();}},
 {ic:'📌',nm:'トップに出す夢',n:N(()=>pinnedDreams().length),sm:'夢を開いて 📌 で選ぶ',go:()=>{dseg='list';openDreamPage();}},
 {ic:'🏆',nm:'究極の目標と期限',go:()=>openGoalDue()},
@@ -13132,7 +13132,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c50.8";
+const CL_APPVER="c50.9";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
