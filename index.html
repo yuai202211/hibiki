@@ -3859,7 +3859,17 @@ return {tab,rest};}
 function plShowHtml(g,o){const S=plShow(),T=g==='ot'?[]:(S.tab[g]||[]),D=S.rest[g]||[],a=o.a||'data-p',on=o.on||'sel',cur=o.cur||'';
 if(!T.length&&!D.length)return o.none||'';
 return T.map(p=>'<button type="button" class="'+(o.b||'')+(cur===p?' '+on:'')+'" '+a+'="'+esc(p)+'">'+esc(p)+'</button>').join('')+
-(D.length?'<div class="pl-sec">🎚 回して選ぶ（'+D.length+'か所）</div><div class="pldw"><div class="pldial">'+D.map(p=>'<button type="button" class="'+(cur===p?on:'')+'" '+a+'="'+esc(p)+'">'+esc(p)+'</button>').join('')+'</div></div>':'');}
+(D.length?'<div class="pl-sec">📍 場所名を2回押して選ぶ（'+D.length+'か所）</div><div class="pldw"><div class="pldial">'+D.map(p=>'<button type="button" class="'+(cur===p?on:'')+'" '+a+'="'+esc(p)+'">'+esc(p)+'</button>').join('')+'</div></div>':'');}
+let plDialPass=null,plDialTouch=null;
+document.addEventListener('pointerdown',e=>{const b=e.target.closest&&e.target.closest('.pldial>button');plDialTouch=b?{b,x:e.clientX,y:e.clientY,moved:false}:null;},true);
+document.addEventListener('pointermove',e=>{const t=plDialTouch;if(t&&Math.hypot(e.clientX-t.x,e.clientY-t.y)>8){t.moved=true;if(armId===t.b)armClear();}},true);
+document.addEventListener('pointercancel',()=>{if(plDialTouch){plDialTouch.moved=true;if(armId===plDialTouch.b)armClear();}},true);
+document.addEventListener('scroll',()=>{if(armId&&armId.closest&&armId.closest('.pldial'))armClear();if(plDialTouch)plDialTouch.moved=true;},true);
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('.pldial>button');if(!b||b===plDialPass)return;
+e.preventDefault();e.stopImmediatePropagation();const t=plDialTouch;plDialTouch=null;
+if(t&&t.b===b&&t.moved){armClear();return;}
+armTap(b,b,'📍 '+b.textContent.trim(),()=>{plDialPass=b;try{b.dispatchEvent(new MouseEvent('click',{bubbles:true,cancelable:true,view:window}));}finally{plDialPass=null;}});
+},true);
 function plDialFix(host){try{host.querySelectorAll('.pldial').forEach(d=>{const x=d.querySelector('.on,.sel');if(x)d.scrollTop=x.offsetTop-84;});}catch(e){}}
 function plgWrite(list){state.plgrp=state.plgrp||{};const now=Date.now();list.forEach((x,i)=>{state.plgrp[x.g]={c:x.c,o:i,ts:now};});}
 function pflBtns(cur){return plGroups().concat([{g:'ot'}]).map(x=>'<button data-pfl="'+x.g+'"'+(x.g===cur?' class="sel"':'')+'>'+esc(plgName(x.g))+'</button>').join('')+'<button data-pfl="_ed" class="pf-ed">✎ 編集</button>';}
@@ -4923,7 +4933,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c50.10）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c50.11）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -5529,10 +5539,13 @@ if((id==='sleep'||id==='nap')){if(isCar||eType==='move')row.bd=0;else{const b=be
 const last=acts[acts.length-1];if(last&&!last.t.trim()&&!last.s&&!last.e&&!last.k&&!last.d&&!(last.c&&last.c.trim()))acts[acts.length-1]=row;else acts.push(row);acPaint();});};}
 {const fa=$('frAdd2');if(fa)fa.onclick=()=>{frs.push('');frPaint(true);cPaint();};}
 {const qm=$('acQm');if(qm)qm.onclick=()=>{qMore=!qMore;acCh();};}};
+if(ex&&ex.entryMode==='multi'){sheetSt.one=false;}else{
 {const ne0=acts.filter(a=>a&&(String(a.t||'').trim()||a.k));{const z=ne0[0];if(ne0.length===1&&z.kx&&z.kx.length&&!(z.c&&String(z.c).trim())&&!(z.ph&&z.ph.length)&&!z.st&&!frs.some(x=>String(x||'').trim()))acts=acOneFromRows(acts);}}
 {const ne=acts.filter(a=>a&&(String(a.t||'').trim()||a.k)),z=ne[0],same=ne.length>1&&!!z&&!!(z.s||z.e)&&!frs.some(x=>String(x||'').trim())&&ne.every((a,i)=>a.k&&!a.st&&(!i||(((a.s===z.s&&a.e===z.e)||(a.w&&!a.s&&!a.e))&&String(a.t||'').trim()===acLbOf(a.k)&&!(a.c&&a.c.trim())&&!(a.ph&&a.ph.length)&&!a.p&&!a.car)));
 if(same){acts=ne;ne.forEach((a,i)=>{a.w=1;if(i){a.s='';a.e='';a.m=0;}});}
 sheetSt.one=same||!((ne.length>1&&!ne.every(a=>a.w&&a.k))||frs.some(x=>String(x||'').trim())||(ne.length>1&&ne.some(a=>a.s||a.e||(a.c&&a.c.trim())||(a.ph&&a.ph.length)||a.st)));}
+if(ex&&ex.entryMode==='one')sheetSt.one=true;
+ }
 acPaint();
 {const w=$('contW');if(w){w.innerHTML='';if(!ex&&date===todayStr()){const nw=new Date(),nowA=nw.getHours()*60+nw.getMinutes();let best=null;
 for(const [dd,off] of [[date,0],[addDays(date,-1),-1440]]){const eo2=state.entries[dd]||{};for(const k2 in eo2){const x=eo2[k2];if(!x||x.del||x.noT||!x.s||!x.e)continue;const s2=hmMin(x.s)+off;let e2=hmMin(x.e)+off+1440*(Number(x.ed)||0);if(e2<s2)e2+=1440;if(e2>nowA+5)continue;const rows=(x.acts||[]).filter(a=>a&&a.k);if(!rows.length)continue;if(!best||e2>best.e2)best={e2,x,k2,row:rows[rows.length-1]};}}
@@ -5622,7 +5635,7 @@ const ne={p:(isMv&&!sheetSt.plOn)?'':p,t,ph:sheetSt.ph.slice(),s:tS,e:tE,ts:Date
 if(isMv){ne.mv=1;if(rt)ne.rt=rt;if(trSel)ne.tr=trSel;{const c=sheetSt.mvCmGet&&sheetSt.mvCmGet();if(c)ne.rtc=c;else delete ne.rtc;}}if({rest:1,sleep:1,meal:1,ai:1,work:1,incar:1}[eType])ne.k=eType;
 if(sheetSt.pf)ne.pf=sheetSt.pf;if(sheetSt.pf0)ne.pf0=sheetSt.pf0;if(sheetSt.pj)ne.pj=sheetSt.pj;if(sheetSt.ar)ne.ar=sheetSt.ar;if(sheetSt.ai&&sheetSt.ai.length)ne.ai=sheetSt.ai.slice();
 if(tdSel==='_other'){const x=(($('tdX')||{}).value||'').trim();if(x)ne.dx=x;}else if(tdSel)ne.d=tdSel;
-if(aS.length)ne.acts=aS;if(sheetSt.md)ne.md=1;ne.mn=sheetSt.sub?0:1;{const S=sheetSt.sel||{};const mt=(S.stay?'s':'')+(S.move?'m':'')+(S.car?'c':'');if(mt)ne.mt=mt;}
+if(aS.length)ne.acts=aS;if(sheetSt.md)ne.md=1;ne.entryMode=sheetSt.one?'one':'multi';ne.mn=sheetSt.sub?0:1;{const S=sheetSt.sel||{};const mt=(S.stay?'s':'')+(S.move?'m':'')+(S.car?'c':'');if(mt)ne.mt=mt;}
 const g={date:sheetSt.date,e:ne,pfA:!!sheetSt.pfAuto,pf0A:!!sheetSt.pf0Auto,ts:Date.now()};if(sheetSt.cuts&&sheetSt.cuts.length)g.cuts=JSON.parse(JSON.stringify(sheetSt.cuts));
 const phd={};ne.ph.concat(...aS.map(a=>a.ph||[])).forEach(id=>{const v=PH.mem[id];if(v&&String(v).indexOf('data:')===0&&!(state.photos&&state.photos[id]))phd[id]=v;});if(sheetSt.noPhd){const kp=id=>!!(state.photos&&state.photos[id]);ne.ph=ne.ph.filter(kp);aS.forEach(a=>{if(a.ph){a.ph=a.ph.filter(kp);if(!a.ph.length)delete a.ph;}});}else if(Object.keys(phd).length)g.phd=phd;
 return g;};
@@ -5694,7 +5707,7 @@ if(!isMv&&p&&pfS&&!sheetSt.pfAuto)placeSet(p,pfS);
 if(tdS==='_other'){if(tdXS)ne.dx=tdXS;}else if(tdS)ne.d=tdS;
 if(actsS.length)ne.acts=actsSort(actsS,actsBase(ne));
 if(sheetSt.md)ne.md=1;else delete ne.md;
-ne.mn=sheetSt.sub?0:1;{const S=sheetSt.sel||{};const mt=(S.stay?'s':'')+(S.move?'m':'')+(S.car?'c':'');if(mt)ne.mt=mt;else delete ne.mt;}
+ne.entryMode=sheetSt.one?'one':'multi';ne.mn=sheetSt.sub?0:1;{const S=sheetSt.sel||{};const mt=(S.stay?'s':'')+(S.move?'m':'')+(S.car?'c':'');if(mt)ne.mt=mt;else delete ne.mt;}
 state.entries[d0][saveKey]=ne;try{mvJoin(d0,saveKey,ne,!!(sheetSt&&sheetSt.existing),autoMsg);}catch(e){}
 if(tEd<0&&sheetSt.key!=null&&sheetSt.date!==d0){const o=(state.entries[sheetSt.date]||{})[saveKey];if(o&&o!==ne&&!o.del){o.del=1;o.ts=Date.now();}}
 {const SPR=(ne.acts||[]).filter(a=>a.sp);if((CUTS.length||SPR.length)&&!ne.noT){const cuts=SPR.map(a=>({s:a.s,e:a.e,ty:a.sp,row:a})).concat(CUTS.map(c=>({s:c.s,e:c.e,ty:c.ty,ks:c.ks,p:c.p})));recSplit(d0,saveKey,ne,cuts,tE,tEd);}
@@ -13132,7 +13145,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c50.10";
+const CL_APPVER="c50.11";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
