@@ -1,0 +1,23 @@
+'use strict';
+const fs=require('fs'),path=require('path');
+module.exports=function(h){
+  const rep=(a,b)=>{const n=a instanceof RegExp?(h.match(new RegExp(a.source,'g'))||[]).length:h.split(a).length-1;if(n!==1)throw Error('first-step anchor count '+n+': '+String(a).slice(0,80));h=h.replace(a,b);};
+  const nl=h.includes('\r\n')?'\r\n':'\n';
+  const js=fs.readFileSync(path.join(__dirname,'first-step.js'),'utf8').replace(/\r?\n/g,nl);
+  const css=fs.readFileSync(path.join(__dirname,'first-step.css'),'utf8');
+  const i=h.indexOf('</style>');if(i<0)throw Error('first-step stylesheet anchor missing');h=h.slice(0,i)+css+nl+h.slice(i);
+  rep(/pane\.innerHTML=html;(?=\s*const pf=)/, 'pane.innerHTML=fpCardHtml()+html;');
+  rep('prepBind(pane);', 'prepBind(pane);fpBind(pane);');
+  rep('function prepCardHtml(){','function prepCardHtml(){if(fpCurrent())return \'\';');
+  rep('function openPrepSheet(date,pre){','function openPrepSheet(date,pre){return fpOpen(date);');
+  rep('function prepAfterSleep(wait){','function prepAfterSleep(wait){return;');
+  rep('function prepAskDest(){try{','function prepAskDest(){if((prepToday()||{}).fp)return false;try{');
+  rep('function prepAskAfterSave(){try{','function prepAskAfterSave(){if((prepToday()||{}).fp)return;try{');
+  rep('try{prepTick();}catch(e){}','try{prepTick();fpTick();}catch(e){}');
+  rep("row('prep','🌅 明日の準備',tin('ntPrep',C.t.prep))", "row('prep','🌅 明日の準備','22:00・23:00')");
+  const a="if(on.prep){try{for(const d of [t,d1]){const p=(state.prep||{})[addDays(d,1)];";
+  const start=h.indexOf(a),end=h.indexOf('if(on.wake)',start);if(start<0||end<start)throw Error('first-step notification anchor missing');
+  h=h.slice(0,start)+"if(on.prep){try{for(const d of [t,d1]){const p=(state.prep||{})[addDays(d,1)];if(!fpComplete(p)){add('prep|'+d,ntfAt(d,'22:00'),'🌅 明日の準備を決めよう','フライング以外、遅刻。23時までに4つを確定。');add('prep-deadline|'+d,ntfAt(d,'23:00'),'23時。明日の準備の締切です','行き先・移動手段・出発時刻・軽いやる事1つ。');}}}catch(e){}}"+nl+h.slice(end);
+  rep(nl+'boot();',nl+js+nl+'boot();');
+  return h;
+};

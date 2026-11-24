@@ -6,7 +6,7 @@
 - iPhone はホーム画面のアイコンから開く（Safari のタブで開くと保存領域とログインが別になり、しばらく使わないと端末の控えが消されることがある。記録の本体はクラウドにあるので、消えても次の起動で取り直す）
 - 単一の HTML（`index.html`）＋ Service Worker（`sw.js`）＋ `manifest.webmanifest`
 - データとログイン：Supabase（Auth・Postgres・Storage）。アプリに入っているのは公開前提のキーだけ
-- 版：**c1.1**（`sw.js` の `VER` と画面の診断ラベルに出る）
+- 版：**c50.12**（`sw.js` の `VER` と画面の診断ラベルに出る）
 
 ## できること
 
@@ -38,3 +38,9 @@
 ## 配信
 
 `main` ブランチの `/` を GitHub Pages で配信。push 前に必ず `node dev/scan-public.js index.html` を通す。
+
+### 日記の準備欄（c50.12）
+
+日記に行き先・移動手段・出発時刻・最初の軽い作業を表示する。22時から翌日の準備、23時を締切として案内する。通知は既存の通知設定に従う。確定内容は既存の `prep` に保存・同期し、入力中の下書きは端末内に保存する。
+
+`dev/first-step.js` と `dev/first-step.css` が実装。非公開のビルダーではクラウド層の挿入前に `h=require(path.join(__dirname,'build-first-step.js'))(h);` を呼ぶ。`dev/build-first-step.js` は既存の挿入位置が変わるとエラーにし、機能の欠落を防ぐ。ビルド後は `node dev/test-first-step.js` で確認する。
