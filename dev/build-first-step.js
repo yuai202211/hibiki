@@ -13,6 +13,9 @@ module.exports=function(h){
   rep('function prepAfterSleep(wait){','function prepAfterSleep(wait){return;');
   rep('function prepAskDest(){try{','function prepAskDest(){if((prepToday()||{}).fp)return false;try{');
   rep('function prepAskAfterSave(){try{','function prepAskAfterSave(){if((prepToday()||{}).fp)return;try{');
+  rep('function prepGo(){const p=prepToday();if(!p||p.skip||!p.to)return;', 'function prepGo(){const p=prepToday();if(!p||p.skip||!p.to)return;if(p.fp){quickMoveStart(p.tr);return;}');
+  rep("const p=prepToday();if(!p)return;if(openMove()){quickMoveArrive();if(!prepArrInfo(prepToday()))quickPlace(p.to);}else quickPlace(p.to);", "const p=prepToday();if(!p)return;if(p.fp){if(openMove())mvpArrAsk();else openEntrySheet(todayStr(),{hour:new Date().getHours()});return;}if(openMove()){quickMoveArrive();if(!prepArrInfo(prepToday()))quickPlace(p.to);}else quickPlace(p.to);");
+  rep('function prepArrInfo(p){if(!p||p.home||!p.to)return null;', 'function prepArrInfo(p){if(!p||p.home||!p.to)return null;if(p.fp){const r=fpLinked(p);return r&&(!r.en.mv||r.en.e)?{at:r.en.mv?r.en.e:r.en.s,out:\'\'}:null;}');
   rep('try{prepTick();}catch(e){}','try{prepTick();fpTick();}catch(e){}');
   rep("row('prep','🌅 明日の準備',tin('ntPrep',C.t.prep))", "row('prep','🌅 明日の準備','22:00・23:00')");
   const a="if(on.prep){try{for(const d of [t,d1]){const p=(state.prep||{})[addDays(d,1)];";

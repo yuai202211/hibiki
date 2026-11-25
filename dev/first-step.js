@@ -15,9 +15,9 @@ function fpTitle(d){return d===todayStr()?'今日':d===addDays(todayStr(),1)?'�
 function fpCurrent(){return topView==='diary'&&ui.tab==='di'&&ui.date===todayStr();}
 function fpBusy(){return !!document.querySelector('.ovl.open')||!!(document.activeElement&&document.activeElement.matches('input,textarea,select,[contenteditable="true"]'));}
 function fpCardHtml(){if(!fpCurrent())return '';const d=fpDate(),p=fpRecord(d),dr=fpDraft(d),edit=FP_EDIT===d||!fpComplete(p)||dr.dirty,lab=fpTitle(d),h=new Date().getHours(),late=d===todayStr()||h>=23;
-const hd='<div class="fp-head"><span>🌅 '+esc(lab)+'の準備'+(edit?'':' ✓')+'</span><small>'+(d>todayStr()?'23:00までに確定':'前夜に決めた予定')+'</small></div><h2>フライング以外、遅刻。</h2>';
-if(!edit){const done=!!(p.dd||[])[0],started=!!p.fpStart,now=d===todayStr(),mv=now&&openMove(),arr=now&&prepArrived(p),tr=TRS.find(x=>x[0]===p.tr),mode=tr?tr[1]:p.tr;
-return '<section class="fp-card" id="fpCard" data-date="'+esc(d)+'">'+hd+'<div class="fp-summary"><b>📍 '+esc(p.to)+'</b><span>'+esc(p.dep)+' 出発　'+esc(mode)+'</span></div><button type="button" class="fp-edit" data-fp="edit">予定を変更する</button><div class="fp-first"><strong>最初にやる事（軽いものを1つだけ）</strong><p>'+esc(prepDos(p)[0])+'</p>'+(done?'<div class="fp-done">✓ 最初の1つ、終わった！</div>':now?'<small>'+(started?'今はこの1つ。終わったら下のボタンを押そう。':'まずは、決めたこの1つから始めよう。')+'</small><button type="button" class="savebtn" data-fp="'+(started?'finish':'start')+'">'+(started?'終わった！':'これを始める')+'</button>':'<small>朝は、まずこの1つから始めよう。</small>')+'</div>'+(now?'<button type="button" class="fp-move" data-fp="'+(arr?'next':mv?'arrive':'go')+'">'+(arr?'🚗 次の移動を記録する':mv?'🏁 到着した':esc(mode)+'で出発する')+'</button>':'')+'</section>';}
+const hd='<div class="fp-head"><span>🌅 '+esc(lab)+'、はじめにやる事'+(edit?'':' ✓')+'</span><small>'+(d>todayStr()?'23:00までに確定':edit?'今ここで決める':'決めておいた予定')+'</small></div><h2>フライング以外、遅刻。</h2>';
+if(!edit){const done=!!(p.dd||[])[0],started=!!p.fpStart,now=d===todayStr(),mv=now&&openMove(),arr=now&&!!fpLinked(p),tr=TRS.find(x=>x[0]===p.tr),mode=tr?tr[1]:p.tr;
+return '<section class="fp-card" id="fpCard" data-date="'+esc(d)+'">'+hd+'<div class="fp-summary"><b>📍 '+esc(p.to)+'</b><span>'+esc(p.dep)+' 出発　'+esc(mode)+'</span></div>'+fpLinkedHtml(p)+'<button type="button" class="fp-edit" data-fp="edit">予定を変更する</button><div class="fp-first"><strong>最初にやる事（軽いものを1つだけ）</strong><p>'+esc(prepDos(p)[0])+'</p>'+(done?'<div class="fp-done">✓ 最初の1つ、終わった！</div>':now?'<small>'+(started?'今はこの1つ。終わったら下のボタンを押そう。':'まずは、決めたこの1つから始めよう。')+'</small><button type="button" class="savebtn" data-fp="'+(started?'finish':'start')+'">'+(started?'終わった！':'これを始める')+'</button>':'<small>朝は、まずこの1つから始めよう。</small>')+'</div>'+(now?'<button type="button" class="fp-move" data-fp="'+(mv?'arrive':arr?'next':'go')+'">'+(mv?'🏁 到着した':arr?'🚗 次の移動を記録する':esc(mode)+'で出発する')+'</button>':'')+'</section>';}
 const opts=prepTodos(d).slice(0,20),first=dr.task;
 return '<section class="fp-card'+(late?' fp-late':'')+'" id="fpCard" data-date="'+esc(d)+'">'+hd+'<p class="fp-intro">'+(late?'行き先・移動手段・出発時刻・軽いやる事1つ。今ここで決めよう。':'朝に迷わず動けるように、下の4つを決めておこう。')+'</p><form id="fpForm" novalidate>'+
 '<div class="fp-field"><label for="fpTo">① '+esc(lab)+'は、どこへ行く？</label><input type="text" id="fpTo" value="'+esc(dr.to)+'" placeholder="例：駅名やエリア名" autocomplete="off"><small>ざっくりした場所でOK。住所やお店の名前は不要です。</small></div>'+
@@ -33,6 +33,7 @@ const prior=fpRecord(d)||{},same=prepDos(prior)[0]===task,ds=prepDos(prior),si=A
 ds[0]=task;si[0]=x.tid||(same?si[0]||'':'');dd[0]=same?(dd[0]||0):0;
 const patch={fp:1,to,tr:x.tr,dep:x.dep,do:task,dos:ds,dsi:si,dd,home:0,skip:0,quit:0,del:0,cross:0,done:dd.length&&dd.every(Boolean)?1:0,fpConfirmed:Date.now(),ts:Date.now()};
 if(!same)patch.fpStart=0;
+if(!same||prior.to!==to){patch.fpLink=null;patch.fpAsked='';}
 FP_EDIT='';fpForget(d);
 mutate(()=>{state.prep=state.prep||{};state.prep[d]=Object.assign({},prior,patch);});
 toast('✓ '+fpTitle(d)+'の準備を確定した');try{ntfKick();}catch(e){}return true;}
@@ -43,9 +44,11 @@ card.querySelectorAll('[data-fptodo]').forEach(b=>b.onclick=()=>{const todo=(sta
 card.querySelectorAll('[data-fp]').forEach(b=>b.onclick=()=>{const a=b.dataset.fp;if(a==='edit'){FP_EDIT=d;fpForget(d);render();return;}if(d!==todayStr())return;const p=fpRecord(d);if(!p)return;
 if(a==='start'){mutate(()=>{state.prep[d]=Object.assign({},state.prep[d],{fpStart:Date.now(),ts:Date.now()});});}
 else if(a==='finish'){prepDoSet(0,1);const id=prepTdId(p,0);if(id&&(state.todos||{})[id]&&!tdDone(state.todos[id]))tdComplete(id,true);toast('✓ 最初の1つ、終わった！');}
-else if(a==='go'){prepGo();}
-else if(a==='arrive'){if(openMove())quickMoveArrive();else quickPlace(p.to);}
+else if(a==='go'){quickMoveStart(p.tr);}
+else if(a==='arrive'){if(openMove())mvpArrAsk();}
 else if(a==='next'){quickMoveStart();}
+else if(a==='record'){const r=fpLinked(p);if(r)openEntrySheet(r.d,{key:r.k});}
+else if(a==='unlink'){mutate(()=>{state.prep[d]=Object.assign({},state.prep[d],{fpLink:null,ts:Date.now()});});toast('紐づけを取り消した。次の記録でまた確認する');}
 });}
 function fpBeforeRender(){fpCapture();const a=document.activeElement;FP_FOCUS=a&&a.closest&&a.closest('#fpForm')?{id:a.id,start:a.selectionStart,end:a.selectionEnd}:null;}
 function fpAfterRender(){const f=FP_FOCUS;FP_FOCUS=null;if(f&&$(f.id)){try{$(f.id).focus({preventScroll:true});if(f.start!==null)$(f.id).setSelectionRange(f.start,f.end);}catch(e){}}
@@ -57,3 +60,22 @@ function fpOpen(d){fpCapture();FP_EDIT=d||fpDay();topView='diary';ui.tab='di';ui
 var fpRenderBase=render;
 render=function(){fpBeforeRender();const result=fpRenderBase.apply(this,arguments);fpAfterRender();return result;};
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)fpTick();});
+
+/* Link only after an explicit answer. Never copy the planned place into entries. */
+var FP_PENDING=null,FP_ASK_TIMER=0;
+function fpLinked(p){const r=p&&p.fpLink,e=r&&((state.entries||{})[r.d]||{})[r.k];return e&&!e.del?{d:r.d,k:r.k,en:e}:null;}
+function fpEntryLabel(e){return (e.mv?String(e.rt||'').trim():String(e.p||'').trim())||(e.mv?'移動の記録':'日記の記録');}
+function fpLinkedHtml(p){const r=fpLinked(p);if(!r)return '';return '<div class="fp-linked"><strong>✓ 実際の記録と紐づけ済み</strong><span>'+esc(r.en.s||'')+' '+esc(fpEntryLabel(r.en))+'</span><button type="button" class="fp-edit" data-fp="record">この記録を見る</button><button type="button" class="fp-edit" data-fp="unlink">紐づけを取り消す</button></div>';}
+function fpCanAsk(p){return fpComplete(p)&&!fpLinked(p)&&!(p.dd||[])[0];}
+function fpEntrySig(e){if(!e||e.del||e.noT||e.k==='sleep'||(!e.mv&&!e.p))return '';return JSON.stringify([e.mv||0,e.p||'',e.rt||'',e.tr||'',e.s||'',e.mv?e.e||'':'',e.t||'',e.k||'',e.acts||[]]);}
+function fpEntrySnapshot(){const out={};const t=todayStr();for(const d of [t,addDays(t,-1)]){const eo=(state.entries||{})[d]||{};for(const k in eo){const e=eo[k];if(d!==t&&!(e&&e.mv&&!e.e))continue;out[d+'|'+k]=fpEntrySig(e);}}return out;}
+function fpFindChanged(before){const t=todayStr(),eo=state.entries||{},out=[];for(const d of [t,addDays(t,-1)])for(const k in eo[d]||{}){const e=eo[d][k],id=d+'|'+k,sig=fpEntrySig(e);if(!sig||sig===before[id]||e.gapfix)continue;if(d!==t&&!before[id])continue;const fresh=!Object.prototype.hasOwnProperty.call(before,id);out.push({d,k,sig,score:(fresh?4:0)+(!e.mv?2:0),ts:Number(e.ts)||0});}out.sort((a,b)=>b.score-a.score||b.ts-a.ts);return out[0]||null;}
+function fpScheduleAsk(){clearTimeout(FP_ASK_TIMER);FP_ASK_TIMER=setTimeout(fpAskRecord,650);}
+function fpAskRecord(){const c=FP_PENDING,t=todayStr(),p=fpRecord(t);if(!c||!fpCanAsk(p)){FP_PENDING=null;return;}const e=((state.entries||{})[c.d]||{})[c.k];if(!fpEntrySig(e)){FP_PENDING=null;return;}const sig=c.d+'|'+c.k+'|'+fpEntrySig(e);if(p.fpAsked===sig){FP_PENDING=null;return;}
+if(document.hidden||fpBusy()){fpScheduleAsk();return;}
+FP_PENDING=null;const confirmed=p.fpConfirmed||0;
+openSub('<div class="sh-time"><span>🌅 今日、はじめにやる事</span></div><div class="sh-note" style="text-align:left"><b>今回の移動・滞在は、決めていた「今日、はじめにやる事」のためですか？</b><p>📍 '+esc(p.to)+'<br>やる事：'+esc(prepDos(p)[0])+'</p><p>今回の記録：<br>'+esc(e.s||'')+' '+esc(fpEntryLabel(e))+'</p><small>「はい」でこの記録と紐づけます。作業の完了は別に記録します。</small></div><div class="sh-btns"><button type="button" class="delbtn" id="fpLinkNo" style="flex:1">いいえ</button><button type="button" class="savebtn" id="fpLinkYes" style="flex:1">はい</button></div>',null);
+const answer=yes=>{closeSub();const q=fpRecord(t),en=((state.entries||{})[c.d]||{})[c.k];if(t!==todayStr()||!fpCanAsk(q)||(q.fpConfirmed||0)!==confirmed||!fpEntrySig(en))return;mutate(()=>{state.prep[t]=Object.assign({},q,{fpAsked:sig,ts:Date.now()},yes?{fpLink:{d:c.d,k:c.k}}:{});});toast(yes?'✓ 実際の記録と紐づけた':'次の移動・場所の記録でまた確認する');};
+$('fpLinkNo').onclick=()=>answer(false);$('fpLinkYes').onclick=()=>answer(true);}
+var fpMutateBase=mutate;
+mutate=function(fn){const watch=fpCanAsk(fpRecord(todayStr())),before=watch?fpEntrySnapshot():null;const result=fpMutateBase.apply(this,arguments);if(before&&fpCanAsk(fpRecord(todayStr()))){const c=fpFindChanged(before);if(c){FP_PENDING=c;fpScheduleAsk();}}return result;};

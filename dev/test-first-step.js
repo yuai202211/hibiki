@@ -41,3 +41,31 @@ assert(html.includes("'cond','prep','ckin'"),'existing per-day cloud collection 
 assert(html.includes('prep:1'),'merge known collection preserved');
 require('./guard-inputs.js')(src);
 console.log('PASS: 21/22 date boundary, required fields, reload drafts, confirmed summary, existing data preservation, escaping, morning task states, historical dates, both notifications/cancellation/opt-out, sync registration.');
+
+// Exercise the mutation observer and real Yes/No handlers with synthetic entries.
+clock=new Date('2026-11-25T14:00:00');ctx.ui.date='2026-11-25';
+ctx.state.prep['2026-11-25']={fp:1,to:'Planned district',tr:'car',dep:'12:00',dos:['Reply once'],dd:[0],fpConfirmed:1};
+let pending=null,dialog='',busy=false;
+ctx.setTimeout=fn=>{pending=fn;return 1;};ctx.clearTimeout=()=>{pending=null;};
+ctx.document.querySelector=()=>busy?{}:null;
+ctx.openSub=h=>{dialog=h;elem('fpLinkYes');elem('fpLinkNo');};ctx.closeSub=()=>{dialog='';};
+const fire=()=>{const f=pending;pending=null;if(f)f();};
+assert.match(run('fpCardHtml()'),/今日、はじめにやる事/);
+run("mutate(()=>{state.entries['2026-11-25'].detour={p:'Actual stop',s:'14:00',t:'Coffee',ts:2};})");
+assert(pending);busy=true;fire();assert.equal(dialog,'');assert(pending,'defer while editing');busy=false;fire();
+assert.match(dialog,/今回の移動・滞在は/);assert.match(dialog,/Actual stop/);
+elem('fpLinkNo').onclick();assert(!ctx.state.prep['2026-11-25'].fpLink);assert.equal(pending,null,'No does not immediately ask again');
+run("mutate(()=>{state.entries['2026-11-25'].detour.e='14:10';state.entries['2026-11-25'].trip={mv:1,s:'14:10',rt:'Actual stop → ',tr:'car',ts:3};})");fire();assert.match(dialog,/Actual stop →/,'next movement asks after No');
+elem('fpLinkNo').onclick();
+run("mutate(()=>{state.entries['2026-11-25'].trip.e='14:40';state.entries['2026-11-25'].trip.rt='Actual stop → Actual cafe';state.entries['2026-11-25'].cafe={p:'Actual cafe',s:'14:40',t:'Work',ts:4};})");fire();assert.match(dialog,/14:40 Actual cafe/,'arrival chooses the new stay, not the preceding movement');
+const beforeYes=JSON.stringify(ctx.state.entries);elem('fpLinkYes').onclick();
+assert.equal(JSON.stringify(ctx.state.entries),beforeYes,'link never changes, duplicates, or renames diary entries');
+assert.equal(ctx.state.prep['2026-11-25'].to,'Planned district');assert.equal(ctx.state.prep['2026-11-25'].fpLink.k,'cafe');assert.equal(ctx.state.prep['2026-11-25'].dd[0],0,'linking is not task completion');
+assert.match(run('fpCardHtml()'),/実際の記録と紐づけ済み/);
+run("mutate(()=>{state.entries['2026-11-25'].later={p:'Later stop',s:'16:00',ts:5};})");assert.equal(pending,null,'linked plan does not ask again');
+run("state.entries['2026-11-25'].cafe.del=1");assert.equal(run("fpLinked(state.prep['2026-11-25'])"),null,'deleted linked records are not shown');
+run("mutate(()=>{state.entries['2026-11-25'].again={p:'Another cafe',s:'17:00',ts:6};})");assert(pending,'deleted link can be replaced at the next record');fire();elem('fpLinkNo').onclick();
+run("mutate(()=>{state.entries['2026-11-24']={old:{p:'Old visit',s:'10:00',ts:7}};})");assert.equal(pending,null,'historical edits do not prompt for today');
+assert(html.includes('if(p.fp){quickMoveStart(p.tr);return;}'),'legacy departure also avoids inserting a planned destination');
+assert(src.includes("else if(a==='arrive'){if(openMove())mvpArrAsk();}"),'arrival opens the actual place picker');
+console.log('PASS: new labels, editor deferral, No then next record, arrival candidate, explicit Yes, no place overwrite/duplicate/time change, separate completion, no repeat after link, deleted links and historical edits.');
