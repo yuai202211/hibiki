@@ -2511,6 +2511,14 @@ input.pin,textarea.pin{color:#14181f!important;-webkit-text-fill-color:#14181f!i
 .fp-summary{display:flex;flex-direction:column;gap:5px;font-size:13px}.fp-summary b{font-size:19px}.fp-edit{font-size:11px;color:#687184;align-self:flex-start;min-height:36px}.fp-first{display:flex;flex-direction:column;gap:7px;padding-top:10px;border-top:1px solid var(--line)}.fp-first strong{font-size:12px;color:#13864a}.fp-first p{font-size:16px;font-weight:800;margin:0}.fp-first small{font-size:11.5px;color:#687184}.fp-done{font-size:13px;color:#13864a;font-weight:800}.fp-move{min-height:44px;border:1px solid var(--line);border-radius:12px;font-size:13px;font-weight:800;background:#f1f3f8;color:#344565}
 @media(max-width:360px){.fp-card{padding:12px 9px}.fp-head{flex-wrap:wrap}}
 .fp-linked{display:flex;flex-direction:column;gap:5px;padding:10px;border-radius:10px;background:#edf9f1;font-size:12px;color:#24583c}.fp-linked strong{font-size:12px}
+@media(max-width:499px){
+.app.fp-typing #nav,.app.fp-typing #mvp,.app.fp-typing #nowBar,.app.fp-typing #slpbar,.app.fp-typing .fab{display:none!important}
+.app.fp-typing>.top .hdr1,.app.fp-typing>.top .datebar,
+.app.fp-typing>#ftk,.app.fp-typing>.dreamrow,.app.fp-typing>#dreamBand,
+.app.fp-typing>#gstrip,.app.fp-typing>#pinRow,.app.fp-typing>#foldBar,.app.fp-typing>#nowCard{display:none!important}
+.app.fp-typing #scr{scroll-padding-block:12px;scroll-behavior:auto}
+.fp-field input{scroll-margin-block:16px}
+}
 
 </style>
 
@@ -4945,7 +4953,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c50.13）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c50.14）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -12432,6 +12440,20 @@ let v=d.vy*16;if(Math.abs(v)>2){const step=()=>{if(g||Math.abs(v)<0.5)return;d.s
 })();
 }catch(e){}
 var FP_DRAFTS={},FP_EDIT='',FP_SIG='',FP_FOCUS=null;
+var FP_VIEW_TIMER=0;
+function fpInputViewport(){const app=$('app'),a=document.activeElement;if(!app)return;
+const active=!!(a&&a.matches&&a.matches('#fpForm input')&&window.innerWidth<500);
+app.classList.toggle('fp-typing',active);if(!active)return;
+const sc=$('scr');if(!sc)return;const vv=window.visualViewport,r=a.getBoundingClientRect(),sr=sc.getBoundingClientRect();
+const top=Math.max(vv?vv.offsetTop:0,sr.top)+12,bottom=Math.min(vv?vv.offsetTop+vv.height:window.innerHeight,sr.bottom)-12;
+const field=a.closest('.fp-field'),label=field&&field.querySelector('label'),lr=label&&label.getBoundingClientRect();
+const start=lr&&r.bottom-lr.top<bottom-top?lr.top:r.top;
+if(r.bottom>bottom)sc.scrollTop+=Math.ceil(r.bottom-bottom);else if(start<top)sc.scrollTop-=Math.ceil(top-start);
+}
+function fpInputViewportSoon(){if(!$('app'))return;clearTimeout(FP_VIEW_TIMER);FP_VIEW_TIMER=setTimeout(fpInputViewport,30);}
+document.addEventListener('focusin',fpInputViewportSoon);
+document.addEventListener('focusout',fpInputViewportSoon);
+if(typeof window!=='undefined'){window.addEventListener('resize',fpInputViewportSoon);if(window.visualViewport){window.visualViewport.addEventListener('resize',fpInputViewportSoon);window.visualViewport.addEventListener('scroll',fpInputViewportSoon);}}
 function fpDay(){const t=todayStr();return new Date().getHours()>=22?addDays(t,1):t;}
 function fpRecord(d){const p=(state.prep||{})[d];return p&&!p.del?p:null;}
 function fpComplete(p){return !!(p&&!p.del&&!p.skip&&!p.quit&&String(p.to||'').trim()&&String(p.tr||'').trim()&&/^([01]\d|2[0-3]):[0-5]\d$/.test(p.dep||'')&&prepDos(p)[0]);}
@@ -12484,6 +12506,7 @@ else if(a==='unlink'){mutate(()=>{state.prep[d]=Object.assign({},state.prep[d],{
 });}
 function fpBeforeRender(){fpCapture();const a=document.activeElement;FP_FOCUS=a&&a.closest&&a.closest('#fpForm')?{id:a.id,start:a.selectionStart,end:a.selectionEnd}:null;}
 function fpAfterRender(){const f=FP_FOCUS;FP_FOCUS=null;if(f&&$(f.id)){try{$(f.id).focus({preventScroll:true});if(f.start!==null)$(f.id).setSelectionRange(f.start,f.end);}catch(e){}}
+fpInputViewportSoon();
 const card=$('fpCard');if(!card)return;const d=card.dataset.date,missing=!fpComplete(fpRecord(d)),sig=d+'|'+(new Date().getHours()>=23?'late':'open')+'|'+missing;
 if(missing&&FP_SIG!==sig&&!fpBusy()){const pane=$('pane');if(pane)pane.scrollTop=0;ui._jump=null;}FP_SIG=sig;}
 function fpTick(){const d=fpDay(),h=new Date().getHours(),sig=d+'|'+(h>=23?'late':'open')+'|'+!fpComplete(fpRecord(d));if(sig===FP_SIG||fpBusy())return;
@@ -13236,7 +13259,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c50.13";
+const CL_APPVER="c50.14";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;

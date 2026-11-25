@@ -1,5 +1,19 @@
 /* The four-field diary preparation uses the existing per-day prep collection. */
 var FP_DRAFTS={},FP_EDIT='',FP_SIG='',FP_FOCUS=null;
+var FP_VIEW_TIMER=0;
+function fpInputViewport(){const app=$('app'),a=document.activeElement;if(!app)return;
+const active=!!(a&&a.matches&&a.matches('#fpForm input')&&window.innerWidth<500);
+app.classList.toggle('fp-typing',active);if(!active)return;
+const sc=$('scr');if(!sc)return;const vv=window.visualViewport,r=a.getBoundingClientRect(),sr=sc.getBoundingClientRect();
+const top=Math.max(vv?vv.offsetTop:0,sr.top)+12,bottom=Math.min(vv?vv.offsetTop+vv.height:window.innerHeight,sr.bottom)-12;
+const field=a.closest('.fp-field'),label=field&&field.querySelector('label'),lr=label&&label.getBoundingClientRect();
+const start=lr&&r.bottom-lr.top<bottom-top?lr.top:r.top;
+if(r.bottom>bottom)sc.scrollTop+=Math.ceil(r.bottom-bottom);else if(start<top)sc.scrollTop-=Math.ceil(top-start);
+}
+function fpInputViewportSoon(){if(!$('app'))return;clearTimeout(FP_VIEW_TIMER);FP_VIEW_TIMER=setTimeout(fpInputViewport,30);}
+document.addEventListener('focusin',fpInputViewportSoon);
+document.addEventListener('focusout',fpInputViewportSoon);
+if(typeof window!=='undefined'){window.addEventListener('resize',fpInputViewportSoon);if(window.visualViewport){window.visualViewport.addEventListener('resize',fpInputViewportSoon);window.visualViewport.addEventListener('scroll',fpInputViewportSoon);}}
 function fpDay(){const t=todayStr();return new Date().getHours()>=22?addDays(t,1):t;}
 function fpRecord(d){const p=(state.prep||{})[d];return p&&!p.del?p:null;}
 function fpComplete(p){return !!(p&&!p.del&&!p.skip&&!p.quit&&String(p.to||'').trim()&&String(p.tr||'').trim()&&/^([01]\d|2[0-3]):[0-5]\d$/.test(p.dep||'')&&prepDos(p)[0]);}
@@ -52,6 +66,7 @@ else if(a==='unlink'){mutate(()=>{state.prep[d]=Object.assign({},state.prep[d],{
 });}
 function fpBeforeRender(){fpCapture();const a=document.activeElement;FP_FOCUS=a&&a.closest&&a.closest('#fpForm')?{id:a.id,start:a.selectionStart,end:a.selectionEnd}:null;}
 function fpAfterRender(){const f=FP_FOCUS;FP_FOCUS=null;if(f&&$(f.id)){try{$(f.id).focus({preventScroll:true});if(f.start!==null)$(f.id).setSelectionRange(f.start,f.end);}catch(e){}}
+fpInputViewportSoon();
 const card=$('fpCard');if(!card)return;const d=card.dataset.date,missing=!fpComplete(fpRecord(d)),sig=d+'|'+(new Date().getHours()>=23?'late':'open')+'|'+missing;
 if(missing&&FP_SIG!==sig&&!fpBusy()){const pane=$('pane');if(pane)pane.scrollTop=0;ui._jump=null;}FP_SIG=sig;}
 function fpTick(){const d=fpDay(),h=new Date().getHours(),sig=d+'|'+(h>=23?'late':'open')+'|'+!fpComplete(fpRecord(d));if(sig===FP_SIG||fpBusy())return;
