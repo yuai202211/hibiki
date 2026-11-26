@@ -22,6 +22,7 @@
 .fp-card{padding:18px 16px;gap:18px;border:1px solid #c7e6d6;border-radius:22px;background:linear-gradient(155deg,#fffaf0 0%,#f3fbf5 38%,var(--card) 75%);box-shadow:0 5px 20px #22754e0a}
 .fp-head{gap:8px;flex-wrap:wrap;font-size:11px}.fp-head small{font-weight:500;color:#728277}
 .fp-edit-top{display:inline-flex;align-items:center;justify-content:center;gap:4px;min-height:40px;min-width:74px;padding:7px 13px;border:1px solid #afd4bd;border-radius:12px;background:var(--card);color:#246544;font-size:13px;font-weight:700;flex-shrink:0;cursor:pointer}.fp-edit-top:focus-visible{outline:2px solid #32af72;outline-offset:2px}
+.fp-route-edit{width:100%;min-height:44px;padding:10px 14px;border:1px solid #afd4bd;border-radius:13px;background:#edf8f1;color:#246544;font-size:13px;font-weight:700;cursor:pointer}.fp-route-edit:focus-visible{outline:2px solid #32af72;outline-offset:2px}
 .fp-welcome{padding:2px 0 6px}.fp-card .fp-welcome h2{color:#205b43;font-size:27px;line-height:1.45;letter-spacing:.02em;font-weight:800}.fp-welcome p{font-size:12px;line-height:1.7;color:#657d6f;margin:9px 0 0}
 .fp-eyebrow{color:#668675;font-size:11px;font-weight:700;letter-spacing:.08em}
 .fp-first{border:0;padding:0;gap:13px}.fp-first .fp-theme{font-size:21px;font-weight:800;line-height:1.65;color:#244b38;margin:0;white-space:pre-wrap;word-break:normal;overflow-wrap:anywhere}

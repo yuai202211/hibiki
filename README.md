@@ -6,7 +6,7 @@
 - iPhone はホーム画面のアイコンから開く（Safari のタブで開くと保存領域とログインが別になり、しばらく使わないと端末の控えが消されることがある。記録の本体はクラウドにあるので、消えても次の起動で取り直す）
 - 単一の HTML（`index.html`）＋ Service Worker（`sw.js`）＋ `manifest.webmanifest`
 - データとログイン：Supabase（Auth・Postgres・Storage）。アプリに入っているのは公開前提のキーだけ
-- 版：**c50.18**（`sw.js` の `VER` と画面の診断ラベルに出る）
+- 版：**c50.19**（`sw.js` の `VER` と画面の診断ラベルに出る）
 
 ## できること
 

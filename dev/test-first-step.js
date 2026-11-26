@@ -84,3 +84,14 @@ assert.equal(ctx.state.prep[titleDate].fpHeading,'My edited theme');assert.equal
 run('FP_EDIT="";FP_DRAFTS={}');assert.match(run('fpCardHtml()'),/My edited theme/);assert.match(run('fpCardHtml()'),/Unsaved local detail/);
 assert(!run('fpCardHtml()').includes('フライング以外'));
 console.log('PASS: separate theme/detail, title-only non-destructive save, old draft compatibility, remote heading refresh and independent full save.');
+
+// Route edits preserve the independently authored action and its progress.
+ctx.state.prep[titleDate].fpStart=123;ctx.state.prep[titleDate].dd=[1];ctx.state.prep[titleDate].done=1;ctx.state.prep[titleDate].fpLink={d:titleDate,k:'again'};
+const routePrior=JSON.parse(JSON.stringify(ctx.state.prep[titleDate])),entriesPrior=JSON.stringify(ctx.state.entries);
+run("Object.assign(fpDraft('2026-11-25'),{to:state.prep['2026-11-25'].to,tr:'train',dep:'11:15',task:'Stale hidden detail',heading:'Stale hidden title',headingDirty:true,dirty:true});fpSaveRoute('2026-11-25')");
+const routeResult=ctx.state.prep[titleDate];assert.equal(routeResult.dep,'11:15');assert.equal(routeResult.tr,'train');
+for(const key of ['fpHeading','dos','do','dd','done','fpStart','fpConfirmed','fpLink'])assert.deepEqual(JSON.parse(JSON.stringify(routeResult[key]??null)),routePrior[key]??null,'route edit preserves '+key);
+assert.equal(JSON.stringify(ctx.state.entries),entriesPrior,'route editing never changes actual diary entries');
+run("Object.assign(fpDraft('2026-11-25'),{to:'Another planned area',dep:'12:00',tr:'car'});fpSaveRoute('2026-11-25')");assert.equal(ctx.state.prep[titleDate].fpLink,null,'new planned destination unlinks old actual record');
+const validRoute=JSON.stringify(ctx.state.prep[titleDate]);run("Object.assign(fpDraft('2026-11-25'),{dep:''})");assert.equal(run("fpSaveRoute('2026-11-25')"),false);assert.equal(JSON.stringify(ctx.state.prep[titleDate]),validRoute);
+console.log('PASS: direct route edit saves destination/time/transport, preserves title/detail/progress/actual records, and rejects missing time.');

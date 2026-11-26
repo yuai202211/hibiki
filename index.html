@@ -2522,6 +2522,7 @@ input.pin,textarea.pin{color:#14181f!important;-webkit-text-fill-color:#14181f!i
 .fp-card{padding:18px 16px;gap:18px;border:1px solid #c7e6d6;border-radius:22px;background:linear-gradient(155deg,#fffaf0 0%,#f3fbf5 38%,var(--card) 75%);box-shadow:0 5px 20px #22754e0a}
 .fp-head{gap:8px;flex-wrap:wrap;font-size:11px}.fp-head small{font-weight:500;color:#728277}
 .fp-edit-top{display:inline-flex;align-items:center;justify-content:center;gap:4px;min-height:40px;min-width:74px;padding:7px 13px;border:1px solid #afd4bd;border-radius:12px;background:var(--card);color:#246544;font-size:13px;font-weight:700;flex-shrink:0;cursor:pointer}.fp-edit-top:focus-visible{outline:2px solid #32af72;outline-offset:2px}
+.fp-route-edit{width:100%;min-height:44px;padding:10px 14px;border:1px solid #afd4bd;border-radius:13px;background:#edf8f1;color:#246544;font-size:13px;font-weight:700;cursor:pointer}.fp-route-edit:focus-visible{outline:2px solid #32af72;outline-offset:2px}
 .fp-welcome{padding:2px 0 6px}.fp-card .fp-welcome h2{color:#205b43;font-size:27px;line-height:1.45;letter-spacing:.02em;font-weight:800}.fp-welcome p{font-size:12px;line-height:1.7;color:#657d6f;margin:9px 0 0}
 .fp-eyebrow{color:#668675;font-size:11px;font-weight:700;letter-spacing:.08em}
 .fp-first{border:0;padding:0;gap:13px}.fp-first .fp-theme{font-size:21px;font-weight:800;line-height:1.65;color:#244b38;margin:0;white-space:pre-wrap;word-break:normal;overflow-wrap:anywhere}
@@ -4968,7 +4969,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c50.18）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c50.19）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -12454,7 +12455,7 @@ const kill=ev=>{ev.stopPropagation();ev.preventDefault();};window.addEventListen
 let v=d.vy*16;if(Math.abs(v)>2){const step=()=>{if(g||Math.abs(v)<0.5)return;d.sc.scrollTop-=v;v*=0.92;requestAnimationFrame(step);};requestAnimationFrame(step);}},true);
 })();
 }catch(e){}
-var FP_DRAFTS={},FP_EDIT='',FP_SIG='',FP_FOCUS=null,FP_SCROLL='';
+var FP_DRAFTS={},FP_EDIT='',FP_SIG='',FP_FOCUS=null,FP_SCROLL='',FP_EDIT_PART='';
 var FP_VIEW_TIMER=0;
 function fpInputViewport(){const app=$('app'),a=document.activeElement;if(!app)return;
 const active=!!(a&&a.matches&&a.matches('#fpForm input,#fpForm textarea')&&window.innerWidth<500);
@@ -12487,17 +12488,22 @@ function fpBusy(){return !!document.querySelector('.ovl.open')||!!(document.acti
 function fpCardHtml(){if(!fpCurrent())return '';const d=fpDate(),p=fpRecord(d),dr=fpDraft(d),edit=FP_EDIT===d||!fpComplete(p)||dr.dirty,lab=fpTitle(d),h=new Date().getHours(),late=d===todayStr()||h>=23;
 const hd='<div class="fp-head"><span>🌅 '+esc(lab)+'、はじめにやる事'+(edit?'':' ✓')+'</span>'+(!edit?'<button type="button" class="fp-edit-top" data-fp="edit" aria-label="確定した準備を編集する">✎ 編集</button>':'<small>'+(fpComplete(p)?'編集中':d>todayStr()?'夜のうちに準備':'小さな一歩を選ぼう')+'</small>')+'</div><div class="fp-welcome"><h2>日々の習慣が<br>未来をつくる！</h2><p>小さく始めて、気持ちよく進もう。</p></div>';
 if(!edit){const done=!!(p.dd||[])[0],started=!!p.fpStart,now=d===todayStr(),mv=now&&openMove(),arr=now&&!!fpLinked(p),tr=TRS.find(x=>x[0]===p.tr),mode=tr?tr[1]:p.tr;
-return '<section class="fp-card" id="fpCard" data-date="'+esc(d)+'">'+hd+'<div class="fp-first"><span class="fp-eyebrow">'+esc(lab)+'のテーマ</span>'+(p.fpHeading?'<h3 class="fp-theme">'+esc(p.fpHeading)+'</h3>':'')+'<div class="fp-action"><span>最初の一歩</span><p>'+esc(prepDos(p)[0])+'</p></div>'+(done?'<div class="fp-done">✓ 最初の1つ、終わった！ いいスタート！</div>':now?'<small>'+(started?'いいね。その一歩が、今日を動かしている。':'準備はできている。まずは、この一歩から。')+'</small><button type="button" class="savebtn" data-fp="'+(started?'finish':'start')+'">'+(started?'終わった！':'これを始める')+'</button>':'<small>朝の自分に、楽しみをひとつ。</small>')+'</div><div class="fp-summary"><span class="fp-eyebrow">'+esc(lab)+'の行き先</span><b>📍 '+esc(p.to)+'</b><span>'+esc(p.dep)+' 出発　'+esc(mode)+'</span></div>'+fpLinkedHtml(p)+'<button type="button" class="fp-edit" data-fp="edit">予定を変更する</button>'+(now?'<button type="button" class="fp-move" data-fp="'+(mv?'arrive':arr?'next':'go')+'">'+(mv?'🏁 到着した':arr?'🚗 次の移動を記録する':esc(mode)+'で出発する')+'</button>':'')+'</section>';}
-const opts=prepTodos(d).slice(0,20),first=dr.task;
+return '<section class="fp-card" id="fpCard" data-date="'+esc(d)+'">'+hd+'<div class="fp-first"><span class="fp-eyebrow">'+esc(lab)+'のテーマ</span>'+(p.fpHeading?'<h3 class="fp-theme">'+esc(p.fpHeading)+'</h3>':'')+'<div class="fp-action"><span>最初の一歩</span><p>'+esc(prepDos(p)[0])+'</p></div>'+(done?'<div class="fp-done">✓ 最初の1つ、終わった！ いいスタート！</div>':now?'<small>'+(started?'いいね。その一歩が、今日を動かしている。':'準備はできている。まずは、この一歩から。')+'</small><button type="button" class="savebtn" data-fp="'+(started?'finish':'start')+'">'+(started?'終わった！':'これを始める')+'</button>':'<small>朝の自分に、楽しみをひとつ。</small>')+'</div><div class="fp-summary" id="fpRouteSummary"><span class="fp-eyebrow">'+esc(lab)+'の行き先</span><b>📍 '+esc(p.to)+'</b><span>'+esc(p.dep)+' 出発　'+esc(mode)+'</span></div>'+fpLinkedHtml(p)+'<button type="button" class="fp-route-edit" data-fp="route">✎ 場所・時間を変更</button>'+(now?'<button type="button" class="fp-move" data-fp="'+(mv?'arrive':arr?'next':'go')+'">'+(mv?'🏁 到着した':arr?'🚗 次の移動を記録する':esc(mode)+'で出発する')+'</button>':'')+'</section>';}
+const opts=prepTodos(d).slice(0,20),first=dr.task,route=FP_EDIT_PART==='route';
 return '<section class="fp-card" id="fpCard" data-date="'+esc(d)+'">'+hd+'<p class="fp-intro">行き先と、最初の一歩。朝の自分に用意しておこう。</p><form id="fpForm" novalidate>'+
 '<div class="fp-field"><label for="fpTo">① '+esc(lab)+'は、どこへ行く？</label><input type="text" id="fpTo" value="'+esc(dr.to)+'" placeholder="例：駅名やエリア名" autocomplete="off"><small>ざっくりした場所でOK。住所やお店の名前は不要です。</small></div>'+
 '<fieldset class="fp-field"><legend>② どうやって行く？</legend><div class="sh-chips" id="fpTr">'+TRS.map(x=>'<button type="button" class="chip'+(dr.tr===x[0]?' sel':'')+'" data-fptr="'+esc(x[0])+'" aria-pressed="'+(dr.tr===x[0]?'true':'false')+'">'+esc(x[1])+'</button>').join('')+'</div></fieldset>'+
 '<div class="fp-field"><label for="fpDep">③ 何時に出発する？</label><input type="time" id="fpDep" value="'+esc(dr.dep)+'"></div>'+
-'<div class="fp-task-field"><div class="fp-eyebrow">④ 最初にやる事</div><div class="fp-field fp-heading-field"><label for="fpHeading">大タイトル</label><textarea id="fpHeading" rows="1" placeholder="例：ノート・手帳の整理">'+esc(dr.heading||'')+'</textarea><button type="button" class="fp-heading-save" id="fpHeadingSave">タイトルだけ保存</button></div><div class="fp-field fp-detail-field"><label for="fpTask">やる事の詳細（1行）</label><textarea id="fpTask" rows="1" placeholder="例：メールを1件返す" aria-describedby="fpTaskHelp">'+esc(first)+'</textarea><small id="fpTaskHelp">すぐに取りかかれて、短い時間で終わるものを1つだけ決めてください。</small></div>'+(opts.length?'<details><summary>やる事から大タイトルを選ぶ</summary><small>詳細の1行はそのまま残ります。</small><div class="fp-options">'+opts.map(x=>'<button type="button" class="chip" data-fptodo="'+esc(x.id)+'">'+esc(x.t)+'</button>').join('')+'</div></details>':'')+'</div>'+
-'<p class="fp-error" id="fpError" role="alert"></p><button type="submit" class="savebtn">'+(fpComplete(p)?'変更を保存':'これで'+esc(lab)+'の準備を確定する')+'</button></form></section>';}
+'<div class="fp-task-field"'+(route?' style="display:none"':'')+'><div class="fp-eyebrow">④ 最初にやる事</div><div class="fp-field fp-heading-field"><label for="fpHeading">大タイトル</label><textarea id="fpHeading" rows="1" placeholder="例：ノート・手帳の整理">'+esc(dr.heading||'')+'</textarea><button type="button" class="fp-heading-save" id="fpHeadingSave">タイトルだけ保存</button></div><div class="fp-field fp-detail-field"><label for="fpTask">やる事の詳細（1行）</label><textarea id="fpTask" rows="1" placeholder="例：メールを1件返す" aria-describedby="fpTaskHelp">'+esc(first)+'</textarea><small id="fpTaskHelp">すぐに取りかかれて、短い時間で終わるものを1つだけ決めてください。</small></div>'+(opts.length?'<details><summary>やる事から大タイトルを選ぶ</summary><small>詳細の1行はそのまま残ります。</small><div class="fp-options">'+opts.map(x=>'<button type="button" class="chip" data-fptodo="'+esc(x.id)+'">'+esc(x.t)+'</button>').join('')+'</div></details>':'')+'</div>'+
+'<p class="fp-error" id="fpError" role="alert"></p><button type="submit" class="savebtn">'+(route?'場所・時間の変更を保存':fpComplete(p)?'変更を保存':'これで'+esc(lab)+'の準備を確定する')+'</button></form></section>';}
 function fpCapture(){const card=$('fpCard'),form=$('fpForm');if(!card||!form)return;const d=card.dataset.date,x=fpDraft(d);x.to=$('fpTo').value;x.dep=$('fpDep').value;x.task=$('fpTask').value;if(x.headingDirty&&$('fpHeading'))x.heading=$('fpHeading').value;if(x.dirty)fpRemember(x);}
 function fpReadInput(d){const x=fpDraft(d);x.to=$('fpTo').value;x.dep=$('fpDep').value;const task=$('fpTask').value;if(task!==x.task)x.tid='';x.task=task;const h=$('fpHeading');if(h&&h.value!==x.heading){x.heading=h.value;x.headingDirty=true;}x.dirty=true;FP_EDIT=d;fpRemember(x);fpTextFit();fpInputViewportSoon();}
 function fpSaveHeading(d,heading){heading=String(heading||'').trim();const x=fpDraft(d);x.heading=heading;x.headingDirty=false;fpRemember(x);mutate(()=>{state.prep=state.prep||{};state.prep[d]=Object.assign({},state.prep[d]||{},{fpHeading:heading,ts:Date.now()});});toast('✓ 大タイトルを保存した');}
+function fpSaveRoute(d){const x=fpDraft(d),to=x.to.trim(),prior=fpRecord(d);if(!prior)return false;
+if(!to||!x.tr||!/^([01]\d|2[0-3]):[0-5]\d$/.test(x.dep)){const e=$('fpError');if(e)e.textContent='行き先・移動手段・出発時刻を入れてください。';return false;}
+const patch={to,tr:x.tr,dep:x.dep,ts:Date.now()};if(prior.to!==to){patch.fpLink=null;patch.fpAsked='';}
+FP_EDIT='';FP_EDIT_PART='';fpForget(d);FP_SCROLL='fpRouteSummary';
+mutate(()=>{state.prep[d]=Object.assign({},prior,patch);});toast('✓ 場所・時間を変更した');return true;}
 function fpSave(d){const x=fpDraft(d),to=x.to.trim(),task=x.task.trim(),miss=[];if(!to)miss.push('行き先');if(!x.tr)miss.push('移動手段');if(!/^([01]\d|2[0-3]):[0-5]\d$/.test(x.dep))miss.push('出発時刻');if(!task)miss.push('最初にやる事（軽いものを1つだけ）');
 if(miss.length){const e=$('fpError');if(e)e.textContent=miss.join('・')+'を決めてください。';return false;}
 const prior=fpRecord(d)||{},same=prepDos(prior)[0]===task,ds=prepDos(prior),si=Array.isArray(prior.dsi)?prior.dsi.slice():[],dd=Array.isArray(prior.dd)?prior.dd.slice():[];
@@ -12509,11 +12515,11 @@ FP_EDIT='';fpForget(d);FP_SCROLL='fpCard';
 mutate(()=>{state.prep=state.prep||{};state.prep[d]=Object.assign({},prior,patch);});
 toast('✓ '+fpTitle(d)+'の準備を確定した');try{ntfKick();}catch(e){}return true;}
 function fpBind(pane){const card=pane.querySelector('#fpCard');if(!card)return;const d=card.dataset.date;
-const form=card.querySelector('#fpForm');if(form){form.oninput=()=>fpReadInput(d);form.onchange=()=>fpReadInput(d);form.onsubmit=e=>{e.preventDefault();fpReadInput(d);fpSave(d);};}
+const form=card.querySelector('#fpForm');if(form){form.oninput=()=>fpReadInput(d);form.onchange=()=>fpReadInput(d);form.onsubmit=e=>{e.preventDefault();fpReadInput(d);if(FP_EDIT_PART==='route')fpSaveRoute(d);else fpSave(d);};}
 const headingSave=card.querySelector('#fpHeadingSave');if(headingSave)headingSave.onclick=()=>fpSaveHeading(d,$('fpHeading').value);
 card.querySelectorAll('[data-fptr]').forEach(b=>b.onclick=()=>{fpReadInput(d);const x=fpDraft(d);x.tr=x.tr===b.dataset.fptr?'':b.dataset.fptr;fpRemember(x);card.querySelectorAll('[data-fptr]').forEach(c=>{const on=c.dataset.fptr===x.tr;c.classList.toggle('sel',on);c.setAttribute('aria-pressed',String(on));});});
 card.querySelectorAll('[data-fptodo]').forEach(b=>b.onclick=()=>{const todo=(state.todos||{})[b.dataset.fptodo];if(!todo||todo.del)return;fpReadInput(d);const x=fpDraft(d);x.heading=todo.t;x.headingDirty=true;fpRemember(x);$('fpHeading').value=x.heading;fpTextFit();});
-card.querySelectorAll('[data-fp]').forEach(b=>b.onclick=()=>{const a=b.dataset.fp;if(a==='edit'){FP_EDIT=d;fpForget(d);FP_SCROLL='fpHeading';render();return;}if(d!==todayStr())return;const p=fpRecord(d);if(!p)return;
+card.querySelectorAll('[data-fp]').forEach(b=>b.onclick=()=>{const a=b.dataset.fp;if(a==='edit'||a==='route'){FP_EDIT=d;FP_EDIT_PART=a==='route'?'route':'';fpForget(d);FP_SCROLL=a==='route'?'fpTo':'fpHeading';render();return;}if(d!==todayStr())return;const p=fpRecord(d);if(!p)return;
 if(a==='start'){mutate(()=>{state.prep[d]=Object.assign({},state.prep[d],{fpStart:Date.now(),ts:Date.now()});});}
 else if(a==='finish'){prepDoSet(0,1);const id=prepTdId(p,0);if(id&&(state.todos||{})[id]&&!tdDone(state.todos[id]))tdComplete(id,true);toast('✓ 最初の1つ、終わった！');}
 else if(a==='go'){quickMoveStart(p.tr);}
@@ -12530,7 +12536,7 @@ const card=$('fpCard');if(!card)return;const d=card.dataset.date,missing=!fpComp
 if(missing&&FP_SIG!==sig&&!fpBusy()){const pane=$('pane');if(pane)pane.scrollTop=0;ui._jump=null;}FP_SIG=sig;}
 function fpTick(){const d=fpDay(),h=new Date().getHours(),sig=d+'|'+(h>=23?'late':'open')+'|'+!fpComplete(fpRecord(d));if(sig===FP_SIG||fpBusy())return;
 if(fpCurrent()){if(FP_EDIT&&fpDraft(FP_EDIT).dirty)return;render();}else if(h>=22&&!fpComplete(fpRecord(d))){FP_SIG=sig;toast(h>=23?'明日の一歩を、朝の自分に用意しよう。':'日記で、明日が楽しみになる準備をしよう。');}}
-function fpOpen(d){fpCapture();FP_EDIT=d||fpDay();topView='diary';ui.tab='di';ui.date=todayStr();ui._jump=null;render();const pane=$('pane');if(pane)pane.scrollTop=0;}
+function fpOpen(d){fpCapture();FP_EDIT_PART='';FP_EDIT=d||fpDay();topView='diary';ui.tab='di';ui.date=todayStr();ui._jump=null;render();const pane=$('pane');if(pane)pane.scrollTop=0;}
 var fpRenderBase=render;
 render=function(){fpBeforeRender();const result=fpRenderBase.apply(this,arguments);fpAfterRender();return result;};
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)fpTick();});
@@ -13278,7 +13284,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c50.18";
+const CL_APPVER="c50.19";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
