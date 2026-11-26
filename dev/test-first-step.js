@@ -69,3 +69,18 @@ run("mutate(()=>{state.entries['2026-11-24']={old:{p:'Old visit',s:'10:00',ts:7}
 assert(html.includes('if(p.fp){quickMoveStart(p.tr);return;}'),'legacy departure also avoids inserting a planned destination');
 assert(src.includes("else if(a==='arrive'){if(openMove())mvpArrAsk();}"),'arrival opens the actual place picker');
 console.log('PASS: new labels, editor deferral, No then next record, arrival candidate, explicit Yes, no place overwrite/duplicate/time change, separate completion, no repeat after link, deleted links and historical edits.');
+
+// A heading-only edit must not publish a stale desktop draft over phone details.
+const titleDate='2026-11-25',preserved=JSON.parse(JSON.stringify(ctx.state.prep[titleDate]));
+run("Object.assign(fpDraft('2026-11-25'),{task:'Unsaved local detail',dirty:true,heading:'Draft theme',headingDirty:true});fpRemember(fpDraft('2026-11-25'))");
+run("fpSaveHeading('2026-11-25','Notebook theme')");
+const afterTitle=JSON.parse(JSON.stringify(ctx.state.prep[titleDate]));delete afterTitle.fpHeading;delete afterTitle.ts;delete preserved.ts;
+assert.deepEqual(afterTitle,preserved,'heading save preserves every existing record field');
+assert.equal(run("fpDraft('2026-11-25').task"),'Unsaved local detail','title-only save retains the local detail draft');
+run('FP_DRAFTS={}');assert.equal(run("fpDraft('2026-11-25').heading"),'Notebook theme');assert.equal(run("fpDraft('2026-11-25').task"),'Unsaved local detail');
+run("state.prep['2026-11-25'].fpHeading='Updated on another device'");assert.equal(run("fpDraft('2026-11-25').heading"),'Updated on another device','untouched heading follows synced record');
+run("Object.assign(fpDraft('2026-11-25'),{heading:'My edited theme',headingDirty:true});fpSave('2026-11-25')");
+assert.equal(ctx.state.prep[titleDate].fpHeading,'My edited theme');assert.equal(ctx.state.prep[titleDate].dos[0],'Unsaved local detail');
+run('FP_EDIT="";FP_DRAFTS={}');assert.match(run('fpCardHtml()'),/My edited theme/);assert.match(run('fpCardHtml()'),/Unsaved local detail/);
+assert(!run('fpCardHtml()').includes('フライング以外'));
+console.log('PASS: separate theme/detail, title-only non-destructive save, old draft compatibility, remote heading refresh and independent full save.');

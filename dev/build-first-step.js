@@ -20,7 +20,7 @@ module.exports=function(h){
   rep("row('prep','🌅 明日の準備',tin('ntPrep',C.t.prep))", "row('prep','🌅 明日の準備','22:00・23:00')");
   const a="if(on.prep){try{for(const d of [t,d1]){const p=(state.prep||{})[addDays(d,1)];";
   const start=h.indexOf(a),end=h.indexOf('if(on.wake)',start);if(start<0||end<start)throw Error('first-step notification anchor missing');
-  h=h.slice(0,start)+"if(on.prep){try{for(const d of [t,d1]){const p=(state.prep||{})[addDays(d,1)];if(!fpComplete(p)){add('prep|'+d,ntfAt(d,'22:00'),'🌅 明日の準備を決めよう','フライング以外、遅刻。23時までに4つを確定。');add('prep-deadline|'+d,ntfAt(d,'23:00'),'23時。明日の準備の締切です','行き先・移動手段・出発時刻・軽いやる事1つ。');}}}catch(e){}}"+nl+h.slice(end);
+  h=h.slice(0,start)+"if(on.prep){try{for(const d of [t,d1]){const p=(state.prep||{})[addDays(d,1)];if(!fpComplete(p)){add('prep|'+d,ntfAt(d,'22:00'),'🌅 明日が楽しみになる準備を','行き先と最初の一歩。23時までに朝の自分へ用意しよう。');add('prep-deadline|'+d,ntfAt(d,'23:00'),'🌅 明日の一歩を決めておこう','小さく始めて、気持ちよく進もう。');}}}catch(e){}}"+nl+h.slice(end);
   rep(nl+'boot();',nl+js+nl+'boot();');
   return h;
 };

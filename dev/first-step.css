@@ -16,5 +16,20 @@
   .app.fp-typing>#ftk,.app.fp-typing>.dreamrow,.app.fp-typing>#dreamBand,
   .app.fp-typing>#gstrip,.app.fp-typing>#pinRow,.app.fp-typing>#foldBar,.app.fp-typing>#nowCard{display:none!important}
   .app.fp-typing #scr{scroll-padding-block:12px;scroll-behavior:auto}
-  .fp-field input{scroll-margin-block:16px}
+  .fp-field input,.fp-field textarea{scroll-margin-block:16px}
 }
+/* A calm morning card: the theme and the first action each have their own place. */
+.fp-card{padding:18px 16px;gap:18px;border:1px solid #c7e6d6;border-radius:22px;background:linear-gradient(155deg,#fffaf0 0%,#f3fbf5 38%,var(--card) 75%);box-shadow:0 5px 20px #22754e0a}
+.fp-head{gap:8px;flex-wrap:wrap;font-size:11px}.fp-head small{font-weight:500;color:#728277}
+.fp-welcome{padding:2px 0 6px}.fp-card .fp-welcome h2{color:#205b43;font-size:27px;line-height:1.45;letter-spacing:.02em;font-weight:800}.fp-welcome p{font-size:12px;line-height:1.7;color:#657d6f;margin:9px 0 0}
+.fp-eyebrow{color:#668675;font-size:11px;font-weight:700;letter-spacing:.08em}
+.fp-first{border:0;padding:0;gap:13px}.fp-first .fp-theme{font-size:21px;font-weight:800;line-height:1.65;color:#244b38;margin:0;white-space:pre-wrap;word-break:normal;overflow-wrap:anywhere}
+.fp-action{padding:15px 16px;background:var(--card);border:1px solid #dbe9df;border-left:3px solid #56bc87;border-radius:4px 15px 15px 4px}.fp-action>span{display:block;color:#518164;font-size:10px;font-weight:700;letter-spacing:.08em;margin-bottom:7px}.fp-first .fp-action p{font-size:15px;font-weight:500;line-height:1.85;color:var(--ink);white-space:pre-wrap;word-break:normal;overflow-wrap:anywhere}
+.fp-summary{padding:14px 0 0;border-top:1px solid #dbe9df;gap:6px}.fp-summary b{font-size:14px;line-height:1.7;font-weight:600}.fp-summary>span:last-child{font-size:12px;color:#637a6b}.fp-edit{font-size:12px;color:#47765c}
+.fp-card .savebtn{min-height:48px;border-radius:15px;font-size:14px;box-shadow:0 4px 12px #12a76b18}.fp-move{background:var(--card);color:#47765c;border-radius:14px}
+.fp-task-field{padding:16px;background:#f0f8f2;border:1px solid #d8e9dd;border-radius:17px;display:flex;flex-direction:column;gap:16px}
+.fp-task-field .fp-field{gap:8px}.fp-task-field label{font-size:12px;color:#57745f;line-height:1.6}.fp-task-field small{line-height:1.8}
+.fp-field textarea{box-sizing:border-box;display:block;width:100%;min-width:0;min-height:52px;max-height:200px;resize:none;overflow-y:auto;border:1px solid #d2e4d8;border-radius:12px;padding:12px;background:var(--card);color:var(--ink);font-family:inherit;font-size:16px;line-height:1.8;white-space:pre-wrap;overflow-wrap:anywhere}
+.fp-field textarea:focus-visible{outline:2px solid #32af72;outline-offset:2px}.fp-field textarea::placeholder{color:#92a499;font-size:13px;font-weight:400}
+.fp-heading-field #fpHeading{font-size:18px;font-weight:700;line-height:1.65;color:#244b38}.fp-heading-save{align-self:flex-end;border:1px solid #bfdcc9;background:var(--card);border-radius:20px;color:#417254;font-size:11px;min-height:32px;padding:4px 12px}.fp-detail-field{padding-top:14px;border-top:1px solid #d4e5d9}
+@media(max-width:360px){.fp-card{padding:16px 12px}.fp-task-field{padding:13px}.fp-card .fp-welcome h2{font-size:25px}}
