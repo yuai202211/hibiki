@@ -1,5 +1,5 @@
 /* The four-field diary preparation uses the existing per-day prep collection. */
-var FP_DRAFTS={},FP_EDIT='',FP_SIG='',FP_FOCUS=null;
+var FP_DRAFTS={},FP_EDIT='',FP_SIG='',FP_FOCUS=null,FP_SCROLL='';
 var FP_VIEW_TIMER=0;
 function fpInputViewport(){const app=$('app'),a=document.activeElement;if(!app)return;
 const active=!!(a&&a.matches&&a.matches('#fpForm input,#fpForm textarea')&&window.innerWidth<500);
@@ -30,7 +30,7 @@ function fpTitle(d){return d===todayStr()?'今日':d===addDays(todayStr(),1)?'�
 function fpCurrent(){return topView==='diary'&&ui.tab==='di'&&ui.date===todayStr();}
 function fpBusy(){return !!document.querySelector('.ovl.open')||!!(document.activeElement&&document.activeElement.matches('input,textarea,select,[contenteditable="true"]'));}
 function fpCardHtml(){if(!fpCurrent())return '';const d=fpDate(),p=fpRecord(d),dr=fpDraft(d),edit=FP_EDIT===d||!fpComplete(p)||dr.dirty,lab=fpTitle(d),h=new Date().getHours(),late=d===todayStr()||h>=23;
-const hd='<div class="fp-head"><span>🌅 '+esc(lab)+'、はじめにやる事'+(edit?'':' ✓')+'</span><small>'+(d>todayStr()?'夜のうちに準備':edit?'小さな一歩を選ぼう':'準備できているよ')+'</small></div><div class="fp-welcome"><h2>日々の習慣が<br>未来をつくる！</h2><p>小さく始めて、気持ちよく進もう。</p></div>';
+const hd='<div class="fp-head"><span>🌅 '+esc(lab)+'、はじめにやる事'+(edit?'':' ✓')+'</span>'+(!edit?'<button type="button" class="fp-edit-top" data-fp="edit" aria-label="確定した準備を編集する">✎ 編集</button>':'<small>'+(fpComplete(p)?'編集中':d>todayStr()?'夜のうちに準備':'小さな一歩を選ぼう')+'</small>')+'</div><div class="fp-welcome"><h2>日々の習慣が<br>未来をつくる！</h2><p>小さく始めて、気持ちよく進もう。</p></div>';
 if(!edit){const done=!!(p.dd||[])[0],started=!!p.fpStart,now=d===todayStr(),mv=now&&openMove(),arr=now&&!!fpLinked(p),tr=TRS.find(x=>x[0]===p.tr),mode=tr?tr[1]:p.tr;
 return '<section class="fp-card" id="fpCard" data-date="'+esc(d)+'">'+hd+'<div class="fp-first"><span class="fp-eyebrow">'+esc(lab)+'のテーマ</span>'+(p.fpHeading?'<h3 class="fp-theme">'+esc(p.fpHeading)+'</h3>':'')+'<div class="fp-action"><span>最初の一歩</span><p>'+esc(prepDos(p)[0])+'</p></div>'+(done?'<div class="fp-done">✓ 最初の1つ、終わった！ いいスタート！</div>':now?'<small>'+(started?'いいね。その一歩が、今日を動かしている。':'準備はできている。まずは、この一歩から。')+'</small><button type="button" class="savebtn" data-fp="'+(started?'finish':'start')+'">'+(started?'終わった！':'これを始める')+'</button>':'<small>朝の自分に、楽しみをひとつ。</small>')+'</div><div class="fp-summary"><span class="fp-eyebrow">'+esc(lab)+'の行き先</span><b>📍 '+esc(p.to)+'</b><span>'+esc(p.dep)+' 出発　'+esc(mode)+'</span></div>'+fpLinkedHtml(p)+'<button type="button" class="fp-edit" data-fp="edit">予定を変更する</button>'+(now?'<button type="button" class="fp-move" data-fp="'+(mv?'arrive':arr?'next':'go')+'">'+(mv?'🏁 到着した':arr?'🚗 次の移動を記録する':esc(mode)+'で出発する')+'</button>':'')+'</section>';}
 const opts=prepTodos(d).slice(0,20),first=dr.task;
@@ -39,7 +39,7 @@ return '<section class="fp-card" id="fpCard" data-date="'+esc(d)+'">'+hd+'<p cla
 '<fieldset class="fp-field"><legend>② どうやって行く？</legend><div class="sh-chips" id="fpTr">'+TRS.map(x=>'<button type="button" class="chip'+(dr.tr===x[0]?' sel':'')+'" data-fptr="'+esc(x[0])+'" aria-pressed="'+(dr.tr===x[0]?'true':'false')+'">'+esc(x[1])+'</button>').join('')+'</div></fieldset>'+
 '<div class="fp-field"><label for="fpDep">③ 何時に出発する？</label><input type="time" id="fpDep" value="'+esc(dr.dep)+'"></div>'+
 '<div class="fp-task-field"><div class="fp-eyebrow">④ 最初にやる事</div><div class="fp-field fp-heading-field"><label for="fpHeading">大タイトル</label><textarea id="fpHeading" rows="1" placeholder="例：ノート・手帳の整理">'+esc(dr.heading||'')+'</textarea><button type="button" class="fp-heading-save" id="fpHeadingSave">タイトルだけ保存</button></div><div class="fp-field fp-detail-field"><label for="fpTask">やる事の詳細（1行）</label><textarea id="fpTask" rows="1" placeholder="例：メールを1件返す" aria-describedby="fpTaskHelp">'+esc(first)+'</textarea><small id="fpTaskHelp">すぐに取りかかれて、短い時間で終わるものを1つだけ決めてください。</small></div>'+(opts.length?'<details><summary>やる事から大タイトルを選ぶ</summary><small>詳細の1行はそのまま残ります。</small><div class="fp-options">'+opts.map(x=>'<button type="button" class="chip" data-fptodo="'+esc(x.id)+'">'+esc(x.t)+'</button>').join('')+'</div></details>':'')+'</div>'+
-'<p class="fp-error" id="fpError" role="alert"></p><button type="submit" class="savebtn">これで'+esc(lab)+'の準備を確定する</button></form></section>';}
+'<p class="fp-error" id="fpError" role="alert"></p><button type="submit" class="savebtn">'+(fpComplete(p)?'変更を保存':'これで'+esc(lab)+'の準備を確定する')+'</button></form></section>';}
 function fpCapture(){const card=$('fpCard'),form=$('fpForm');if(!card||!form)return;const d=card.dataset.date,x=fpDraft(d);x.to=$('fpTo').value;x.dep=$('fpDep').value;x.task=$('fpTask').value;if(x.headingDirty&&$('fpHeading'))x.heading=$('fpHeading').value;if(x.dirty)fpRemember(x);}
 function fpReadInput(d){const x=fpDraft(d);x.to=$('fpTo').value;x.dep=$('fpDep').value;const task=$('fpTask').value;if(task!==x.task)x.tid='';x.task=task;const h=$('fpHeading');if(h&&h.value!==x.heading){x.heading=h.value;x.headingDirty=true;}x.dirty=true;FP_EDIT=d;fpRemember(x);fpTextFit();fpInputViewportSoon();}
 function fpSaveHeading(d,heading){heading=String(heading||'').trim();const x=fpDraft(d);x.heading=heading;x.headingDirty=false;fpRemember(x);mutate(()=>{state.prep=state.prep||{};state.prep[d]=Object.assign({},state.prep[d]||{},{fpHeading:heading,ts:Date.now()});});toast('✓ 大タイトルを保存した');}
@@ -50,7 +50,7 @@ ds[0]=task;si[0]=x.tid||(same?si[0]||'':'');dd[0]=same?(dd[0]||0):0;
 const patch={fp:1,fpHeading:String(x.heading||'').trim(),to,tr:x.tr,dep:x.dep,do:task,dos:ds,dsi:si,dd,home:0,skip:0,quit:0,del:0,cross:0,done:dd.length&&dd.every(Boolean)?1:0,fpConfirmed:Date.now(),ts:Date.now()};
 if(!same)patch.fpStart=0;
 if(!same||prior.to!==to){patch.fpLink=null;patch.fpAsked='';}
-FP_EDIT='';fpForget(d);
+FP_EDIT='';fpForget(d);FP_SCROLL='fpCard';
 mutate(()=>{state.prep=state.prep||{};state.prep[d]=Object.assign({},prior,patch);});
 toast('✓ '+fpTitle(d)+'の準備を確定した');try{ntfKick();}catch(e){}return true;}
 function fpBind(pane){const card=pane.querySelector('#fpCard');if(!card)return;const d=card.dataset.date;
@@ -58,7 +58,7 @@ const form=card.querySelector('#fpForm');if(form){form.oninput=()=>fpReadInput(d
 const headingSave=card.querySelector('#fpHeadingSave');if(headingSave)headingSave.onclick=()=>fpSaveHeading(d,$('fpHeading').value);
 card.querySelectorAll('[data-fptr]').forEach(b=>b.onclick=()=>{fpReadInput(d);const x=fpDraft(d);x.tr=x.tr===b.dataset.fptr?'':b.dataset.fptr;fpRemember(x);card.querySelectorAll('[data-fptr]').forEach(c=>{const on=c.dataset.fptr===x.tr;c.classList.toggle('sel',on);c.setAttribute('aria-pressed',String(on));});});
 card.querySelectorAll('[data-fptodo]').forEach(b=>b.onclick=()=>{const todo=(state.todos||{})[b.dataset.fptodo];if(!todo||todo.del)return;fpReadInput(d);const x=fpDraft(d);x.heading=todo.t;x.headingDirty=true;fpRemember(x);$('fpHeading').value=x.heading;fpTextFit();});
-card.querySelectorAll('[data-fp]').forEach(b=>b.onclick=()=>{const a=b.dataset.fp;if(a==='edit'){FP_EDIT=d;fpForget(d);render();return;}if(d!==todayStr())return;const p=fpRecord(d);if(!p)return;
+card.querySelectorAll('[data-fp]').forEach(b=>b.onclick=()=>{const a=b.dataset.fp;if(a==='edit'){FP_EDIT=d;fpForget(d);FP_SCROLL='fpHeading';render();return;}if(d!==todayStr())return;const p=fpRecord(d);if(!p)return;
 if(a==='start'){mutate(()=>{state.prep[d]=Object.assign({},state.prep[d],{fpStart:Date.now(),ts:Date.now()});});}
 else if(a==='finish'){prepDoSet(0,1);const id=prepTdId(p,0);if(id&&(state.todos||{})[id]&&!tdDone(state.todos[id]))tdComplete(id,true);toast('✓ 最初の1つ、終わった！');}
 else if(a==='go'){quickMoveStart(p.tr);}
@@ -70,6 +70,7 @@ else if(a==='unlink'){mutate(()=>{state.prep[d]=Object.assign({},state.prep[d],{
 function fpBeforeRender(){fpCapture();const a=document.activeElement;FP_FOCUS=a&&a.closest&&a.closest('#fpForm')?{id:a.id,start:a.selectionStart,end:a.selectionEnd}:null;}
 function fpAfterRender(){const f=FP_FOCUS;FP_FOCUS=null;if(f&&$(f.id)){try{$(f.id).focus({preventScroll:true});if(f.start!==null)$(f.id).setSelectionRange(f.start,f.end);}catch(e){}}
 fpTextFit();fpInputViewportSoon();
+if(FP_SCROLL){const el=$(FP_SCROLL),sc=$('scr');FP_SCROLL='';if(el&&sc){const target=el.closest('.fp-field')||el;sc.scrollTop+=target.getBoundingClientRect().top-sc.getBoundingClientRect().top-16;}}
 const card=$('fpCard');if(!card)return;const d=card.dataset.date,missing=!fpComplete(fpRecord(d)),sig=d+'|'+(new Date().getHours()>=23?'late':'open')+'|'+missing;
 if(missing&&FP_SIG!==sig&&!fpBusy()){const pane=$('pane');if(pane)pane.scrollTop=0;ui._jump=null;}FP_SIG=sig;}
 function fpTick(){const d=fpDay(),h=new Date().getHours(),sig=d+'|'+(h>=23?'late':'open')+'|'+!fpComplete(fpRecord(d));if(sig===FP_SIG||fpBusy())return;
