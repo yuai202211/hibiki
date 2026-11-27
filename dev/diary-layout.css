@@ -1,0 +1,42 @@
+/* Use the whole phone width; the comment action occupies only the record header. */
+#app #pane>.hour.filled.hour{display:block;position:relative;padding:14px 10px!important;margin:12px 0!important;border:1px solid #dce5e4!important;border-radius:16px!important;background:#fff!important;box-shadow:0 2px 7px #12302b08!important}
+#app #pane>.hour.filled::before{display:none}
+#app #pane>.hour.filled>.hh{display:flex;align-items:center;flex-wrap:wrap;gap:6px;width:auto;min-height:34px;padding:0 64px 8px 0;text-align:left;color:#34485b;font-size:14px}
+#app #pane>.hour.filled>.hh b,#app #pane>.hour.filled>.hh small{display:inline;font-size:14px;line-height:1.5;color:inherit;background:transparent}
+#app #pane>.hour.filled>.hh small::before{content:'→';display:inline;margin-right:6px;font-size:12px;color:#627789}
+#app #pane>.hour.filled>.hh .pv::before{display:none}
+#app #pane>.hour.filled>.body{padding-right:0;min-width:0}
+#app #pane>.hour.filled>.body>.loc{font-size:16px;line-height:1.55;color:#146b55}
+#app #pane>.hour.filled>.body>.txt{font-size:15px;line-height:1.8;margin-top:10px}
+#app #pane>.hour.filled.warn-rec::after{width:3px;border-radius:0 16px 16px 0}
+.acts{gap:12px;margin-top:12px}
+.acts>.act{display:flex;flex-direction:column;align-items:stretch;gap:7px;margin:0;padding:12px;border:1px solid #dae5e7;border-radius:12px;background:#f8fbfb;box-shadow:none}
+.acts>.act.k-ai{background:#f8f9ff;margin:0;padding:12px}
+.acts>.act>.a-k,.acts>.act>.a-d{display:none}
+.act .dl-clock{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:4px 8px;color:#193d4c;font-variant-numeric:tabular-nums}
+.dl-clock strong{font-size:16px;font-weight:900;letter-spacing:.2px}
+.dl-duration{font-size:12px;font-weight:800;white-space:nowrap;color:#236e60;background:#e6f4ed;border-radius:6px;padding:2px 7px}
+.dl-context{font-size:11px;color:#617281;margin-top:-4px}
+.acts>.act>.a-h{gap:4px 8px;min-height:0}
+.acts>.act .a-h>.a-kl{font-size:15px;line-height:1.6;padding:0;background:transparent!important;color:#1b3345!important;border-radius:0;font-weight:800}
+.acts>.act .a-h>.a-kl+.a-kl::before{content:'・';color:#6c7d87;margin-right:4px}
+.acts>.act>.a-x,.acts>.act>.a-x.a-x1,.acts>.act>.a-c{margin:0;padding:0;font-size:15px;line-height:1.8;color:#263747;background:transparent;font-weight:600}
+.acts>.act>.a-c{border-top:1px dashed #dce5e7;padding-top:7px}
+.acts>.act .a-tg{margin:0;gap:5px}
+.acts>.act .a-tg>.a-ai,.acts>.act .a-tg>.a-ap{display:contents}
+.acts>.act>.dl-fold{padding-top:3px}
+.act>.dl-clock{order:0}.act>.dl-context{order:1}.act>.a-h{order:2}.act>.a-x{order:3}.act>.a-c{order:4}.act>.a-ph{order:5}.act>.dl-meta{order:6}.act>.dl-settings{order:7}
+.dl-fold{display:block;min-width:0}
+.dl-fold-body{display:block}
+.dl-prose:not(.is-open)>.dl-fold-body{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}
+.dl-meta:not(.is-open)>.dl-fold-body,.dl-settings:not(.is-open)>.dl-fold-body{display:none}
+.dl-toggle{display:flex;align-items:center;width:fit-content;min-height:36px;font-size:12px;font-weight:700;line-height:1.5;color:#426477;cursor:pointer;border-radius:7px;padding:3px 4px}
+.dl-toggle:focus-visible{outline:2px solid #00a978;outline-offset:2px}
+.dl-meta.is-open>.dl-fold-body,.dl-settings.is-open>.dl-fold-body{padding:8px 0;border-top:1px solid #dce5e7}
+.acts>.act .a-sw{margin:0;gap:10px;display:flex;flex-wrap:wrap}
+.acts>.act.rest{flex-direction:row;flex-wrap:wrap;justify-content:space-between;font-size:12px;background:#f6f7f9;border-style:dashed}
+/* Pinned yellow actions have their own upper tier, categories begin below. */
+.qtop>.dl-favorites{display:flex;flex-wrap:wrap;gap:7px;width:100%;padding:10px;background:#fffae8;border:1px solid #f2dd9f;border-radius:13px;box-sizing:border-box}
+.qtop>.dl-categories{display:flex;flex-wrap:wrap;gap:7px;width:100%;margin-top:14px;padding-top:12px;border-top:1px solid #d2e4dd}
+.dl-category-label{display:block;flex-basis:100%;font-size:12px;color:#61776e;font-weight:800;margin-bottom:3px}
+.qtop .dl-favorites .chip,.qtop .dl-categories .chip{margin:0}
