@@ -33,3 +33,7 @@ assert.equal(run("WK_HW.o().find(x=>x[0]==='mail')[1]"),'✉️ メール・掲�
 assert.equal(run("kindOf('c_shaken').lb"),'車検証コピー依頼');
 assert.equal(run("kindOf('c_inspection').g"),'V');
 console.log('PASS: independent send/read work types, auction preview search, vehicle inspection, device/place selection, save/reopen serialization, category switching, deselection, comments and existing work flows.');
+
+assert.equal(run("kindOf('dreambook').lb"),'夢手帳タイム');
+assert.equal(run("kindOf('dreambook').g"),'S');
+assert.equal(run("kindOf('dreambook').muda"),false);
