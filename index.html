@@ -4027,7 +4027,7 @@ return sep+a.map(y=>'・'+y.t+(Number(y.m)?' '+durText(Number(y.m)):'')).join(se
 const ACT_K={ai:['🤖','AI'],work:['💼','仕事'],stay:['📍','滞在'],move:['🚗','移動'],meal:['🍚','食事'],rest:['☕','休憩']};
 const KIND_BASE=[['ai','🤖','AI','#7a6ef3','A',0,'h'],['aibiz','💡','AIビジネス','#6d28d9','A',0,'h'],['aiwork','🛠️','AI作業','#8b5cf6','A',0,'h'],
 ['pcwork','💻','PC作業','#475569','D',0,'h'],['datasrch','🗃️','データ探し・整理','#78716c','D',1,'h'],['spwork','📱','スマホ作業','#64748b','D',0,'h'],
-['mkt','📈','相場リサーチ','#0f766e','V',0,'h'],['c_list','📸','出品準備','#0d9488','V',0,'h'],['c_aaadj','🔁','AA調整','#0e7490','V',0,'h'],['c_aalive','🔴','AAライブ','#dc2626','V',0,'h'],
+['mkt','📈','相場リサーチ','#0f766e','V',0,'h'],['c_shitami','🔍','下見検索','#0f766e','V',0,'h'],['c_list','📸','出品準備','#0d9488','V',0,'h'],['c_aaadj','🔁','AA調整','#0e7490','V',0,'h'],['c_aalive','🔴','AAライブ','#dc2626','V',0,'h'],
 ['c_aapick','🚛','落札車の引取','#b45309','V',0,'b'],['c_in','📥','車両搬入','#0e7490','V',0,'b'],['c_out','📤','車両搬出','#b45309','V',0,'b'],['c_aaafter','📋','AA落札後対応','#a16207','V',0,'h'],['c_aafax','📠','AA会場へ名変後車検証FAX','#92400e','V',0,'h'],['c_aaclaim','⚠️','AAクレーム対応','#b91c1c','V',0,'h'],['repair','🔧','整備','#c2410c','V',0,'b'],
 ['c_buy','🤝','買取商談','#15803d','V',0,'h'],['c_sell','💰','販売商談','#16a34a','V',0,'h'],['c_cust','🙋','客対応','#2563eb','V',0,'h'],['c_snsc','💬','SNS閲覧＋コメント','#b45309','V',0,'h'],['c_dmv','🏛️','陸自対応','#4b5563','V',1,'h'],['c_garage','🅿️','車庫証明 申請・受取','#334155','V',1,'b'],['c_kscan','🪪','車検証スキャン','#475569','V',0,'h'],['c_mail','📮','郵送物対応（中古車）','#0f766e','V',0,'h'],['c_copy','🖨️','コピー','#475569','V',0,''],['carsee','🏎️','好きな車を見る（イベント・展示）','#b91c1c','V',0,''],['c_unload','🧳','荷物の積み下ろし（車を空にする）','#64748b','V',0,'b'],['c_fuel','⛽','給油（商品車）','#b45309','V',0,'b'],['c_int','🧽','内装クリーニング','#0d9488','V',0,'b'],['c_wash','🚿','洗車','#0284c7','V',0,'b'],['c_polish','✨','外装磨き','#ca8a04','V',0,'b'],['c_mnt','🛠️','点検・整備外注対応','#9a3412','V',0,'h'],['c_body','🎨','鈑金塗装外注対応','#7c2d12','V',0,'h'],['c_kaiso','🔁','入替・その他の回送','#a16207','V',0,'b'],['c_swap','🔁','車両入替','#a16207','V',0,''],['c_park','🅿️','駐車','#a16207','V',0,''],['c_oil','🛢️','オイル交換','#92400e','V',0,'b'],['c_shop','🛒','買い物（部品・用品）','#b45309','V',0,'b'],['c_photo','📷','写真撮影','#0d9488','V',0,'b'],['c_imgedit','🖼️','画像編集','#7c3aed','V',0,'h'],['c_goo_list','🌐','掲載サイト出品対応','#ea580c','V',0,'h'],['c_yahoo','🔖','ヤフオク出品作業','#d97706','V',0,'h'],['c_price','💴','掲載の金額変更','#15803d','V',0,'h'],['c_goo_inq','📨','掲載サイト問合せ対応','#2563eb','V',0,'h'],['c_deliv','🎁','納車','#16a34a','V',0,'b'],
 ['c_mkfind','🔍','案件探し','#db2777','V',0,'h'],['c_mkdm','✉️','DM送信','#db2777','V',0,'h'],['c_mkpost','📝','投稿','#db2777','V',0,'h'],['c_mkana','📊','反応を見る・分析','#db2777','V',0,'h'],
@@ -4041,7 +4041,7 @@ const KIND_BASE=[['ai','🤖','AI','#7a6ef3','A',0,'h'],['aibiz','💡','AIビ�
 ['m_tr','🏦','振込み対応','#4338ca','Y',0,'h'],['m_io','💳','入出金対応','#4f46e5','Y',0,'h'],['m_atm','🏧','ATM対応','#6366f1','Y',1,'h'],['m_tax','🧾','確定申告','#3730a3','Y',0,'h'],['gov','🏢','役所・警察・郵便','#4b5563','Y',1,'b'],['post','📮','郵便物受取','#0f766e','L',0,'b'],['docscan','🖨️','書類スキャン','#0f766e','L',0,'h'],['receipt','🧾','領収書対応','#0f766e','L',0,'h'],
 ['sleep','🌙','睡眠','#475569','S',0,''],['meal','🍚','食事','#f08a24','S',0,''],['mdrec','🕳️','ムダ（自分で付けた）','#e0405a','M',1,''],['mealto','🥡','食事（持ち帰り）','#f08a24','S',0,''],['snack','🍪','おやつ・間食','#f59e0b','S',0,''],['move','🚗','移動','#12a6a0','S',0,''],['exer','🏃','運動','#16a34a','S',0,'b'],['bath','🛁','身支度','#06b6d4','S',0,''],['spa','♨️','風呂・サウナ','#0891b2','S',0,''],['shower','🚿','シャワー','#0ea5e9','S',0,''],['haircut','✂️','髪切り','#a855f7','S',0,''],['beauty','💈','美容（脱毛など）','#db2777','S',0,''],['drive','🚘','ひとりドライブ','#0ea5e9','S',0,''],['laundry','🧺','洗濯','#0ea5e9','S',0,'b'],['laundry_bl','🫧','洗濯（漂白）','#0ea5e9','S',0,'b'],['dryer','🌬️','乾燥','#38bdf8','S',0,'b'],['fold','👕','洗濯たたみ','#0284c7','S',0,'b'],['cleaning','👔','クリーニング','#0369a1','S',0,'b'],['massage','💆','マッサージ','#0d9488','S',0,''],['akasuri','🧖','あかすり','#0891b2','S',0,''],['shop','🛒','買い物','#f59e0b','S',0,''],['fuel','⛽','給油','#d97706','S',0,''],['rest','☕','休憩','#c98a2f','S',0,''],['nap','😴','仮眠','#64748b','S',0,''],['incar','🚙','車内滞在','#0f766e','S',1,''],['spplay','📲','スマホ操作','#d946ef','S',1,''],['wc','🚻','トイレ','#94a3b8','S',0,''],['mailself','📮','郵送物対応（自分）','#0f766e','S',0,''],
 ['bizcall','📞','仕事の連絡','#2f8fcf','C',0,'h'],['famcall','👪','家族との連絡','#f472b6','F',0,''],['errand','🧾','用事の連絡','#64748b','C',1,'h'],['chat','💬','雑談（私用）','#d946ef','S',1,''],['son','👦','息子','#f472b6','F',0,''],['family','🏡','家族の用事','#ec4899','F',0,''],['fam_play','🪆','家族と遊ぶ','#f472b6','F',0,''],
-['work','💼','仕事','#1e3a8a','X',0,'h'],['think','🧠','企画・考える','#6b7280','X',0,'h'],['money','🧮','お金・事務','#4338ca','X',0,'h'],['doc','📄','資料確認','#5b7fa6','X',0,'h'],['docmk','📑','資料づくり','#5b7fa6','X',0,'h'],['call','📞','電話・連絡','#2f8fcf','X',1,'h'],['meet','🤝','商談・人と会う','#d9633b','X',0,'h'],
+['work','💼','仕事','#1e3a8a','X',0,'h'],['email_send','📧','メール作成・送信','#2563eb','X',0,'h'],['email_read','📥','受信メール確認','#0f766e','X',0,'h'],['think','🧠','企画・考える','#6b7280','X',0,'h'],['money','🧮','お金・事務','#4338ca','X',0,'h'],['doc','📄','資料確認','#5b7fa6','X',0,'h'],['docmk','📑','資料づくり','#5b7fa6','X',0,'h'],['call','📞','電話・連絡','#2f8fcf','X',1,'h'],['meet','🤝','商談・人と会う','#d9633b','X',0,'h'],
 ['study','🎓','勉強','#c2410c','X',0,'h'],['read','📖','読書','#8b5e3c','S',0,'h'],['audio','🔊','音声で学ぶ','#9333ea','X',0,'h'],['vstudy','🎬','動画で学ぶ','#0891b2','X',0,'h'],['write','✍️','書く・発信','#be123c','X',0,'h'],['reflect','📝','振り返り','#15803d','S',0,'h'],['diary','✏️','日記を書く','#15803d','S',0,'h'],
 ['house','🧹','家事','#a3a3a3','X',0,'b'],['play','🪆','遊び','#f97316','S',0,''],['video','📺','動画・SNS','#d946ef','S',1,''],['ytube','▶︎','YouTube視聴','#e02424','S',1,''],['ytbiz','💼','YouTube（ビジネス）','#b91c1c','S',0,'h'],['stay','📍','滞在','#0bc167','X',0,'']];
 function coLb(){try{const v=state&&state._cfg&&state._cfg.entAl;if(v)return String(v).slice(0,20);}catch(e){}return '屋号';}
@@ -4050,7 +4050,7 @@ function setCoName(){const v=prompt('会社（屋号）の名前',coLb());if(v==
 const KIND_GRP=[['A','🤖','AI','#7a6ef3'],['D','💻','PC・スマホ作業','#475569'],['V','🚗','中古車','#b45309'],['T','⛩️','GetYourGuide','#be123c'],['B','🚀','新規事業開発','#ea580c'],['P','📣','集客','#db2777'],['Y','💴','お金','#4338ca'],['S','👤','自分','#0891b2'],['C','📞','連絡','#2f8fcf'],['F','👦','家族','#f472b6'],KG_CO,['M','🕳️','ムダ','#e0405a'],['X','📍','その他','#9aa3b5']];
 const KIND_TREE=[{id:'pc',ic:'💻',lb:'PC',d:'pc',ch:[{id:'ai',ic:'🤖',lb:'AI',ch:['ai','aibiz','aiwork']},'pcwork','datasrch']},
 {id:'sp',ic:'📱',lb:'スマホ',d:'phone',ch:[{id:'ai',ic:'🤖',lb:'AI',ch:['ai','aibiz','aiwork']},'spwork','spplay']},
-{id:'car',ic:'🚗',lb:'中古車',ch:['mkt','c_list','c_aaadj','c_aalive','c_aapick','c_aaafter','c_aaclaim','repair','c_buy','c_sell','c_cust','c_dmv','c_garage','c_mail','c_mkfind','c_mkdm','c_mkpost','c_mkana','c_dig','c_ext','c_shaken','c_lfix','c_price','c_inq','c_outaa','c_deliv','c_buyp','c_carrier','c_tow','c_ins']},
+{id:'car',ic:'🚗',lb:'中古車',ch:['mkt','c_shitami','c_list','c_aaadj','c_aalive','c_aapick','c_aaafter','c_aaclaim','repair','c_buy','c_sell','c_cust','c_dmv','c_garage','c_mail','c_mkfind','c_mkdm','c_mkpost','c_mkana','c_dig','c_ext','c_shaken','c_lfix','c_price','c_inq','c_outaa','c_deliv','c_buyp','c_carrier','c_tow','c_ins']},
 {id:'al',ic:'🏬',get lb(){return coLb();},ch:['post','m_tr','m_io','m_atm','m_tax','gov']},{id:'yen',ic:'💴',lb:'お金',ch:['m_tr','m_io','m_atm','m_tax','gov']},{id:'tel',ic:'📞',lb:'連絡',ch:['bizcall','famcall','errand','chat']},
 {id:'self',ic:'👤',lb:'自分',ch:['sleep','meal','move','exer','bath','spa','shower','rest','nap','incar','spplay','shop','wc','mailself']},{id:'fam',ic:'👦',lb:'家族',ch:['son','family','famcall']},{id:'etc',ic:'📍',lb:'その他',ch:null}];
 
@@ -4969,7 +4969,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c50.19）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c50.20）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -8605,8 +8605,8 @@ Object.assign(KIND_SG0,{meal:'eat',mealto:'eat',snack:'eat',sleep:'yasumu',nap:'
 bath:'body',spa:'body',shower:'body',wc:'body',exer:'body',haircut:'body',beauty:'body',massage:'body',akasuri:'body',
 laundry:'wash',laundry_bl:'wash',dryer:'wash',fold:'wash',cleaning:'wash',move:'yoji',fuel:'yoji',shop:'yoji',spplay:'kibun',chat:'kibun',reflect:'kaku',diary:'kaku',
 c_aapick:'hakobu',c_in:'hakobu',c_out:'hakobu',c_kaiso:'hakobu',c_tow:'hakobu',c_swap:'hakobu',c_park:'hakobu',c_deliv:'hakobu',repair:'seibi',c_oil:'seibi',c_fuel:'seibi',c_unload:'seibi',
-c_shop:'seibi',c_dmv:'tetsu',c_garage:'tetsu',c_kscan:'tetsu',c_copy:'tetsu',mkt:'shiraberu',carsee:'shiraberu',c_snsc:'shiraberu',
-work:'ippan',think:'ippan',money:'ippan',doc:'ippan',docmk:'ippan',call:'ippan',meet:'ippan',write:'ippan',study:'manabu',read:'kibun',audio:'manabu',vstudy:'manabu',play:'asobi',video:'asobi',ytube:'asobi',ytbiz:'asobi',house:'ie',stay:'ie',b_idea:'bz_think',b_res:'bz_think',b_make:'bz_do',b_sell:'bz_do',m_tr:'y_bank',m_io:'y_bank',m_atm:'y_bank',m_tax:'y_tetsu',gov:'y_tetsu'});
+c_shop:'seibi',c_dmv:'tetsu',c_garage:'tetsu',c_kscan:'tetsu',c_copy:'tetsu',mkt:'shiraberu',c_shitami:'shiraberu',carsee:'shiraberu',c_snsc:'shiraberu',
+work:'ippan',email_send:'ippan',email_read:'ippan',think:'ippan',money:'ippan',doc:'ippan',docmk:'ippan',call:'ippan',meet:'ippan',write:'ippan',study:'manabu',read:'kibun',audio:'manabu',vstudy:'manabu',play:'asobi',video:'asobi',ytube:'asobi',ytbiz:'asobi',house:'ie',stay:'ie',b_idea:'bz_think',b_res:'bz_think',b_make:'bz_do',b_sell:'bz_do',m_tr:'y_bank',m_io:'y_bank',m_atm:'y_bank',m_tax:'y_tetsu',gov:'y_tetsu'});
 let SUB_ON={};
 function subList(g){const st=state.ksub||{},out=[];KIND_SUB0.forEach((b,i)=>{const o=st[b[0]];if(o&&o.off)return;const gg=(o&&o.g)||b[1];if(gg!==g)return;out.push({id:b[0],g:gg,ic:(o&&o.ic)||b[2],lb:(o&&o.lb)||b[3],o:(o&&o.o!=null)?Number(o.o):i*10});});
 for(const id in st){const o=st[id];if(!o||!o.own||o.off||!o.lb||o.g!==g||KIND_SUB0.some(b=>b[0]===id))continue;out.push({id,g,ic:o.ic||'📂',lb:String(o.lb),o:Number(o.o)||9999});}return out.sort((a,b)=>a.o-b.o);}
@@ -8658,12 +8658,13 @@ const WK_PPL=[['c_cust','🙋 客対応'],['c_inq','📩 問合せ対応'],['c_b
 const WK_WHY={f:'wy',c:'why',q:'🎯 何のため（いくつでも）',m:1,o:[['hibiki','📱 HIBIKI'],['car','🚗 中古車'],['nb','🚀 新規事業（教材・コンサル）'],['learn','📚 学び'],['etc','📂 その他']],last:1};
 const WK_DID={f:'ap',c:'did',q:'🧠 AIで何をした（いくつでも）',m:1,o:()=>aipList().map(z=>[z.id,z.ic+' '+z.lb]),nx:()=>WK_WHY};
 const WK_USED={f:'ai',c:'used',q:'🤖 使ったAI（いくつでも）',m:1,o:()=>AI_TOOLS.map(z=>[z[0],z[1]]),nx:()=>WK_DID};
-const WK_ROOT={f:'wc',c:'cat',q:'どれ？',o:[['ai','🤖 AI'],['car','🚗 中古車'],['tel','📞 電話'],['nb','🚀 新規事業']],nx:v=>({
+const WK_ROOT={f:'wc',c:'cat',q:'どれ？',o:[['ai','🤖 AI'],['car','🚗 中古車'],['tel','📞 電話'],['nb','🚀 新規事業'],['email_send','📧 メール作成・送信'],['email_read','📥 受信メール確認']],nx:v=>({
 ai:Object.assign({},WK_TL,{nx:()=>Object.assign({},WK_PL,{nx:()=>WK_USED})}),
+email_send:WK_TL,email_read:WK_TL,
 car:{f:'wc',c:'grp',q:'中古車のどれ？',o:[['mk','📣 集客・案件発掘'],['scr','💻 画面の作業'],['ppl','🙋 人とのやり取り'],['mv','🚘 車を動かす'],['tc','🔧 車を触る'],['proc','🏛️ 手続き・外注']],nx:g=>({
 mk:{f:'wc',c:'item',q:'何をした？',o:[['c_mkfind','🔍 案件探し'],['c_mkdm','✉️ DM送信'],['c_mkpost','📝 投稿'],['c_mkana','📊 反応を見る・分析']],nx:()=>WK_TL},
 scr:{f:'wc',c:'item',q:'何の画面？',o:()=>[['cis','🖥️ '+wkLb('cis')],['goo','🌐 '+wkLb('goo')],['c_snsc','📱 SNS'],['c_photo','📷 写真撮影']],nx:s=>({
-cis:{f:'wc',c:'sub',q:()=>wkLb('cis')+'のどれ？',o:[['mkt','📈 相場リサーチ'],['c_aalive','🔴 AAライブ'],['c_aaadj','🔁 AA調整'],['c_aaafter','📋 AA落札後対応'],['c_dig','🗂️ デジタル出品作業'],['c_ext','⏳ クレーム延長申請'],['c_shaken','📄 車検証コピー依頼'],['c_aaclaim','⚠️ AAクレーム対応']],nx:()=>WK_TL},
+cis:{f:'wc',c:'sub',q:()=>wkLb('cis')+'のどれ？',o:[['mkt','📈 相場リサーチ'],['c_shitami','🔍 下見検索'],['c_aalive','🔴 AAライブ'],['c_aaadj','🔁 AA調整'],['c_aaafter','📋 AA落札後対応'],['c_dig','🗂️ デジタル出品作業'],['c_ext','⏳ クレーム延長申請'],['c_shaken','📄 車検証コピー依頼'],['c_aaclaim','⚠️ AAクレーム対応']],nx:()=>WK_TL},
 goo:{f:'wc',c:'sub',q:()=>wkLb('goo')+'のどれ？',o:[['c_goo_list','📝 掲載'],['c_lfix','✏️ 修正'],['c_price','💴 金額変更']],nx:()=>WK_TL},
 c_snsc:WK_TL}[s]||null)},
 ppl:{f:'wc',c:'item',q:'だれと？',o:WK_PPL,nx:()=>WK_HW},
@@ -8679,7 +8680,7 @@ function wkVal(a,L,i){const st=L[i];if(!st||!a)return null;if(st.f==='wc'){const
 function wkHas(v){return v!=null&&(!Array.isArray(v)||v.length>0);}
 function wkChain(a){const L=[];let st=WK_ROOT,i=0;while(st&&L.length<12){L.push(st);const v=wkVal(a,L,i);if(!wkHas(v)||!st.nx)break;st=st.nx(Array.isArray(v)?v[0]:v);i++;}return L;}
 function wkDone(a){const L=wkChain(a),i=L.length-1,v=wkVal(a,L,i);return wkHas(v)&&(!L[i].nx||!L[i].nx(Array.isArray(v)?v[0]:v));}
-function wkKind(wc){if(!Array.isArray(wc)||!wc.length)return '';if(wc[0]==='ai')return 'ai';for(let j=wc.length-1;j>=1;j--){const v=wc[j];if(!WK_TOK[v]&&kindOf(v))return v;}return wc[0]==='tel'?'bizcall':'work';}
+function wkKind(wc){if(!Array.isArray(wc)||!wc.length)return '';if(wc[0]==='ai')return 'ai';if(wc[0]==='email_send'||wc[0]==='email_read')return wc[0];for(let j=wc.length-1;j>=1;j--){const v=wc[j];if(!WK_TOK[v]&&kindOf(v))return v;}return wc[0]==='tel'?'bizcall':'work';}
 function wkMust(a){return !!(a&&Array.isArray(a.wc)&&(a.wc[0]==='nb'||(a.wc[0]==='tel'&&a.wc[1]==='bizcall')));}
 function wkOptLb(st,v){const o=wkOpts(st).find(x=>x[0]===v);return o?o[1]:v;}
 function wkApply(a,i,v,site){const L=wkChain(a),st=L[i];if(!st)return;const oldK=wkKind(a.wc);
@@ -8697,7 +8698,7 @@ if(Array.isArray(a.wc)&&a.wc[0]==='tel'&&a.wc[1]==='car')a.hw='tel';else if(a.hw
 const lbOf=x=>{const z=x&&kindOf(x);return z?z.lb:'';},tv=String(a.t||'').trim();if(!tv||tv===lbOf(oldK)||kindList().some(x=>x&&x.lb===tv))a.t=lbOf(a.k);}
 function wkDrop(a){const L=wkChain(a);wkClear(a,L,0);wkSync(a,wkKind(a.wc));}
 function wkChipHtml(){const a=WK_CUR,c=a&&Array.isArray(a.wc)&&a.wc[0];return '<button type="button" class="chip ac-q wk-b'+(c?' sel':'')+'" data-wkb="'+esc(WK_SITE)+'">💼 仕事'+(c?'：'+esc(wkOptLb(WK_ROOT,c)):'')+'</button>';}
-function wkHide(x){return !!(x&&((x.G&&['A','V','B','T'].indexOf(x.G)>=0)||['ai','aibiz','aiwork','bizcall','work','gyg'].indexOf(x.k)>=0));}
+function wkHide(x){return !!(x&&((x.G&&['A','V','B','T'].indexOf(x.G)>=0)||['ai','aibiz','aiwork','bizcall','work','email_send','email_read','gyg'].indexOf(x.k)>=0));}
 function wkHtml(a,site,open){if(!a&&!open)return '';const b=a||{};if(!(Array.isArray(b.wc)&&b.wc.length)&&!open)return '';const L=wkChain(b);let lastWhy='';try{lastWhy=localStorage.getItem('hibiki-wkwhy')||'';}catch(e){}
 return '<div class="wk-steps" data-wksite="'+esc(site)+'">'+L.map((st,i)=>{const v=wkVal(b,L,i),has=wkHas(v),pv=(st.last&&!has&&lastWhy)?lastWhy:'',pvs=pv?pv.split(','):[];
 return '<div class="wk-st" data-wkst="'+i+'" style="--c:'+WK_CO[st.c]+'"><div class="wk-h"><i></i>'+esc(wkQ(st))+(has?' <span class="ok">✓</span>':' <b>どれ？</b>')+(pv?' <small class="pvh">前回：'+esc(pvs.map(z=>wkOptLb(st,z)).join('・'))+'</small>':'')+(st.tip?'<small>'+esc(st.tip)+'</small>':'')+'</div><div class="wk-o">'+
@@ -13284,7 +13285,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c50.19";
+const CL_APPVER="c50.20";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
