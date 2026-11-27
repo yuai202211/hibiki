@@ -4977,7 +4977,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c50.24）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c50.25）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -12676,7 +12676,15 @@ function wmMealAsk(go,selected){const vs=selected||[];openSub('<div class="sh-ti
 function wmBizBox(a,attr){const vs=wmValues(a,'bz'),rc=wmUnique(vs.concat(bzRecent()));return '<div class="ac-ai ac-bz"><span>🏷 何の事業（いくつでも）</span><input type="text" class="bz-in" '+attr+'="1" placeholder="自由に（例：中古車・新しい事業の名前）" value="'+esc(a.bz||'')+'">'+rc.map(x=>'<button type="button" aria-pressed="'+vs.includes(x)+'" class="chip'+(vs.includes(x)?' sel':'')+'" '+attr+'c="'+esc(x)+'">'+esc(x)+'</button>').join('')+'</div>';}
 
 var BR_SLOTS=[['wake','🌅','起床後'],['before','🚀','最初の行動の前'],['bed','🌙','就寝前']],BR_LIMIT=600000,BR_VIEW='',BR_NOTICE='',BR_CLEAN_AT=0;
-function brDay(){return bizDay();}
+var BR_DAY_CACHE=null;
+function brDay(){const now=Date.now(),today=todayStr(),version=state.updatedAt;if(version&&BR_DAY_CACHE&&BR_DAY_CACHE.entries===state.entries&&BR_DAY_CACHE.version===version&&now-BR_DAY_CACHE.at<30000)return BR_DAY_CACHE.day;
+let day='2026-11-27';const sleeps=sleepSessions();for(const d of Object.keys(sleeps)){if(d<day||d>today)continue;if(sleeps[d].some(x=>x.e&&new Date(d+'T'+x.e+':00').getTime()<=now))day=d;}
+// A saved reading day stays open across midnight until a later wake record exists.
+for(const x of Object.values(state.rlog||{})){if(x&&x.br&&!x.del&&x.brDay>day&&x.brDay<=today)day=x.brDay;}
+BR_DAY_CACHE={entries:state.entries,version,at:now,day};return day;}
+
+function brSlots(d){return d==='2026-11-27'?BR_SLOTS.filter(x=>x[0]==='bed'):BR_SLOTS;}
+function brExpected(d,slot){return brSlots(d).some(x=>x[0]===slot);}
 function brSlot(id){return BR_SLOTS.find(x=>x[0]===id);}
 function brLabel(x){const s=brSlot(x&&x.brSlot);return '熊谷手帳を読む'+(s?'（'+s[2]+'）':'');}
 function brLogs(d,slot){return Object.entries(state.rlog||{}).filter(([id,x])=>x&&x.br&&!x.del&&(!d||x.brDay===d)&&(!slot||x.brSlot===slot)).map(([id,x])=>Object.assign({id},x)).sort((a,b)=>(a.brStart||0)-(b.brStart||0));}
@@ -12689,7 +12697,7 @@ function brClock(ms){const s=Math.max(0,Math.floor(ms/1000));return String(Math.
 function brTime(ms){const n=new Date(ms);return pad(n.getHours())+':'+pad(n.getMinutes());}
 function brStamp(ms){const n=new Date(ms);return fmt(n)+'T'+brTime(ms);}
 function brWrite(fn){mutate(fn);try{ntfKick();}catch(e){}brRefresh();}
-function brStart(slot){if(!brSlot(slot))return false;const active=brActive();if(active){brOpen();toast('いま読んでいる回を、完了か中断にしてください');return false;}
+function brStart(slot){if(!brSlot(slot)||!brExpected(brDay(),slot))return false;const active=brActive();if(active){brOpen();toast('いま読んでいる回を、完了か中断にしてください');return false;}
 const d=brDay();if(brDone(d,slot)){toast('この回は読了済みです。直す場合は「履歴・修正」へ');return false;}
 const pending=brLogs(d,slot).find(x=>x.brReview&&!x.brDone);if(pending&&brTotal(d,slot)>=BR_LIMIT){brReview(pending.id);return false;}
 const now=Date.now(),id='br-'+d+'-'+slot+'-'+now;
@@ -12700,10 +12708,10 @@ if(done&&brTotal(x.brDay,x.brSlot)<BR_LIMIT){toast('読む時間を10分確保�
 const now=Date.now();if(now-x.brStart>18*3600000){brEdit(id);toast('終了時刻を確認して保存してください');return false;}
 brWrite(()=>{const y=state.rlog[id];if(!y||y.del||y.brEnd)return;state.rlog[id]=Object.assign({},y,{brEnd:now,brDone:0,brReview:done?1:0,e:brTime(now),m:Math.round(Math.max(0,now-y.brStart)/60000),ts:now});});
 if(done)brReview(id);else toast('読んだ時間を記録しました。続きは「再開する」から');return true;}
-function brCardHtml(){if(!(topView==='diary'&&ui.tab==='di'&&ui.date===todayStr()))return '';const d=brDay(),done=BR_SLOTS.filter(x=>brDone(d,x[0])).length,active=brActive();
-return '<section class="br-card" id="brCard" data-brday="'+esc(d)+'"><div class="br-head"><b>📖 熊谷手帳を読む</b><span>'+done+' / 3 回</span></div><p class="br-intro">自分で書いた中身を、すべて読み返す。<br><strong>1回10分</strong>、今日の行動につなげよう。</p><small class="br-date">'+esc(d)+'の手帳タイム · 朝5時に日付が切り替わります</small>'+
+function brCardHtml(){if(!(topView==='diary'&&ui.tab==='di'&&ui.date===todayStr()))return '';const d=brDay(),slots=brSlots(d),done=slots.filter(x=>brDone(d,x[0])).length,active=brActive();
+return '<section class="br-card" id="brCard" data-brday="'+esc(d)+'"><div class="br-head"><b>📖 熊谷手帳を読む</b><span>'+done+' / '+slots.length+' 回</span></div><p class="br-intro">自分で書いた中身を、すべて読み返す。<br><strong>1回10分</strong>、今日の行動につなげよう。</p>'+(slots.length===1?'<p class="br-hint">今日は就寝前の1回から。明日から3回です。</p>':'')+'<small class="br-date">'+esc(d)+'の手帳タイム · 起床の記録で次の1日へ（0時では切り替わりません）</small>'+
 (active&&active.brDay!==d?'<div class="br-carry">'+esc(active.brDay)+'の読書が続いています。<button type="button" data-br-edit="'+esc(active.id)+'">終了時刻を確認</button></div>':'')+
-BR_SLOTS.map(([slot,ic,lb])=>{const logs=brLogs(d,slot),ok=brDone(d,slot),review=brTotal(d,slot)>=BR_LIMIT&&logs.find(x=>x.brReview&&!x.brDone),running=active&&active.brDay===d&&active.brSlot===slot,total=brTotal(d,slot);return '<div class="br-row'+(ok?' done':running?' running':'')+'"><div class="br-row-head"><b>'+ic+' '+lb+'</b><span>'+(ok?'✓ 読了':running?'読んでいます':review?'振り返り待ち':'10分')+'</span></div>'+
+slots.map(([slot,ic,lb])=>{const logs=brLogs(d,slot),ok=brDone(d,slot),review=brTotal(d,slot)>=BR_LIMIT&&logs.find(x=>x.brReview&&!x.brDone),running=active&&active.brDay===d&&active.brSlot===slot,total=brTotal(d,slot);return '<div class="br-row'+(ok?' done':running?' running':'')+'"><div class="br-row-head"><b>'+ic+' '+lb+'</b><span>'+(ok?'✓ 読了':running?'読んでいます':review?'振り返り待ち':'10分')+'</span></div>'+
 (logs.length?'<div class="br-time"><span data-br-clock="'+slot+'">'+brClock(total)+'</span><small>読んだ時間</small></div>':'')+
 (running?'<p class="br-hint" data-br-hint>'+ (total>=BR_LIMIT?'10分経ちました。全部読めたら、手帳を閉じて振り返ろう。':'あと '+brClock(BR_LIMIT-total)+'。ひとつずつ、読み返そう。')+'</p><div class="br-actions"><button type="button" class="br-primary" data-br-stop="'+esc(active.id)+'"'+(total<BR_LIMIT?' disabled':'')+'>読み終えて確認へ</button><button type="button" class="br-secondary" data-br-pause="'+esc(active.id)+'">中断する</button></div>':ok?'<p class="br-finished">'+(slot==='before'?'準備できた。最初の一歩へ！':slot==='bed'?'今日も読み返せた。おつかれさま。':'夢を思い出せた。今日を始めよう。')+'</p>':review?'<button type="button" class="br-primary" data-br-review="'+esc(review.id)+'">✎ 振り返りを仕上げる</button>':'<button type="button" class="br-primary" data-br-start="'+slot+'"'+(active?' disabled':'')+'>'+(logs.length?'▶ 再開する':'📖 読み始める')+'</button>')+
 (logs.length?'<button type="button" class="br-history" data-br-history="'+slot+'">履歴・修正</button>':'')+'</div>';}).join('')+'<p class="br-foot">10分読む → 手帳を閉じてひと言 → 読了。<br>ひと言の文章は保存しません。入力時間は、読む時間に含めません。</p></section>';}
@@ -12714,7 +12722,7 @@ function brTick(){if(document.hidden)return;if(Date.now()-BR_CLEAN_AT>10000&&!fp
 for(const el of card.querySelectorAll('[data-br-clock]'))el.textContent=brClock(brTotal(d,el.dataset.brClock));
 const a=brActive(),hint=card.querySelector('[data-br-hint]');if(a&&hint&&a.brDay===d){const total=brTotal(d,a.brSlot);hint.textContent=total>=BR_LIMIT?'10分経ちました。全部読めたら、手帳を閉じて振り返ろう。':'あと '+brClock(BR_LIMIT-total)+'。ひとつずつ、読み返そう。';const button=card.querySelector('[data-br-stop]');if(button)button.disabled=total<BR_LIMIT;if(total>=BR_LIMIT&&BR_NOTICE!==a.id){BR_NOTICE=a.id;toast('📖 10分経ちました。全部読めたら「読み終えて確認へ」');}}
 }
-function brGate(slot,go){if(brDone(brDay(),slot)){go();return;}const s=brSlot(slot),active=brActive();openSub('<div class="sh-time"><span>'+s[1]+' '+s[2]+'に、手帳を10分</span></div><p class="sh-note">自分で書いた中身を、すべて読み返しましょう。</p><div class="br-gate"><button type="button" class="savebtn" id="brGateRead">📖 手帳を読む</button><button type="button" class="br-secondary" id="brGateSkip">'+(active?'読書を中断して、':'今回は')+(slot==='bed'?'そのまま寝る':'先に行動を始める')+'</button></div>',null);
+function brGate(slot,go){if(!brExpected(brDay(),slot)||brDone(brDay(),slot)){go();return;}const s=brSlot(slot),active=brActive();openSub('<div class="sh-time"><span>'+s[1]+' '+s[2]+'に、手帳を10分</span></div><p class="sh-note">自分で書いた中身を、すべて読み返しましょう。</p><div class="br-gate"><button type="button" class="savebtn" id="brGateRead">📖 手帳を読む</button><button type="button" class="br-secondary" id="brGateSkip">'+(active?'読書を中断して、':'今回は')+(slot==='bed'?'そのまま寝る':'先に行動を始める')+'</button></div>',null);
 $('brGateRead').onclick=()=>{closeSub();if(brActive())brOpen();else brStart(slot);};$('brGateSkip').onclick=()=>{closeSub();const a=brActive();if(a&&!brStop(a.id,false))return;go();};}
 function brHistory(d,slot){const logs=brLogs(d,slot);openSub('<div class="sh-time"><span>📖 '+esc(brSlot(slot)[2])+' · 履歴・修正</span></div><div class="br-log-list">'+logs.map(x=>'<button type="button" class="br-log" data-br-log="'+esc(x.id)+'"><b>'+esc(x.d)+' '+esc(x.s)+' → '+esc(x.e||'読書中')+'</b><span>'+brClock(brElapsed(x))+' · '+(x.brDone?'✓ 全部読んだ':x.brEnd?'中断':'読書中')+'　✎ 編集</span></button>').join('')+'</div><button type="button" class="br-secondary" id="brHistClose">閉じる</button>',null);$('sheet2').querySelectorAll('[data-br-log]').forEach(b=>b.onclick=()=>brEdit(b.dataset.brLog));$('brHistClose').onclick=closeSub;}
 function brEdit(id){const x=(state.rlog||{})[id];if(!x||!x.br||x.del)return;const snap=JSON.stringify(x);
@@ -12725,8 +12733,8 @@ function brSaveEdit(id,snap,d,start,end,done){const x=(state.rlog||{})[id];if(!x
 const s=start===brStamp(x.brStart)?x.brStart:new Date(start).getTime(),e=end?(x.brEnd&&end===brStamp(x.brEnd)?x.brEnd:new Date(end).getTime()):0,now=Date.now();if(!/^\d{4}-\d{2}-\d{2}$/.test(d)||d>todayStr()||!Number.isFinite(s)||s>now)return '日付と開始日時を確認してください。';if(end&&(!Number.isFinite(e)||e<s||e>now||e-s>18*3600000))return '終了日時を確認してください（開始から18時間以内）。';if(done&&!e)return '全部読んだ場合は、終了日時も入れてください。';const active=brActive();if(!e&&active&&active.id!==id)return 'ほかの回を読書中です。先に終了してください。';
 if(done&&(!(x.brReviewed||brReflectionValid(x.brReflection))||brLogs(d,x.brSlot).filter(y=>y.id!==id).reduce((n,y)=>n+brElapsed(y),0)+e-s<BR_LIMIT))return '読了には、10分読むことと内容の振り返りが必要です。';
 brWrite(()=>{state.rlog[id]=Object.assign({},x,{brDay:d,brStart:s,brEnd:e,brDone:done?1:0,brReview:done||!e?0:(x.brReview||0),d:fmt(new Date(s)),s:brTime(s),e:e?brTime(e):'',m:e?Math.round((e-s)/60000):0,ts:now});});return '';}
-function brNotifications(add,t,d1){const C=ntfCfg();if(!C.on.book)return;const now=Date.now(),A=alarmCfg();for(const d of [t,d1]){const wake=ntfAt(d,A.wake).getTime(),wakeDay=hmMin(A.wake)<300?addDays(d,-1):d,bed=ntfAt(d,A.bed).getTime(),bedDay=hmMin(A.bed)<300?addDays(d,-1):d;
-if(!brDone(wakeDay,'wake'))add('book-wake|'+wakeDay,wake,'📖 起床後、熊谷手帳を10分','自分で書いた中身を、すべて読み返そう。');
+function brNotifications(add,t,d1){const C=ntfCfg();if(!C.on.book)return;const now=Date.now(),A=alarmCfg();for(const d of [t,d1]){const wake=ntfAt(d,A.wake).getTime(),wakeDay=d,bed=ntfAt(d,A.bed).getTime(),bedDay=d===todayStr()&&bed>=now?brDay():(hmMin(A.bed)<720?addDays(d,-1):d);
+if(brExpected(wakeDay,'wake')&&!brDone(wakeDay,'wake'))add('book-wake|'+wakeDay,wake,'📖 起床後、熊谷手帳を10分','自分で書いた中身を、すべて読み返そう。');
 if(!brDone(bedDay,'bed'))add('book-bed|'+bedDay,bed-10*60000,'📖 就寝前、熊谷手帳を10分','今日の夢と行動を読み返してから、おやすみ。');}
 const a=brActive();if(a){const previous=brLogs(a.brDay,a.brSlot).filter(x=>x.id!==a.id).reduce((n,x)=>n+brElapsed(x),0),at=a.brStart+Math.max(0,BR_LIMIT-previous);if(at>=now-180000)add('book-timer|'+a.id,at,'📖 手帳タイム、10分経ちました','全部読めたら、手帳を閉じて内容をひと言で振り返ろう。');}}
 // Older versions stored the phrase. Keep only its completion flag, never its text.
@@ -12741,7 +12749,7 @@ $('brReviewForm').onsubmit=e=>{e.preventDefault();const error=brSaveReview(id,$(
 function brSaveReview(id,text,confirmed){const x=(state.rlog||{})[id];if(!x||x.del||!x.brEnd)return '記録が変わりました。開き直してください。';if(x.brDone)return '';if(brTotal(x.brDay,x.brSlot)<BR_LIMIT)return '読む時間が10分に届いていません。再開して読み返しましょう。';if(!brReflectionValid(text))return '手帳に書いた具体的な内容を、5文字以上でひと言お願いします。';if(!confirmed)return '中身をすべて読み返したことを確認してください。';
 brWrite(()=>{state.rlog[id]=Object.assign(brWithoutReflection(state.rlog[id]),{brDone:1,brReview:0,brReviewed:1,t:'',ts:Date.now()});});return '';}
 var brSleepBase=quickSleepStart;quickSleepStart=function(){if(openSleep())return brSleepBase.apply(this,arguments);brGate('bed',()=>brSleepBase());};
-var brWakeBase=quickWake;quickWake=function(){const had=!!openSleep(),result=brWakeBase.apply(this,arguments);if(had&&!openSleep()&&!brDone(brDay(),'wake')){brOpen();toast('🌅 おはよう。熊谷手帳を読む10分から始めよう。');}return result;};
+var brWakeBase=quickWake;quickWake=function(){const had=!!openSleep(),result=brWakeBase.apply(this,arguments);if(had&&!openSleep()&&brExpected(brDay(),'wake')&&!brDone(brDay(),'wake')){brOpen();toast('🌅 おはよう。熊谷手帳を読む10分から始めよう。');}return result;};
 document.addEventListener('visibilitychange',()=>{if(!document.hidden){brRefresh();brTick();}});
 setInterval(brTick,1000);
 
@@ -13470,7 +13478,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c50.24";
+const CL_APPVER="c50.25";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
