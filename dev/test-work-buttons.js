@@ -37,3 +37,13 @@ console.log('PASS: independent send/read work types, auction preview search, veh
 assert.equal(run("kindOf('dreambook').lb"),'夢手帳タイム');
 assert.equal(run("kindOf('dreambook').g"),'S');
 assert.equal(run("kindOf('dreambook').muda"),false);
+
+// The important activity is pinned first even without usage history; user pins stay intact.
+vm.runInContext(section('function qFixIds(){','const KUSEN='),ctx);
+ctx.state._cfg.qfix=['read','dreambook','read'];
+assert.deepEqual(Array.from(run('qFixIds()')),['dreambook','read']);
+ctx.KSEC=[];ctx.WK_SITE=false;ctx.QTOP_N=8;ctx.QMORE=false;ctx.todayStr=()=> '2026-11-28';ctx.qTopStart=()=> '2026-11-01';ctx.parseD=d=>new Date(d+'T00:00:00');ctx.kUseDays=()=>({});
+ctx.mk=id=>'<button class="chip" data-kind="'+id+'">'+run('kindOf("'+id+'").lb')+'</button>';
+const pinHtml=run("qTopHtml([], 'data-kind', mk, [], [], [])");
+assert(pinHtml.includes('夢手帳タイム'));assert(pinHtml.indexOf('夢手帳タイム')<pinHtml.indexOf('読書'));assert.equal((pinHtml.match(/data-kind="dreambook"/g)||[]).length,1);assert.deepEqual(ctx.state._cfg.qfix,['read','dreambook','read']);
+console.log('PASS: dream notebook activity pinned first, no history required, no duplicate, existing pin configuration unchanged.');

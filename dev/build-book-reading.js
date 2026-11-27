@@ -2,6 +2,8 @@
 const fs=require('fs'),path=require('path');
 module.exports=function(h){const rep=(a,b)=>{const n=h.split(a).length-1;if(n!==1)throw Error('book-reading anchor '+n+': '+a.slice(0,100));h=h.replace(a,b);};
 rep("['read','📖','読書','#8b5e3c','S',0,'h']", "['read','📖','読書','#8b5e3c','S',0,'h'],['dreambook','📖','夢手帳タイム','#15803d','S',0,'h']");
+rep("return Array.isArray(L)?L.filter(id=>{const k=kindOf(id);return k&&!k.off;}):[];", "return ['dreambook',...(Array.isArray(L)?L:[])].filter((id,i,a)=>{const k=kindOf(id);return a.indexOf(id)===i&&k&&!k.off;});");
+rep("if(!top.length)return '';", "if(!top.length&&!qFixIds().length)return '';");
 rep('pane.innerHTML=fpCardHtml()+html;','pane.innerHTML=brCardHtml()+fpCardHtml()+html;');
 rep('prepBind(pane);fpBind(pane);','prepBind(pane);fpBind(pane);brBind(pane);');
 rep("if(a==='start'){mutate(()=>{state.prep[d]=Object.assign({},state.prep[d],{fpStart:Date.now(),ts:Date.now()});});}","if(a==='start'){brGate('before',()=>{if(d!==todayStr())return;mutate(()=>{state.prep[d]=Object.assign({},state.prep[d],{fpStart:Date.now(),ts:Date.now()});});});}");
