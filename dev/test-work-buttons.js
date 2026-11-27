@@ -5,6 +5,7 @@ function section(a,b){const start=html.indexOf(a),end=html.indexOf(b,start);asse
 const ctx={state:{kinds:{},_cfg:{wkLb:{cis:'業者用画面'}}},grpOk:()=>true,kSg:()=>'',localStorage:{getItem:()=>null,setItem(){}},esc:s=>String(s),AI_TOOLS:[],aipList:()=>[]};
 vm.createContext(ctx);
 vm.runInContext(section('const KIND_BASE=','function coLb()')+section('function kindOf(','function acPlCands(')+section('var WK_SITE=','var WK_SCT1='),ctx);
+vm.runInContext(fs.readFileSync(path.join(__dirname,'multi-select.js'),'utf8'),ctx);
 const run=s=>vm.runInContext(s,ctx);
 run('function kindList(){return KIND_BASE.map(b=>kindOf(b[0]));}');
 const roots=run('wkOpts(WK_ROOT)');for(const [id,label] of [['email_send','📧 メール作成・送信'],['email_read','📥 受信メール確認']])assert.equal(roots.find(x=>x[0]===id)[1],label);
@@ -24,8 +25,9 @@ for(const [id,steps,label] of [
  assert.equal(run('kindOf(row.k).muda'),false);
 }
 ctx.row={};run("wkApply(row,0,'email_send','test');wkApply(row,1,'pc','test');wkApply(row,2,'desk','test');row.t='Preserve authored comment';wkApply(row,0,'email_read','test')");
-assert.equal(ctx.row.k,'email_read');assert.equal(ctx.row.t,'Preserve authored comment');assert.equal(ctx.row.d,undefined);assert.equal(ctx.row.ws,undefined);
-assert.equal(run("wkApply(row,0,'email_read','test')"),'del');assert.equal(ctx.row.k,'');
+assert.equal(ctx.row.k,'email_send');assert(ctx.row.kx.includes('email_read'));assert.equal(ctx.row.t,'Preserve authored comment');assert.equal(ctx.row.d,'pc');assert.equal(ctx.row.ws,'desk');
+run("wkApply(row,0,'email_read','test')");assert.equal(ctx.row.k,'email_send');
+assert.equal(run("wkApply(row,0,'email_send','test')"),'del');assert.equal(ctx.row.k,'');
 assert.equal(run("wkKind(['car','scr','cis','mkt'])"),'mkt');assert.equal(run("wkKind(['tel','bizcall'])"),'bizcall');assert.equal(run("wkKind(['ai'])"),'ai');
 assert.equal(run("WK_HW.o().find(x=>x[0]==='mail')[1]"),'✉️ メール・掲載サイト');
 assert.equal(run("kindOf('c_shaken').lb"),'車検証コピー依頼');

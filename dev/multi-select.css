@@ -1,0 +1,5 @@
+.wm-note{color:#6d628a;font-size:12px;line-height:1.6;padding:2px 4px 6px;font-weight:700}
+.wk-multi .wk-o button{white-space:normal;overflow-wrap:anywhere;max-width:100%;min-height:40px}
+.wk-multi .wk-h small{display:block;width:100%;font-weight:600}
+.wk-multi .wk-o button.sel::after{content:' ✓';font-size:11px}
+.wk-multi .wk-o{align-items:stretch}

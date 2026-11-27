@@ -6,7 +6,7 @@
 - iPhone はホーム画面のアイコンから開く（Safari のタブで開くと保存領域とログインが別になり、しばらく使わないと端末の控えが消されることがある。記録の本体はクラウドにあるので、消えても次の起動で取り直す）
 - 単一の HTML（`index.html`）＋ Service Worker（`sw.js`）＋ `manifest.webmanifest`
 - データとログイン：Supabase（Auth・Postgres・Storage）。アプリに入っているのは公開前提のキーだけ
-- 版：**c50.21**（`sw.js` の `VER` と画面の診断ラベルに出る）
+- 版：**c50.22**（`sw.js` の `VER` と画面の診断ラベルに出る）
 
 ## できること
 
@@ -46,3 +46,9 @@
 見出しは「今日／明日、はじめにやる事」。当日の移動・場所の日記を保存すると、この予定のための記録か確認する。「いいえ」は次の記録時に再確認し、「はい」は `prep.fpLink` に実際の日記の参照を保存する。場所・時間・日記本文を上書きせず、作業完了とも分ける。紐づけはカードから取り消せる。予定の目的地を移動記録へ自動入力せず、到着時に実際の場所を選ぶ。
 
 `dev/first-step.js` と `dev/first-step.css` が実装。非公開のビルダーではクラウド層の挿入前に `h=require(path.join(__dirname,'build-first-step.js'))(h);` を呼ぶ。`dev/build-first-step.js` は既存の挿入位置が変わるとエラーにし、機能の欠落を防ぐ。ビルド後は `node dev/test-first-step.js` で確認する。
+
+### 記録の複数選択（c50.22）
+
+仕事の各階層、端末、作業場所、連絡手段、事業の分類を複数選択できる。同じボタンを再度押すとその選択だけ外れる。既存の活動・AI・目的の複数選択も保存・再編集で保持する。各分類の時間はそれぞれ集計し、経過時間・移動時間は重複計上しない。
+
+`dev/multi-select.js` と `dev/multi-select.css` が実装。非公開のビルダーは `build-first-step.js` の直後、クラウド層の挿入前に `h=require(path.join(__dirname,'build-multi-select.js'))(h);` を呼ぶ。`wm` は選択した仕事の階層、`wsx`・`hwx`・`bzx` は追加の選択肢を保存する。既存の `wc`・`k/kx`・`d/dd` と併記し、既存記録を一括書き換えない。検証は `node dev/test-multi-select.js`、`node dev/test-multi-analysis.js`、`node dev/test-work-buttons.js`。
