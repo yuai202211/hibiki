@@ -1,0 +1,13 @@
+'use strict';
+const fs=require('fs'),path=require('path');
+module.exports=function(h){const rep=(a,b)=>{const n=h.split(a).length-1;if(n!==1)throw Error('book-reading anchor '+n+': '+a.slice(0,100));h=h.replace(a,b);};
+rep('pane.innerHTML=fpCardHtml()+html;','pane.innerHTML=brCardHtml()+fpCardHtml()+html;');
+rep('prepBind(pane);fpBind(pane);','prepBind(pane);fpBind(pane);brBind(pane);');
+rep("if(a==='start'){mutate(()=>{state.prep[d]=Object.assign({},state.prep[d],{fpStart:Date.now(),ts:Date.now()});});}","if(a==='start'){brGate('before',()=>{if(d!==todayStr())return;mutate(()=>{state.prep[d]=Object.assign({},state.prep[d],{fpStart:Date.now(),ts:Date.now()});});});}");
+rep("rn:((rn[x.r]&&rn[x.r].n)||'ルーティン')","rn:(x.br?brLabel(x):((rn[x.r]&&rn[x.r].n)||'ルーティン'))");
+rep('function openRlogSheet(rid,lid){','function openRlogSheet(rid,lid){if(lid&&(state.rlog||{})[lid]&&state.rlog[lid].br)return brEdit(lid);');
+rep('prep:1,wake:1,tb:1,','prep:1,wake:1,book:1,tb:1,');
+rep("row('wake','🌞 起きる',tin('ntWake',A.wake))+","row('wake','🌞 起きる',tin('ntWake',A.wake))+row('book','📖 熊谷手帳を読む','起床・就寝前・10分の目安')+");
+rep('if(on.wake){','try{brNotifications(add,t,d1);}catch(e){}\nif(on.wake){');
+const js=fs.readFileSync(path.join(__dirname,'book-reading.js'),'utf8'),css=fs.readFileSync(path.join(__dirname,'book-reading.css'),'utf8');
+rep('</style>',css+'\n</style>');rep('\nboot();','\n'+js+'\nboot();');return h;};

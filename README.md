@@ -6,7 +6,7 @@
 - iPhone はホーム画面のアイコンから開く（Safari のタブで開くと保存領域とログインが別になり、しばらく使わないと端末の控えが消されることがある。記録の本体はクラウドにあるので、消えても次の起動で取り直す）
 - 単一の HTML（`index.html`）＋ Service Worker（`sw.js`）＋ `manifest.webmanifest`
 - データとログイン：Supabase（Auth・Postgres・Storage）。アプリに入っているのは公開前提のキーだけ
-- 版：**c50.22**（`sw.js` の `VER` と画面の診断ラベルに出る）
+- 版：**c50.23**（`sw.js` の `VER` と画面の診断ラベルに出る）
 
 ## できること
 
@@ -52,3 +52,11 @@
 仕事の各階層、端末、作業場所、連絡手段、事業の分類を複数選択できる。同じボタンを再度押すとその選択だけ外れる。既存の活動・AI・目的の複数選択も保存・再編集で保持する。各分類の時間はそれぞれ集計し、経過時間・移動時間は重複計上しない。
 
 `dev/multi-select.js` と `dev/multi-select.css` が実装。非公開のビルダーは `build-first-step.js` の直後、クラウド層の挿入前に `h=require(path.join(__dirname,'build-multi-select.js'))(h);` を呼ぶ。`wm` は選択した仕事の階層、`wsx`・`hwx`・`bzx` は追加の選択肢を保存する。既存の `wc`・`k/kx`・`d/dd` と併記し、既存記録を一括書き換えない。検証は `node dev/test-multi-select.js`、`node dev/test-multi-analysis.js`、`node dev/test-work-buttons.js`。
+
+### 熊谷手帳を読み返す習慣（c50.23）
+
+起床後・最初の行動の前・就寝前に、各10分、自分で書いた中身をすべて読み返す。日記に3回分の進捗を表示し、開始・中断・再開を記録する。10分経過だけでは完了せず、手帳を閉じて覚えておきたい内容をひと言入力し、すべて読んだことを確認して読了にする。中断中と振り返りの入力時間は読む時間に含めない。アプリで実際の読書内容を検証するものではない。
+
+開始・終了・振り返りは既存の `rlog` で保存・同期し、日記の時系列にも表示する。履歴から日時・振り返り・読了を修正できる。習慣の日付は既存の朝5時区切りを使用する。起床・最初の行動・就寝に案内を組み込み、既存通知設定に起床・就寝10分前・読書10分経過の案内を追加する。先に行動・就寝する場合は未完了のまま残す。iPhoneへの通知実配信は別途実機確認が必要。
+
+実装は `dev/book-reading.js` と `dev/book-reading.css`。非公開ビルダーは `build-multi-select.js` の後に `h=require(path.join(__dirname,'build-book-reading.js'))(h);` を呼ぶ。検証は `node dev/test-book-reading.js`。
