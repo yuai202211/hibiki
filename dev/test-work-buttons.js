@@ -9,11 +9,13 @@ const run=s=>vm.runInContext(s,ctx);
 run('function kindList(){return KIND_BASE.map(b=>kindOf(b[0]));}');
 const roots=run('wkOpts(WK_ROOT)');for(const [id,label] of [['email_send','📧 メール作成・送信'],['email_read','📥 受信メール確認']])assert.equal(roots.find(x=>x[0]===id)[1],label);
 assert.equal(run("wkOpts(WK_ROOT.nx('car').nx('scr').nx('cis')).find(x=>x[0]==='c_shitami')[1]"),'🔍 下見検索');
+assert.equal(run("wkOpts(WK_ROOT.nx('car').nx('proc')).find(x=>x[0]==='c_inspection')[1]"),'🚘 車検');
 assert.equal(run("wkQ(WK_ROOT.nx('car').nx('scr').nx('cis'))"),'業者用画面のどれ？');
 for(const [id,steps,label] of [
  ['email_send',['email_send','pc','desk'],'メール作成・送信'],
  ['email_read',['email_read','phone','move'],'受信メール確認'],
- ['c_shitami',['car','scr','cis','c_shitami','pc','desk'],'下見検索']
+ ['c_shitami',['car','scr','cis','c_shitami','pc','desk'],'下見検索'],
+ ['c_inspection',['car','proc','c_inspection'],'車検']
 ]){
  ctx.row={};steps.forEach((v,i)=>{ctx.choice=v;run('wkApply(row,wkChain(row).length-1,choice,"test")');});
  assert.equal(ctx.row.k,id);assert.equal(ctx.row.t,label);assert.equal(run('wkDone(row)'),true);
@@ -26,4 +28,6 @@ assert.equal(ctx.row.k,'email_read');assert.equal(ctx.row.t,'Preserve authored c
 assert.equal(run("wkApply(row,0,'email_read','test')"),'del');assert.equal(ctx.row.k,'');
 assert.equal(run("wkKind(['car','scr','cis','mkt'])"),'mkt');assert.equal(run("wkKind(['tel','bizcall'])"),'bizcall');assert.equal(run("wkKind(['ai'])"),'ai');
 assert.equal(run("WK_HW.o().find(x=>x[0]==='mail')[1]"),'✉️ メール・掲載サイト');
-console.log('PASS: independent send/read work types, auction preview search, device/place selection, save/reopen serialization, category switching, deselection, comments and existing work flows.');
+assert.equal(run("kindOf('c_shaken').lb"),'車検証コピー依頼');
+assert.equal(run("kindOf('c_inspection').g"),'V');
+console.log('PASS: independent send/read work types, auction preview search, vehicle inspection, device/place selection, save/reopen serialization, category switching, deselection, comments and existing work flows.');
