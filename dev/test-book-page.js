@@ -1,0 +1,17 @@
+'use strict';
+const fs=require('fs'),path=require('path'),vm=require('vm'),assert=require('assert/strict');
+const html=fs.readFileSync(path.join(__dirname,'../index.html'),'utf8');
+const stamp=s=>new Date('2026-11-28T'+s+':00').getTime();
+const r=(s,e,note,extra={})=>Object.assign({br:1,brDay:'2026-11-27',brSlot:'bed',brStart:stamp(s),brEnd:stamp(e),d:'2026-11-28',s,e,brNote:note,brDone:0},extra);
+const state={rlog:{a:r('03:29','03:34',''),b:r('03:36','03:38',''),c:r('03:40','03:44','My concrete next step',{brDone:1,brReviewed:1}),n:r('03:36','03:36','A saved thought',{brNoteOnly:1,brStar:1}),reset:r('03:00','03:10','Keep this old note',{brReset:1}),deleted:r('04:00','04:30','Deleted',{del:1}),routine:{r:'exercise',d:'2026-11-28',s:'08:00',e:'08:15'}}};
+const ctx={state,Date,srNorm:s=>s.toLowerCase(),brElapsed:x=>x.brEnd-x.brStart,brReflectionValid:x=>!!x,brLabel:()=> 'Book reading',bnText:x=>x.brNote||'',brSlot:()=>['bed','🌙','就寝前'],brClock:n=>String(n/60000),esc:s=>String(s).replace(/[<>&"']/g,''),fmt:d=>d.toISOString().slice(0,10),bnCard:x=>'<p>'+x.brNote+'</p>'};
+vm.createContext(ctx);vm.runInContext(fs.readFileSync(path.join(__dirname,'book-page.js'),'utf8'),ctx);const run=s=>vm.runInContext(s,ctx);
+const before=JSON.stringify(state),groups=run('bnGroups()');assert.equal(groups.length,1);assert.equal(groups[0].total,11*60000);assert.equal(groups[0].rows.length,5);assert.equal(groups[0].done,true);
+assert.equal(run('bnGroups({star:true})[0].total'),0);assert.equal(run("bnGroups({q:'concrete'})[0].rows.length"),1);assert.equal(run("bnGroups({from:'2026-11-29'}).length"),0);assert.equal(run("bnGroups({to:'2026-11-27'}).length"),0);
+assert.equal(run('bnInDiary(state.rlog.a)'),false);assert.equal(run('bnInDiary(state.rlog.n)'),false);assert.equal(run('bnInDiary(state.rlog.routine)'),true);
+assert.equal(run('bnInDiary({k:"dreambook"})'),true,'manual dreambook diary activity remains');
+ctx.ids=['navHome','navYume','navDiary','navEarn','navTodo','navPay','navMemo','navMisc','navBookNotes','navDocs'];const idsBefore=JSON.stringify(ctx.ids);const order=run('bnNavOrder(ids)');assert.equal(order[6],'navBookNotes');assert.equal(order[7],'navEarn');assert.equal(new Set(order).size,ctx.ids.length);assert.equal(JSON.stringify(ctx.ids),idsBefore);
+ctx.ids=['navMemo','navEarn','navDiary','navBookNotes','navYume','navHome','navPay','navTodo','navMisc'];assert.deepEqual(Array.from(run('bnNavOrder(ids)')).slice(0,6),['navMemo','navDiary','navYume','navHome','navPay','navTodo']);
+assert.equal(JSON.stringify(state),before,'grouping, filtering and display never mutate records');
+assert(html.includes('return bnNavOrder(L);'));assert(!html.includes('brCardHtml()+fpCardHtml()+html'));assert(html.includes('if(!bnInDiary(x)||x.d!==ui.date||!x.s)continue;'));
+console.log('PASS: grouped pause/resume times, preserved notes/reset records, date/word/star filtering, diary separation, custom navigation order and no data writes.');

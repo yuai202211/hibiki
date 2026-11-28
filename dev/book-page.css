@@ -1,0 +1,18 @@
+.bn-lead{font-size:13px;line-height:1.8;margin:0 0 16px;color:#607b6c}
+.bn-tabs{display:flex;gap:5px;padding:4px;background:#edf1f7;border-radius:15px;margin-bottom:18px}
+.bn-tabs button{flex:1;min-width:0;min-height:46px;border:0;border-radius:12px;background:transparent;color:#788493;font:inherit;font-weight:800;font-size:14px}
+.bn-tabs button[aria-pressed=true]{background:#fff;color:#087a52;box-shadow:0 2px 5px #203c2520}
+.bn-page .br-card{margin:0 0 12px}
+.bn-group{border:1px solid #d4e6da;border-radius:20px;background:#fff;padding:16px;margin:14px 0;overflow-wrap:anywhere;box-shadow:0 4px 12px #1b5b3610}
+.bn-group-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;font-size:12px;line-height:1.8}
+.bn-group-head>span{background:#e5f5eb;border-radius:20px;padding:4px 9px;color:#07834c;font-weight:800}
+.bn-group h3{font-size:17px;margin:14px 0 8px;color:#245542}
+.bn-total{display:flex;align-items:baseline;gap:10px;font-size:26px;font-variant-numeric:tabular-nums;font-weight:800;color:#116744;margin:9px 0}
+.bn-total small{font-size:12px;font-weight:400;color:#647f70}
+.bn-group .bn-note{border:0;border-radius:0;border-top:1px solid #e4eee8;margin:12px 0 0;padding:12px 0 0}
+.bn-group .bn-note>p{font-size:16px;line-height:1.9;margin:10px 0}
+.bn-group summary,.bn-filters summary{min-height:40px;padding:10px 0;box-sizing:border-box;font-size:13px;color:#4c7863;cursor:pointer}
+.bn-group summary span{font-size:11px;margin-left:7px;color:#718379}
+.bn-segments{display:grid;gap:8px}.bn-segments .br-log{width:100%;text-align:left}
+.bn-filters{border-bottom:1px solid #dbe8e0;margin-bottom:10px;padding-bottom:5px}.bn-filters .bn-filter{padding:6px 0 12px}
+.bn-encourage{background:#edf8f1;border-radius:14px;padding:14px;font-size:13px;color:#58816b;line-height:1.8}
