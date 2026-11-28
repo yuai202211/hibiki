@@ -30,6 +30,7 @@ function tfLoad(){
  TF.draft=found?{id:found[0],day:found[1].tfDay,text:found[1].t,base:found[1].t,dirty:false}:{id:tfId(),day:todayStr(),text:'',base:'',dirty:false};
 }
 function tfSaveDraft(){
+ if(TF.composing)return false;
  clearTimeout(TF.timer);const d=TF.draft;if(!d||!d.dirty)return true;
  const m=(state.memos||{})[d.id];
  // A concurrent device's draft is kept intact; save this version separately.
@@ -39,9 +40,9 @@ function tfSaveDraft(){
   if(localSaveFail)return false;d.base=d.text;d.dirty=false;TF.stamp=tfStamp();tfBackup();return true;
  }finally{TF.busy=false;}
 }
-function tfInput(text){tfLoad();TF.draft.text=text;TF.draft.dirty=true;tfBackup();clearTimeout(TF.timer);TF.timer=setTimeout(()=>{const ok=tfSaveDraft();const el=$('tfSave');if(el)el.textContent=ok?'下書き保存済み':'保存できません。入力はこのまま残しています';},700);}
+function tfInput(text){tfLoad();TF.draft.text=text;TF.draft.dirty=true;tfBackup();clearTimeout(TF.timer);if(TF.composing)return;TF.timer=setTimeout(()=>{const ok=tfSaveDraft();const el=$('tfSave');if(el)el.textContent=ok?'下書き保存済み':'保存できません。入力はこのまま残しています';},700);}
 function tfApply(){
- if(TF.busy)return false;tfLoad();const d=TF.draft,p=tfParse(d.text);if(p.error||!p.items.length){tfMessage(p.error||'まず、メモを書いてください。');return false;}
+ if(TF.busy||TF.composing)return false;tfLoad();const d=TF.draft,p=tfParse(d.text);if(p.error||!p.items.length){tfMessage(p.error||'まず、メモを書いてください。');return false;}
  const applied=(state.memos||{})[d.id];
  if(applied&&applied.tfApplied&&applied.t===d.text){saveLocal(false);if(localSaveFail){tfMessage('まだ保存できません。元の文章は残しています。');return false;}if((applied.tfIds||[]).some(id=>!state.todos[id])){tfMessage('別の端末で反映したToDoを同期中です。入力は残しています。');return false;}tfApplied();return true;}
  d.dirty=true; // Re-check a remote draft revision even when this editor has not changed.
@@ -57,21 +58,21 @@ function tfApply(){
  }finally{TF.busy=false;}
  tfApplied();tfMessage(p.items.filter(x=>!x.divider).length+'件を反映しました。元の文章も保存しています。');return true;
 }
-function tfApplied(){TF.draft={id:tfId(),day:todayStr(),text:'',base:'',dirty:false};TF.paper=false;tfBackup();tfRender();}
+function tfApplied(){TF.draft={id:tfId(),day:todayStr(),text:'',base:'',dirty:false};TF.paper=false;tfBackup();tfRender(true);}
 function tfMessage(s){const el=$('tfMessage');if(el)el.textContent=s;else toast(s);}
-function tfStartEdit(id){if(TF.edit&&TF.edit.id!==id)return tfMessage('編集中の内容を保存してから、次を開いてください。');const x=(state.todos||{})[id];if(!x||x.del)return;TF.confirm='';TF.edit={id,t:x.t||'',c:x.c||'',baseT:x.t||'',baseC:x.c||''};tfBackup();tfRender();$('tfTitle').focus();}
+function tfStartEdit(id){if(TF.edit&&TF.edit.id!==id)return tfMessage('編集中の内容を保存してから、次を開いてください。');const x=(state.todos||{})[id];if(!x||x.del)return;TF.confirm='';TF.edit={id,t:x.t||'',c:x.c||'',baseT:x.t||'',baseC:x.c||''};tfBackup();tfRender(true);$('tfTitle').focus();}
 function tfSaveEdit(){
  const e=TF.edit;if(!e||!e.t.trim())return tfMessage('大タイトルを入力してください。');const x=(state.todos||{})[e.id];
- if(x&&!x.del&&x.t===e.t.trim()&&String(x.c||'')===e.c){saveLocal(false);if(localSaveFail)return tfMessage('まだ保存できません。入力を残しています。');TF.edit=null;tfBackup();tfRender();return;}
+ if(x&&!x.del&&x.t===e.t.trim()&&String(x.c||'')===e.c){saveLocal(false);if(localSaveFail)return tfMessage('まだ保存できません。入力を残しています。');TF.edit=null;tfBackup();tfRender(true);return;}
  if(!x||x.del||x.t!==e.baseT||String(x.c||'')!==e.baseC){tfMessage('別の画面で変更されています。入力をコピーしてから「戻る」で最新の内容を確認してください。');return;}
  TF.busy=true;try{mutate(()=>{state.todos[e.id]=Object.assign({},x,{t:e.t.trim(),c:e.c,ts:tfTs(x)});});if(localSaveFail){tfMessage('保存できません。入力を残しています。');return;}
- TF.edit=null;tfBackup();}finally{TF.busy=false;}tfRender();tfMessage('変更を保存しました。');
+ TF.edit=null;tfBackup();}finally{TF.busy=false;}tfRender(true);tfMessage('変更を保存しました。');
 }
 function tfComplete(id,yes){
- if(!yes){TF.confirm=id;tfRender();const b=$('tfNo');if(b)b.focus();return;}
- if(TF.busy||TF.confirm!==id)return;const x=(state.todos||{})[id];if(!x||x.del||tdDone(Object.assign({id},x))){TF.confirm='';tfRender();return;}
+ if(!yes){TF.confirm=id;tfRender(true);const b=$('tfNo');if(b)b.focus();return;}
+ if(TF.busy||TF.confirm!==id)return;const x=(state.todos||{})[id];if(!x||x.del||tdDone(Object.assign({id},x))){TF.confirm='';tfRender(true);return;}
  TF.confirm='';TF.busy=true;try{tdComplete(id,true);}finally{TF.busy=false;}
- tfRender();tfMessage(localSaveFail?'端末保存に失敗しています。同期表示を確認してください。':'✓ 完了しました。「今日できたこと」から戻せます。');
+ tfRender(true);tfMessage(localSaveFail?'端末保存に失敗しています。同期表示を確認してください。':'✓ 完了しました。「今日できたこと」から戻せます。');
 }
 function tfReorder(ids){
  const visible=tfRows().filter(x=>tfDate(x)===todayStr()&&!x.quit&&!tdHib(x)&&(x.tfDivider||!tdDone(x))).sort(tfOrder);
@@ -92,7 +93,8 @@ function tfCard(x,next){
  h+='<div class="tf-row"><button class="tf-check" '+(done?'data-undo':'data-complete')+'="'+id+'" aria-label="'+(done?'未完了に戻す':'完了の確認')+'">'+(done?'☑':'□')+'</button><div class="tf-copy"><h3>'+esc(x.t)+'</h3>'+(x.c?'<p>'+esc(x.c)+'</p>':'')+'</div>'+grip+'</div><div class="tf-actions"><button class="tf-link" data-edit="'+id+'">✎ その場で編集</button><button class="tf-link" data-settings="'+id+'" aria-label="時刻・分類などの設定">⋯</button></div></article>';
  return h;
 }
-function tfRender(){
+function tfRender(force){
+ if(TF.composing||!force&&typeof document!=='undefined'&&document.activeElement?.closest?.('.tf-root input,.tf-root textarea,.tf-root select'))return;
  tfLoad();pageMode='todo';const pg=$('page'),old=pg.querySelector('.page-body'),scroll=old?old.scrollTop:0,t=todayStr(),today=tfToday(false),done=tfToday(true);
  const active=tfRows().filter(x=>tfDate(x)===t&&!x.quit&&!tdHib(x)&&(x.tfDivider||!tdDone(x))).sort(tfOrder);
  const matches=TF.search?tfRows().filter(tfMatch).sort((a,b)=>tfDate(b).localeCompare(tfDate(a))||tfOrder(a,b)):active;
@@ -112,38 +114,43 @@ function tfRender(){
  tfBind(pg);if(!TF.search){const pl=pg.querySelector('.pln-wrap');if(pl)plnBind(pl);}pg.querySelector('.page-body').scrollTop=scroll;TF.stamp=tfStamp();
 }
 function tfBind(pg){
- const raw=$('tfRaw');if(raw)raw.oninput=()=>{tfInput(raw.value);const p=tfParse(raw.value);$('tfParseCount').textContent=p.error||'反映する項目：'+p.items.filter(x=>!x.divider).length+'件';$('tfSave').textContent='下書きを保存中…';};
+ const raw=$('tfRaw');if(raw)raw.oninput=()=>{tfInput(raw.value);if(TF.composing)return;const p=tfParse(raw.value);$('tfParseCount').textContent=p.error||'反映する項目：'+p.items.filter(x=>!x.divider).length+'件';$('tfSave').textContent='下書きを保存中…';};
+ pg.querySelectorAll('.tf-root input,.tf-root textarea').forEach(el=>{
+  el.oncompositionstart=()=>{TF.composing=true;clearTimeout(TF.timer);};
+  el.oncompositionend=()=>{TF.composing=false;if(el.oninput)el.oninput();};
+  el.addEventListener('blur',()=>{TF.composing=false;if(!el.isConnected)return;if(el===raw){if(TF.draft&&el.value!==TF.draft.text)el.oninput();tfSaveDraft();}else if(TF.edit&&el.oninput)el.oninput();});
+ });
  if($('tfPaper'))$('tfPaper').ontoggle=()=>{TF.paper=$('tfPaper').open;};
  if($('tfDone'))$('tfDone').ontoggle=()=>{TF.done=$('tfDone').open;};
- if(TF.edit&&$('tfTitle')){for(const [id,key] of [['tfTitle','t'],['tfDetail','c']])$(id).oninput=()=>{TF.edit[key]=$(id).value;tfBackup();};}
+ if(TF.edit&&$('tfTitle')){for(const [id,key] of [['tfTitle','t'],['tfDetail','c']])$(id).oninput=()=>{if(TF.edit){TF.edit[key]=$(id).value;tfBackup();}};}
  const root=pg.querySelector('.tf-root');root.onclick=ev=>{
   const b=ev.target.closest('button');if(!b)return;
   if(b.dataset.complete)return tfComplete(b.dataset.complete,false);
   if(b.dataset.yes)return tfComplete(b.dataset.yes,true);
-  if(b.dataset.undo){TF.busy=true;try{tdUndo(b.dataset.undo);}finally{TF.busy=false;}tfRender();return;}
+  if(b.dataset.undo){TF.busy=true;try{tdUndo(b.dataset.undo);}finally{TF.busy=false;}tfRender(true);return;}
   if(b.dataset.edit)return tfStartEdit(b.dataset.edit);
   if(b.dataset.settings){tfSaveDraft();return tdEditSheet(b.dataset.settings,()=>tfRender());}
-  if(b.dataset.draft){if(!tfSaveDraft())return;const m=state.memos[b.dataset.draft];TF.draft={id:b.dataset.draft,day:m.tfDay,text:m.t,base:m.t,dirty:false};TF.paper=true;tfBackup();tfRender();return;}
+  if(b.dataset.draft){if(!tfSaveDraft())return;const m=state.memos[b.dataset.draft];TF.draft={id:b.dataset.draft,day:m.tfDay,text:m.t,base:m.t,dirty:false};TF.paper=true;tfBackup();tfRender(true);return;}
   if(b.hasAttribute('data-day')){const v=b.dataset.day;const d=v==='all'?'':addDays(todayStr(),Number(v));$('tfFrom').value=d;$('tfTo').value=d;return;}
   switch(b.dataset.action){
    case 'apply':tfApply();break;
-   case 'search':tfSaveDraft();TF.search=!TF.search;TF.confirm='';tfRender();break;
-   case 'find':{const a=$('tfFrom').value,z=$('tfTo').value;if(a&&z&&a>z)return tfMessage('日付の前後を確認してください。');TF.q=$('tfQ').value;TF.from=a;TF.to=z;TF.status=$('tfStatus').value;TF.limit=30;TF.confirm='';tfRender();break;}
-   case 'today':TF.search=false;TF.confirm='';tfRender();break;
-   case 'more':TF.limit+=30;tfRender();break;
-   case 'no':TF.confirm='';tfRender();break;
+   case 'search':tfSaveDraft();TF.search=!TF.search;TF.confirm='';tfRender(true);break;
+   case 'find':{const a=$('tfFrom').value,z=$('tfTo').value;if(a&&z&&a>z)return tfMessage('日付の前後を確認してください。');TF.q=$('tfQ').value;TF.from=a;TF.to=z;TF.status=$('tfStatus').value;TF.limit=30;TF.confirm='';tfRender(true);break;}
+   case 'today':TF.search=false;TF.confirm='';tfRender(true);break;
+   case 'more':TF.limit+=30;tfRender(true);break;
+   case 'no':TF.confirm='';tfRender(true);break;
    case 'saveEdit':tfSaveEdit();break;
-   case 'cancelEdit':TF.edit=null;tfBackup();tfRender();break;
-   case 'legacy':tfSaveDraft();TF.search=true;TF.from='';TF.to='';TF.status='all';TF.q='';tfRender();break;
+   case 'cancelEdit':TF.edit=null;tfBackup();tfRender(true);break;
+   case 'legacy':tfSaveDraft();TF.search=true;TF.from='';TF.to='';TF.status='all';TF.q='';tfRender(true);break;
   }
  };
- root.onkeydown=ev=>{if(ev.key==='Escape'&&TF.confirm){ev.preventDefault();TF.confirm='';tfRender();}};
+ root.onkeydown=ev=>{if(ev.key==='Escape'&&TF.confirm){ev.preventDefault();TF.confirm='';tfRender(true);}};
  root.querySelectorAll('[data-grip]').forEach(b=>tfGrip(b));
 }
 function tfGrip(b){
  let timer=null,drag=null;
  const clear=cancel=>{clearTimeout(timer);timer=null;if(!drag)return;cancelAnimationFrame(drag.raf);const moved=drag.on;drag.card.classList.remove('tf-dragging');drag=null;TF.drag=null;
-  if(moved){if(!cancel){const ids=[...$('tfList').children].map(x=>x.dataset.row).filter(Boolean);if(!tfReorder(ids))toast('並びを保存できませんでした。');}tfRender();}};
+  if(moved){if(!cancel){const ids=[...$('tfList').children].map(x=>x.dataset.row).filter(Boolean);if(!tfReorder(ids))toast('並びを保存できませんでした。');}tfRender(true);}};
  const move=()=>{if(!drag||!drag.on)return;const list=$('tfList'),pb=$('page').querySelector('.page-body'),r=pb.getBoundingClientRect();
   if(drag.y<r.top+55)pb.scrollTop-=10;else if(drag.y>r.bottom-55)pb.scrollTop+=10;
   const other=[...list.children].filter(x=>x!==drag.card),before=other.find(x=>{const z=x.getBoundingClientRect();return drag.y<z.top+z.height/2;});if(drag.card.nextElementSibling!==(before||null)){list.insertBefore(drag.card,before||null);try{b.setPointerCapture(drag.pointer);}catch(e){}}drag.raf=requestAnimationFrame(move);
@@ -152,12 +159,20 @@ function tfGrip(b){
   try{b.setPointerCapture(ev.pointerId);}catch(e){}timer=setTimeout(()=>{if(!drag)return;drag.on=true;TF.drag=drag;drag.card.classList.add('tf-dragging');move();},380);};
  b.onpointermove=ev=>{if(!drag)return;if(!drag.on&&(Math.abs(ev.clientY-drag.startY)>12||Math.abs(ev.clientX-drag.x)>12)){clear(true);return;}drag.y=ev.clientY;if(drag.on)ev.preventDefault();};
  b.onpointerup=()=>clear(false);b.onpointercancel=()=>clear(true);b.onlostpointercapture=()=>{if(drag)clear(true);};
- b.onkeydown=ev=>{if(!['ArrowUp','ArrowDown'].includes(ev.key))return;ev.preventDefault();const ids=[...$('tfList').children].map(x=>x.dataset.row),i=ids.indexOf(b.dataset.grip),j=i+(ev.key==='ArrowUp'?-1:1);if(j<0||j>=ids.length)return;[ids[i],ids[j]]=[ids[j],ids[i]];tfReorder(ids);tfRender();const el=$('page').querySelector('[data-grip="'+b.dataset.grip+'"]');if(el)el.focus();};
+ b.onkeydown=ev=>{if(!['ArrowUp','ArrowDown'].includes(ev.key))return;ev.preventDefault();const ids=[...$('tfList').children].map(x=>x.dataset.row),i=ids.indexOf(b.dataset.grip),j=i+(ev.key==='ArrowUp'?-1:1);if(j<0||j>=ids.length)return;[ids[i],ids[j]]=[ids[j],ids[i]];tfReorder(ids);tfRender(true);const el=$('page').querySelector('[data-grip="'+b.dataset.grip+'"]');if(el)el.focus();};
 }
 function tfStamp(){return todayStr()+JSON.stringify(state.todos||{})+JSON.stringify(state.memos||{});}
+function tfKeepVisible(el){
+ if(document.activeElement!==el||!el.isConnected||TF.composing)return;
+ const sc=el.closest('.page-body');if(!sc)return;
+ const vv=window.visualViewport,s=sc.getBoundingClientRect(),top=Math.max(s.top,vv?vv.offsetTop:0)+8,bot=Math.min(s.bottom,vv?vv.offsetTop+vv.height:window.innerHeight)-8;
+ if(el.tagName==='TEXTAREA'){const cap=Math.max(80,bot-top-8)+'px';if(el.style.maxHeight!==cap)el.style.maxHeight=cap;}
+ const r=el.getBoundingClientRect();let dy=r.bottom>bot?r.bottom-bot:r.top<top?r.top-top:0;
+ if(Math.abs(dy)>2)sc.scrollTop+=Math.round(dy);
+}
 function tfRefresh(){
  const root=$('page')&&$('page').querySelector('.tf-root');if(!root||pageMode!=='todo'||TF.busy||TF.drag||TF.edit||TF.confirm||TF.search||root.contains(document.activeElement))return;
- const s=tfStamp();if(s!==TF.stamp){if(TF.draft&&!TF.draft.text&&TF.draft.day!==todayStr())TF.draft=null;tfRender();}
+ const s=tfStamp();if(s!==TF.stamp){if(TF.draft&&!TF.draft.text&&TF.draft.day!==todayStr())TF.draft=null;tfRender(true);}
 }
 if(typeof window!=='undefined'){
  window.addEventListener('pagehide',()=>{tfBackup();tfSaveDraft();});

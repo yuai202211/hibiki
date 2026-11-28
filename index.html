@@ -2614,7 +2614,7 @@ input.pin,textarea.pin{color:#14181f!important;-webkit-text-fill-color:#14181f!i
 .qtop .dl-favorites .chip,.qtop .dl-categories .chip{margin:0}
 
 </style>
-<link rel="stylesheet" href="./todo-flow.css?v=c50.34">
+<link rel="stylesheet" href="./todo-flow.css?v=c50.35">
 
 <div id="bootmsg" style="position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:24px;background:#faf9f5;color:#6a7080;font:800 15px -apple-system,BlinkMacSystemFont,sans-serif;text-align:center"><div style="font-size:34px">📔</div><div class="hb-logo" style="font-size:24px;color:#0a9a54"><b>HIBIKI</b><i>日々記</i></div><div id="bootmsgT">読み込み中…</div><div id="bootmsgS" style="font-size:12px;color:#9aa3b5;font-weight:700"></div></div>
 <div class="app" id="app">
@@ -2725,9 +2725,9 @@ const r=document.createElement('button');r.textContent='再読み込み';r.style
 try{document.documentElement.lang='ja';}catch(e){}
 const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function taGrow(ta){if(!ta||ta._grow||ta.tagName!=='TEXTAREA')return;ta._grow=1;const w=document.createElement('div');w.className='tagrow';const cs=getComputedStyle(ta);w.style.setProperty('--tf',cs.font);w.style.setProperty('--tlh',cs.lineHeight);w.style.setProperty('--tp',cs.padding);w.style.setProperty('--tb',cs.borderWidth);w.style.setProperty('--tls',cs.letterSpacing);if(ta.style.margin){w.style.margin=ta.style.margin;ta.style.margin='0';}
+function taGrow(ta){if(!ta||ta._grow||ta.tagName!=='TEXTAREA'||ta.closest('.tf-root'))return;ta._grow=1;const w=document.createElement('div');w.className='tagrow';const cs=getComputedStyle(ta);w.style.setProperty('--tf',cs.font);w.style.setProperty('--tlh',cs.lineHeight);w.style.setProperty('--tp',cs.padding);w.style.setProperty('--tb',cs.borderWidth);w.style.setProperty('--tls',cs.letterSpacing);if(ta.style.margin){w.style.margin=ta.style.margin;ta.style.margin='0';}
 ta.parentNode.insertBefore(w,ta);w.appendChild(ta);const s=()=>{w.dataset.v=ta.value;};s();ta.addEventListener('input',s);ta.addEventListener('change',s);}
-function kbOn(host){if(!host)return;if(host.id==='page'&&pageMode==='srch')return;try{if(!host.querySelector(':scope>.kbsp')){const sp=document.createElement('div');sp.className='kbsp';const ft=[...host.children].find(k=>{const c=getComputedStyle(k);return c.position==='sticky'&&c.bottom!=='auto';});if(ft)host.insertBefore(sp,ft);else host.appendChild(sp);}}catch(e){}host.classList.add('kb');}
+function kbOn(host){if(!host)return;if(host.id==='page'&&(pageMode==='srch'||host.querySelector('.tf-root')))return;try{if(!host.querySelector(':scope>.kbsp')){const sp=document.createElement('div');sp.className='kbsp';const ft=[...host.children].find(k=>{const c=getComputedStyle(k);return c.position==='sticky'&&c.bottom!=='auto';});if(ft)host.insertBefore(sp,ft);else host.appendChild(sp);}}catch(e){}host.classList.add('kb');}
 const kvTxt=el=>{if(!el||!el.matches)return false;if(el.tagName==='TEXTAREA')return !el.readOnly;if(el.tagName!=='INPUT'||el.readOnly)return false;return /^(text|search|tel|number|url|email)$/.test(el.type);};
 function kvCoverTop(el,top0){const r=el.getBoundingClientRect();let best=Infinity;const vb=(window.visualViewport?window.visualViewport.offsetTop+window.visualViewport.height:window.innerHeight);
 const ys=[Math.min(r.bottom-4,vb-2),Math.min(r.top+Math.min(r.height-4,40),vb-2)];
@@ -2736,7 +2736,7 @@ let c=t;while(c&&c!==document.body){const p=getComputedStyle(c).position;if(p===
 if(c&&c!==document.body){const ct=c.getBoundingClientRect().top;if(ct>r.top-2)best=Math.min(best,ct);}}}
 return best;}
 function kvCoverBot(el){const r=el.getBoundingClientRect();let best=-Infinity;for(const x of [r.left+14,r.left+r.width/2,r.right-14]){const y=r.top+3;if(y<0)continue;const t=document.elementFromPoint(x,y);if(!t||t===el||el.contains(t)||t.contains(el))continue;let c=t;while(c&&c!==document.body){const p=getComputedStyle(c).position;if(p==='fixed'||p==='sticky')break;c=c.parentElement;}if(c&&c!==document.body){const cb=c.getBoundingClientRect().bottom;if(cb<r.bottom)best=Math.max(best,cb);}}return best;}
-let kvRaf=0;function keepVisible(el){if(!kvTxt(el))return;if(el.closest&&el.closest('#mvp'))return;if(kvRaf)clearTimeout(kvRaf);kvRaf=setTimeout(()=>{kvRaf=0;try{const vv=window.visualViewport,top=vv?vv.offsetTop:0;let bot=(vv?vv.offsetTop+vv.height:window.innerHeight)-10;const r=el.getBoundingClientRect();try{document.querySelectorAll('#sheet .sh-btns.main,#sheet2 .sh-btns,#nowBar').forEach(f=>{if(!f.offsetParent)return;const fr=f.getBoundingClientRect();if(fr.top<bot&&fr.bottom>fr.top&&fr.top>top+80)bot=Math.min(bot,fr.top-6);});}catch(e){}try{const ct=kvCoverTop(el,top);if(ct>top+60&&ct<bot)bot=ct-8;}catch(e){}let sc=el.parentElement;while(sc&&sc!==document.body){const o=getComputedStyle(sc).overflowY;if((o==='auto'||o==='scroll')&&sc.scrollHeight>sc.clientHeight+2)break;sc=sc.parentElement;}
+let kvRaf=0;function keepVisible(el){if(!kvTxt(el))return;if(el.closest(".tf-root"))return tfKeepVisible(el);if(el.closest&&el.closest('#mvp'))return;if(kvRaf)clearTimeout(kvRaf);kvRaf=setTimeout(()=>{kvRaf=0;try{const vv=window.visualViewport,top=vv?vv.offsetTop:0;let bot=(vv?vv.offsetTop+vv.height:window.innerHeight)-10;const r=el.getBoundingClientRect();try{document.querySelectorAll('#sheet .sh-btns.main,#sheet2 .sh-btns,#nowBar').forEach(f=>{if(!f.offsetParent)return;const fr=f.getBoundingClientRect();if(fr.top<bot&&fr.bottom>fr.top&&fr.top>top+80)bot=Math.min(bot,fr.top-6);});}catch(e){}try{const ct=kvCoverTop(el,top);if(ct>top+60&&ct<bot)bot=ct-8;}catch(e){}let sc=el.parentElement;while(sc&&sc!==document.body){const o=getComputedStyle(sc).overflowY;if((o==='auto'||o==='scroll')&&sc.scrollHeight>sc.clientHeight+2)break;sc=sc.parentElement;}
 if(!sc||sc===document.body){if(r.bottom>bot||r.top<top+10)el.scrollIntoView({block:'center'});return;}
 let y0=r.top,y1=r.bottom;if(el.tagName==='TEXTAREA'&&r.height>bot-top-24){try{const cs=getComputedStyle(el),m=document.createElement('div');m.style.cssText='position:absolute;left:0;top:0;visibility:hidden;white-space:pre-wrap;word-break:break-word;pointer-events:none;';m.style.font=cs.font;m.style.lineHeight=cs.lineHeight;m.style.padding=cs.padding;m.style.letterSpacing=cs.letterSpacing;m.style.boxSizing='border-box';m.style.width=r.width+'px';m.style.border=cs.borderWidth+' solid transparent';m.textContent=el.value.slice(0,el.selectionEnd||0);const s=document.createElement('span');s.textContent='\u200b';m.appendChild(s);document.body.appendChild(m);const lh=parseFloat(cs.lineHeight)||22,cy=s.offsetTop;m.remove();y0=r.top+cy;y1=y0+lh+4;}catch(e){}}
 const scR=sc.getBoundingClientRect();bot=Math.min(bot,scR.bottom-8);const tl=Math.max(top+10,scR.top+8,kvCoverBot(el)+6);if(y1>bot)sc.scrollTop+=Math.ceil(y1-bot);else if(y0<tl)sc.scrollTop-=Math.ceil(tl-y0);}catch(e){}},0);}
@@ -3405,7 +3405,7 @@ sessionStorage.setItem('nippo10-esc',JSON.stringify({state:slim,t:Date.now()}));
  }
 }
 let verChkAt=0;
-function paneBusy(){try{const a=document.activeElement;return !!(a&&a.matches&&a.matches('input,select,textarea')&&!a.readOnly&&a.closest('#scr,#pane,#sheet,#sheet2'));}catch(e){return false;}}
+function paneBusy(){try{const a=document.activeElement;return !!(a&&a.matches&&a.matches('input,select,textarea')&&!a.readOnly&&a.closest('#scr,#pane,#sheet,#sheet2,#page .tf-root'));}catch(e){return false;}}
 window.__rendPend=false;function renderSoon(){if(paneBusy()){if(!window.__rendPend){window.__rendPend=true;setTimeout(()=>{if(window.__rendPend){window.__rendPend=false;try{render();}catch(e){}}},180000);}return;}window.__rendPend=false;render();}
 document.addEventListener('focusout',()=>{setTimeout(()=>{if(window.__rendPend&&!paneBusy()){window.__rendPend=false;try{render();}catch(e){}}},300);});
 function verBusy(){try{const o=$('ovl').classList.contains('open');const pw=[...$('sheet').querySelectorAll('input[type=password],input[type=email]')].some(x=>x.value);return (o&&(!!sheetSt||pw||sheetDirty))||$('ovl2').classList.contains('open')||($('page').classList.contains('open')&&pageMode==='memoEd')||paneBusy();}catch(e){return false;}}
@@ -5045,7 +5045,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c50.34）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c50.35）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -12928,6 +12928,7 @@ const found=Object.entries(state.memos||{}).filter(([,m])=>m&&!m.del&&m.tfDraft&
 TF.draft=found?{id:found[0],day:found[1].tfDay,text:found[1].t,base:found[1].t,dirty:false}:{id:tfId(),day:todayStr(),text:'',base:'',dirty:false};
 }
 function tfSaveDraft(){
+if(TF.composing)return false;
 clearTimeout(TF.timer);const d=TF.draft;if(!d||!d.dirty)return true;
 const m=(state.memos||{})[d.id];
 // A concurrent device's draft is kept intact; save this version separately.
@@ -12937,9 +12938,9 @@ try{mutate(()=>{state.memos=state.memos||{};state.memos[d.id]={t:d.text,tfDraft:
 if(localSaveFail)return false;d.base=d.text;d.dirty=false;TF.stamp=tfStamp();tfBackup();return true;
 }finally{TF.busy=false;}
 }
-function tfInput(text){tfLoad();TF.draft.text=text;TF.draft.dirty=true;tfBackup();clearTimeout(TF.timer);TF.timer=setTimeout(()=>{const ok=tfSaveDraft();const el=$('tfSave');if(el)el.textContent=ok?'下書き保存済み':'保存できません。入力はこのまま残しています';},700);}
+function tfInput(text){tfLoad();TF.draft.text=text;TF.draft.dirty=true;tfBackup();clearTimeout(TF.timer);if(TF.composing)return;TF.timer=setTimeout(()=>{const ok=tfSaveDraft();const el=$('tfSave');if(el)el.textContent=ok?'下書き保存済み':'保存できません。入力はこのまま残しています';},700);}
 function tfApply(){
-if(TF.busy)return false;tfLoad();const d=TF.draft,p=tfParse(d.text);if(p.error||!p.items.length){tfMessage(p.error||'まず、メモを書いてください。');return false;}
+if(TF.busy||TF.composing)return false;tfLoad();const d=TF.draft,p=tfParse(d.text);if(p.error||!p.items.length){tfMessage(p.error||'まず、メモを書いてください。');return false;}
 const applied=(state.memos||{})[d.id];
 if(applied&&applied.tfApplied&&applied.t===d.text){saveLocal(false);if(localSaveFail){tfMessage('まだ保存できません。元の文章は残しています。');return false;}if((applied.tfIds||[]).some(id=>!state.todos[id])){tfMessage('別の端末で反映したToDoを同期中です。入力は残しています。');return false;}tfApplied();return true;}
 d.dirty=true; // Re-check a remote draft revision even when this editor has not changed.
@@ -12955,21 +12956,21 @@ state.memos[d.id]={t:d.text,tfDraft:1,tfApplied:1,tfDay:d.day,tfIds:p.items.map(
 }finally{TF.busy=false;}
 tfApplied();tfMessage(p.items.filter(x=>!x.divider).length+'件を反映しました。元の文章も保存しています。');return true;
 }
-function tfApplied(){TF.draft={id:tfId(),day:todayStr(),text:'',base:'',dirty:false};TF.paper=false;tfBackup();tfRender();}
+function tfApplied(){TF.draft={id:tfId(),day:todayStr(),text:'',base:'',dirty:false};TF.paper=false;tfBackup();tfRender(true);}
 function tfMessage(s){const el=$('tfMessage');if(el)el.textContent=s;else toast(s);}
-function tfStartEdit(id){if(TF.edit&&TF.edit.id!==id)return tfMessage('編集中の内容を保存してから、次を開いてください。');const x=(state.todos||{})[id];if(!x||x.del)return;TF.confirm='';TF.edit={id,t:x.t||'',c:x.c||'',baseT:x.t||'',baseC:x.c||''};tfBackup();tfRender();$('tfTitle').focus();}
+function tfStartEdit(id){if(TF.edit&&TF.edit.id!==id)return tfMessage('編集中の内容を保存してから、次を開いてください。');const x=(state.todos||{})[id];if(!x||x.del)return;TF.confirm='';TF.edit={id,t:x.t||'',c:x.c||'',baseT:x.t||'',baseC:x.c||''};tfBackup();tfRender(true);$('tfTitle').focus();}
 function tfSaveEdit(){
 const e=TF.edit;if(!e||!e.t.trim())return tfMessage('大タイトルを入力してください。');const x=(state.todos||{})[e.id];
-if(x&&!x.del&&x.t===e.t.trim()&&String(x.c||'')===e.c){saveLocal(false);if(localSaveFail)return tfMessage('まだ保存できません。入力を残しています。');TF.edit=null;tfBackup();tfRender();return;}
+if(x&&!x.del&&x.t===e.t.trim()&&String(x.c||'')===e.c){saveLocal(false);if(localSaveFail)return tfMessage('まだ保存できません。入力を残しています。');TF.edit=null;tfBackup();tfRender(true);return;}
 if(!x||x.del||x.t!==e.baseT||String(x.c||'')!==e.baseC){tfMessage('別の画面で変更されています。入力をコピーしてから「戻る」で最新の内容を確認してください。');return;}
 TF.busy=true;try{mutate(()=>{state.todos[e.id]=Object.assign({},x,{t:e.t.trim(),c:e.c,ts:tfTs(x)});});if(localSaveFail){tfMessage('保存できません。入力を残しています。');return;}
-TF.edit=null;tfBackup();}finally{TF.busy=false;}tfRender();tfMessage('変更を保存しました。');
+TF.edit=null;tfBackup();}finally{TF.busy=false;}tfRender(true);tfMessage('変更を保存しました。');
 }
 function tfComplete(id,yes){
-if(!yes){TF.confirm=id;tfRender();const b=$('tfNo');if(b)b.focus();return;}
-if(TF.busy||TF.confirm!==id)return;const x=(state.todos||{})[id];if(!x||x.del||tdDone(Object.assign({id},x))){TF.confirm='';tfRender();return;}
+if(!yes){TF.confirm=id;tfRender(true);const b=$('tfNo');if(b)b.focus();return;}
+if(TF.busy||TF.confirm!==id)return;const x=(state.todos||{})[id];if(!x||x.del||tdDone(Object.assign({id},x))){TF.confirm='';tfRender(true);return;}
 TF.confirm='';TF.busy=true;try{tdComplete(id,true);}finally{TF.busy=false;}
-tfRender();tfMessage(localSaveFail?'端末保存に失敗しています。同期表示を確認してください。':'✓ 完了しました。「今日できたこと」から戻せます。');
+tfRender(true);tfMessage(localSaveFail?'端末保存に失敗しています。同期表示を確認してください。':'✓ 完了しました。「今日できたこと」から戻せます。');
 }
 function tfReorder(ids){
 const visible=tfRows().filter(x=>tfDate(x)===todayStr()&&!x.quit&&!tdHib(x)&&(x.tfDivider||!tdDone(x))).sort(tfOrder);
@@ -12990,7 +12991,8 @@ if(next)h+='<div class="tf-next-label">次はこれ</div>';
 h+='<div class="tf-row"><button class="tf-check" '+(done?'data-undo':'data-complete')+'="'+id+'" aria-label="'+(done?'未完了に戻す':'完了の確認')+'">'+(done?'☑':'□')+'</button><div class="tf-copy"><h3>'+esc(x.t)+'</h3>'+(x.c?'<p>'+esc(x.c)+'</p>':'')+'</div>'+grip+'</div><div class="tf-actions"><button class="tf-link" data-edit="'+id+'">✎ その場で編集</button><button class="tf-link" data-settings="'+id+'" aria-label="時刻・分類などの設定">⋯</button></div></article>';
 return h;
 }
-function tfRender(){
+function tfRender(force){
+if(TF.composing||!force&&typeof document!=='undefined'&&document.activeElement?.closest?.('.tf-root input,.tf-root textarea,.tf-root select'))return;
 tfLoad();pageMode='todo';const pg=$('page'),old=pg.querySelector('.page-body'),scroll=old?old.scrollTop:0,t=todayStr(),today=tfToday(false),done=tfToday(true);
 const active=tfRows().filter(x=>tfDate(x)===t&&!x.quit&&!tdHib(x)&&(x.tfDivider||!tdDone(x))).sort(tfOrder);
 const matches=TF.search?tfRows().filter(tfMatch).sort((a,b)=>tfDate(b).localeCompare(tfDate(a))||tfOrder(a,b)):active;
@@ -13010,38 +13012,43 @@ h+='</div></div>';pg.innerHTML=h;pg.classList.add('open');$('pgBk').onclick=clos
 tfBind(pg);if(!TF.search){const pl=pg.querySelector('.pln-wrap');if(pl)plnBind(pl);}pg.querySelector('.page-body').scrollTop=scroll;TF.stamp=tfStamp();
 }
 function tfBind(pg){
-const raw=$('tfRaw');if(raw)raw.oninput=()=>{tfInput(raw.value);const p=tfParse(raw.value);$('tfParseCount').textContent=p.error||'反映する項目：'+p.items.filter(x=>!x.divider).length+'件';$('tfSave').textContent='下書きを保存中…';};
+const raw=$('tfRaw');if(raw)raw.oninput=()=>{tfInput(raw.value);if(TF.composing)return;const p=tfParse(raw.value);$('tfParseCount').textContent=p.error||'反映する項目：'+p.items.filter(x=>!x.divider).length+'件';$('tfSave').textContent='下書きを保存中…';};
+pg.querySelectorAll('.tf-root input,.tf-root textarea').forEach(el=>{
+el.oncompositionstart=()=>{TF.composing=true;clearTimeout(TF.timer);};
+el.oncompositionend=()=>{TF.composing=false;if(el.oninput)el.oninput();};
+el.addEventListener('blur',()=>{TF.composing=false;if(!el.isConnected)return;if(el===raw){if(TF.draft&&el.value!==TF.draft.text)el.oninput();tfSaveDraft();}else if(TF.edit&&el.oninput)el.oninput();});
+});
 if($('tfPaper'))$('tfPaper').ontoggle=()=>{TF.paper=$('tfPaper').open;};
 if($('tfDone'))$('tfDone').ontoggle=()=>{TF.done=$('tfDone').open;};
-if(TF.edit&&$('tfTitle')){for(const [id,key] of [['tfTitle','t'],['tfDetail','c']])$(id).oninput=()=>{TF.edit[key]=$(id).value;tfBackup();};}
+if(TF.edit&&$('tfTitle')){for(const [id,key] of [['tfTitle','t'],['tfDetail','c']])$(id).oninput=()=>{if(TF.edit){TF.edit[key]=$(id).value;tfBackup();}};}
 const root=pg.querySelector('.tf-root');root.onclick=ev=>{
 const b=ev.target.closest('button');if(!b)return;
 if(b.dataset.complete)return tfComplete(b.dataset.complete,false);
 if(b.dataset.yes)return tfComplete(b.dataset.yes,true);
-if(b.dataset.undo){TF.busy=true;try{tdUndo(b.dataset.undo);}finally{TF.busy=false;}tfRender();return;}
+if(b.dataset.undo){TF.busy=true;try{tdUndo(b.dataset.undo);}finally{TF.busy=false;}tfRender(true);return;}
 if(b.dataset.edit)return tfStartEdit(b.dataset.edit);
 if(b.dataset.settings){tfSaveDraft();return tdEditSheet(b.dataset.settings,()=>tfRender());}
-if(b.dataset.draft){if(!tfSaveDraft())return;const m=state.memos[b.dataset.draft];TF.draft={id:b.dataset.draft,day:m.tfDay,text:m.t,base:m.t,dirty:false};TF.paper=true;tfBackup();tfRender();return;}
+if(b.dataset.draft){if(!tfSaveDraft())return;const m=state.memos[b.dataset.draft];TF.draft={id:b.dataset.draft,day:m.tfDay,text:m.t,base:m.t,dirty:false};TF.paper=true;tfBackup();tfRender(true);return;}
 if(b.hasAttribute('data-day')){const v=b.dataset.day;const d=v==='all'?'':addDays(todayStr(),Number(v));$('tfFrom').value=d;$('tfTo').value=d;return;}
 switch(b.dataset.action){
 case 'apply':tfApply();break;
-case 'search':tfSaveDraft();TF.search=!TF.search;TF.confirm='';tfRender();break;
-case 'find':{const a=$('tfFrom').value,z=$('tfTo').value;if(a&&z&&a>z)return tfMessage('日付の前後を確認してください。');TF.q=$('tfQ').value;TF.from=a;TF.to=z;TF.status=$('tfStatus').value;TF.limit=30;TF.confirm='';tfRender();break;}
-case 'today':TF.search=false;TF.confirm='';tfRender();break;
-case 'more':TF.limit+=30;tfRender();break;
-case 'no':TF.confirm='';tfRender();break;
+case 'search':tfSaveDraft();TF.search=!TF.search;TF.confirm='';tfRender(true);break;
+case 'find':{const a=$('tfFrom').value,z=$('tfTo').value;if(a&&z&&a>z)return tfMessage('日付の前後を確認してください。');TF.q=$('tfQ').value;TF.from=a;TF.to=z;TF.status=$('tfStatus').value;TF.limit=30;TF.confirm='';tfRender(true);break;}
+case 'today':TF.search=false;TF.confirm='';tfRender(true);break;
+case 'more':TF.limit+=30;tfRender(true);break;
+case 'no':TF.confirm='';tfRender(true);break;
 case 'saveEdit':tfSaveEdit();break;
-case 'cancelEdit':TF.edit=null;tfBackup();tfRender();break;
-case 'legacy':tfSaveDraft();TF.search=true;TF.from='';TF.to='';TF.status='all';TF.q='';tfRender();break;
+case 'cancelEdit':TF.edit=null;tfBackup();tfRender(true);break;
+case 'legacy':tfSaveDraft();TF.search=true;TF.from='';TF.to='';TF.status='all';TF.q='';tfRender(true);break;
  }
 };
-root.onkeydown=ev=>{if(ev.key==='Escape'&&TF.confirm){ev.preventDefault();TF.confirm='';tfRender();}};
+root.onkeydown=ev=>{if(ev.key==='Escape'&&TF.confirm){ev.preventDefault();TF.confirm='';tfRender(true);}};
 root.querySelectorAll('[data-grip]').forEach(b=>tfGrip(b));
 }
 function tfGrip(b){
 let timer=null,drag=null;
 const clear=cancel=>{clearTimeout(timer);timer=null;if(!drag)return;cancelAnimationFrame(drag.raf);const moved=drag.on;drag.card.classList.remove('tf-dragging');drag=null;TF.drag=null;
-if(moved){if(!cancel){const ids=[...$('tfList').children].map(x=>x.dataset.row).filter(Boolean);if(!tfReorder(ids))toast('並びを保存できませんでした。');}tfRender();}};
+if(moved){if(!cancel){const ids=[...$('tfList').children].map(x=>x.dataset.row).filter(Boolean);if(!tfReorder(ids))toast('並びを保存できませんでした。');}tfRender(true);}};
 const move=()=>{if(!drag||!drag.on)return;const list=$('tfList'),pb=$('page').querySelector('.page-body'),r=pb.getBoundingClientRect();
 if(drag.y<r.top+55)pb.scrollTop-=10;else if(drag.y>r.bottom-55)pb.scrollTop+=10;
 const other=[...list.children].filter(x=>x!==drag.card),before=other.find(x=>{const z=x.getBoundingClientRect();return drag.y<z.top+z.height/2;});if(drag.card.nextElementSibling!==(before||null)){list.insertBefore(drag.card,before||null);try{b.setPointerCapture(drag.pointer);}catch(e){}}drag.raf=requestAnimationFrame(move);
@@ -13050,12 +13057,20 @@ b.onpointerdown=ev=>{if(ev.button!==0||TF.edit||TF.confirm)return;drag={card:b.c
 try{b.setPointerCapture(ev.pointerId);}catch(e){}timer=setTimeout(()=>{if(!drag)return;drag.on=true;TF.drag=drag;drag.card.classList.add('tf-dragging');move();},380);};
 b.onpointermove=ev=>{if(!drag)return;if(!drag.on&&(Math.abs(ev.clientY-drag.startY)>12||Math.abs(ev.clientX-drag.x)>12)){clear(true);return;}drag.y=ev.clientY;if(drag.on)ev.preventDefault();};
 b.onpointerup=()=>clear(false);b.onpointercancel=()=>clear(true);b.onlostpointercapture=()=>{if(drag)clear(true);};
-b.onkeydown=ev=>{if(!['ArrowUp','ArrowDown'].includes(ev.key))return;ev.preventDefault();const ids=[...$('tfList').children].map(x=>x.dataset.row),i=ids.indexOf(b.dataset.grip),j=i+(ev.key==='ArrowUp'?-1:1);if(j<0||j>=ids.length)return;[ids[i],ids[j]]=[ids[j],ids[i]];tfReorder(ids);tfRender();const el=$('page').querySelector('[data-grip="'+b.dataset.grip+'"]');if(el)el.focus();};
+b.onkeydown=ev=>{if(!['ArrowUp','ArrowDown'].includes(ev.key))return;ev.preventDefault();const ids=[...$('tfList').children].map(x=>x.dataset.row),i=ids.indexOf(b.dataset.grip),j=i+(ev.key==='ArrowUp'?-1:1);if(j<0||j>=ids.length)return;[ids[i],ids[j]]=[ids[j],ids[i]];tfReorder(ids);tfRender(true);const el=$('page').querySelector('[data-grip="'+b.dataset.grip+'"]');if(el)el.focus();};
 }
 function tfStamp(){return todayStr()+JSON.stringify(state.todos||{})+JSON.stringify(state.memos||{});}
+function tfKeepVisible(el){
+if(document.activeElement!==el||!el.isConnected||TF.composing)return;
+const sc=el.closest('.page-body');if(!sc)return;
+const vv=window.visualViewport,s=sc.getBoundingClientRect(),top=Math.max(s.top,vv?vv.offsetTop:0)+8,bot=Math.min(s.bottom,vv?vv.offsetTop+vv.height:window.innerHeight)-8;
+if(el.tagName==='TEXTAREA'){const cap=Math.max(80,bot-top-8)+'px';if(el.style.maxHeight!==cap)el.style.maxHeight=cap;}
+const r=el.getBoundingClientRect();let dy=r.bottom>bot?r.bottom-bot:r.top<top?r.top-top:0;
+if(Math.abs(dy)>2)sc.scrollTop+=Math.round(dy);
+}
 function tfRefresh(){
 const root=$('page')&&$('page').querySelector('.tf-root');if(!root||pageMode!=='todo'||TF.busy||TF.drag||TF.edit||TF.confirm||TF.search||root.contains(document.activeElement))return;
-const s=tfStamp();if(s!==TF.stamp){if(TF.draft&&!TF.draft.text&&TF.draft.day!==todayStr())TF.draft=null;tfRender();}
+const s=tfStamp();if(s!==TF.stamp){if(TF.draft&&!TF.draft.text&&TF.draft.day!==todayStr())TF.draft=null;tfRender(true);}
 }
 if(typeof window!=='undefined'){
 window.addEventListener('pagehide',()=>{tfBackup();tfSaveDraft();});
@@ -13788,7 +13803,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c50.34";
+const CL_APPVER="c50.35";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;

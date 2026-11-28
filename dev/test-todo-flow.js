@@ -34,7 +34,7 @@ const cleanId=run('TF.draft.id');ctx.state.memos[cleanId].t='Newer remote draft'
 day='2026-11-29';assert.equal(run('tfToday(false).length'),0);assert.equal(run('tfToday(true).length'),0);assert(Object.keys(ctx.state.todos).length>0,'midnight does not remove tasks');
 assert.equal(JSON.stringify([ctx.state.entries,ctx.state.prep,ctx.state.memos.keep]),preserved);
 const escaped=run("tfCard({id:'test',t:'<script>alert(1)</script>',c:'<img onerror=alert(1)>',done:0},false)");assert(!escaped.includes('<script>'));assert(escaped.includes('&lt;script&gt;'));
-assert(html.includes('<option value="')||html.includes("['all','すべて']"));assert(html.includes('todo-flow.css?v=c50.34'));assert(html.includes('function renderTodoPage(){return tfRender();}'));
+assert(html.includes('<option value="')||html.includes("['all','すべて']"));assert(html.includes('todo-flow.css?v=c50.35'));assert(html.includes('function renderTodoPage(){return tfRender();}'));
 assert.equal(fs.readFileSync(path.join(__dirname,'../todo-flow.css'),'utf8'),fs.readFileSync(path.join(__dirname,'todo-flow.css'),'utf8'));
 // Exercise the actual cloud serializer and merge, including all new fields and tombstones.
 const grab=re=>{const m=html.match(re);assert(m);return m[0];},m0=html.indexOf('function mergeStates('),m1=html.indexOf('\n}\n',m0)+3,c0=html.indexOf('function clItems('),c1=html.indexOf('const clKey=');
