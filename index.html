@@ -5020,7 +5020,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c50.30）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c50.31）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -12770,10 +12770,9 @@ return '<section class="br-card" id="brCard" data-brday="'+esc(d)+'"><div class=
 slots.map(([slot,ic,lb])=>{const logs=brLogs(d,slot),ok=brDone(d,slot),review=brTotal(d,slot)>=BR_LIMIT&&logs.find(x=>x.brReview&&!x.brDone),running=active&&active.brDay===d&&active.brSlot===slot,total=brTotal(d,slot);return '<div class="br-row'+(ok?' done':running?' running':'')+'"><div class="br-row-head"><b>'+ic+' '+lb+'</b><span>'+(ok?'✓ 読了':running?'読んでいます':review?'振り返り待ち':'10分')+'</span></div>'+
 ('<div class="br-time"><span data-br-clock="'+slot+'">'+brClock(total)+'</span><small>読んだ時間</small></div>')+
 (running?'<p class="br-hint" data-br-hint>'+ (total>=BR_LIMIT?'10分経ちました。全部読めたら、手帳を閉じて振り返ろう。':'あと '+brClock(BR_LIMIT-total)+'。ひとつずつ、読み返そう。')+'</p><div class="br-actions"><button type="button" class="br-primary" data-br-stop="'+esc(active.id)+'"'+(total<BR_LIMIT?' disabled':'')+'>読み終えて確認へ</button><button type="button" class="br-secondary" data-br-pause="'+esc(active.id)+'">中断する</button></div>':ok?'<p class="br-finished">'+(slot==='before'?'準備できた。最初の一歩へ！':slot==='bed'?'今日も読み返せた。おつかれさま。':'夢を思い出せた。今日を始めよう。')+'</p>':review?'<button type="button" class="br-primary" data-br-review="'+esc(review.id)+'">✎ 振り返りを仕上げる</button>':'<button type="button" class="br-primary" data-br-start="'+slot+'"'+(active?' disabled':'')+'>'+(logs.length?'▶ 再開する':'📖 読み始める')+'</button>')+
-'<button type="button" class="br-secondary bn-write" data-bn-add="'+slot+'">✎ いつでもひと言を書く</button>'+
 (logs.length?'<button type="button" class="br-history" data-br-reset="'+slot+'">↺ リセット</button>':'')+
 (logs.length?'<button type="button" class="br-history" data-br-history="'+slot+'">履歴・修正</button>':'')+'</div>';}).join('')+'<p class="br-foot">10分読む → 手帳を閉じてひと言 → 読了。<br>ひと言は「手帳のひと言」に保存します。入力時間は、読む時間に含めません。</p></section>';}
-function brBind(root){const card=root&&root.querySelector('#brCard');if(!card)return;const begin=card.querySelector('[data-br-begin]');if(begin)begin.onclick=brBeginDayAsk;card.querySelectorAll('[data-bn-add]').forEach(b=>b.onclick=()=>bnAdd(b.dataset.bnAdd));card.querySelectorAll('[data-br-reset]').forEach(b=>b.onclick=()=>brResetAsk(card.dataset.brday,b.dataset.brReset));card.querySelectorAll('[data-br-start]').forEach(b=>b.onclick=()=>brStart(b.dataset.brStart));card.querySelectorAll('[data-br-stop]').forEach(b=>b.onclick=()=>brStop(b.dataset.brStop,true));card.querySelectorAll('[data-br-pause]').forEach(b=>b.onclick=()=>brStop(b.dataset.brPause,false));card.querySelectorAll('[data-br-history]').forEach(b=>b.onclick=()=>brHistory(card.dataset.brday,b.dataset.brHistory));card.querySelectorAll('[data-br-edit]').forEach(b=>b.onclick=()=>brEdit(b.dataset.brEdit));card.querySelectorAll('[data-br-review]').forEach(b=>b.onclick=()=>brReview(b.dataset.brReview));}
+function brBind(root){const card=root&&root.querySelector('#brCard');if(!card)return;const begin=card.querySelector('[data-br-begin]');if(begin)begin.onclick=brBeginDayAsk;card.querySelectorAll('[data-br-reset]').forEach(b=>b.onclick=()=>brResetAsk(card.dataset.brday,b.dataset.brReset));card.querySelectorAll('[data-br-start]').forEach(b=>b.onclick=()=>brStart(b.dataset.brStart));card.querySelectorAll('[data-br-stop]').forEach(b=>b.onclick=()=>brStop(b.dataset.brStop,true));card.querySelectorAll('[data-br-pause]').forEach(b=>b.onclick=()=>brStop(b.dataset.brPause,false));card.querySelectorAll('[data-br-history]').forEach(b=>b.onclick=()=>brHistory(card.dataset.brday,b.dataset.brHistory));card.querySelectorAll('[data-br-edit]').forEach(b=>b.onclick=()=>brEdit(b.dataset.brEdit));card.querySelectorAll('[data-br-review]').forEach(b=>b.onclick=()=>brReview(b.dataset.brReview));}
 function brRefresh(){const el=$('brCard');if(!el)return;const d=brDay();el.outerHTML=brCardHtml();brBind($('pane'));BR_VIEW=d;}
 function brOpen(){if(!(topView==='diary'&&ui.tab==='di'&&ui.date===todayStr())){topView='diary';ui.tab='di';ui.date=todayStr();render();}brRefresh();const el=$('brCard'),sc=$('scr');if(el&&sc)sc.scrollTop+=el.getBoundingClientRect().top-sc.getBoundingClientRect().top-12;}
 function brTick(){if(document.hidden)return;const card=$('brCard');if(!card)return;const d=brDay();if(card.dataset.brday!==d){if(!fpBusy())brRefresh();return;}
@@ -13595,7 +13594,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c50.30";
+const CL_APPVER="c50.31";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;
