@@ -1,0 +1,23 @@
+'use strict';
+const fs=require('fs'),path=require('path'),vm=require('vm'),assert=require('assert/strict');
+let now=new Date('2026-11-28T16:00:00');
+class Clock extends Date{constructor(...a){super(...(a.length?a:[now.getTime()]));}static now(){return now.getTime();}}
+const fmt=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+const state={rlog:{},entries:{keep:{t:'existing diary'}},prep:{'2026-11-28':{fp:1,dd:[0],to:'existing place',fpHeading:'existing title'}}};
+const ctx={Date:Clock,state,fmt,todayStr:()=>fmt(now),addDays:(s,n)=>{const d=new Date(s+'T12:00:00');d.setDate(d.getDate()+n);return fmt(d);},sleepSessions:()=>({'2026-11-28':[{e:'08:00'}]}),fpCurrent:()=>true,fpRecord:d=>state.prep[d],FP_EDIT:'',pad:n=>String(n).padStart(2,'0'),esc:s=>String(s).replace(/</g,'&lt;'),bnText:x=>x.brNote||'',bnDraftKey:()=>'',localStorage:{removeItem(){}},$:()=>null};
+const source=fs.readFileSync(path.join(__dirname,'book-reading.js'),'utf8');vm.createContext(ctx);vm.runInContext(source.slice(0,source.indexOf('var brSleepBase=')),ctx);const run=s=>vm.runInContext(s,ctx);ctx.brWrite=fn=>fn();
+const prepBefore=JSON.stringify(state.prep),diaryBefore=JSON.stringify(state.entries);
+assert.equal(run('brDiaryHtml()'),'');state.prep['2026-11-28'].dd=[1];
+let card=run('brDiaryHtml()');assert(card.includes('id="brDiaryCard"'));assert.equal((card.match(/class="br-row(?: |")/g)||[]).length,1);assert(card.includes('data-br-start="wake"'));assert(!card.includes('最初の行動の前'));assert(!card.includes('data-br-start="bed"'));
+const at=s=>new Date('2026-11-28T'+s+':00').getTime();
+const session=(slot,s,e,extra={})=>Object.assign({br:1,brDay:'2026-11-28',brSlot:slot,d:'2026-11-28',s,e,brStart:at(s),brEnd:at(e),brDone:0,brReview:1,brNote:'',ts:1},extra);
+state.rlog.a=session('wake','08:00','08:06');state.rlog.b=session('wake','08:10','08:14');
+assert.equal(run("brNextSlot(brDay())"),'wake','elapsed time is not completion');assert(run('brDiaryHtml()').includes('振り返りを仕上げる'));
+assert.equal(run("brSaveReview('b','Remember the concrete next step',true)"),'');assert.equal(run('brNextSlot(brDay())'),'before');
+assert(run('brDiaryHtml()').includes('data-br-start="before"'));
+state.rlog.c=session('before','09:00','09:10');assert.equal(run("brSaveReview('c','Take a small step toward the goal',true)"),'');assert.equal(run('brNextSlot(brDay())'),'bed');
+state.rlog.d=session('bed','15:00','15:10');assert.equal(run("brSaveReview('d','Keep the long term dream in mind',true)"),'');assert.equal(run('brDiaryHtml()'),'','all three complete hides the prompt');
+now=new Date('2026-11-29T00:30:00');assert.equal(run('brDay()'),'2026-11-28','midnight does not reset the reading day');state.rlog.d.brDone=0;assert(run('brDiaryHtml()').includes('🌙 就寝前'),'pending bedtime stays visible after midnight');state.rlog.d.brDone=1;
+now=new Date('2026-11-28T16:00:00');state.rlog.b.brDone=0;state.rlog.d.brEnd=0;assert.equal(run('brNextSlot(brDay())'),'bed','the actively reading slot stays visible');state.rlog.d.brEnd=at('15:10');state.rlog.d.brDone=1;ctx.FP_EDIT='2026-11-28';assert.equal(run('brDiaryHtml()'),'','explicit first-step editing stays accessible');ctx.FP_EDIT='';
+state.prep['2026-11-28'].dd=[0];assert.equal(JSON.stringify(state.prep),prepBefore);assert.equal(JSON.stringify(state.entries),diaryBefore);
+assert(!source.includes('data-bn-add='));console.log('PASS: one pending slot, review-gated progression, three-complete dismissal, active-session priority, midnight continuity, explicit editing and no diary/prep changes.');

@@ -4,6 +4,8 @@ module.exports=function(h){const rep=(a,b)=>{const n=h.split(a).length-1;if(n!==
 rep("['read','📖','読書','#8b5e3c','S',0,'h']", "['read','📖','読書','#8b5e3c','S',0,'h'],['dreambook','📖','夢手帳タイム','#15803d','S',0,'h']");
 rep("return Array.isArray(L)?L.filter(id=>{const k=kindOf(id);return k&&!k.off;}):[];", "return ['dreambook',...(Array.isArray(L)?L:[])].filter((id,i,a)=>{const k=kindOf(id);return a.indexOf(id)===i&&k&&!k.off;});");
 rep("if(!top.length)return '';", "if(!top.length&&!qFixIds().length)return '';");
+rep('pane.innerHTML=fpCardHtml()+html;','pane.innerHTML=fpCardHtml()+brDiaryHtml()+html;');
+rep('prepBind(pane);fpBind(pane);','prepBind(pane);fpBind(pane);brBind(pane);');
 rep("if(a==='start'){mutate(()=>{state.prep[d]=Object.assign({},state.prep[d],{fpStart:Date.now(),ts:Date.now()});});}","if(a==='start'){brGate('before',()=>{if(d!==todayStr())return;mutate(()=>{state.prep[d]=Object.assign({},state.prep[d],{fpStart:Date.now(),ts:Date.now()});});});}");
 rep("rn:((rn[x.r]&&rn[x.r].n)||'ルーティン')","rn:(x.br?brLabel(x):((rn[x.r]&&rn[x.r].n)||'ルーティン'))");
 rep('function openRlogSheet(rid,lid){','function openRlogSheet(rid,lid){if(lid&&(state.rlog||{})[lid]&&state.rlog[lid].br)return (state.rlog[lid].brNoteOnly||state.rlog[lid].brReset)?bnEdit(lid):brEdit(lid);');

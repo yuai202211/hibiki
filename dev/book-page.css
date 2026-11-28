@@ -16,3 +16,8 @@
 .bn-segments{display:grid;gap:8px}.bn-segments .br-log{width:100%;text-align:left}
 .bn-filters{border-bottom:1px solid #dbe8e0;margin-bottom:10px;padding-bottom:5px}.bn-filters .bn-filter{padding:6px 0 12px}
 .bn-encourage{background:#edf8f1;border-radius:14px;padding:14px;font-size:13px;color:#58816b;line-height:1.8}
+.bn-day-picker{margin:0 0 12px}.bn-day-picker label{display:block;font-size:12px;font-weight:700;margin-bottom:7px;color:#315b48}
+.bn-day-picker>div{display:grid;grid-template-columns:34px minmax(0,1fr) 34px 48px;gap:5px;align-items:center}
+.bn-day-picker input{box-sizing:border-box;min-width:0;width:100%;min-height:44px;padding:7px;border:1px solid #cde0d3;border-radius:11px;background:#fff;color:#234d3c;font:inherit;font-size:16px}
+.bn-day-picker button{min-height:44px;border:1px solid #d5e5dc;border-radius:11px;background:#f1f8f4;color:#156c4b;font:inherit;font-size:13px;font-weight:800}
+#bnMore{display:block;width:100%;margin-top:14px;min-height:44px}

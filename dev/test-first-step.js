@@ -30,7 +30,7 @@ ctx.state.prep['2026-11-26'].bring='Preserve old preparation';ctx.state.prep['20
 run("Object.assign(fpDraft('2026-11-26'),{task:'One small document edit',tid:'',dirty:true});fpSave('2026-11-26')");assert.equal(ctx.state.prep['2026-11-26'].bring,'Preserve old preparation');assert.equal(ctx.state.prep['2026-11-26'].dos[1],'Existing second task');
 ctx.state.prep['2026-11-26'].to='<img src=x onerror=alert(1)>';assert(!run('fpCardHtml()').includes('<img'));ctx.state.prep['2026-11-26'].to='Example district';
 clock=new Date('2026-11-26T09:00:00');ctx.ui.date='2026-11-26';assert.match(run('fpCardHtml()'),/これを始める/);
-ctx.state.prep['2026-11-26'].fpStart=clock.getTime();assert.match(run('fpCardHtml()'),/終わった！/);ctx.state.prep['2026-11-26'].dd=[1];assert.match(run('fpCardHtml()'),/最初の1つ、終わった！/);
+ctx.state.prep['2026-11-26'].fpStart=clock.getTime();assert.match(run('fpCardHtml()'),/終わった！/);ctx.state.prep['2026-11-26'].dd=[1];assert.equal(run('fpCardHtml()'),'','completed first step is hidden, not deleted');
 ctx.ui.date='2026-11-25';assert.equal(run('fpCardHtml()'),'');ctx.ui.date='2026-11-26';
 clock=new Date('2026-11-25T21:00:00');ctx.ntfCfg=()=>({on:{prep:1},t:{prep:'18:00'}});ctx.ntfAt=(d,t)=>new TestDate(d+'T'+t+':00');
 const ntf=html.slice(html.indexOf('function ntfPlan(){'),html.indexOf('function ntfRowsOf('));vm.runInContext(ntf,ctx);

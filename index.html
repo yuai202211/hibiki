@@ -2566,6 +2566,11 @@ input.pin,textarea.pin{color:#14181f!important;-webkit-text-fill-color:#14181f!i
 .bn-segments{display:grid;gap:8px}.bn-segments .br-log{width:100%;text-align:left}
 .bn-filters{border-bottom:1px solid #dbe8e0;margin-bottom:10px;padding-bottom:5px}.bn-filters .bn-filter{padding:6px 0 12px}
 .bn-encourage{background:#edf8f1;border-radius:14px;padding:14px;font-size:13px;color:#58816b;line-height:1.8}
+.bn-day-picker{margin:0 0 12px}.bn-day-picker label{display:block;font-size:12px;font-weight:700;margin-bottom:7px;color:#315b48}
+.bn-day-picker>div{display:grid;grid-template-columns:34px minmax(0,1fr) 34px 48px;gap:5px;align-items:center}
+.bn-day-picker input{box-sizing:border-box;min-width:0;width:100%;min-height:44px;padding:7px;border:1px solid #cde0d3;border-radius:11px;background:#fff;color:#234d3c;font:inherit;font-size:16px}
+.bn-day-picker button{min-height:44px;border:1px solid #d5e5dc;border-radius:11px;background:#f1f8f4;color:#156c4b;font:inherit;font-size:13px;font-weight:800}
+#bnMore{display:block;width:100%;margin-top:14px;min-height:44px}
 
 #app #pane>.hour.filled.hour{display:block;position:relative;padding:14px 10px!important;margin:12px 0!important;border:1px solid #dce5e4!important;border-radius:16px!important;background:#fff!important;box-shadow:0 2px 7px #12302b08!important}
 #app #pane>.hour.filled::before{display:none}
@@ -4773,7 +4778,7 @@ let foot='';
 foot+='<div class="lgo"><button id="alarmBtn">⏰ 注意の時刻を変える</button><small>'+esc(alarmSummary())+'</small></div>';
 const ckOn=(topView==='top'||topView==='misc')&&isToday;try{$('app').classList.toggle('topck',ckOn);$('app').classList.toggle('hide-top',uiHide('top'));}catch(e){}
 if(ckOn)html=html.replace('<!--ckfoot-->',foot);
-pane.innerHTML=fpCardHtml()+html;
+pane.innerHTML=fpCardHtml()+brDiaryHtml()+html;
 const pf=$('pfoot')||pane;if(ckOn){if(pf!==pane)pf.innerHTML='';}else if(pf!==pane)pf.innerHTML=foot;else pane.insertAdjacentHTML('beforeend',foot);
 if(ckOn)try{renderPins();}catch(e){}
 if(ckOn)try{ckBind(pane);}catch(e){}
@@ -4783,7 +4788,7 @@ try{dbandPaint();}catch(e){}
 if(topView==='diary')slpBarBind(pane.querySelector('.hour.wr'));
 try{depCardBind(pane);}catch(e){}
 tbBind(pane);
-prepBind(pane);fpBind(pane);
+prepBind(pane);fpBind(pane);brBind(pane);
 {const o=$('tlOrd');if(o){o.style.display=topView==='diary'?'':'none';const nf=sugNo('tl|new');o.innerHTML='⇅<span class="tlw"> '+(nf?'新しい順':'古い順')+'</span><span class="tlw2"> 並び</span>';o.setAttribute('aria-label',nf?'新しい順':'古い順');o.classList.toggle('on',nf);o.onclick=ev=>{ev.stopPropagation();msxTog('tl|new');};}}
 
 const fb=ckOn?pane:pf;
@@ -5039,7 +5044,7 @@ row('grey','#c3c8d4','⚪ クラウド未接続','claude.aiにログインして
 '<button class="savebtn" id="syncNow">☁ いまクラウドに保存（画面が読み直される）</button>'+
 '<button class="bkbtn" id="rescueNow">🛟 過去バージョンから救出を再実行</button>'+
 (typeof clSyncDiagHtml==='function'?clSyncDiagHtml():'')+
-'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c50.32）：'+
+'<div class="sh-note" style="text-align:left;word-break:break-all">HIBIKI（c50.33）：'+
 '版庫 '+(function(){try{return state.vprobe?((state.vprobe.ok?'OK':'NG')+'('+state.vprobe.note+')'):'未検証';}catch(e){return '?';}})()+'<br>'+
 '起動 '+esc(BOOTLOG)+'<br>'+
 '保存エラー '+esc(PUBERR||'なし')+(permFail?'〔自動送信停止中。☁で再開／容量超過なら写真整理が必要〕':'')+(VERSFAIL?'〔版台帳の記録失敗〕':'')+'<br>'+
@@ -12542,6 +12547,7 @@ function fpTitle(d){return d===todayStr()?'今日':d===addDays(todayStr(),1)?'�
 function fpCurrent(){return topView==='diary'&&ui.tab==='di'&&ui.date===todayStr();}
 function fpBusy(){return !!document.querySelector('.ovl.open')||!!(document.activeElement&&document.activeElement.matches('input,textarea,select,[contenteditable="true"]'));}
 function fpCardHtml(){if(!fpCurrent())return '';const d=fpDate(),p=fpRecord(d),dr=fpDraft(d),edit=FP_EDIT===d||!fpComplete(p)||dr.dirty,lab=fpTitle(d),h=new Date().getHours(),late=d===todayStr()||h>=23;
+if(p&&(p.dd||[])[0]&&!edit)return '';
 const hd='<div class="fp-head"><span>🌅 '+esc(lab)+'、はじめにやる事'+(edit?'':' ✓')+'</span>'+(!edit?'<button type="button" class="fp-edit-top" data-fp="edit" aria-label="確定した準備を編集する">✎ 編集</button>':'<small>'+(fpComplete(p)?'編集中':d>todayStr()?'夜のうちに準備':'小さな一歩を選ぼう')+'</small>')+'</div><div class="fp-welcome"><h2>日々の習慣が<br>未来をつくる！</h2><p>小さく始めて、気持ちよく進もう。</p></div>';
 if(!edit){const done=!!(p.dd||[])[0],started=!!p.fpStart,now=d===todayStr(),mv=now&&openMove(),arr=now&&!!fpLinked(p),tr=TRS.find(x=>x[0]===p.tr),mode=tr?tr[1]:p.tr;
 return '<section class="fp-card" id="fpCard" data-date="'+esc(d)+'">'+hd+'<div class="fp-first"><span class="fp-eyebrow">'+esc(lab)+'のテーマ</span>'+(p.fpHeading?'<h3 class="fp-theme">'+esc(p.fpHeading)+'</h3>':'')+'<div class="fp-action"><span>最初の一歩</span><p>'+esc(prepDos(p)[0])+'</p></div>'+(done?'<div class="fp-done">✓ 最初の1つ、終わった！ いいスタート！</div>':now?'<small>'+(started?'いいね。その一歩が、今日を動かしている。':'準備はできている。まずは、この一歩から。')+'</small><button type="button" class="savebtn" data-fp="'+(started?'finish':'start')+'">'+(started?'終わった！':'これを始める')+'</button>':'<small>朝の自分に、楽しみをひとつ。</small>')+'</div><div class="fp-summary" id="fpRouteSummary"><span class="fp-eyebrow">'+esc(lab)+'の行き先</span><b>📍 '+esc(p.to)+'</b><span>'+esc(p.dep)+' 出発　'+esc(mode)+'</span></div>'+fpLinkedHtml(p)+'<button type="button" class="fp-route-edit" data-fp="route">✎ 場所・時間を変更</button>'+(now?'<button type="button" class="fp-move" data-fp="'+(mv?'arrive':arr?'next':'go')+'">'+(mv?'🏁 到着した':arr?'🚗 次の移動を記録する':esc(mode)+'で出発する')+'</button>':'')+'</section>';}
@@ -12782,22 +12788,25 @@ if(done&&brTotal(x.brDay,x.brSlot)<BR_LIMIT){toast('読む時間を10分確保�
 const now=Date.now();if(now-x.brStart>18*3600000){brEdit(id);toast('終了時刻を確認して保存してください');return false;}
 brWrite(()=>{const y=state.rlog[id];if(!y||y.del||y.brEnd)return;state.rlog[id]=Object.assign({},y,{brEnd:now,brDone:0,brReview:done?1:0,e:brTime(now),m:Math.round(Math.max(0,now-y.brStart)/60000),ts:now});});
 if(done)brReview(id);else toast('読んだ時間を記録しました。続きは「再開する」から');return true;}
-function brCardHtml(dedicated){if(!dedicated&&!(topView==='diary'&&ui.tab==='di'&&ui.date===todayStr()))return '';const d=brDay(),slots=brSlots(d),done=slots.filter(x=>brDone(d,x[0])).length,active=brActive();
-return '<section class="br-card" id="brCard" data-brday="'+esc(d)+'"><div class="br-head"><b>📖 熊谷手帳を読む</b><span>'+done+' / '+slots.length+' 回</span></div><p class="br-intro">自分で書いた中身を、すべて読み返す。<br><strong>1回10分</strong>、今日の行動につなげよう。</p>'+(slots.length===1?'<p class="br-hint">今日は就寝前の1回から。明日から3回です。</p>':'')+'<small class="br-date">'+esc(d)+'の手帳タイム · 起床・最初の行動で次の1日へ（0時では切り替わりません）</small>'+
+function brCardHtml(dedicated,onlySlot){if(!dedicated&&!(topView==='diary'&&ui.tab==='di'&&ui.date===todayStr()))return '';const d=brDay(),slots=brSlots(d),done=slots.filter(x=>brDone(d,x[0])).length,active=brActive();
+return '<section class="br-card" id="'+(onlySlot?'brDiaryCard':'brCard')+'" data-brday="'+esc(d)+'"><div class="br-head"><b>📖 熊谷手帳を読む</b><span>'+done+' / '+slots.length+' 回</span></div><p class="br-intro">自分で書いた中身を、すべて読み返す。<br><strong>1回10分</strong>、今日の行動につなげよう。</p>'+(slots.length===1?'<p class="br-hint">今日は就寝前の1回から。明日から3回です。</p>':'')+'<small class="br-date">'+esc(d)+'の手帳タイム · 起床・最初の行動で次の1日へ（0時では切り替わりません）</small>'+
 (d<todayStr()?'<button type="button" class="br-secondary" data-br-begin>🌅 起床済み・今日の3回へ</button>':'')+
 (active&&active.brDay!==d?'<div class="br-carry">'+esc(active.brDay)+'の読書が続いています。<button type="button" data-br-edit="'+esc(active.id)+'">終了時刻を確認</button></div>':'')+
-slots.map(([slot,ic,lb])=>{const logs=brLogs(d,slot),ok=brDone(d,slot),review=brTotal(d,slot)>=BR_LIMIT&&logs.find(x=>x.brReview&&!x.brDone),running=active&&active.brDay===d&&active.brSlot===slot,total=brTotal(d,slot);return '<div class="br-row'+(ok?' done':running?' running':'')+'"><div class="br-row-head"><b>'+ic+' '+lb+'</b><span>'+(ok?'✓ 読了':running?'読んでいます':review?'振り返り待ち':'10分')+'</span></div>'+
+slots.filter(x=>!onlySlot||x[0]===onlySlot).map(([slot,ic,lb])=>{const logs=brLogs(d,slot),ok=brDone(d,slot),review=brTotal(d,slot)>=BR_LIMIT&&logs.find(x=>x.brReview&&!x.brDone),running=active&&active.brDay===d&&active.brSlot===slot,total=brTotal(d,slot);return '<div class="br-row'+(ok?' done':running?' running':'')+'"><div class="br-row-head"><b>'+ic+' '+lb+'</b><span>'+(ok?'✓ 読了':running?'読んでいます':review?'振り返り待ち':'10分')+'</span></div>'+
 ('<div class="br-time"><span data-br-clock="'+slot+'">'+brClock(total)+'</span><small>読んだ時間</small></div>')+
 (running?'<p class="br-hint" data-br-hint>'+ (total>=BR_LIMIT?'10分経ちました。全部読めたら、手帳を閉じて振り返ろう。':'あと '+brClock(BR_LIMIT-total)+'。ひとつずつ、読み返そう。')+'</p><div class="br-actions"><button type="button" class="br-primary" data-br-stop="'+esc(active.id)+'"'+(total<BR_LIMIT?' disabled':'')+'>読み終えて確認へ</button><button type="button" class="br-secondary" data-br-pause="'+esc(active.id)+'">中断する</button></div>':ok?'<p class="br-finished">'+(slot==='before'?'準備できた。最初の一歩へ！':slot==='bed'?'今日も読み返せた。おつかれさま。':'夢を思い出せた。今日を始めよう。')+'</p>':review?'<button type="button" class="br-primary" data-br-review="'+esc(review.id)+'">✎ 振り返りを仕上げる</button>':'<button type="button" class="br-primary" data-br-start="'+slot+'"'+(active?' disabled':'')+'>'+(logs.length?'▶ 再開する':'📖 読み始める')+'</button>')+
 (logs.length?'<button type="button" class="br-history" data-br-reset="'+slot+'">↺ リセット</button>':'')+
 (logs.length?'<button type="button" class="br-history" data-br-history="'+slot+'">履歴・修正</button>':'')+'</div>';}).join('')+'<p class="br-foot">10分読む → 手帳を閉じてひと言 → 読了。<br>ひと言は「手帳」の「ひと言・履歴」に保存します。入力時間は、読む時間に含めません。</p></section>';}
-function brBind(root){const card=root&&root.querySelector('#brCard');if(!card)return;const begin=card.querySelector('[data-br-begin]');if(begin)begin.onclick=brBeginDayAsk;card.querySelectorAll('[data-br-reset]').forEach(b=>b.onclick=()=>brResetAsk(card.dataset.brday,b.dataset.brReset));card.querySelectorAll('[data-br-start]').forEach(b=>b.onclick=()=>brStart(b.dataset.brStart));card.querySelectorAll('[data-br-stop]').forEach(b=>b.onclick=()=>brStop(b.dataset.brStop,true));card.querySelectorAll('[data-br-pause]').forEach(b=>b.onclick=()=>brStop(b.dataset.brPause,false));card.querySelectorAll('[data-br-history]').forEach(b=>b.onclick=()=>brHistory(card.dataset.brday,b.dataset.brHistory));card.querySelectorAll('[data-br-edit]').forEach(b=>b.onclick=()=>brEdit(b.dataset.brEdit));card.querySelectorAll('[data-br-review]').forEach(b=>b.onclick=()=>brReview(b.dataset.brReview));}
-function brRefresh(){const el=$('brCard');if(!el)return;const d=brDay();el.outerHTML=brCardHtml(true);brBind($('page'));BR_VIEW=d;}
-function brOpen(){if(!$('page'))return;bnOpen(null,'today');}
-function brTick(){if(document.hidden)return;const card=$('brCard');if(!card)return;const d=brDay();if(card.dataset.brday!==d){if(!fpBusy())brRefresh();return;}
+function brBind(root){const card=root&&root.querySelector('#brCard,#brDiaryCard');if(!card)return;const begin=card.querySelector('[data-br-begin]');if(begin)begin.onclick=brBeginDayAsk;card.querySelectorAll('[data-br-reset]').forEach(b=>b.onclick=()=>brResetAsk(card.dataset.brday,b.dataset.brReset));card.querySelectorAll('[data-br-start]').forEach(b=>b.onclick=()=>brStart(b.dataset.brStart));card.querySelectorAll('[data-br-stop]').forEach(b=>b.onclick=()=>brStop(b.dataset.brStop,true));card.querySelectorAll('[data-br-pause]').forEach(b=>b.onclick=()=>brStop(b.dataset.brPause,false));card.querySelectorAll('[data-br-history]').forEach(b=>b.onclick=()=>brHistory(card.dataset.brday,b.dataset.brHistory));card.querySelectorAll('[data-br-edit]').forEach(b=>b.onclick=()=>brEdit(b.dataset.brEdit));card.querySelectorAll('[data-br-review]').forEach(b=>b.onclick=()=>brReview(b.dataset.brReview));}
+function brNextSlot(d){const active=brActive();if(active&&active.brDay===d)return active.brSlot;return (brSlots(d).find(x=>!brDone(d,x[0]))||[])[0]||'';}
+function brDiaryHtml(){if(!fpCurrent())return '';const d=brDay(),p=fpRecord(d);if(!p||!(p.dd||[])[0]||FP_EDIT)return '';const slot=brNextSlot(d);return slot?brCardHtml(true,slot):'';}
+function brRefresh(){const full=$('brCard'),inline=$('brDiaryCard');if(full){full.outerHTML=brCardHtml(true);brBind($('page'));}if(inline){inline.outerHTML=brDiaryHtml();brBind($('pane'));}BR_VIEW=brDay();}
+function brOpen(){if(!$('page'))return;if(!$('page').classList.contains('open')&&$('brDiaryCard')){brRefresh();return;}bnOpen(null,'today');}
+function brTick(){if(document.hidden)return;const d=brDay();for(const card of [$('brCard'),$('brDiaryCard')]){if(!card)continue;if(card.dataset.brday!==d){if(!fpBusy())brRefresh();return;}
 for(const el of card.querySelectorAll('[data-br-clock]'))el.textContent=brClock(brTotal(d,el.dataset.brClock));
 const a=brActive(),hint=card.querySelector('[data-br-hint]');if(a&&hint&&a.brDay===d){const total=brTotal(d,a.brSlot);hint.textContent=total>=BR_LIMIT?'10分経ちました。全部読めたら、手帳を閉じて振り返ろう。':'あと '+brClock(BR_LIMIT-total)+'。ひとつずつ、読み返そう。';const button=card.querySelector('[data-br-stop]');if(button)button.disabled=total<BR_LIMIT;if(total>=BR_LIMIT&&BR_NOTICE!==a.id){BR_NOTICE=a.id;toast('📖 10分経ちました。全部読めたら「読み終えて確認へ」');}}
-}
+}}
+
 function brGate(slot,go){if(slot==='before')brBeginDay(todayStr());if(!brExpected(brDay(),slot)||brDone(brDay(),slot)){go();return;}const s=brSlot(slot),active=brActive();openSub('<div class="sh-time"><span>'+s[1]+' '+s[2]+'に、手帳を10分</span></div><p class="sh-note">自分で書いた中身を、すべて読み返しましょう。</p><div class="br-gate"><button type="button" class="savebtn" id="brGateRead">📖 手帳を読む</button><button type="button" class="br-secondary" id="brGateSkip">'+(active?'読書を中断して、':'今回は')+(slot==='bed'?'そのまま寝る':'先に行動を始める')+'</button></div>',null);
 $('brGateRead').onclick=()=>{closeSub();if(brActive())brOpen();else brStart(slot);};$('brGateSkip').onclick=()=>{closeSub();const a=brActive();if(a&&!brStop(a.id,false))return;go();};}
 function brHistory(d,slot){const logs=brLogs(d,slot);openSub('<div class="sh-time"><span>📖 '+esc(brSlot(slot)[2])+' · 履歴・修正</span></div><div class="br-log-list">'+logs.map(x=>'<button type="button" class="br-log" data-br-log="'+esc(x.id)+'"><b>'+esc(x.d)+' '+esc(x.s)+' → '+esc(x.e||'読書中')+'</b><span>'+brClock(brElapsed(x))+' · '+(x.brDone?'✓ 全部読んだ':x.brEnd?'中断':'読書中')+'　✎ 編集</span></button>').join('')+'</div><button type="button" class="br-secondary" id="brHistClose">閉じる</button>',null);$('sheet2').querySelectorAll('[data-br-log]').forEach(b=>b.onclick=()=>brEdit(b.dataset.brLog));$('brHistClose').onclick=closeSub;}
@@ -12827,15 +12836,15 @@ setInterval(brTick,1000);
 function brResetAsk(d,slot){const snap=JSON.stringify(brLogs(d,slot));openSub('<div class="sh-time"><span>↺ '+esc((brSlot(slot)||[])[2]||'手帳タイム')+'をリセット</span></div><p class="sh-note">この回の計測・読了状態を0に戻します。保存済みのひと言は残ります。</p><div class="br-gate"><button class="savebtn" id="brResetYes">計測を0に戻す</button><button class="br-secondary" id="brResetNo">戻る</button></div>',null);$('brResetNo').onclick=closeSub;$('brResetYes').onclick=()=>{if(JSON.stringify(brLogs(d,slot))!==snap){toast('別の画面で更新されました。開き直してください');return;}brResetSlot(d,slot);closeSub();toast('✓ 計測を0に戻しました');};}
 function brResetSlot(d,slot){const logs=brLogs(d,slot);if(!logs.length)return false;brWrite(()=>{for(const x of logs){state.rlog[x.id]=Object.assign({},state.rlog[x.id],{brReset:1,brDone:0,brReview:0,s:'',e:'',m:0,ts:Date.now()});}});return true;}
 
-var BN_Q={q:'',from:'',to:'',star:false,limit:40};
+var BN_Q={q:'',day:'',from:'',to:'',star:false,limit:3};
 function bnText(x){return String(x&&Object.prototype.hasOwnProperty.call(x,'brNote')?x.brNote:(x&&x.brReflection)||'');}
 function bnDraftKey(id){return 'hibiki-book-note|'+(typeof CL!=='undefined'&&CL.uid||'local')+'|'+id;}
-function bnList(q){q=q||{};const tokens=srNorm(q.q||'').split(/\s+/).filter(Boolean);return Object.entries(state.rlog||{}).filter(([id,x])=>x&&x.br&&!x.del).map(([id,x])=>Object.assign({id},x)).filter(x=>bnText(x).trim()&&(!q.from||x.d>=q.from)&&(!q.to||x.d<=q.to)&&(!q.star||x.brStar)&&tokens.every(t=>srNorm(bnText(x)+' '+brLabel(x)+' '+x.brDay).includes(t))).sort((a,b)=>(b.brCreated||b.brStart)-(a.brCreated||a.brStart));}
+function bnList(q){q=q||{};const tokens=srNorm(q.q||'').split(/\s+/).filter(Boolean);return Object.entries(state.rlog||{}).filter(([id,x])=>x&&x.br&&!x.del).map(([id,x])=>Object.assign({id},x)).filter(x=>bnText(x).trim()&&(!q.day||(x.brDay||x.d)===q.day)&&(!q.from||x.d>=q.from)&&(!q.to||x.d<=q.to)&&(!q.star||x.brStar)&&tokens.every(t=>srNorm(bnText(x)+' '+brLabel(x)+' '+x.brDay).includes(t))).sort((a,b)=>(b.brCreated||b.brStart)-(a.brCreated||a.brStart));}
 function bnSave(id,snap,text){const x=(state.rlog||{})[id];if(!x||!x.br||x.del||JSON.stringify(x)!==snap)return '別の画面で更新されました。開き直してください。';text=String(text||'').trim();if(!text)return 'ひと言を入力してください。';if(Array.from(text).length>500)return '500文字以内で入力してください。';brWrite(()=>{state.rlog[id]=Object.assign({},x,{brNote:text,ts:Date.now()});});return '';}
 function bnCard(x,search){return '<article class="bn-note" id="bn-'+esc(x.id)+'"><div class="bn-meta">'+esc(x.d)+' '+esc(x.s||'')+' · '+esc(((brSlot(x.brSlot)||[])[2]||'今の気持ち')||'')+'</div>'+(x.brDay!==x.d?'<small>'+esc(x.brDay)+'の1日分</small>':'')+'<p>'+esc(bnText(x))+'</p><div class="bn-actions"><button class="chip" data-bn-star="'+esc(x.id)+'" aria-pressed="'+(x.brStar?'true':'false')+'">'+(x.brStar?'★ 支えになる言葉':'☆ 支えになる言葉に')+'</button><button class="chip" data-bn-edit="'+esc(x.id)+'">✎ 編集</button>'+(search?'<button class="chip" data-bn-open="'+esc(x.id)+'">📖 一覧へ</button>':'')+'</div></article>';}
-function bnBind(root){root.querySelectorAll('[data-bn-edit]').forEach(b=>b.onclick=()=>bnEdit(b.dataset.bnEdit));root.querySelectorAll('[data-bn-open]').forEach(b=>b.onclick=()=>{BN_Q={q:'',from:'',to:'',star:false,limit:40};bnOpen(b.dataset.bnOpen);});root.querySelectorAll('[data-bn-star]').forEach(b=>b.onclick=()=>{const id=b.dataset.bnStar,x=(state.rlog||{})[id];if(!x||x.del)return;brWrite(()=>{state.rlog[id]=Object.assign({},x,{brStar:x.brStar?0:1,ts:Date.now()});});bnRepaint();});}
+function bnBind(root){root.querySelectorAll('[data-bn-edit]').forEach(b=>b.onclick=()=>bnEdit(b.dataset.bnEdit));root.querySelectorAll('[data-bn-open]').forEach(b=>b.onclick=()=>{BN_Q={q:'',day:'',from:'',to:'',star:false,limit:3};bnOpen(b.dataset.bnOpen);});root.querySelectorAll('[data-bn-star]').forEach(b=>b.onclick=()=>{const id=b.dataset.bnStar,x=(state.rlog||{})[id];if(!x||x.del)return;brWrite(()=>{state.rlog[id]=Object.assign({},x,{brStar:x.brStar?0:1,ts:Date.now()});});bnRepaint();});}
 function bnRepaint(){if(pageMode==='booknotes')bnRender();else if(pageMode==='srch')renderSearchPage();}
-function bnOpen(id,tab){closeSheet();pageMode='booknotes';BN_TAB=id?'history':tab||'history';if(id){BN_Q={q:'',from:'',to:'',star:false,limit:40};const n=bnGroups(BN_Q).findIndex(g=>g.rows.some(x=>x.id===id));BN_Q.limit=Math.max(40,n+1);}bnRender();const body=$('page').querySelector('.page-body');if(body)body.scrollTop=0;if(id){const el=$('bn-'+id);if(el)el.scrollIntoView({block:'center'});}}
+function bnOpen(id,tab){closeSheet();pageMode='booknotes';BN_TAB=id?'history':tab||'history';BN_Q.limit=3;if(id){const target=(state.rlog||{})[id];BN_Q={q:'',day:target?(target.brDay||target.d):'',from:'',to:'',star:false,limit:3};const n=bnGroups(BN_Q).findIndex(g=>g.rows.some(x=>x.id===id));BN_Q.limit=Math.max(3,n+1);}bnRender();const body=$('page').querySelector('.page-body');if(body)body.scrollTop=0;if(id){const el=$('bn-'+id);if(el)el.scrollIntoView({block:'center'});}}
 function bnRender(){bnPageRender();}
 function bnEdit(id){const x=(state.rlog||{})[id];if(!x||x.del)return;const snap=JSON.stringify(x);openSub('<div class="sh-time"><span>✎ 手帳のひと言</span></div><form id="bnEditForm" class="br-edit"><label>'+esc(x.d)+' · '+esc(((brSlot(x.brSlot)||[])[2]||'今の気持ち')||'')+'<textarea id="bnText" maxlength="500" rows="5">'+esc(bnText(x))+'</textarea></label><p id="bnError" role="alert"></p><button class="savebtn" type="submit">ひと言を保存</button><button class="br-secondary" id="bnCancel" type="button">戻る</button></form>',null);$('bnCancel').onclick=closeSub;$('bnEditForm').onsubmit=e=>{e.preventDefault();const err=bnSave(id,snap,$('bnText').value);if(err){$('bnError').textContent=err;return;}closeSub();bnRepaint();toast('✓ ひと言を保存しました');};}
 function bnMeetingText(rows){return 'HIBIKI 日々記｜時間分析・改善会議\n熊谷手帳を読んで感じたこと（本人の記録）\n'+rows.length+'件\n\n'+rows.map(x=>x.d+' '+(x.s||'')+' '+((brSlot(x.brSlot)||[])[2]||'今の気持ち')+(x.brDay!==x.d?'（'+x.brDay+'の1日分）':'')+(x.brStar?' ★ 支えになる言葉':'')+'\n'+bnText(x)).join('\n\n')+'\n\nこの記録をもとに、繰り返し現れる思い・気持ちの変化・苦しい時に支えになる自分の言葉・次の小さな行動を一緒に振り返りたい。記録にない気持ちは決めつけない。';}
@@ -12852,7 +12861,7 @@ function bnNavOrder(ids){const list=ids.filter(x=>x!=='navBookNotes'&&x!=='navEa
 function bnGroups(q){q=q||{};const tokens=srNorm(q.q||'').split(/\s+/).filter(Boolean),groups=new Map();
 for(const [id,x] of Object.entries(state.rlog||{})){
 if(!x||!x.br||x.del||(!x.brStart&&!bnText(x).trim())||(x.brReset&&!bnText(x).trim()))continue;
-if((q.from&&x.d<q.from)||(q.to&&x.d>q.to)||(q.star&&!x.brStar)||!tokens.every(t=>srNorm(bnText(x)+' '+brLabel(x)+' '+x.brDay).includes(t)))continue;
+if((q.day&&(x.brDay||x.d)!==q.day)||(q.from&&x.d<q.from)||(q.to&&x.d>q.to)||(q.star&&!x.brStar)||!tokens.every(t=>srNorm(bnText(x)+' '+brLabel(x)+' '+x.brDay).includes(t)))continue;
 const d=x.brDay||x.d,key=d+'|'+(x.brSlot||'note');let g=groups.get(key);if(!g){g={key,d,slot:x.brSlot,rows:[],total:0,done:false,running:false,last:0};groups.set(key,g);}
 g.rows.push(Object.assign({id},x));g.last=Math.max(g.last,x.brCreated||x.brStart||0);
 if(!x.brReset&&!x.brNoteOnly&&x.brStart){g.total+=brElapsed(x);g.running=g.running||!x.brEnd;g.done=g.done||!!(x.brDone&&x.brEnd&&(x.brReviewed||brReflectionValid(x.brReflection)));}
@@ -12868,14 +12877,16 @@ pageMode='booknotes';const p=$('page'),old=p.querySelector('.page-body'),y=old?o
 const groups=BN_TAB==='history'?bnGroups(BN_Q):[];
 p.innerHTML='<div class="page-head"><button class="bk" id="pgBk">‹ 戻る</button><span class="tt">📖 熊谷手帳</span></div><div class="page-body bn-page"><p class="bn-lead">読み返した時間と、心に残ったひと言。</p><div class="bn-tabs"><button type="button" data-bn-tab="today" aria-pressed="'+(BN_TAB==='today')+'">今日の10分</button><button type="button" data-bn-tab="history" aria-pressed="'+(BN_TAB==='history')+'">ひと言・履歴</button></div>'+
 (BN_TAB==='today'?brCardHtml(true):
-'<details class="bn-filters" id="bnFilters"'+(filterOpen?' open':'')+'><summary>検索・絞り込み</summary><form id="bnFilter" class="bn-filter"><label>言葉で探す<input id="bnQuery" type="search" value="'+esc(BN_Q.q)+'" placeholder="夢、挑戦、家族…"></label><div class="bn-dates"><label>いつから<input id="bnFrom" type="date" value="'+esc(BN_Q.from)+'"></label><label>いつまで<input id="bnTo" type="date" value="'+esc(BN_Q.to)+'"></label></div><button class="br-primary" type="submit">絞り込む</button></form></details><div class="bn-actions"><button class="chip'+(BN_Q.star?' sel':'')+'" id="bnStars">★ 支えになる言葉'+(BN_Q.star?'だけ':'')+'</button><button class="chip" id="bnReset">すべて見る</button><button class="chip" id="bnMeeting">会議で振り返る</button></div><p class="bn-meta">'+groups.length+'回 · 新しい順'+(BN_Q.q||BN_Q.from||BN_Q.to||BN_Q.star?' · 絞り込み中':'')+'</p><div id="bnResults">'+(groups.length?groups.slice(0,BN_Q.limit).map(bnGroupHtml).join(''):'<p class="an-empty">該当する記録はありません。「今日の10分」から読み始められます。</p>')+'</div>'+(groups.length>BN_Q.limit?'<button class="br-secondary" id="bnMore">もっと見る</button>':'')+'<p class="bn-encourage">あの日の自分が、今日の力になる。</p>')+'</div>';
+'<div class="bn-day-picker"><label for="bnDay">日付で探す（何日分の手帳タイム？）</label><div><button type="button" id="bnPrevDay" aria-label="前の日の手帳を見る">‹</button><input id="bnDay" type="date" value="'+esc(BN_Q.day||'')+'"><button type="button" id="bnNextDay" aria-label="次の日の手帳を見る">›</button><button type="button" id="bnToday">今日</button></div></div><details class="bn-filters" id="bnFilters"'+(filterOpen?' open':'')+'><summary>検索・絞り込み</summary><form id="bnFilter" class="bn-filter"><label>言葉で探す<input id="bnQuery" type="search" value="'+esc(BN_Q.q)+'" placeholder="夢、挑戦、家族…"></label><div class="bn-dates"><label>読んだ日付・いつから<input id="bnFrom" type="date" value="'+esc(BN_Q.from)+'"></label><label>読んだ日付・いつまで<input id="bnTo" type="date" value="'+esc(BN_Q.to)+'"></label></div><button class="br-primary" type="submit">絞り込む</button></form></details><div class="bn-actions"><button class="chip'+(BN_Q.star?' sel':'')+'" id="bnStars">★ 支えになる言葉'+(BN_Q.star?'だけ':'')+'</button><button class="chip" id="bnReset">直近3回</button><button class="chip" id="bnMeeting">会議で振り返る</button></div><p class="bn-meta">'+Math.min(groups.length,BN_Q.limit)+'回を表示 / 全'+groups.length+'回 · 新しい順'+(BN_Q.q||BN_Q.day||BN_Q.from||BN_Q.to||BN_Q.star?' · 絞り込み中':'')+'</p><div id="bnResults">'+(groups.length?groups.slice(0,BN_Q.limit).map(bnGroupHtml).join(''):'<p class="an-empty">該当する記録はありません。「今日の10分」から読み始められます。</p>')+'</div>'+(groups.length>BN_Q.limit?'<button class="br-secondary" id="bnMore">さらに3回分を見る</button>':'')+'<p class="bn-encourage">あの日の自分が、今日の力になる。</p>')+'</div>';
 p.classList.add('open');$('pgBk').onclick=closePage;
 p.querySelectorAll('[data-bn-tab]').forEach(b=>b.onclick=()=>{BN_TAB=b.dataset.bnTab;bnRender();p.querySelector('.page-body').scrollTop=0;});
 if(BN_TAB==='today')brBind(p);else{
-$('bnFilter').onsubmit=e=>{e.preventDefault();BN_Q.q=$('bnQuery').value;BN_Q.from=$('bnFrom').value;BN_Q.to=$('bnTo').value;BN_Q.limit=40;bnRender();};
-$('bnStars').onclick=()=>{BN_Q.star=!BN_Q.star;BN_Q.limit=40;bnRender();};
-$('bnReset').onclick=()=>{BN_Q={q:'',from:'',to:'',star:false,limit:40};bnRender();};
-$('bnMeeting').onclick=bnMeeting;const more=$('bnMore');if(more)more.onclick=()=>{BN_Q.limit+=40;bnRender();};
+const chooseDay=d=>{BN_Q.day=d;BN_Q.from='';BN_Q.to='';BN_Q.limit=3;bnRender();p.querySelector('.page-body').scrollTop=0;};
+$('bnDay').onchange=()=>chooseDay($('bnDay').value);$('bnPrevDay').onclick=()=>chooseDay(addDays(BN_Q.day||brDay(),-1));$('bnNextDay').onclick=()=>chooseDay(addDays(BN_Q.day||brDay(),1));$('bnToday').onclick=()=>chooseDay(brDay());
+$('bnFilter').onsubmit=e=>{e.preventDefault();BN_Q.q=$('bnQuery').value;BN_Q.from=$('bnFrom').value;BN_Q.to=$('bnTo').value;if(BN_Q.from||BN_Q.to)BN_Q.day='';BN_Q.limit=3;bnRender();};
+$('bnStars').onclick=()=>{BN_Q.star=!BN_Q.star;BN_Q.limit=3;bnRender();};
+$('bnReset').onclick=()=>{BN_Q={q:'',day:'',from:'',to:'',star:false,limit:3};bnRender();};
+$('bnMeeting').onclick=bnMeeting;const more=$('bnMore');if(more)more.onclick=()=>{BN_Q.limit+=3;bnRender();};
 bnBind(p);p.querySelectorAll('[data-bn-session]').forEach(b=>b.onclick=()=>brEdit(b.dataset.bnSession));p.querySelectorAll('[data-bn-group]').forEach(el=>{el.open=opened.has(el.dataset.bnGroup);});
  }
 p.querySelector('.page-body').scrollTop=y;navPaint();
@@ -13648,7 +13659,7 @@ return CL_BLANK;
 const CL_EMAIL='hibiki-email',CL_AUTO='hibiki-autologin',CL_PWDAY='hibiki-pwday';
 const clGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v;}catch(e){return d;}};
 const clSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,String(v));}catch(e){}};
-const CL_APPVER="c50.32";
+const CL_APPVER="c50.33";
 function clDailyDue(){return cloudLoggedIn()&&clGet(CL_AUTO,'0')!=='1'&&clGet(CL_PWDAY,'')!==todayStr();}
 async function clAfterLogin(){
 if(!cloudLoggedIn())return;

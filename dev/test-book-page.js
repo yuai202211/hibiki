@@ -7,6 +7,7 @@ const state={rlog:{a:r('03:29','03:34',''),b:r('03:36','03:38',''),c:r('03:40','
 const ctx={state,Date,srNorm:s=>s.toLowerCase(),brElapsed:x=>x.brEnd-x.brStart,brReflectionValid:x=>!!x,brLabel:()=> 'Book reading',bnText:x=>x.brNote||'',brSlot:()=>['bed','🌙','就寝前'],brClock:n=>String(n/60000),esc:s=>String(s).replace(/[<>&"']/g,''),fmt:d=>d.toISOString().slice(0,10),bnCard:x=>'<p>'+x.brNote+'</p>'};
 vm.createContext(ctx);vm.runInContext(fs.readFileSync(path.join(__dirname,'book-page.js'),'utf8'),ctx);const run=s=>vm.runInContext(s,ctx);
 const before=JSON.stringify(state),groups=run('bnGroups()');assert.equal(groups.length,1);assert.equal(groups[0].total,11*60000);assert.equal(groups[0].rows.length,5);assert.equal(groups[0].done,true);
+assert.equal(run("bnGroups({day:'2026-11-27'}).length"),1,'late-night records belong to the chosen reading day');assert.equal(run("bnGroups({day:'2026-11-28'}).length"),0);
 assert.equal(run('bnGroups({star:true})[0].total'),0);assert.equal(run("bnGroups({q:'concrete'})[0].rows.length"),1);assert.equal(run("bnGroups({from:'2026-11-29'}).length"),0);assert.equal(run("bnGroups({to:'2026-11-27'}).length"),0);
 assert.equal(run('bnInDiary(state.rlog.a)'),false);assert.equal(run('bnInDiary(state.rlog.n)'),false);assert.equal(run('bnInDiary(state.rlog.routine)'),true);
 assert.equal(run('bnInDiary({k:"dreambook"})'),true,'manual dreambook diary activity remains');
